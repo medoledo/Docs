@@ -1084,7 +1084,9 @@ code {
     }
   ],
   <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+  <span class="hljs-attr">"created_by_name"</span>: <span class="hljs-string">"String - Creator name"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>
@@ -1196,11 +1198,13 @@ code {
   <span class="hljs-attr">"results"</span>: [
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"homework"</span>: <span class="hljs-string">"Integer - Homework ID"</span>,
+      <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"String - Homework title"</span>,
       <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String — graded|pending"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (submitted|graded)"</span>,
       <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
     }
   ]
@@ -1217,14 +1221,18 @@ code {
   <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String - Student code"</span>,
   <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String | null"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"model_answer"</span>: <span class="hljs-string">"String - Model answer"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (submitted|graded)"</span>,
   <span class="hljs-attr">"answers"</span>: [
     {
-      <span class="hljs-attr">"question_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"homework_question"</span>: <span class="hljs-string">"Integer - Homework question ID"</span>,
       <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"Object | null"</span>,
-      <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean | null"</span>
+      <span class="hljs-attr">"selected_choice_text"</span>: <span class="hljs-string">"String - Text of selected choice"</span>,
+      <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean | null"</span>,
+      <span class="hljs-attr">"points_earned"</span>: <span class="hljs-string">"Integer | null - Points earned"</span>
     }
   ],
   <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
@@ -1297,13 +1305,13 @@ code {
       <span class="hljs-attr">"settings"</span>: {
         <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
         <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
-        <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
+        <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"Integer - Time limit in minutes (0 = no limit)"</span>,
         <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"String"</span>,
         <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"String"</span>,
         <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"String"</span>,
         <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"Boolean"</span>,
         <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"Boolean"</span>,
-        <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"Integer | null"</span>,
+        <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"Integer - Maximum attempts (0 = unlimited)"</span>,
         <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"String"</span>,
         <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"Boolean"</span>
       },
@@ -1373,15 +1381,20 @@ code {
   <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"Boolean | null"</span>,
   <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String - Student code"</span>,
+  <span class="hljs-attr">"is_timed_out"</span>: <span class="hljs-string">"Boolean - Whether the attempt timed out"</span>,
+  <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"Boolean - Whether score is visible to student"</span>,
+  <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"Boolean - Whether answers are visible to student"</span>,
   <span class="hljs-attr">"answers"</span>: [
     {
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"quiz_question"</span>: <span class="hljs-string">"Integer - Quiz question ID"</span>,
       <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"choices"</span>: <span class="hljs-string">"Array"</span>,
-      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"String | null"</span>
+      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"points_earned"</span>: <span class="hljs-string">"Integer - Points earned"</span>,
+      <span class="hljs-attr">"selected_choices"</span>: <span class="hljs-string">"Array[Integer] - Selected choice IDs"</span>,
+      <span class="hljs-attr">"selected_choice_texts"</span>: <span class="hljs-string">"Array[String] - Choice texts"</span>,
+      <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean | null - Whether the answer is correct"</span>,
+      <span class="hljs-attr">"display_order"</span>: <span class="hljs-string">"Integer - Display order of the question"</span>
     }
   ]
 }
@@ -1427,11 +1440,16 @@ code {
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String - Course name"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"file"</span>: <span class="hljs-string">"String (URL) - File URL"</span>,
   <span class="hljs-attr">"file_url"</span>: <span class="hljs-string">"String (URL)"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+  <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer - Creator user ID"</span>,
+  <span class="hljs-attr">"created_by_name"</span>: <span class="hljs-string">"String - Creator name"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>

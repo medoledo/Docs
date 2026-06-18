@@ -439,11 +439,10 @@ code {
       <span class="hljs-attr">"phone"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"secondary_phone"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female) | null"</span>,
+      <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female)"</span>,
       <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
       <span class="hljs-attr">"biography"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"facebook"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"Integer — Write-only (Subject ID)"</span>,
       <span class="hljs-attr">"subject_detail"</span>: {
         <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
         <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
@@ -484,14 +483,12 @@ code {
         <span class="hljs-attr">"division_ids"</span>: <span class="hljs-string">"Array[Integer]"</span>,
         <span class="hljs-attr">"school_type_ids"</span>: <span class="hljs-string">"Array[Integer]"</span>
       },
-      <span class="hljs-attr">"grades"</span>: <span class="hljs-string">"Array[Integer] — Write-only"</span>,
       <span class="hljs-attr">"grades_detail"</span>: [
         {
           <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
           <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
         }
       ],
-      <span class="hljs-attr">"video_security"</span>: <span class="hljs-string">"Integer | null — Write-only"</span>,
       <span class="hljs-attr">"video_security_detail"</span>: {
         <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
         <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
@@ -523,10 +520,11 @@ code {
   <span class="hljs-attr">"phone"</span>: <span class="hljs-string">"String (Required) — Egyptian format: 010/011/012/015 + 8 digits"</span>,
   <span class="hljs-attr">"secondary_phone"</span>: <span class="hljs-string">"String (Optional) — Egyptian format"</span>,
   <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) — Must be globally unique"</span>,
-  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Optional) — male|female"</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Required) — male|female"</span>,
   <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"File (Optional) — image/jpeg|image/png|image/webp"</span>,
   <span class="hljs-attr">"biography"</span>: <span class="hljs-string">"String (Optional)"</span>,
   <span class="hljs-attr">"facebook"</span>: <span class="hljs-string">"String (Optional)"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional) — Default: true"</span>,
   <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"Integer (Required) — Subject ID"</span>,
   <span class="hljs-attr">"grades"</span>: <span class="hljs-string">"Array[Integer] (Required) — Grade IDs"</span>,
   <span class="hljs-attr">"video_security"</span>: <span class="hljs-string">"Integer (Optional) — VideoSecurity ID"</span>
@@ -883,11 +881,11 @@ code {
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"phone"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female) | null"</span>,
-      <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+      <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female)"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"teacher"</span>: <span class="hljs-string">"Integer — Teacher ID"</span>
+      <span class="hljs-attr">"teacher"</span>: <span class="hljs-string">"Integer — Teacher ID"</span>,
+      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String - Teacher's name"</span>
     }
   ]
 }

@@ -879,32 +879,10 @@ code {
 </div></code></pre>
 <p><strong>Success Response â€” 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String â€” Auto-generated 7-digit code"</span>,
-  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String | null"</span>,
-  <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String | null"</span>,
-  <span class="hljs-attr">"father_job"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"educational_state"</span>: <span class="hljs-string">"String (school)"</span>,
-  <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"Integer | null"</span>,
-  <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"Integer | null"</span>,
-  <span class="hljs-attr">"division"</span>: <span class="hljs-string">"Integer | null"</span>,
-  <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"String | null"</span>,
-  <span class="hljs-attr">"national_id"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"birth_date"</span>: <span class="hljs-string">"Date (YYYY-MM-DD)"</span>,
-  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female)"</span>,
-  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"facebook_link"</span>: <span class="hljs-string">"String | null"</span>,
-  <span class="hljs-attr">"governorate"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"area"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String â€” active"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean â€” true"</span>,
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"String - Success message"</span>,
+  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String - Auto-generated 7-digit code"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String - Student's username"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String - Always 'pending'"</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>
@@ -1219,18 +1197,20 @@ code {
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"grades"</span>: [
+      <span class="hljs-attr">"grades_detail"</span>: [
         {
           <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
           <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
         }
       ],
-      <span class="hljs-attr">"school_types"</span>: [
+      <span class="hljs-attr">"school_types_detail"</span>: [
         {
           <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
           <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
         }
-      ]
+      ],
+      <span class="hljs-attr">"grade_ids"</span>: <span class="hljs-string">"Array[Integer] - Grade IDs"</span>,
+      <span class="hljs-attr">"school_type_ids"</span>: <span class="hljs-string">"Array[Integer] - School type IDs"</span>
     }
   ]
 }
@@ -1290,43 +1270,28 @@ code {
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"grades"</span>: <span class="hljs-string">"Array[Integer] â€” Grade IDs"</span>,
+      <span class="hljs-attr">"grade_ids"</span>: <span class="hljs-string">"Array[Integer] - Grade IDs"</span>,
       <span class="hljs-attr">"grades_detail"</span>: [
         {
           <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
           <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
         }
       ],
-      <span class="hljs-attr">"divisions"</span>: <span class="hljs-string">"Array[Integer] â€” Division IDs"</span>,
+      <span class="hljs-attr">"division_ids"</span>: <span class="hljs-string">"Array[Integer] - Division IDs"</span>,
       <span class="hljs-attr">"divisions_detail"</span>: [
         {
           <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-          <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-          <span class="hljs-attr">"grades"</span>: [
-            {
-              <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
-            }
-          ],
-          <span class="hljs-attr">"school_types"</span>: [
-            {
-              <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
-            }
-          ]
+          <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
         }
       ],
-      <span class="hljs-attr">"school_types"</span>: <span class="hljs-string">"Array[Integer] â€” School type IDs"</span>,
+      <span class="hljs-attr">"school_type_ids"</span>: <span class="hljs-string">"Array[Integer] - School type IDs"</span>,
       <span class="hljs-attr">"school_types_detail"</span>: [
         {
           <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
           <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
         }
       ],
-      <span class="hljs-attr">"grade_ids"</span>: <span class="hljs-string">"Array[Integer]"</span>,
-      <span class="hljs-attr">"division_ids"</span>: <span class="hljs-string">"Array[Integer]"</span>,
-      <span class="hljs-attr">"school_type_ids"</span>: <span class="hljs-string">"Array[Integer]"</span>
-    }
+}
   ]
 }
 </div></code></pre>
@@ -1394,7 +1359,8 @@ code {
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"governorate"</span>: <span class="hljs-string">"Integer"</span>
+      <span class="hljs-attr">"governorate_id"</span>: <span class="hljs-string">"Integer - Governorate ID"</span>,
+      <span class="hljs-attr">"governorate_name"</span>: <span class="hljs-string">"String - Governorate name"</span>
     }
   ]
 }
@@ -1406,7 +1372,8 @@ code {
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"governorate"</span>: <span class="hljs-string">"Integer"</span>
+  <span class="hljs-attr">"governorate_id"</span>: <span class="hljs-string">"Integer - Governorate ID"</span>,
+  <span class="hljs-attr">"governorate_name"</span>: <span class="hljs-string">"String - Governorate name"</span>
 }
 </div></code></pre>
 <hr>

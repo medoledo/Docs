@@ -1210,10 +1210,10 @@ code {
   <span class="hljs-attr">"explanation"</span>: <span class="hljs-string">"String - Explanation"</span>,
   <span class="hljs-attr">"is_global"</span>: <span class="hljs-string">"Boolean - Whether question is shared with other teachers"</span>,
   <span class="hljs-attr">"choices"</span>: [
-    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
-    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
-    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
-    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>}
+    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
+    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
+    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
+    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>}
   ]
 }
 </div></code></pre>
@@ -1322,6 +1322,44 @@ code {
 <h4 id="get-learninghomeworksid">GET /learning/homeworks/{id}/</h4>
 <p><strong>Description:</strong> Retrieve a homework with questions.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner (students must have purchased the lecture)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"model_answer"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question"</span>: <span class="hljs-string">"Integer - QuestionBank ID"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"question_image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple)"</span>,
+      <span class="hljs-attr">"choices"</span>: [
+        {
+          <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String"</span>,
+          <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+          <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean"</span>,
+          <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>
+        }
+      ]
+    }
+  ],
+  <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
+  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <hr>
 <h4 id="put-learninghomeworksid">PUT /learning/homeworks/{id}/</h4>
 <p><strong>Description:</strong> Update a homework.</p>
@@ -1419,6 +1457,55 @@ code {
 <h4 id="get-learningquizzesid">GET /learning/quizzes/{id}/</h4>
 <p><strong>Description:</strong> Retrieve a quiz with questions and settings.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner (students must have purchased the lecture)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"Decimal | null"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"settings"</span>: {
+    <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
+    <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
+    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"String (immediate|after_close|manual)"</span>,
+    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"String (immediate|after_close|manual)"</span>,
+    <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"String (fixed|random)"</span>,
+    <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"Boolean"</span>,
+    <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"Boolean"</span>,
+    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"Integer | null"</span>,
+    <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"String (best|average|last)"</span>,
+    <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"Boolean"</span>
+  },
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question"</span>: <span class="hljs-string">"Integer - QuestionBank ID"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"question_image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple|written)"</span>,
+      <span class="hljs-attr">"choices"</span>: [
+        {
+          <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String"</span>,
+          <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+          <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean"</span>,
+          <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>
+        }
+      ]
+    }
+  ],
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <hr>
 <h4 id="put-learningquizzesid">PUT /learning/quizzes/{id}/</h4>
 <p><strong>Description:</strong> Update a quiz. Sending <code>question_ids</code> replaces all questions.</p>
