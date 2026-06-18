@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API ASSISTANT - EduTrack API</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            background: #1e293b;
+            color: white;
+            overflow-y: auto;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .sidebar a {
+            color: #94a3b8;
+            text-decoration: none;
+            display: block;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+        .sidebar a:hover {
+            color: white;
+        }
+        .sidebar h5 {
+            color: white;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .content {
+            margin-left: 280px;
+            padding: 40px;
+            max-width: 960px;
+        }
+        .content h1 {
+            margin-bottom: 24px;
+            color: #1e293b;
+        }
+        .content h2 {
+            margin-top: 32px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            color: #1e293b;
+        }
+        .content h3 {
+            margin-top: 24px;
+            color: #334155;
+        }
+        .content h4 {
+            margin-top: 16px;
+            color: #475569;
+        }
+        .content code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .content pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        .content th, .content td {
+            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        .content th {
+            background: #f1f5f9;
+            font-weight: 600;
+        }
+        .content blockquote {
+            border-left: 4px solid #3b82f6;
+            padding: 12px 16px;
+            margin: 16px 0;
+            background: #f0f7ff;
+            border-radius: 0 8px 8px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h4 style="color: white; margin-bottom: 20px;">EduTrack API</h4>
+        <h5>Docs</h5>
+        <a href="API_OVERVIEW.html">Overview</a>
+        <a href="API_PUBLIC.html">Public</a>
+        <a href="API_SITEOWNER.html">SiteOwner</a>
+        <a href="API_TEACHER.html">Teacher</a>
+        <a href="API_ASSISTANT.html">Assistant</a>
+        <a href="API_STUDENT.html">Student</a>
+        <h5 style="margin-top: 24px;">Links</h5>
+        <a href="docs.html">← Back to Home</a>
+    </div>
+    <div class="content">
+        <a href="docs.html" class="back-link">← Back to Documentation Home</a>
+        <h1 id="edutrack-online-assistant-api">EduTrack Online - Assistant API</h1>
+<blockquote>
+<p><strong>Role:</strong> Assistant<br />
+<strong>Base URL:</strong> <code>http://localhost:8000/api/</code><br />
+<strong>Authentication:</strong> JWT tokens in HTTP-Only cookies (see main docs for login/refresh)</p>
+</blockquote>
+<p>The Assistant role has LIMITED permissions — they help their assigned teacher. Most operations are read-only with some write exceptions (approve enrollments, upload materials).</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-view-coworkers">View Coworkers</a></li>
+<li><a href="#2-view-teachers-courses">View Teacher's Courses</a></li>
+<li><a href="#3-view-topics-read-only">View Topics (Read-Only)</a></li>
+<li><a href="#4-view-lectures-read-only">View Lectures (Read-Only)</a></li>
+<li><a href="#5-view-videos-read-only">View Videos (Read-Only)</a></li>
+<li><a href="#6-enrollments">Enrollments</a></li>
+<li><a href="#7-purchases">Purchases</a></li>
+<li><a href="#8-question-bank-read-only">Question Bank (Read-Only)</a></li>
+<li><a href="#9-homeworks-read-only">Homeworks (Read-Only)</a></li>
+<li><a href="#10-quizzes-read-only">Quizzes (Read-Only)</a></li>
+<li><a href="#11-study-materials">Study Materials</a></li>
+<li><a href="#12-notifications">Notifications</a></li>
+</ol>
+<hr />
+<h2 id="1-view-coworkers">1. View Coworkers</h2>
+<h4 id="get-accountsteacherassistants">GET /accounts/teacher/assistants/</h4>
+<p><strong>Description:</strong> See all assistants working under the same teacher.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;phone&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;gmail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;gender&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (male|female) | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;profile_picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;teacher&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer — Teacher ID&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>403</code></td>
+<td>Not a teacher/assistant</td>
+<td><code>{"detail": "You do not have permission..."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-view-teachers-courses">2. View Teacher's Courses</h2>
+<h4 id="get-coursesmy_courses">GET /courses/my_courses/</h4>
+<p><strong>Description:</strong> List courses taught by the teacher (the queryset filters by teacher profile).</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;teacher&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;grade&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;grade_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;subject_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;cover_picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;topic_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>403</code></td>
+<td>Not a teacher/assistant</td>
+<td><code>{"detail": "You do not have permission..."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-view-topics-read-only">3. View Topics (Read-Only)</h2>
+<h4 id="get-coursestopics">GET /courses/topics/</h4>
+<p><strong>Description:</strong> List topics. Supports filtering by course, search, and ordering.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>course</code></td>
+<td>Integer</td>
+<td>Filter by course ID</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>Boolean</td>
+<td>Filter by active status</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Search by name, description, or course name</td>
+</tr>
+<tr>
+<td><code>ordering</code></td>
+<td>String</td>
+<td><code>order</code>, <code>created_at</code>, <code>name</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-coursestopics_1">GET /courses/topics/<id>/</h4>
+<p><strong>Description:</strong> Retrieve a single topic with nested lectures.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lectures&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;topic_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;discount&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;final_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;formatted_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;available_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_visible&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;videos&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Array[Object]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;video_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Topic not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-view-lectures-read-only">4. View Lectures (Read-Only)</h2>
+<h4 id="get-courseslectures">GET /courses/lectures/</h4>
+<p><strong>Description:</strong> List lectures. Supports filtering by topic, visibility, search, and ordering.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>topic</code></td>
+<td>Integer</td>
+<td>Filter by topic ID</td>
+</tr>
+<tr>
+<td><code>is_visible</code></td>
+<td>Boolean</td>
+<td>Filter by visibility</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Search by name, description, or topic name</td>
+</tr>
+<tr>
+<td><code>ordering</code></td>
+<td>String</td>
+<td><code>order</code>, <code>price</code>, <code>created_at</code>, <code>name</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;topic_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;discount&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;final_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;formatted_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;available_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_visible&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;video_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-courseslectures_1">GET /courses/lectures/<id>/</h4>
+<p><strong>Description:</strong> Retrieve a single lecture with nested videos.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;topic_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;discount&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;final_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;formatted_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;available_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_visible&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;videos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (youtube|bunnystream|vdocipher)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;video_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;duration_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;duration_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;video_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-courseslecturesvideos">GET /courses/lectures/<id>/videos/</h4>
+<p><strong>Description:</strong> Get all videos for a specific lecture.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (youtube|bunnystream|vdocipher)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;platform_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;video_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;duration_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;duration_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<hr />
+<h2 id="5-view-videos-read-only">5. View Videos (Read-Only)</h2>
+<h4 id="get-coursesvideos">GET /courses/videos/</h4>
+<p><strong>Description:</strong> List videos. Supports filtering by lecture, platform, active status, search, and ordering.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lecture</code></td>
+<td>Integer</td>
+<td>Filter by lecture ID</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td>String</td>
+<td>Filter by platform (<code>youtube</code>, <code>bunnystream</code>, <code>vdocipher</code>)</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>Boolean</td>
+<td>Filter by active status</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Search by name or video URL</td>
+</tr>
+<tr>
+<td><code>ordering</code></td>
+<td>String</td>
+<td><code>order</code>, <code>created_at</code>, <code>duration_minutes</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (youtube|bunnystream|vdocipher)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;video_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;duration_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;duration_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-coursesvideos_1">GET /courses/videos/<id>/</h4>
+<p><strong>Description:</strong> Retrieve a single video.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (youtube|bunnystream|vdocipher)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;platform_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;video_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;duration_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;duration_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Video not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-enrollments">6. Enrollments</h2>
+<h4 id="get-coursesenrollmentspending">GET /courses/enrollments/pending/</h4>
+<p><strong>Description:</strong> List pending enrollment requests for the teacher's courses.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong> Array of pending enrollments.</p>
+<div class="codehilite"><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;student_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;grade_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String — pending&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String — Pending&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;enrolled_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;approved_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;approved_by_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;responded_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<hr />
+<h4 id="post-coursesenrollmentsapprove">POST /courses/enrollments/<id>/approve/</h4>
+<p><strong>Description:</strong> Approve a pending enrollment. Assistant must be assistant of the course teacher.</p>
+<p><strong>Authentication:</strong> Teacher (course owner), Assistant (teacher's assistant)</p>
+<p><strong>Content-Type:</strong> <code>application/json</code></p>
+<p><strong>Request Body:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional) — Note for the student&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;approved&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;approved_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;approved_by_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;responded_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>403</code></td>
+<td>Not course owner</td>
+<td><code>{"error": "You can only manage enrollments for your own courses"}</code></td>
+</tr>
+<tr>
+<td><code>400</code></td>
+<td>Not pending</td>
+<td><code>{"error": "Cannot approve enrollment with status: X"}</code></td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Enrollment not found</td>
+<td><code>{"error": "Enrollment not found"}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="post-coursesenrollmentsreject">POST /courses/enrollments/<id>/reject/</h4>
+<p><strong>Description:</strong> Reject a pending enrollment.</p>
+<p><strong>Authentication:</strong> Teacher (course owner), Assistant (teacher's assistant)</p>
+<p><strong>Content-Type:</strong> <code>application/json</code></p>
+<p><strong>Request Body:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional) — Note for the student&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rejected&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;approved_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;approved_by_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;responded_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong> Same as approve endpoint.</p>
+<hr />
+<h2 id="7-purchases">7. Purchases</h2>
+<h4 id="patch-coursespurchasesreopen">PATCH /courses/purchases/<id>/reopen/</h4>
+<p><strong>Description:</strong> Extend a student's lecture access by adding extra days.</p>
+<p><strong>Authentication:</strong> Teacher (lecture course owner), Assistant</p>
+<p><strong>Content-Type:</strong> <code>application/json</code></p>
+<p><strong>Request Body:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;extra_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer (Required) — Minimum 1&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Success Response — 200 OK:</strong> Updated purchase object.</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;topic_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;purchased_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;expires_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;effective_expiry&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;amount_paid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;extra_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_expired&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;reopened_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;reopened_by_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;reopened_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>403</code></td>
+<td>Not course owner</td>
+<td><code>{"error": "You can only extend access for lectures in your own courses"}</code></td>
+</tr>
+<tr>
+<td><code>400</code></td>
+<td>Invalid extra_days</td>
+<td><code>{"extra_days": ["Ensure this value is greater than or equal to 1."]}</code></td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Purchase not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-question-bank-read-only">8. Question Bank (Read-Only)</h2>
+<h4 id="get-question-bankquestions">GET /question-bank/questions/</h4>
+<p><strong>Description:</strong> List questions accessible to the assistant.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lesson</code></td>
+<td>Integer</td>
+<td>Filter by lesson ID</td>
+</tr>
+<tr>
+<td><code>question_type</code></td>
+<td>String</td>
+<td><code>mcq_single</code>, <code>mcq_multiple</code>, <code>written</code></td>
+</tr>
+<tr>
+<td><code>difficulty</code></td>
+<td>String</td>
+<td><code>easy</code>, <code>medium</code>, <code>hard</code></td>
+</tr>
+<tr>
+<td><code>is_global</code></td>
+<td>Boolean</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>lesson__chapter__subject</code></td>
+<td>Integer</td>
+<td>Filter by subject ID</td>
+</tr>
+<tr>
+<td><code>lesson__chapter__grade</code></td>
+<td>Integer</td>
+<td>Filter by grade ID</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Search in question text and explanation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lesson&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lesson_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;chapter_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;subject_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (mcq_single|mcq_multiple|written)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;difficulty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (easy|medium|hard)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;choice_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_global&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-question-bankquestions_1">GET /question-bank/questions/<id>/</h4>
+<p><strong>Description:</strong> Retrieve a single question with all choices (including <code>is_correct</code>).</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lesson&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lesson_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;chapter_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;question_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;difficulty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;explanation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_global&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_correct&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;created_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Question not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-homeworks-read-only">9. Homeworks (Read-Only)</h2>
+<h4 id="get-learninghomeworks">GET /learning/homeworks/</h4>
+<p><strong>Description:</strong> List homeworks for the teacher's courses.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lecture</code></td>
+<td>Integer</td>
+<td>Filter by lecture ID</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>Boolean</td>
+<td>Filter by active status</td>
+</tr>
+<tr>
+<td><code>is_published</code></td>
+<td>Boolean</td>
+<td>Filter by published status</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_published&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;total_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;open_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;close_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-learninghomeworks_1">GET /learning/homeworks/<id>/</h4>
+<p><strong>Description:</strong> Retrieve a homework with questions.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_published&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;total_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;question_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;questions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;open_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;close_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-learninghomeworkssubmissions">GET /learning/homeworks/<id>/submissions/</h4>
+<p><strong>Description:</strong> List all submissions for a homework.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;student_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String — graded|pending&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;submitted_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-learninghomework-submissions">GET /learning/homework-submissions/<id>/</h4>
+<p><strong>Description:</strong> View a specific submission.</p>
+<p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;homework&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;homework_title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;answers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;question_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;selected_choice&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Object | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_correct&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean | null&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;submitted_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Submission not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-quizzes-read-only">10. Quizzes (Read-Only)</h2>
+<h4 id="get-learningquizzes">GET /learning/quizzes/</h4>
+<p><strong>Description:</strong> List quizzes for the teacher's courses.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lecture</code></td>
+<td>Integer</td>
+<td>Filter by lecture ID</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>Boolean</td>
+<td>Filter by active status</td>
+</tr>
+<tr>
+<td><code>is_published</code></td>
+<td>Boolean</td>
+<td>Filter by published status</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;passing_score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_published&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;total_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;open_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;close_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;timer_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;score_visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;answers_visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;question_order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;shuffle_choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;allow_multiple_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;max_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;attempt_scoring&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;show_correct_after_submission&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-learningquizzes_1">GET /learning/quizzes/<id>/</h4>
+<p><strong>Description:</strong> Retrieve a quiz with questions and settings.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;passing_score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_published&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;total_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;question_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;open_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;close_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;timer_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;score_visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;answers_visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;question_order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shuffle_choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;allow_multiple_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;max_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;attempt_scoring&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;show_correct_after_submission&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;questions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;question_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;difficulty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-learningquiz-submissions">GET /learning/quiz-submissions/<id>/</h4>
+<p><strong>Description:</strong> View a specific quiz submission.</p>
+<p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;quiz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;quiz_title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;attempt_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;passed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;started_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;submitted_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;answers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;quiz_question_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;question_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Array&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;written_answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Submission not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-study-materials">11. Study Materials</h2>
+<h4 id="post-materials">POST /materials/</h4>
+<p><strong>Description:</strong> Upload a new PDF study material.</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
+<p><strong>Request Body:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer (Required) — Lecture ID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Required)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;PDF_FILE (Required)&gt;&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Validation:</strong><br />
+- Only PDF files are accepted<br />
+- Maximum file size: 50 MB</p>
+<p><strong>Success Response — 201 Created:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;file_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>400</code></td>
+<td>File too large</td>
+<td><code>{"file": ["File too large. Size should not exceed 50 MB."]}</code></td>
+</tr>
+<tr>
+<td><code>400</code></td>
+<td>Invalid file type</td>
+<td><code>{"file": ["File extension 'xyz' is not allowed. Allowed extensions are: pdf."]}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-materials">GET /materials/</h4>
+<p><strong>Description:</strong> List study materials for the teacher's courses.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lecture</code></td>
+<td>Integer</td>
+<td>Filter by lecture ID</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>Boolean</td>
+<td>Filter by active status</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;file_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-materials_1">GET /materials/<id>/</h4>
+<p><strong>Description:</strong> Retrieve a single material.</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;file_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Material not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="put-materials">PUT /materials/<id>/</h4>
+<p><strong>Description:</strong> Update a material (replace PDF, change title, etc.).</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
+<p><strong>Request Body:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer (Optional) — Lecture ID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;PDF_FILE (Optional)&gt;&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Success Response — 200 OK:</strong> Updated material object.</p>
+<hr />
+<h4 id="delete-materials">DELETE /materials/<id>/</h4>
+<p><strong>Description:</strong> Delete a material.</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Success Response — 204 No Content</strong></p>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Material not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="12-notifications">12. Notifications</h2>
+<h4 id="get-notifications">GET /notifications/</h4>
+<p><strong>Description:</strong> List all notifications for the authenticated assistant.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;is_read&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="get-notificationsunread-count">GET /notifications/unread-count/</h4>
+<p><strong>Description:</strong> Get the count of unread notifications.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;unread_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="post-notificationsmark-all-read">POST /notifications/mark-all-read/</h4>
+<p><strong>Description:</strong> Mark all notifications as read.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Content-Type:</strong> <code>application/json</code></p>
+<p><strong>Request Body:</strong> None</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;All notifications marked as read&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="post-notificationsmark-read">POST /notifications/<id>/mark-read/</h4>
+<p><strong>Description:</strong> Mark a single notification as read.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Content-Type:</strong> <code>application/json</code></p>
+<p><strong>Request Body:</strong> None</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Notification marked as read&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Notification not found</td>
+<td><code>{"detail": "Not found."}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="common-error-formats">Common Error Formats</h2>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>401 Unauthorized</code></td>
+<td>Not authenticated</td>
+<td><code>{"detail": "Authentication credentials were not provided."}</code></td>
+</tr>
+<tr>
+<td><code>401 Unauthorized</code></td>
+<td>Token expired</td>
+<td><code>{"error": "Invalid or expired refresh token"}</code></td>
+</tr>
+<tr>
+<td><code>403 Forbidden</code></td>
+<td>Insufficient permissions</td>
+<td><code>{"detail": "You do not have permission to perform this action."}</code></td>
+</tr>
+<tr>
+<td><code>404 Not Found</code></td>
+<td>Object does not exist</td>
+<td><code>{"detail": "Not found."}</code> or <code>{"error": "String"}</code></td>
+</tr>
+<tr>
+<td><code>500 Internal Server Error</code></td>
+<td>Unexpected error</td>
+<td><code>{"detail": "Internal server error"}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="pagination">Pagination</h2>
+<p>List endpoints return:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Array[Object]&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Add <code>?all=true</code> to bypass pagination.</p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
