@@ -1,159 +1,407 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API OVERVIEW - EduTrack API</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 260px;
-            background: #1e293b;
-            color: white;
-            overflow-y: auto;
-            padding: 20px;
-            z-index: 1000;
-        }
-        .sidebar a {
-            color: #94a3b8;
-            text-decoration: none;
-            display: block;
-            padding: 6px 0;
-            font-size: 14px;
-        }
-        .sidebar a:hover {
-            color: white;
-        }
-        .sidebar h5 {
-            color: white;
-            margin-top: 16px;
-            margin-bottom: 8px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .content {
-            margin-left: 280px;
-            padding: 40px;
-            max-width: 960px;
-        }
-        .content h1 {
-            margin-bottom: 24px;
-            color: #1e293b;
-        }
-        .content h2 {
-            margin-top: 32px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e2e8f0;
-            color: #1e293b;
-        }
-        .content h3 {
-            margin-top: 24px;
-            color: #334155;
-        }
-        .content h4 {
-            margin-top: 16px;
-            color: #475569;
-        }
-        .content code {
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        .content pre {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 16px;
-            border-radius: 8px;
-            overflow-x: auto;
-        }
-        .content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-        }
-        .content th, .content td {
-            border: 1px solid #e2e8f0;
-            padding: 10px 12px;
-            text-align: left;
-        }
-        .content th {
-            background: #f1f5f9;
-            font-weight: 600;
-        }
-        .content blockquote {
-            border-left: 4px solid #3b82f6;
-            padding: 12px 16px;
-            margin: 16px 0;
-            background: #f0f7ff;
-            border-radius: 0 8px 8px 0;
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #3b82f6;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
+<title>API_OVERVIEW.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
 </head>
 <body>
-    <div class="sidebar">
-        <h4 style="color: white; margin-bottom: 20px;">EduTrack API</h4>
-        <h5>Docs</h5>
-        <a href="API_OVERVIEW.html">Overview</a>
-        <a href="API_PUBLIC.html">Public</a>
-        <a href="API_SITEOWNER.html">SiteOwner</a>
-        <a href="API_TEACHER.html">Teacher</a>
-        <a href="API_ASSISTANT.html">Assistant</a>
-        <a href="API_STUDENT.html">Student</a>
-        <h5 style="margin-top: 24px;">Links</h5>
-        <a href="docs.html">← Back to Home</a>
-    </div>
-    <div class="content">
-        <a href="docs.html" class="back-link">← Back to Documentation Home</a>
-        <h1 id="edutrack-online-api-overview">EduTrack Online - API Overview</h1>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="edutrack-online---api-overview">EduTrack Online - API Overview</h1>
 <blockquote>
-<p><strong>Version:</strong> 1.1<br />
-<strong>Date:</strong> April 29, 2026<br />
-<strong>Target Audience:</strong> Next.js Frontend Developers<br />
+<p><strong>Version:</strong> 1.1<br>
+<strong>Date:</strong> April 29, 2026<br>
+<strong>Target Audience:</strong> Next.js Frontend Developers<br>
 <strong>Backend:</strong> Django REST Framework</p>
 </blockquote>
 <h3 id="base-url">Base URL</h3>
-<div class="codehilite"><pre><span></span><code>http://localhost:8000/api/
-</code></pre></div>
-
+<pre class="hljs"><code><div>http://localhost:8000/api/
+</div></code></pre>
 <p>All endpoints are prefixed with <code>/api/</code>.</p>
 <h3 id="authentication">Authentication</h3>
 <p>The API uses <strong>JWT tokens stored in HTTP-Only cookies</strong>.</p>
 <ul>
-<li><strong>Login:</strong> Call <code>POST /api/accounts/login/</code>. The server sets two cookies:</li>
+<li><strong>Login:</strong> Call <code>POST /api/accounts/login/</code>. The server sets two cookies:
+<ul>
 <li><code>access_token</code> — short-lived (30 minutes)</li>
 <li><code>refresh_token</code> — long-lived (7 days)</li>
+</ul>
+</li>
 <li><strong>Subsequent Requests:</strong> The browser automatically sends cookies. No <code>Authorization</code> header needed.</li>
 <li><strong>API Clients (Postman):</strong> You can also send the access token in the <code>Authorization: Bearer &lt;token&gt;</code> header.</li>
 <li><strong>Token Refresh:</strong> When the access token expires, call <code>POST /api/accounts/token/refresh/</code>. The server reads the refresh token from the cookie, generates new tokens, and blacklists the old refresh token.</li>
 <li><strong>Logout:</strong> Call <code>POST /api/accounts/logout/</code>. The server blacklists the refresh token and clears both cookies.</li>
 </ul>
-<p><strong>Inactive User Blocking:</strong><br />
-- Teachers and Assistants must be active to log in or refresh tokens.<br />
-- Students can log in even if inactive.<br />
-- Assistants are blocked if their assigned teacher is inactive.</p>
-<p><strong>CSRF / Cross-Origin Notes:</strong><br />
-- The backend validates the <code>Origin</code> (or <code>Referer</code>) header against <code>CSRF_TRUSTED_ORIGINS</code> for cookie-based auth.<br />
-- Ensure your frontend origin is listed in <code>CSRF_TRUSTED_ORIGINS</code> on the backend (e.g., <code>https://eduonline-five.vercel.app</code>).<br />
-- If you see <code>CSRF Failed: CSRF cookie not set</code>, the origin is not trusted.</p>
+<p><strong>Inactive User Blocking:</strong></p>
+<ul>
+<li>Teachers and Assistants must be active to log in or refresh tokens.</li>
+<li>Students can log in even if inactive.</li>
+<li>Assistants are blocked if their assigned teacher is inactive.</li>
+</ul>
+<p><strong>CSRF / Cross-Origin Notes:</strong></p>
+<ul>
+<li>The backend validates the <code>Origin</code> (or <code>Referer</code>) header against <code>CSRF_TRUSTED_ORIGINS</code> for cookie-based auth.</li>
+<li>Ensure your frontend origin is listed in <code>CSRF_TRUSTED_ORIGINS</code> on the backend (e.g., <code>https://eduonline-five.vercel.app</code>).</li>
+<li>If you see <code>CSRF Failed: CSRF cookie not set</code>, the origin is not trusted.</li>
+</ul>
 <h3 id="common-errors">Common Errors</h3>
 <p>These error formats are shared across all endpoints:</p>
 <table>
@@ -168,47 +416,45 @@
 <tr>
 <td><code>401 Unauthorized</code></td>
 <td>Not authenticated (missing/invalid token)</td>
-<td><code>{"detail": "Authentication credentials were not provided."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Authentication credentials were not provided.&quot;}</code></td>
 </tr>
 <tr>
 <td><code>401 Unauthorized</code></td>
 <td>Token expired</td>
-<td><code>{"error": "Invalid or expired refresh token"}</code></td>
+<td><code>{&quot;error&quot;: &quot;Invalid or expired refresh token&quot;}</code></td>
 </tr>
 <tr>
 <td><code>403 Forbidden</code></td>
 <td>Insufficient permissions</td>
-<td><code>{"detail": "You do not have permission to perform this action."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;You do not have permission to perform this action.&quot;}</code></td>
 </tr>
 <tr>
 <td><code>404 Not Found</code></td>
 <td>Object does not exist</td>
-<td><code>{"detail": "Not found."}</code> or <code>{"error": "String"}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code> or <code>{&quot;error&quot;: &quot;String&quot;}</code></td>
 </tr>
 <tr>
 <td><code>500 Internal Server Error</code></td>
 <td>Unexpected server error</td>
-<td><code>{"detail": "Internal server error"}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Internal server error&quot;}</code></td>
 </tr>
 </tbody>
 </table>
 <h3 id="pagination">Pagination</h3>
 <p>List endpoints that support pagination return this wrapper by default:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Array[Object]&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"results"</span>: <span class="hljs-string">"Array[Object]"</span>
+}
+</div></code></pre>
 <p><strong>Bypass pagination</strong> by adding <code>?all=true</code> to get all results in a single response:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Array[Object]&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: <span class="hljs-string">"Array[Object]"</span>
+}
+</div></code></pre>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -236,7 +482,7 @@
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="appendix-a-permission-matrix">Appendix A: Permission Matrix</h2>
 <table>
 <thead>
@@ -389,10 +635,10 @@
 </tbody>
 </table>
 <blockquote>
-<p>* Must be enrolled and approved<br />
+<p>* Must be enrolled and approved<br>
 ** Must own the course (or be the course teacher's assistant)</p>
 </blockquote>
-<hr />
+<hr>
 <h2 id="appendix-b-enum-reference">Appendix B: Enum Reference</h2>
 <h3 id="user-roles">User Roles</h3>
 <ul>
@@ -401,9 +647,6 @@
 <li><code>assistant</code> — Teacher's assistant</li>
 <li><code>student</code> — Content consumer</li>
 </ul>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

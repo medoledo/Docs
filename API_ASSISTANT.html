@@ -1,136 +1,378 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API ASSISTANT - EduTrack API</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 260px;
-            background: #1e293b;
-            color: white;
-            overflow-y: auto;
-            padding: 20px;
-            z-index: 1000;
-        }
-        .sidebar a {
-            color: #94a3b8;
-            text-decoration: none;
-            display: block;
-            padding: 6px 0;
-            font-size: 14px;
-        }
-        .sidebar a:hover {
-            color: white;
-        }
-        .sidebar h5 {
-            color: white;
-            margin-top: 16px;
-            margin-bottom: 8px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .content {
-            margin-left: 280px;
-            padding: 40px;
-            max-width: 960px;
-        }
-        .content h1 {
-            margin-bottom: 24px;
-            color: #1e293b;
-        }
-        .content h2 {
-            margin-top: 32px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e2e8f0;
-            color: #1e293b;
-        }
-        .content h3 {
-            margin-top: 24px;
-            color: #334155;
-        }
-        .content h4 {
-            margin-top: 16px;
-            color: #475569;
-        }
-        .content code {
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        .content pre {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 16px;
-            border-radius: 8px;
-            overflow-x: auto;
-        }
-        .content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-        }
-        .content th, .content td {
-            border: 1px solid #e2e8f0;
-            padding: 10px 12px;
-            text-align: left;
-        }
-        .content th {
-            background: #f1f5f9;
-            font-weight: 600;
-        }
-        .content blockquote {
-            border-left: 4px solid #3b82f6;
-            padding: 12px 16px;
-            margin: 16px 0;
-            background: #f0f7ff;
-            border-radius: 0 8px 8px 0;
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #3b82f6;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
+<title>API_ASSISTANT.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
 </head>
 <body>
-    <div class="sidebar">
-        <h4 style="color: white; margin-bottom: 20px;">EduTrack API</h4>
-        <h5>Docs</h5>
-        <a href="API_OVERVIEW.html">Overview</a>
-        <a href="API_PUBLIC.html">Public</a>
-        <a href="API_SITEOWNER.html">SiteOwner</a>
-        <a href="API_TEACHER.html">Teacher</a>
-        <a href="API_ASSISTANT.html">Assistant</a>
-        <a href="API_STUDENT.html">Student</a>
-        <h5 style="margin-top: 24px;">Links</h5>
-        <a href="docs.html">← Back to Home</a>
-    </div>
-    <div class="content">
-        <a href="docs.html" class="back-link">← Back to Documentation Home</a>
-        <h1 id="edutrack-online-assistant-api">EduTrack Online - Assistant API</h1>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="edutrack-online---assistant-api">EduTrack Online - Assistant API</h1>
 <blockquote>
-<p><strong>Role:</strong> Assistant<br />
-<strong>Base URL:</strong> <code>http://localhost:8000/api/</code><br />
+<p><strong>Role:</strong> Assistant<br>
+<strong>Base URL:</strong> <code>http://localhost:8000/api/</code><br>
 <strong>Authentication:</strong> JWT tokens in HTTP-Only cookies (see main docs for login/refresh)</p>
 </blockquote>
 <p>The Assistant role has LIMITED permissions — they help their assigned teacher. Most operations are read-only with some write exceptions (approve enrollments, upload materials).</p>
-<hr />
+<hr>
 <h2 id="table-of-contents">Table of Contents</h2>
 <ol>
 <li><a href="#1-view-coworkers">View Coworkers</a></li>
@@ -146,34 +388,33 @@
 <li><a href="#11-study-materials">Study Materials</a></li>
 <li><a href="#12-notifications">Notifications</a></li>
 </ol>
-<hr />
+<hr>
 <h2 id="1-view-coworkers">1. View Coworkers</h2>
 <h4 id="get-accountsteacherassistants">GET /accounts/teacher/assistants/</h4>
 <p><strong>Description:</strong> See all assistants working under the same teacher.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;phone&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;gmail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;gender&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (male|female) | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;profile_picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;teacher&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer — Teacher ID&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"phone"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female) | null"</span>,
+      <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"teacher"</span>: <span class="hljs-string">"Integer — Teacher ID"</span>
+    }
+  ]
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -187,40 +428,39 @@
 <tr>
 <td><code>403</code></td>
 <td>Not a teacher/assistant</td>
-<td><code>{"detail": "You do not have permission..."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;You do not have permission...&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="2-view-teachers-courses">2. View Teacher's Courses</h2>
-<h4 id="get-coursesmy_courses">GET /courses/my_courses/</h4>
+<h4 id="get-coursesmycourses">GET /courses/my_courses/</h4>
 <p><strong>Description:</strong> List courses taught by the teacher (the queryset filters by teacher profile).</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;teacher&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;grade&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;grade_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;subject_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;cover_picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;topic_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"teacher"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"topic_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -234,11 +474,11 @@
 <tr>
 <td><code>403</code></td>
 <td>Not a teacher/assistant</td>
-<td><code>{"detail": "You do not have permission..."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;You do not have permission...&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="3-view-topics-read-only">3. View Topics (Read-Only)</h2>
 <h4 id="get-coursestopics">GET /courses/topics/</h4>
 <p><strong>Description:</strong> List topics. Supports filtering by course, search, and ordering.</p>
@@ -276,68 +516,66 @@
 </tbody>
 </table>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-coursestopics_1">GET /courses/topics/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"lecture_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="get-coursestopicsid">GET /courses/topics/<id>/</h4>
 <p><strong>Description:</strong> Retrieve a single topic with nested lectures.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lectures&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;topic_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;discount&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;final_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;formatted_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;available_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_visible&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;videos&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Array[Object]&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;video_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"lectures"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"topic"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"price"</span>: <span class="hljs-string">"Decimal"</span>,
+      <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal"</span>,
+      <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal"</span>,
+      <span class="hljs-attr">"formatted_price"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"videos"</span>: <span class="hljs-string">"Array[Object]"</span>,
+      <span class="hljs-attr">"video_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ],
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -351,11 +589,11 @@
 <tr>
 <td><code>404</code></td>
 <td>Topic not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="4-view-lectures-read-only">4. View Lectures (Read-Only)</h2>
 <h4 id="get-courseslectures">GET /courses/lectures/</h4>
 <p><strong>Description:</strong> List lectures. Supports filtering by topic, visibility, search, and ordering.</p>
@@ -393,100 +631,97 @@
 </tbody>
 </table>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;topic_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;discount&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;final_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;formatted_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;available_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_visible&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;video_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-courseslectures_1">GET /courses/lectures/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"topic"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"price"</span>: <span class="hljs-string">"Decimal"</span>,
+      <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal"</span>,
+      <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal"</span>,
+      <span class="hljs-attr">"formatted_price"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"video_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="get-courseslecturesid">GET /courses/lectures/<id>/</h4>
 <p><strong>Description:</strong> Retrieve a single lecture with nested videos.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;topic_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;discount&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;final_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;formatted_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;available_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_visible&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;picture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;videos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (youtube|bunnystream|vdocipher)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;platform_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;video_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;duration_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;duration_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;video_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-courseslecturesvideos">GET /courses/lectures/<id>/videos/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"topic"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"price"</span>: <span class="hljs-string">"Decimal"</span>,
+  <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal"</span>,
+  <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal"</span>,
+  <span class="hljs-attr">"formatted_price"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"videos"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"platform"</span>: <span class="hljs-string">"String (youtube|bunnystream|vdocipher)"</span>,
+      <span class="hljs-attr">"platform_display"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"video_url"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ],
+  <span class="hljs-attr">"video_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="get-courseslecturesidvideos">GET /courses/lectures/<id>/videos/</h4>
 <p><strong>Description:</strong> Get all videos for a specific lecture.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span>
-<span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (youtube|bunnystream|vdocipher)&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;platform_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;video_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;duration_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;duration_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">]</span>
-</code></pre></div>
-
-<hr />
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"platform"</span>: <span class="hljs-string">"String (youtube|bunnystream|vdocipher)"</span>,
+    <span class="hljs-attr">"platform_display"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"video_url"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
+    <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
+    <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+    <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+    <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+  }
+]
+</div></code></pre>
+<hr>
 <h2 id="5-view-videos-read-only">5. View Videos (Read-Only)</h2>
 <h4 id="get-coursesvideos">GET /courses/videos/</h4>
 <p><strong>Description:</strong> List videos. Supports filtering by lecture, platform, active status, search, and ordering.</p>
@@ -529,50 +764,48 @@
 </tbody>
 </table>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (youtube|bunnystream|vdocipher)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;platform_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;video_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;duration_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;duration_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-coursesvideos_1">GET /courses/videos/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"platform"</span>: <span class="hljs-string">"String (youtube|bunnystream|vdocipher)"</span>,
+      <span class="hljs-attr">"platform_display"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"video_url"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="get-coursesvideosid">GET /courses/videos/<id>/</h4>
 <p><strong>Description:</strong> Retrieve a single video.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (youtube|bunnystream|vdocipher)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;platform_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;video_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;duration_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;duration_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"platform"</span>: <span class="hljs-string">"String (youtube|bunnystream|vdocipher)"</span>,
+  <span class="hljs-attr">"platform_display"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"video_url"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
+  <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -586,63 +819,60 @@
 <tr>
 <td><code>404</code></td>
 <td>Video not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="6-enrollments">6. Enrollments</h2>
 <h4 id="get-coursesenrollmentspending">GET /courses/enrollments/pending/</h4>
 <p><strong>Description:</strong> List pending enrollment requests for the teacher's courses.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong> Array of pending enrollments.</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span>
-<span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;student_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;grade_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String — pending&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;status_display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String — Pending&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;enrolled_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;approved_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;approved_by_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;responded_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">]</span>
-</code></pre></div>
-
-<hr />
-<h4 id="post-coursesenrollmentsapprove">POST /courses/enrollments/<id>/approve/</h4>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String — pending"</span>,
+    <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"String — Pending"</span>,
+    <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+    <span class="hljs-attr">"approved_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+    <span class="hljs-attr">"approved_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+    <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
+    <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
+  }
+]
+</div></code></pre>
+<hr>
+<h4 id="post-coursesenrollmentsidapprove">POST /courses/enrollments/<id>/approve/</h4>
 <p><strong>Description:</strong> Approve a pending enrollment. Assistant must be assistant of the course teacher.</p>
 <p><strong>Authentication:</strong> Teacher (course owner), Assistant (teacher's assistant)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional) — Note for the student&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (Optional) — Note for the student"</span>
+}
+</div></code></pre>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;approved&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;approved_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;approved_by_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;responded_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"approved"</span>,
+  <span class="hljs-attr">"approved_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+  <span class="hljs-attr">"approved_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -656,80 +886,76 @@
 <tr>
 <td><code>403</code></td>
 <td>Not course owner</td>
-<td><code>{"error": "You can only manage enrollments for your own courses"}</code></td>
+<td><code>{&quot;error&quot;: &quot;You can only manage enrollments for your own courses&quot;}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
 <td>Not pending</td>
-<td><code>{"error": "Cannot approve enrollment with status: X"}</code></td>
+<td><code>{&quot;error&quot;: &quot;Cannot approve enrollment with status: X&quot;}</code></td>
 </tr>
 <tr>
 <td><code>404</code></td>
 <td>Enrollment not found</td>
-<td><code>{"error": "Enrollment not found"}</code></td>
+<td><code>{&quot;error&quot;: &quot;Enrollment not found&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h4 id="post-coursesenrollmentsreject">POST /courses/enrollments/<id>/reject/</h4>
+<hr>
+<h4 id="post-coursesenrollmentsidreject">POST /courses/enrollments/<id>/reject/</h4>
 <p><strong>Description:</strong> Reject a pending enrollment.</p>
 <p><strong>Authentication:</strong> Teacher (course owner), Assistant (teacher's assistant)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional) — Note for the student&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (Optional) — Note for the student"</span>
+}
+</div></code></pre>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;course&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rejected&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;approved_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;approved_by_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;responded_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;response_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"rejected"</span>,
+  <span class="hljs-attr">"approved_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+  <span class="hljs-attr">"approved_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong> Same as approve endpoint.</p>
-<hr />
+<hr>
 <h2 id="7-purchases">7. Purchases</h2>
-<h4 id="patch-coursespurchasesreopen">PATCH /courses/purchases/<id>/reopen/</h4>
+<h4 id="patch-coursespurchasesidreopen">PATCH /courses/purchases/<id>/reopen/</h4>
 <p><strong>Description:</strong> Extend a student's lecture access by adding extra days.</p>
 <p><strong>Authentication:</strong> Teacher (lecture course owner), Assistant</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;extra_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer (Required) — Minimum 1&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer (Required) — Minimum 1"</span>
+}
+</div></code></pre>
 <p><strong>Success Response — 200 OK:</strong> Updated purchase object.</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;topic_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;course_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;teacher_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;purchased_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;expires_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;effective_expiry&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;amount_paid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Decimal&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;extra_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_expired&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;reopened_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;reopened_by_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;reopened_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"Decimal"</span>,
+  <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+  <span class="hljs-attr">"reopened_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime | null"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -743,21 +969,21 @@
 <tr>
 <td><code>403</code></td>
 <td>Not course owner</td>
-<td><code>{"error": "You can only extend access for lectures in your own courses"}</code></td>
+<td><code>{&quot;error&quot;: &quot;You can only extend access for lectures in your own courses&quot;}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
 <td>Invalid extra_days</td>
-<td><code>{"extra_days": ["Ensure this value is greater than or equal to 1."]}</code></td>
+<td><code>{&quot;extra_days&quot;: [&quot;Ensure this value is greater than or equal to 1.&quot;]}</code></td>
 </tr>
 <tr>
 <td><code>404</code></td>
 <td>Purchase not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="8-question-bank-read-only">8. Question Bank (Read-Only)</h2>
 <h4 id="get-question-bankquestions">GET /question-bank/questions/</h4>
 <p><strong>Description:</strong> List questions accessible to the assistant.</p>
@@ -810,59 +1036,57 @@
 </tbody>
 </table>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lesson&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lesson_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;chapter_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;subject_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;question_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (mcq_single|mcq_multiple|written)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;difficulty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (easy|medium|hard)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;choice_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_global&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-question-bankquestions_1">GET /question-bank/questions/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lesson"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lesson_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"chapter_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple|written)"</span>,
+      <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"String (easy|medium|hard)"</span>,
+      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"choice_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"is_global"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="get-question-bankquestionsid">GET /question-bank/questions/<id>/</h4>
 <p><strong>Description:</strong> Retrieve a single question with all choices (including <code>is_correct</code>).</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lesson&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lesson_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;chapter_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;subject_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;question_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;difficulty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;explanation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_global&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_correct&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;created_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lesson"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lesson_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"chapter_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"points"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"explanation"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"is_global"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"choices"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+      <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>
+    }
+  ],
+  <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -876,11 +1100,11 @@
 <tr>
 <td><code>404</code></td>
 <td>Question not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="9-homeworks-read-only">9. Homeworks (Read-Only)</h2>
 <h4 id="get-learninghomeworks">GET /learning/homeworks/</h4>
 <p><strong>Description:</strong> List homeworks for the teacher's courses.</p>
@@ -913,103 +1137,99 @@
 </tbody>
 </table>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_published&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;total_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;question_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;open_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;close_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-learninghomeworks_1">GET /learning/homeworks/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
+      <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="get-learninghomeworksid">GET /learning/homeworks/<id>/</h4>
 <p><strong>Description:</strong> Retrieve a homework with questions.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_published&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;total_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;question_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;questions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;open_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;close_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-learninghomeworkssubmissions">GET /learning/homeworks/<id>/submissions/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question"</span>: {
+        <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+        <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String"</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
+  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="get-learninghomeworksidsubmissions">GET /learning/homeworks/<id>/submissions/</h4>
 <p><strong>Description:</strong> List all submissions for a homework.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;student_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String — graded|pending&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;submitted_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-learninghomework-submissions">GET /learning/homework-submissions/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String — graded|pending"</span>,
+      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="get-learninghomework-submissionsid">GET /learning/homework-submissions/<id>/</h4>
 <p><strong>Description:</strong> View a specific submission.</p>
 <p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;homework&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;homework_title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;answers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;question_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;question_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;selected_choice&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Object | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_correct&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean | null&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;submitted_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"homework"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"answers"</span>: [
+    {
+      <span class="hljs-attr">"question_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"Object | null"</span>,
+      <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean | null"</span>
+    }
+  ],
+  <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -1023,11 +1243,11 @@
 <tr>
 <td><code>404</code></td>
 <td>Submission not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="10-quizzes-read-only">10. Quizzes (Read-Only)</h2>
 <h4 id="get-learningquizzes">GET /learning/quizzes/</h4>
 <p><strong>Description:</strong> List quizzes for the teacher's courses.</p>
@@ -1060,115 +1280,112 @@
 </tbody>
 </table>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;passing_score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_published&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;total_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;question_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;open_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;close_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;timer_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;score_visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;answers_visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;question_order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;shuffle_choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;allow_multiple_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;max_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;attempt_scoring&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;show_correct_after_submission&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-learningquizzes_1">GET /learning/quizzes/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"settings"</span>: {
+        <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
+        <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
+        <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
+        <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"String"</span>,
+        <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"String"</span>,
+        <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"String"</span>,
+        <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"Boolean"</span>,
+        <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"Boolean"</span>,
+        <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"Integer | null"</span>,
+        <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"String"</span>,
+        <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"Boolean"</span>
+      },
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="get-learningquizzesid">GET /learning/quizzes/<id>/</h4>
 <p><strong>Description:</strong> Retrieve a quiz with questions and settings.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;passing_score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_published&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;total_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;question_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;open_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;close_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;timer_minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;score_visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;answers_visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;question_order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shuffle_choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;allow_multiple_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;max_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;attempt_scoring&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;show_correct_after_submission&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;questions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;question&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;question_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;difficulty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-learningquiz-submissions">GET /learning/quiz-submissions/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"settings"</span>: {
+    <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
+    <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime | null"</span>,
+    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
+    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"Boolean"</span>,
+    <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"Boolean"</span>,
+    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"Integer | null"</span>,
+    <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"Boolean"</span>
+  },
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question"</span>: {
+        <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+        <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String"</span>,
+        <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String"</span>,
+        <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"String"</span>,
+        <span class="hljs-attr">"points"</span>: <span class="hljs-string">"Integer"</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="get-learningquiz-submissionsid">GET /learning/quiz-submissions/<id>/</h4>
 <p><strong>Description:</strong> View a specific quiz submission.</p>
 <p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;quiz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;quiz_title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;student_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;attempt_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;passed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;started_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;submitted_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;answers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;quiz_question_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;question_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;question_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Array&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;written_answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"quiz"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"Boolean | null"</span>,
+  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"answers"</span>: [
+    {
+      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"choices"</span>: <span class="hljs-string">"Array"</span>,
+      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"String | null"</span>
+    }
+  ]
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -1182,41 +1399,41 @@
 <tr>
 <td><code>404</code></td>
 <td>Submission not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="11-study-materials">11. Study Materials</h2>
 <h4 id="post-materials">POST /materials/</h4>
 <p><strong>Description:</strong> Upload a new PDF study material.</p>
 <p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer (Required) — Lecture ID&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Required)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;PDF_FILE (Required)&gt;&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<p><strong>Validation:</strong><br />
-- Only PDF files are accepted<br />
-- Maximum file size: 50 MB</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer (Required) — Lecture ID"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String (Required)"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String (Optional)"</span>,
+  <span class="hljs-attr">"file"</span>: <span class="hljs-string">"&lt;PDF_FILE (Required)&gt;"</span>
+}
+</div></code></pre>
+<p><strong>Validation:</strong></p>
+<ul>
+<li>Only PDF files are accepted</li>
+<li>Maximum file size: 50 MB</li>
+</ul>
 <p><strong>Success Response — 201 Created:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;file_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"file_url"</span>: <span class="hljs-string">"String (URL)"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -1230,16 +1447,16 @@
 <tr>
 <td><code>400</code></td>
 <td>File too large</td>
-<td><code>{"file": ["File too large. Size should not exceed 50 MB."]}</code></td>
+<td><code>{&quot;file&quot;: [&quot;File too large. Size should not exceed 50 MB.&quot;]}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
 <td>Invalid file type</td>
-<td><code>{"file": ["File extension 'xyz' is not allowed. Allowed extensions are: pdf."]}</code></td>
+<td><code>{&quot;file&quot;: [&quot;File extension 'xyz' is not allowed. Allowed extensions are: pdf.&quot;]}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h4 id="get-materials">GET /materials/</h4>
 <p><strong>Description:</strong> List study materials for the teacher's courses.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
@@ -1266,40 +1483,38 @@
 </tbody>
 </table>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;file_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL)&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="get-materials_1">GET /materials/<id>/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"file_url"</span>: <span class="hljs-string">"String (URL)"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="get-materialsid">GET /materials/<id>/</h4>
 <p><strong>Description:</strong> Retrieve a single material.</p>
 <p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;lecture_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;file_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"file_url"</span>: <span class="hljs-string">"String (URL)"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -1313,27 +1528,26 @@
 <tr>
 <td><code>404</code></td>
 <td>Material not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h4 id="put-materials">PUT /materials/<id>/</h4>
+<hr>
+<h4 id="put-materialsid">PUT /materials/<id>/</h4>
 <p><strong>Description:</strong> Update a material (replace PDF, change title, etc.).</p>
 <p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;lecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer (Optional) — Lecture ID&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (Optional)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;PDF_FILE (Optional)&gt;&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer (Optional) — Lecture ID"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String (Optional)"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String (Optional)"</span>,
+  <span class="hljs-attr">"file"</span>: <span class="hljs-string">"&lt;PDF_FILE (Optional)&gt;"</span>
+}
+</div></code></pre>
 <p><strong>Success Response — 200 OK:</strong> Updated material object.</p>
-<hr />
-<h4 id="delete-materials">DELETE /materials/<id>/</h4>
+<hr>
+<h4 id="delete-materialsid">DELETE /materials/<id>/</h4>
 <p><strong>Description:</strong> Delete a material.</p>
 <p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Success Response — 204 No Content</strong></p>
@@ -1350,67 +1564,63 @@
 <tr>
 <td><code>404</code></td>
 <td>Material not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="12-notifications">12. Notifications</h2>
 <h4 id="get-notifications">GET /notifications/</h4>
 <p><strong>Description:</strong> List all notifications for the authenticated assistant.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;is_read&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTime (ISO 8601)&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"message"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"is_read"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
 <h4 id="get-notificationsunread-count">GET /notifications/unread-count/</h4>
 <p><strong>Description:</strong> Get the count of unread notifications.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;unread_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"unread_count"</span>: <span class="hljs-string">"Integer"</span>
+}
+</div></code></pre>
+<hr>
 <h4 id="post-notificationsmark-all-read">POST /notifications/mark-all-read/</h4>
 <p><strong>Description:</strong> Mark all notifications as read.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;All notifications marked as read&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<hr />
-<h4 id="post-notificationsmark-read">POST /notifications/<id>/mark-read/</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"All notifications marked as read"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="post-notificationsidmark-read">POST /notifications/<id>/mark-read/</h4>
 <p><strong>Description:</strong> Mark a single notification as read.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 200 OK:</strong></p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Notification marked as read&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Notification marked as read"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -1424,11 +1634,11 @@
 <tr>
 <td><code>404</code></td>
 <td>Notification not found</td>
-<td><code>{"detail": "Not found."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="common-error-formats">Common Error Formats</h2>
 <table>
 <thead>
@@ -1442,45 +1652,41 @@
 <tr>
 <td><code>401 Unauthorized</code></td>
 <td>Not authenticated</td>
-<td><code>{"detail": "Authentication credentials were not provided."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Authentication credentials were not provided.&quot;}</code></td>
 </tr>
 <tr>
 <td><code>401 Unauthorized</code></td>
 <td>Token expired</td>
-<td><code>{"error": "Invalid or expired refresh token"}</code></td>
+<td><code>{&quot;error&quot;: &quot;Invalid or expired refresh token&quot;}</code></td>
 </tr>
 <tr>
 <td><code>403 Forbidden</code></td>
 <td>Insufficient permissions</td>
-<td><code>{"detail": "You do not have permission to perform this action."}</code></td>
+<td><code>{&quot;detail&quot;: &quot;You do not have permission to perform this action.&quot;}</code></td>
 </tr>
 <tr>
 <td><code>404 Not Found</code></td>
 <td>Object does not exist</td>
-<td><code>{"detail": "Not found."}</code> or <code>{"error": "String"}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code> or <code>{&quot;error&quot;: &quot;String&quot;}</code></td>
 </tr>
 <tr>
 <td><code>500 Internal Server Error</code></td>
 <td>Unexpected error</td>
-<td><code>{"detail": "Internal server error"}</code></td>
+<td><code>{&quot;detail&quot;: &quot;Internal server error&quot;}</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
+<hr>
 <h2 id="pagination">Pagination</h2>
 <p>List endpoints return:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;previous&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String (URL) | null&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Array[Object]&quot;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"results"</span>: <span class="hljs-string">"Array[Object]"</span>
+}
+</div></code></pre>
 <p>Add <code>?all=true</code> to bypass pagination.</p>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
