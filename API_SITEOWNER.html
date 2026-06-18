@@ -913,7 +913,7 @@ code {
   <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String — Auto-generated (e.g. X7K9-M2P4-QR1W-L5D8)"</span>,
   <span class="hljs-attr">"value"</span>: <span class="hljs-string">"Decimal"</span>,
-  <span class="hljs-attr">"is_used"</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">"is_used"</span>: <span class="hljs-string">"boolean - Whether this code has been redeemed"</span>,
   <span class="hljs-attr">"used_by"</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">"used_by_name"</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">"used_at"</span>: <span class="hljs-literal">null</span>,
@@ -1161,8 +1161,8 @@ code {
 </table>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"start_date"</span>: <span class="hljs-string">"2026-03-27"</span>,
-  <span class="hljs-attr">"end_date"</span>: <span class="hljs-string">"2026-04-26"</span>,
+  <span class="hljs-attr">"start_date"</span>: <span class="hljs-string">"String (YYYY-MM-DD) - Start of date range"</span>,
+  <span class="hljs-attr">"end_date"</span>: <span class="hljs-string">"String (YYYY-MM-DD) - End of date range"</span>,
   <span class="hljs-attr">"total_revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
   <span class="hljs-attr">"total_purchases"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"daily_trends"</span>: [
@@ -1187,43 +1187,43 @@ code {
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total_students"</span>: <span class="hljs-number">150</span>,
-  <span class="hljs-attr">"total_teachers"</span>: <span class="hljs-number">25</span>,
-  <span class="hljs-attr">"total_assistants"</span>: <span class="hljs-number">5</span>,
-  <span class="hljs-attr">"new_users_this_month"</span>: <span class="hljs-number">20</span>,
-  <span class="hljs-attr">"new_students_this_month"</span>: <span class="hljs-number">15</span>,
-  <span class="hljs-attr">"new_teachers_this_month"</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">"total_students"</span>: <span class="hljs-string">"integer - Total number of student accounts"</span>,
+  <span class="hljs-attr">"total_teachers"</span>: <span class="hljs-string">"integer - Total number of teacher accounts"</span>,
+  <span class="hljs-attr">"total_assistants"</span>: <span class="hljs-string">"integer - Total number of assistant accounts"</span>,
+  <span class="hljs-attr">"new_users_this_month"</span>: <span class="hljs-string">"integer - New users registered this month"</span>,
+  <span class="hljs-attr">"new_students_this_month"</span>: <span class="hljs-string">"integer - New students registered this month"</span>,
+  <span class="hljs-attr">"new_teachers_this_month"</span>: <span class="hljs-string">"integer - New teachers created this month"</span>,
   <span class="hljs-attr">"students_by_status"</span>: {
-    <span class="hljs-attr">"verified"</span>: <span class="hljs-number">120</span>,
-    <span class="hljs-attr">"pending"</span>: <span class="hljs-number">20</span>,
-    <span class="hljs-attr">"declined"</span>: <span class="hljs-number">5</span>,
-    <span class="hljs-attr">"suspended_temporary"</span>: <span class="hljs-number">3</span>,
-    <span class="hljs-attr">"suspended_permanent"</span>: <span class="hljs-number">2</span>
+    <span class="hljs-attr">"verified"</span>: <span class="hljs-string">"integer - Count of verified students"</span>,
+    <span class="hljs-attr">"pending"</span>: <span class="hljs-string">"integer - Count of pending students"</span>,
+    <span class="hljs-attr">"declined"</span>: <span class="hljs-string">"integer - Count of declined students"</span>,
+    <span class="hljs-attr">"suspended_temporary"</span>: <span class="hljs-string">"integer - Count of temporarily suspended students"</span>,
+    <span class="hljs-attr">"suspended_permanent"</span>: <span class="hljs-string">"integer - Count of permanently suspended students"</span>
   },
   <span class="hljs-attr">"students_by_grade_school_division"</span>: [
     {
-      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"3rd Secondary"</span>,
-      <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"International"</span>,
-      <span class="hljs-attr">"division"</span>: <span class="hljs-string">"Division A"</span>,
-      <span class="hljs-attr">"count"</span>: <span class="hljs-number">45</span>
+      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"string - Grade name"</span>,
+      <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"string - School type name"</span>,
+      <span class="hljs-attr">"division"</span>: <span class="hljs-string">"string - Division name"</span>,
+      <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer - Number of students in this combination"</span>
     }
   ],
-  <span class="hljs-attr">"teachers_active_count"</span>: <span class="hljs-number">23</span>,
-  <span class="hljs-attr">"teachers_inactive_count"</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">"teachers_active_count"</span>: <span class="hljs-string">"integer - Number of active teachers"</span>,
+  <span class="hljs-attr">"teachers_inactive_count"</span>: <span class="hljs-string">"integer - Number of inactive teachers"</span>,
   <span class="hljs-attr">"teachers_by_grade_subject"</span>: [
     {
-      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"3rd Secondary"</span>,
-      <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"Mathematics"</span>,
-      <span class="hljs-attr">"count"</span>: <span class="hljs-number">5</span>
+      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"string - Grade name"</span>,
+      <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"string - Subject name"</span>,
+      <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer - Number of teachers for this grade/subject"</span>
     }
   ],
-  <span class="hljs-attr">"total_subjects"</span>: <span class="hljs-number">15</span>,
-  <span class="hljs-attr">"total_grades"</span>: <span class="hljs-number">12</span>,
-  <span class="hljs-attr">"total_school_types"</span>: <span class="hljs-number">3</span>,
-  <span class="hljs-attr">"total_divisions"</span>: <span class="hljs-number">8</span>,
-  <span class="hljs-attr">"total_governorates"</span>: <span class="hljs-number">27</span>,
-  <span class="hljs-attr">"total_areas"</span>: <span class="hljs-number">150</span>,
-  <span class="hljs-attr">"total_video_security_options"</span>: <span class="hljs-number">3</span>
+  <span class="hljs-attr">"total_subjects"</span>: <span class="hljs-string">"integer - Total number of subjects"</span>,
+  <span class="hljs-attr">"total_grades"</span>: <span class="hljs-string">"integer - Total number of grades"</span>,
+  <span class="hljs-attr">"total_school_types"</span>: <span class="hljs-string">"integer - Total number of school types"</span>,
+  <span class="hljs-attr">"total_divisions"</span>: <span class="hljs-string">"integer - Total number of divisions"</span>,
+  <span class="hljs-attr">"total_governorates"</span>: <span class="hljs-string">"integer - Total number of governorates"</span>,
+  <span class="hljs-attr">"total_areas"</span>: <span class="hljs-string">"integer - Total number of areas"</span>,
+  <span class="hljs-attr">"total_video_security_options"</span>: <span class="hljs-string">"integer - Total number of video security options"</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>

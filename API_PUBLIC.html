@@ -375,7 +375,7 @@ code {
 <p>This file documents endpoints that require <strong>NO authentication</strong>.</p>
 <hr>
 <h3 id="base-url">Base URL</h3>
-<pre class="hljs"><code><div>http://localhost:8000/api/
+<pre class="hljs"><code><div>https://edutrackonline.savekiteg.com
 </div></code></pre>
 <p>All endpoints are prefixed with <code>/api/</code>.</p>
 <hr>
@@ -612,8 +612,8 @@ code {
 </div></code></pre>
 <p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"valid"</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String â€” 32-character hex token"</span>,
+  <span class="hljs-attr">"valid"</span>: <span class="hljs-string">"boolean - Whether the OTP is valid"</span>,
+  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String — 32-character hex token"</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"OTP verified successfully"</span>
 }
 </div></code></pre>
@@ -814,7 +814,7 @@ code {
 </div></code></pre>
 <p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"verified"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"verified"</span>: <span class="hljs-string">"boolean - Whether the email is verified"</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Email verified successfully"</span>
 }
 </div></code></pre>
@@ -1423,17 +1423,17 @@ code {
 </ul>
 <p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer - Number of items"</span>,
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
-      <span class="hljs-attr">"subject"</span>: <span class="hljs-number">1</span>,
-      <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"Chemistry"</span>,
-      <span class="hljs-attr">"grade"</span>: <span class="hljs-number">1</span>,
-      <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"3rd Secondary"</span>,
-      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemical Bonding"</span>,
-      <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
-      <span class="hljs-attr">"lesson_count"</span>: <span class="hljs-number">3</span>
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
+      <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"integer - Subject ID"</span>,
+      <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"string - Subject name"</span>,
+      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"integer - Grade ID"</span>,
+      <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"string - Grade name"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Chapter name"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>,
+      <span class="hljs-attr">"lesson_count"</span>: <span class="hljs-string">"integer - Number of lessons"</span>
     }
   ]
 }
@@ -1444,19 +1444,19 @@ code {
 <p><strong>Authentication:</strong> None (public read)</p>
 <p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
-  <span class="hljs-attr">"subject"</span>: <span class="hljs-number">1</span>,
-  <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"Chemistry"</span>,
-  <span class="hljs-attr">"grade"</span>: <span class="hljs-number">1</span>,
-  <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"3rd Secondary"</span>,
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemical Bonding"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
+  <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"integer - Subject ID"</span>,
+  <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"string - Subject name"</span>,
+  <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"integer - Grade ID"</span>,
+  <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"string - Grade name"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Chapter name"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>,
   <span class="hljs-attr">"lessons"</span>: [
-    {<span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Ionic Bonds"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
-    {<span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Covalent Bonds"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
+    {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Lesson name"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>},
+    {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Lesson name"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>}
   ],
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-04-26T10:00:00Z"</span>,
-  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-04-26T10:00:00Z"</span>
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
 }
 </div></code></pre>
 <hr>
@@ -1485,16 +1485,16 @@ code {
 <p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>[
   {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
-    <span class="hljs-attr">"subject"</span>: <span class="hljs-number">1</span>,
-    <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"Chemistry"</span>,
-    <span class="hljs-attr">"grade"</span>: <span class="hljs-number">1</span>,
-    <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"3rd Secondary"</span>,
-    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemical Bonding"</span>,
-    <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
+    <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"integer - Subject ID"</span>,
+    <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"string - Subject name"</span>,
+    <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"integer - Grade ID"</span>,
+    <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"string - Grade name"</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Chapter name"</span>,
+    <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>,
     <span class="hljs-attr">"lessons"</span>: [
-      {<span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Ionic Bonds"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
-      {<span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Covalent Bonds"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
+      {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Lesson name"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>},
+      {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Lesson name"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>}
     ]
   }
 ]

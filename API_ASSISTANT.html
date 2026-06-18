@@ -368,7 +368,7 @@ code {
 <h1 id="edutrack-online---assistant-api">EduTrack Online - Assistant API</h1>
 <blockquote>
 <p><strong>Role:</strong> Assistant<br>
-<strong>Base URL:</strong> <code>http://localhost:8000/api/</code><br>
+<strong>Base URL:</strong> <code>https://edutrackonline.savekiteg.com</code><br>
 <strong>Authentication:</strong> JWT tokens in HTTP-Only cookies (see main docs for login/refresh)</p>
 </blockquote>
 <p>The Assistant role has LIMITED permissions — they help their assigned teacher. Most operations are read-only with some write exceptions (approve enrollments, upload materials).</p>
@@ -1581,9 +1581,11 @@ code {
   <span class="hljs-attr">"results"</span>: [
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"notification_type"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"notification_type_display"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"message"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"metadata"</span>: <span class="hljs-string">"Object | null"</span>,
       <span class="hljs-attr">"is_read"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
     }
@@ -1596,7 +1598,7 @@ code {
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"unread_count"</span>: <span class="hljs-string">"Integer"</span>
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer - Number of unread notifications"</span>
 }
 </div></code></pre>
 <hr>
