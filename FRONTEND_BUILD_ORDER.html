@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FRONTEND_BUILD_ORDER.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="edutrack-online--frontend-build-order-phase-1-siteowner">EduTrack Online — Frontend Build Order (Phase 1: SiteOwner)</h1>
+<h2 id="overview">Overview</h2>
+<p>Build these pages <strong>in order</strong>. Each page depends on the previous one.</p>
+<hr>
+<h2 id="page-1-login-page">Page 1: Login Page</h2>
+<p><strong>APIs to use (from API_PUBLIC.md):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Login</td>
+<td>POST</td>
+<td><code>/accounts/login/</code></td>
+<td>Authenticate user, returns JWT cookies + <code>{role, name, is_active}</code></td>
+</tr>
+<tr>
+<td>Forgot Password</td>
+<td>POST</td>
+<td><code>/accounts/forgot-password/</code></td>
+<td>Send OTP to email (always returns 200)</td>
+</tr>
+<tr>
+<td>Verify OTP</td>
+<td>POST</td>
+<td><code>/accounts/verify-otp/</code></td>
+<td>Verify 6-digit code, get reset_token</td>
+</tr>
+<tr>
+<td>Reset Password</td>
+<td>POST</td>
+<td><code>/accounts/reset-password/</code></td>
+<td>Set new password with OTP + reset_token</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Flow:</strong></p>
+<ol>
+<li>User enters username + password → <code>POST /accounts/login/</code></li>
+<li>If 200 → store <code>{role, name}</code> in React state, redirect to <strong>Teachers Page</strong> (if role=siteowner)</li>
+<li>If 401 → show error message</li>
+<li>&quot;Forgot Password?&quot; link → step-by-step: email → OTP → new password</li>
+</ol>
+<p><strong>Required:</strong> Login form, Forgot Password modal/flow.</p>
+<hr>
+<h2 id="page-2-student-register-page-public">Page 2: Student Register Page (Public)</h2>
+<p><strong>APIs to use (from API_PUBLIC.md):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Register</td>
+<td>POST</td>
+<td><code>/accounts/student/register/</code></td>
+<td>Create student account (pending approval)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Required fields in form:</strong></p>
+<ul>
+<li><code>username</code> (unique)</li>
+<li><code>password</code> + <code>password_confirm</code></li>
+<li><code>name_ar</code> (Arabic name)</li>
+<li><code>name_en</code> (English name)</li>
+<li><code>phone_number</code> (Egyptian format: 010/011/012/015 + 8 digits)</li>
+<li><code>father_number</code>, <code>mother_number</code> (parent phones)</li>
+<li><code>father_job</code></li>
+<li><code>educational_state</code> → always <code>&quot;school&quot;</code> (hidden, hardcoded)</li>
+<li><code>school_type</code> (select from dropdown)</li>
+<li><code>grade</code> (select from dropdown)</li>
+<li><code>division</code> (select from dropdown, filters by school_type + grade)</li>
+<li><code>school_name</code> (text input)</li>
+<li><code>national_id</code> (14 digits)</li>
+<li><code>birth_date</code> (date picker)</li>
+<li><code>gender</code> (male/female)</li>
+<li><code>gmail</code> (unique across all users)</li>
+<li><code>facebook_link</code> (optional)</li>
+<li><code>governorate</code> (select from dropdown)</li>
+<li><code>area</code> (select from dropdown, filters by governorate)</li>
+</ul>
+<p><strong>Dropdown data:</strong> Fetch from Settings endpoints (see Page 6).</p>
+<p><strong>Business rules:</strong></p>
+<ul>
+<li>Division must belong to the selected school_type AND grade</li>
+<li>Area must belong to the selected governorate</li>
+<li>Student phone cannot match father's or mother's phone</li>
+<li><code>password_confirm</code> must match <code>password</code></li>
+</ul>
+<hr>
+<h2 id="page-3-teachers-page-siteowner-dashboard">Page 3: Teachers Page (SiteOwner Dashboard)</h2>
+<p>This is the <strong>main landing page</strong> after login. Shows all teachers as cards.</p>
+<p><strong>APIs to use (from API_SITEOWNER.md):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List teachers</td>
+<td>GET</td>
+<td><code>/accounts/teachers/</code></td>
+<td>Paginated list with search, filter</td>
+</tr>
+<tr>
+<td>Create teacher</td>
+<td>POST</td>
+<td><code>/accounts/teachers/</code></td>
+<td>Create new teacher account</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Teacher Card shows:</strong></p>
+<ul>
+<li>Name</li>
+<li>Subject (from <code>subject_detail.name</code>)</li>
+<li>Grades (from <code>grades_detail[].name</code>)</li>
+<li>Course count (computed from teacher's courses — <strong>TBD</strong>, may need annotation)</li>
+<li>Active/Inactive status badge</li>
+<li>&quot;View Courses&quot; button → navigates to <strong>Teacher Courses Page</strong></li>
+<li>&quot;Edit&quot; button → opens edit modal/inline form</li>
+</ul>
+<p><strong>Teacher List Filters:</strong></p>
+<ul>
+<li>Search by name, phone, gmail, username</li>
+<li>Filter by is_active</li>
+<li>Pagination (default 50 per page, <code>?all=true</code> for all)</li>
+</ul>
+<p><strong>Teacher Create Form fields:</strong></p>
+<ul>
+<li><code>username</code>, <code>password</code></li>
+<li><code>name</code>, <code>phone</code>, <code>secondary_phone</code>, <code>gmail</code></li>
+<li><code>gender</code> (male/female — <strong>required</strong>)</li>
+<li><code>subject</code> (ID from subjects list)</li>
+<li><code>grades</code> (array of grade IDs)</li>
+<li><code>is_active</code> (checkbox, default true)</li>
+<li><code>biography</code>, <code>facebook</code> (optional)</li>
+</ul>
+<p><strong>Success response:</strong> Returns full teacher profile with ID. Use this to navigate to the new teacher's detail.</p>
+<hr>
+<h2 id="page-4-teacher-detail-page-viewedit-teacher">Page 4: Teacher Detail Page (View/Edit Teacher)</h2>
+<p>Clicking on a teacher card or the edit button from the Teachers Page.</p>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Get teacher</td>
+<td>GET</td>
+<td><code>/accounts/teachers/&lt;id&gt;/</code></td>
+<td>Full teacher detail with subject/grades</td>
+</tr>
+<tr>
+<td>Update teacher</td>
+<td>PATCH</td>
+<td><code>/accounts/teachers/&lt;id&gt;/</code></td>
+<td>Update teacher fields</td>
+</tr>
+<tr>
+<td>List assistants</td>
+<td>GET</td>
+<td><code>/accounts/teacher/assistants/?teacher=&lt;id&gt;</code></td>
+<td>View assistants for this teacher</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Teacher Detail sections:</strong></p>
+<ol>
+<li><strong>Profile Info</strong> — name, phone, gmail, subject, grades, active status. Editable.</li>
+<li><strong>Assistants List</strong> — read-only table showing assigned assistants (name, phone, gmail, is_active). Note: assistants are created later by the teacher themselves.</li>
+<li><strong>Create Course Button</strong> → opens a form to create a course for this teacher.</li>
+</ol>
+<p><strong>Course Create Form (inline):</strong></p>
+<ul>
+<li><code>name</code> (text — will be validated as unique per teacher+grade)</li>
+<li><code>grade</code> (select from dropdown — teacher must teach this grade)</li>
+<li><code>description</code> (textarea, optional)</li>
+<li><code>is_active</code> (checkbox, default true)</li>
+</ul>
+<p><strong>Note:</strong> Subject is auto-derived from <code>teacher.subject</code> — NOT sent in request.</p>
+<p><strong>Success:</strong> After creating a course, the page should show a success message and optionally navigate to the <strong>Teacher Courses Page</strong>.</p>
+<hr>
+<h2 id="page-5-teacher-courses-page">Page 5: Teacher Courses Page</h2>
+<p>List all courses for a specific teacher. Accessed via &quot;View Courses&quot; button on teacher card.</p>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List courses</td>
+<td>GET</td>
+<td><code>/courses/?teacher=&lt;id&gt;</code></td>
+<td>Paginated list of courses for this teacher</td>
+</tr>
+<tr>
+<td>Get course</td>
+<td>GET</td>
+<td><code>/courses/&lt;id&gt;/</code></td>
+<td>Full course detail</td>
+</tr>
+<tr>
+<td>Update course</td>
+<td>PATCH</td>
+<td><code>/courses/&lt;id&gt;/</code></td>
+<td>Update course name/description/active</td>
+</tr>
+<tr>
+<td>Delete course</td>
+<td>DELETE</td>
+<td><code>/courses/&lt;id&gt;/</code></td>
+<td>Delete empty course (no enrollments/topics/lectures)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Course Card shows:</strong></p>
+<ul>
+<li>Course name</li>
+<li>Grade name</li>
+<li>Is Active badge</li>
+<li>Created date</li>
+<li>Topic count (from <code>topic_count</code> in response)</li>
+<li>Total lectures count (from <code>total_lectures</code> in response)</li>
+<li>&quot;Edit&quot; button → opens edit modal</li>
+<li>&quot;Delete&quot; button → only if course is empty (no enrollments)</li>
+</ul>
+<p><strong>Course Edit Form:</strong></p>
+<ul>
+<li><code>name</code>, <code>description</code>, <code>is_active</code></li>
+<li><strong>Cannot change:</strong> <code>teacher</code>, <code>grade</code> (these are locked after creation)</li>
+</ul>
+<p><strong>Course Delete rules:</strong></p>
+<ul>
+<li>Can only delete if no enrolled students, no topics, no lectures, no materials</li>
+<li>DELETE returns 400 if students are enrolled</li>
+<li>Return a confirmation dialog before deleting</li>
+</ul>
+<hr>
+<h2 id="page-6-students-page-siteowner">Page 6: Students Page (SiteOwner)</h2>
+<p>Manage all student registrations. Approve/decline pending students.</p>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List students</td>
+<td>GET</td>
+<td><code>/accounts/students/</code></td>
+<td>Paginated list with search, sort, filters</td>
+</tr>
+<tr>
+<td>Get student</td>
+<td>GET</td>
+<td><code>/accounts/students/&lt;id&gt;/</code></td>
+<td>Full student detail</td>
+</tr>
+<tr>
+<td>Change status</td>
+<td>PATCH</td>
+<td><code>/accounts/students/&lt;id&gt;/status/</code></td>
+<td>Update status + is_active</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Student List Filters:</strong></p>
+<ul>
+<li>Search by name, student_code, phone, national_id, gmail</li>
+<li>Filter by <code>status</code> (verified/pending/declined/suspended)</li>
+<li>Filter by <code>grade</code>, <code>school_type</code></li>
+<li>Sort by created_at, name, student_code</li>
+<li>Pagination (default 50)</li>
+</ul>
+<p><strong>Student Table columns:</strong></p>
+<ul>
+<li>Student Code, Name (en), Grade, Phone, Gmail, Status badge, Created date, Actions</li>
+</ul>
+<p><strong>Student Detail view:</strong></p>
+<ul>
+<li>Full profile info (name_ar, name_en, phone, father/mother numbers, school info, etc.)</li>
+<li>Status change buttons:
+<ul>
+<li>&quot;Verify &amp; Activate&quot; → <code>PATCH {status: &quot;verified&quot;, is_active: true}</code></li>
+<li>&quot;Decline&quot; → <code>PATCH {status: &quot;declined&quot;, is_active: false}</code></li>
+<li>&quot;Suspend (Temporary)&quot; → <code>PATCH {status: &quot;suspended_temporary&quot;, is_active: false}</code></li>
+<li>&quot;Suspend (Permanent)&quot; → <code>PATCH {status: &quot;suspended_permanent&quot;, is_active: false}</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Default view:</strong> Show pending students first (sort by most recent).</p>
+<hr>
+<h2 id="page-7-settings-page-read-only-reference">Page 7: Settings Page (Read-Only Reference)</h2>
+<p>Display all reference data for preview. No CRUD operations.</p>
+<p><strong>APIs to use (from API_PUBLIC.md):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List grades</td>
+<td>GET</td>
+<td><code>/accounts/grades/</code></td>
+</tr>
+<tr>
+<td>List school types</td>
+<td>GET</td>
+<td><code>/accounts/school-types/</code></td>
+</tr>
+<tr>
+<td>List divisions</td>
+<td>GET</td>
+<td><code>/accounts/divisions/</code></td>
+</tr>
+<tr>
+<td>List subjects</td>
+<td>GET</td>
+<td><code>/accounts/subjects/</code></td>
+</tr>
+<tr>
+<td>List governorates</td>
+<td>GET</td>
+<td><code>/accounts/governorates/</code></td>
+</tr>
+<tr>
+<td>List areas</td>
+<td>GET</td>
+<td><code>/accounts/areas/</code></td>
+</tr>
+<tr>
+<td>List video security</td>
+<td>GET</td>
+<td><code>/accounts/video-security/</code></td>
+</tr>
+<tr>
+<td>List chapters</td>
+<td>GET</td>
+<td><code>/curriculum/chapters/</code></td>
+</tr>
+<tr>
+<td>List lessons</td>
+<td>GET</td>
+<td><code>/curriculum/lessons/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> All these endpoints support <code>?all=true</code> to bypass pagination and get complete lists for dropdowns.</p>
+<hr>
+<h2 id="static-files-needed">Static Files Needed</h2>
+<p>No static files are served by the backend. The frontend should handle all assets (images, icons, logos) on its own.</p>
+<hr>
+<h2 id="auth-flow-summary">Auth Flow Summary</h2>
+<pre class="hljs"><code><div>1. POST /accounts/login/ with {username, password}
+2. Server sets httpOnly cookies: access_token (30min), refresh_token (7d)
+3. Server returns JSON: {role: &quot;siteowner&quot;, name: &quot;Admin&quot;, is_active: true}
+4. Frontend stores {role, name} in React context/state
+5. All subsequent requests automatically send cookies (browser handles this)
+6. When access_token expires → POST /accounts/token/refresh/ (reads refresh cookie)
+7. POST /accounts/logout/ to clear cookies
+</div></code></pre>
+<p><strong>Note:</strong> Since cookies are httpOnly, the frontend CANNOT read the JWT. Session restoration works via <code>GET /accounts/me/</code> which reads the cookie and returns <code>{role, name, is_active}</code>.</p>
+<hr>
+<h2 id="error-handling">Error Handling</h2>
+<p>All API errors follow this pattern:</p>
+<pre class="hljs"><code><div>{<span class="hljs-attr">"error"</span>: <span class="hljs-string">"Human-readable error message"</span>}
+</div></code></pre>
+<p>HTTP Status codes:</p>
+<ul>
+<li><code>200</code> — Success</li>
+<li><code>201</code> — Created</li>
+<li><code>400</code> — Bad request (validation error)</li>
+<li><code>401</code> — Not authenticated or invalid credentials</li>
+<li><code>403</code> — Not authorized (wrong role)</li>
+<li><code>404</code> — Not found</li>
+<li><code>500</code> — Server error</li>
+</ul>
+
+</body>
+</html>
