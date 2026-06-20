@@ -863,16 +863,14 @@ code {
   <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String (Optional) â€” Required for school students"</span>,
   <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String (Optional) â€” Required for school students"</span>,
   <span class="hljs-attr">"father_job"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"educational_state"</span>: <span class="hljs-string">"String (Required) â€” school"</span>,
-  <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"Integer (Optional) â€” Required for school students"</span>,
-  <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"Integer (Optional) â€” Required for school students"</span>,
-  <span class="hljs-attr">"division"</span>: <span class="hljs-string">"Integer (Optional) â€” Required for school students"</span>,
-  <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"String (Optional) â€” Required for school students"</span>,
-  <span class="hljs-attr">"national_id"</span>: <span class="hljs-string">"String (Required) â€” 14 digits"</span>,
+  <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"Integer (Required)"</span>,
+  <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"Integer (Required)"</span>,
+  <span class="hljs-attr">"division"</span>: <span class="hljs-string">"Integer (Required)"</span>,
+  <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"String (Required)"</span>,
+  <span class="hljs-attr">"national_id"</span>: <span class="hljs-string">"String (Required) — 14 digits"</span>,
   <span class="hljs-attr">"birth_date"</span>: <span class="hljs-string">"Date (YYYY-MM-DD) (Required)"</span>,
-  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Required) â€” male|female"</span>,
-  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) â€” Must be globally unique"</span>,
-  <span class="hljs-attr">"facebook_link"</span>: <span class="hljs-string">"String (Optional)"</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Required) — male|female"</span>,
+  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) — Must be globally unique"</span>,
   <span class="hljs-attr">"governorate"</span>: <span class="hljs-string">"Integer (Required)"</span>,
   <span class="hljs-attr">"area"</span>: <span class="hljs-string">"Integer (Required) â€” Must belong to the selected governorate"</span>
 }
@@ -912,23 +910,23 @@ code {
 </tr>
 <tr>
 <td><code>400</code></td>
-<td>Missing school fields</td>
-<td><code>{&quot;educational_state&quot;: [&quot;School type and grade are required...&quot;]}</code></td>
+<td>Missing school type or grade</td>
+<td><code>{&quot;school_type&quot;: [&quot;School type and grade are required.&quot;]}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
 <td>Missing division</td>
-<td><code>{&quot;division&quot;: [&quot;Division is required for school students.&quot;]}</code></td>
+<td><code>{&quot;division&quot;: [&quot;Division is required.&quot;]}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
 <td>Missing school name</td>
-<td><code>{&quot;school_name&quot;: [&quot;School name is required for school students.&quot;]}</code></td>
+<td><code>{&quot;school_name&quot;: [&quot;School name is required.&quot;]}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
 <td>Missing parent phones</td>
-<td><code>{&quot;father_number&quot;: [&quot;Father phone number is required...&quot;]}</code></td>
+<td><code>{&quot;father_number&quot;: [&quot;Father phone number is required.&quot;]}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
@@ -1466,6 +1464,36 @@ code {
   }
 ]
 </div></code></pre>
+<hr>
+<h2 id="9-public-key">9. Public Key</h2>
+<hr>
+<h3 id="get-accountspublic-key">GET /accounts/public-key/</h3>
+<p><strong>Description:</strong> Returns the RSA public key used for JWT verification (RS256 algorithm). Frontends can use this to verify token signatures locally.</p>
+<p><strong>Authentication:</strong> None (public)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"public_key"</span>: <span class="hljs-string">"String — PEM-formatted RSA public key"</span>,
+  <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"String — Always 'RS256'"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>500</code></td>
+<td>Server has no public key configured</td>
+<td><code>{&quot;error&quot;: &quot;Public key not configured on the server.&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
 
 </body>
 </html>
