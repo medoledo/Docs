@@ -377,12 +377,16 @@ code {
 <h3 id="base-url">Base URL</h3>
 <pre class="hljs"><code><div>https://edutrackonline.savekiteg.com
 </div></code></pre>
-<p>All endpoints are prefixed with <code>/api/</code>.</p>
 <hr>
 <h2 id="1-authentication">1. Authentication</h2>
 <hr>
 <h3 id="post-accountslogin">POST /accounts/login/</h3>
 <p><strong>Description:</strong> Authenticates a user with username and password. Returns user data in the JSON body and sets JWT tokens as HTTP-Only cookies.</p>
+<p><strong>Cookies set on success:</strong></p>
+<ul>
+<li><code>access_token</code> — JWT access token, 30 min expiry, httpOnly, Secure, SameSite=None, Path=/</li>
+<li><code>refresh_token</code> — JWT refresh token, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
+</ul>
 <p><strong>Authentication:</strong> Public (no login required)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
@@ -814,7 +818,9 @@ code {
 </div></code></pre>
 <p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"verified"</span>: <span class="hljs-string">"boolean - Whether the email is verified"</span>,
+  <span class="hljs-attr">"verified"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String - The verified email address"</span>,
+  <span class="hljs-attr">"verification_token"</span>: <span class="hljs-string">"String - Single-use token required for registration"</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Email verified successfully"</span>
 }
 </div></code></pre>
@@ -845,23 +851,31 @@ code {
 </tr>
 </tbody>
 </table>
+<p><strong>Business Rules:</strong></p>
+<ul>
+<li>After successful verification, save the <code>verification_token</code> \u2014 it's required when submitting the registration form.</li>
+<li>The token is <strong>single-use</strong>: once used in registration, it cannot be reused.</li>
+<li>The token expires when the OTP expires (10 minutes).</li>
+</ul>
 <hr>
 <h2 id="4-student-registration">4. Student Registration</h2>
 <hr>
 <h3 id="post-accountsstudentregister">POST /accounts/student/register/</h3>
-<p><strong>Description:</strong> Register a new student account. Creates both a User and StudentProfile atomically.</p>
+<p><strong>Description:</strong> Register a new student account. Creates both a User and StudentProfile atomically. <strong>Email must be verified first</strong> (see verify-email flow above).</p>
 <p><strong>Authentication:</strong> Public</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
+<p><strong>Prerequisite:</strong> Call <code>POST /verify-email/confirm/</code> first to obtain a <code>verification_token</code>. Include it in this request.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String (Required) â€” Unique, case-insensitive"</span>,
-  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required) â€” Minimum 8 characters"</span>,
-  <span class="hljs-attr">"password_confirm"</span>: <span class="hljs-string">"String (Required) â€” Must match password"</span>,
-  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"String (Required) â€” Arabic name"</span>,
-  <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String (Required) â€” English name"</span>,
-  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String (Required) â€” Egyptian format"</span>,
-  <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String (Optional) â€” Required for school students"</span>,
-  <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String (Optional) â€” Required for school students"</span>,
+  <span class="hljs-attr">"verification_token"</span>: <span class="hljs-string">"String (Required) — Token from verify-email/confirm"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String (Required) — Unique, case-insensitive"</span>,
+  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required) — Minimum 8 characters"</span>,
+  <span class="hljs-attr">"password_confirm"</span>: <span class="hljs-string">"String (Required) — Must match password"</span>,
+  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"String (Required) — Arabic name"</span>,
+  <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String (Required) — English name"</span>,
+  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String (Required) — Egyptian format"</span>,
+  <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String (Required)"</span>,
+  <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"father_job"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"Integer (Required)"</span>,
   <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"Integer (Required)"</span>,
@@ -870,12 +884,12 @@ code {
   <span class="hljs-attr">"national_id"</span>: <span class="hljs-string">"String (Required) — 14 digits"</span>,
   <span class="hljs-attr">"birth_date"</span>: <span class="hljs-string">"Date (YYYY-MM-DD) (Required)"</span>,
   <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Required) — male|female"</span>,
-  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) — Must be globally unique"</span>,
+  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) — Must be globally unique, must match verified email"</span>,
   <span class="hljs-attr">"governorate"</span>: <span class="hljs-string">"Integer (Required)"</span>,
-  <span class="hljs-attr">"area"</span>: <span class="hljs-string">"Integer (Required) â€” Must belong to the selected governorate"</span>
+  <span class="hljs-attr">"area"</span>: <span class="hljs-string">"Integer (Required) — Must belong to the selected governorate"</span>
 }
 </div></code></pre>
-<p><strong>Success Response â€” 201 Created:</strong></p>
+<p><strong>Success Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"String - Success message"</span>,
   <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String - Auto-generated 7-digit code"</span>,
@@ -893,6 +907,16 @@ code {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>400</code></td>
+<td>Missing verification token</td>
+<td><code>{&quot;verification_token&quot;: [&quot;Email verification is required.&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>400</code></td>
+<td>Invalid/expired token</td>
+<td><code>{&quot;verification_token&quot;: [&quot;Invalid or expired verification token...&quot;]}</code></td>
+</tr>
 <tr>
 <td><code>400</code></td>
 <td>Username exists</td>
@@ -937,7 +961,8 @@ code {
 </table>
 <p><strong>Business Rules:</strong></p>
 <ul>
-<li>All students MUST provide: <code>school_type</code>, <code>grade</code>, <code>division</code>, <code>school_name</code>, <code>father_number</code>, <code>mother_number</code>.</li>
+<li><strong>Email must be verified before registration.</strong> Call <code>POST /verify-email/confirm/</code> first to get a <code>verification_token</code>.</li>
+<li>The <code>gmail</code> and <code>verification_token</code> must match the email that was verified.</li>
 <li>The <code>area</code> must belong to the selected <code>governorate</code>.</li>
 <li>A 7-digit <code>student_code</code> is auto-generated and guaranteed unique.</li>
 </ul>

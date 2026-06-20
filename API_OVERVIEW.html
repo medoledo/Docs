@@ -375,7 +375,6 @@ code {
 <h3 id="base-url">Base URL</h3>
 <pre class="hljs"><code><div>https://edutrackonline.savekiteg.com
 </div></code></pre>
-<p>All endpoints are prefixed with <code>/api/</code>.</p>
 <h3 id="authentication">Authentication</h3>
 <p>The API uses <strong>JWT tokens stored in HTTP-Only cookies</strong>.</p>
 <ul>
@@ -402,6 +401,75 @@ code {
 <li>Ensure your frontend origin is listed in <code>CSRF_TRUSTED_ORIGINS</code> on the backend (e.g., <code>https://eduonline-five.vercel.app</code>).</li>
 <li>If you see <code>CSRF Failed: CSRF cookie not set</code>, the origin is not trusted.</li>
 </ul>
+<h3 id="jwt-token-structure">JWT Token Structure</h3>
+<p>Tokens are <strong>RS256-signed JWTs</strong> (asymmetric RSA keys). The payload is <strong>not encrypted</strong> — anyone with the public key can decode and read the claims. The signature prevents tampering.</p>
+<h4 id="access-token-30-minutes">Access Token (30 minutes)</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"token_type"</span>: <span class="hljs-string">"access"</span>,
+  <span class="hljs-attr">"exp"</span>: <span class="hljs-string">"Integer — Expiration timestamp (Unix)"</span>,
+  <span class="hljs-attr">"iat"</span>: <span class="hljs-string">"Integer — Issued at timestamp (Unix)"</span>,
+  <span class="hljs-attr">"jti"</span>: <span class="hljs-string">"String — Unique token ID (used for blacklisting)"</span>,
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"Integer — The user's primary key"</span>
+}
+</div></code></pre>
+<h4 id="refresh-token-7-days">Refresh Token (7 days)</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"token_type"</span>: <span class="hljs-string">"refresh"</span>,
+  <span class="hljs-attr">"exp"</span>: <span class="hljs-string">"Integer — Expiration timestamp (Unix)"</span>,
+  <span class="hljs-attr">"iat"</span>: <span class="hljs-string">"Integer — Issued at timestamp (Unix)"</span>,
+  <span class="hljs-attr">"jti"</span>: <span class="hljs-string">"String — Unique token ID (used for blacklisting)"</span>,
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"Integer — The user's primary key"</span>
+}
+</div></code></pre>
+<h4 id="decoding-a-token-frontend">Decoding a Token (Frontend)</h4>
+<p>On the frontend, you can decode the payload without the public key (the payload is base64-encoded, not encrypted):</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Decode JWT payload (NOT verification — just reading claims)</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">decodeJwtPayload</span>(<span class="hljs-params">token</span>) </span>{
+  <span class="hljs-keyword">const</span> payload = token.split(<span class="hljs-string">'.'</span>)[<span class="hljs-number">1</span>];
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(atob(payload));
+}
+</div></code></pre>
+<p>To <strong>verify</strong> the signature, use the public key from <code>GET /accounts/public-key/</code> with a JWT library (e.g., <code>jsonwebtoken</code> on npm).</p>
+<h3 id="cookie-details">Cookie Details</h3>
+<p>The backend sets <strong>HTTP-Only cookies</strong> (inaccessible to JavaScript) for JWT tokens:</p>
+<table>
+<thead>
+<tr>
+<th>Cookie Name</th>
+<th>Value</th>
+<th>Max Age</th>
+<th>Secure</th>
+<th>HttpOnly</th>
+<th>SameSite</th>
+<th>Domain</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>access_token</code></td>
+<td>JWT access token</td>
+<td>30 min</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td><code>None</code></td>
+<td>Configurable via <code>JWT_AUTH_COOKIE_DOMAIN</code> env var</td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td><code>refresh_token</code></td>
+<td>JWT refresh token</td>
+<td>7 days</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td><code>None</code></td>
+<td>Same as above</td>
+<td><code>/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important:</strong> <code>SameSite=None</code> + <code>Secure=true</code> means cookies are only sent over HTTPS and are included in cross-origin requests. During localhost development, the frontend must either use a proxy or enable <code>chrome://flags/#allow-insecure-localhost</code>.</p>
+<p><strong>Production domain setup:</strong> Set the environment variable <code>JWT_AUTH_COOKIE_DOMAIN=.savekiteg.com</code> on the server so cookies are shared across all subdomains (e.g., <code>eduonline.savekiteg.com</code> frontend + <code>edutrackonline.savekiteg.com</code> backend). If unset, cookies are scoped to the exact host that set them.</p>
 <h3 id="common-errors">Common Errors</h3>
 <p>These error formats are shared across all endpoints:</p>
 <table>

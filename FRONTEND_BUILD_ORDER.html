@@ -400,7 +400,7 @@ code {
 <td>Verify 6-digit code, get reset_token</td>
 </tr>
 <tr>
-<td>Reset Password</td>
+<td>Reset Passwor d</td>
 <td>POST</td>
 <td><code>/accounts/reset-password/</code></td>
 <td>Set new password with OTP + reset_token</td>
@@ -429,6 +429,18 @@ code {
 </thead>
 <tbody>
 <tr>
+<td>Verify email</td>
+<td>POST</td>
+<td><code>/accounts/verify-email/request/</code></td>
+<td>Request OTP for email verification</td>
+</tr>
+<tr>
+<td>Confirm email</td>
+<td>POST</td>
+<td><code>/accounts/verify-email/confirm/</code></td>
+<td>Verify OTP, get <code>verification_token</code></td>
+</tr>
+<tr>
 <td>Register</td>
 <td>POST</td>
 <td><code>/accounts/student/register/</code></td>
@@ -436,8 +448,22 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Required fields in form:</strong></p>
+<p><strong>3-Step Registration Flow:</strong></p>
+<pre class="hljs"><code><div>Step 1:  POST /verify-email/request/ { email }
+         → OTP sent to email
+
+Step 2:  POST /verify-email/confirm/ { email, otp }
+         → Returns { verified, email, verification_token }
+         → Save verification_token in React state
+
+Step 3:  POST /student/register/ { verification_token, gmail, ...all fields }
+         → Server validates token matches gmail
+         → Creates student if valid
+</div></code></pre>
+<p><strong>Step 3 form fields:</strong></p>
 <ul>
+<li><code>verification_token</code> (hidden field — from Step 2 response)</li>
+<li><code>gmail</code> (must match the email verified in Step 2)</li>
 <li><code>username</code> (unique)</li>
 <li><code>password</code> + <code>password_confirm</code></li>
 <li><code>name_ar</code> (Arabic name)</li>
@@ -452,13 +478,14 @@ code {
 <li><code>national_id</code> (14 digits)</li>
 <li><code>birth_date</code> (date picker)</li>
 <li><code>gender</code> (male/female)</li>
-<li><code>gmail</code> (unique across all users)</li>
 <li><code>governorate</code> (select from dropdown)</li>
 <li><code>area</code> (select from dropdown, filters by governorate)</li>
 </ul>
 <p><strong>Dropdown data:</strong> Fetch from Settings endpoints (see Page 6).</p>
 <p><strong>Business rules:</strong></p>
 <ul>
+<li><strong>Email must be verified before registration.</strong> The <code>gmail</code> in Step 3 must match the email verified in Step 2.</li>
+<li><code>verification_token</code> is single-use and expires in 10 minutes.</li>
 <li>Division must belong to the selected school_type AND grade</li>
 <li>Area must belong to the selected governorate</li>
 <li>Student phone cannot match father's or mother's phone</li>
