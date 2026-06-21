@@ -386,6 +386,7 @@ code {
 <ul>
 <li><code>access_token</code> — JWT access token, 30 min expiry, httpOnly, Secure, SameSite=None, Path=/</li>
 <li><code>refresh_token</code> — JWT refresh token, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
+<li><code>user-role</code> — JWT containing <code>{user_id, role}</code>, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
 </ul>
 <p><strong>Authentication:</strong> Public (no login required)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>

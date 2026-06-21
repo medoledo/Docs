@@ -421,6 +421,14 @@ code {
   <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"Integer — The user's primary key"</span>
 }
 </div></code></pre>
+<h4 id="role-token-7-days--user-role-cookie">Role Token (7 days — <code>user-role</code> cookie)</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"Integer — The user's primary key"</span>,
+  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"String (siteowner|teacher|assistant|student)"</span>,
+  <span class="hljs-attr">"exp"</span>: <span class="hljs-string">"Integer — Expiration timestamp (Unix)"</span>,
+  <span class="hljs-attr">"iat"</span>: <span class="hljs-string">"Integer — Issued at timestamp (Unix)"</span>
+}
+</div></code></pre>
 <h4 id="decoding-a-token-frontend">Decoding a Token (Frontend)</h4>
 <p>On the frontend, you can decode the payload without the public key (the payload is base64-encoded, not encrypted):</p>
 <pre class="hljs"><code><div><span class="hljs-comment">// Decode JWT payload (NOT verification — just reading claims)</span>
@@ -459,6 +467,16 @@ code {
 <tr>
 <td><code>refresh_token</code></td>
 <td>JWT refresh token</td>
+<td>7 days</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td><code>None</code></td>
+<td>Same as above</td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td><code>user-role</code></td>
+<td>JWT containing <code>{user_id, role}</code></td>
 <td>7 days</td>
 <td><code>true</code></td>
 <td><code>true</code></td>
