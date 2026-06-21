@@ -479,7 +479,7 @@ code {
 <td>JWT containing <code>{user_id, role}</code></td>
 <td>7 days</td>
 <td><code>true</code></td>
-<td><code>true</code></td>
+<td><strong><code>false</code></strong> (JS-readable)</td>
 <td><code>None</code></td>
 <td>Same as above</td>
 <td><code>/</code></td>
@@ -487,6 +487,16 @@ code {
 </tbody>
 </table>
 <p><strong>Important:</strong> <code>SameSite=None</code> + <code>Secure=true</code> means cookies are only sent over HTTPS and are included in cross-origin requests. During localhost development, the frontend must either use a proxy or enable <code>chrome://flags/#allow-insecure-localhost</code>.</p>
+<h4 id="user-role-cookie-js-readable"><code>user-role</code> Cookie (JS-Readable)</h4>
+<p>The <code>user-role</code> cookie is <strong>not httpOnly</strong> — JavaScript can read it. The frontend should use it as a performance optimization:</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// On page load — instant role check, no API call</span>
+<span class="hljs-keyword">const</span> cookie = getCookie(<span class="hljs-string">'user-role'</span>);
+<span class="hljs-keyword">if</span> (cookie) {
+  <span class="hljs-keyword">const</span> payload = <span class="hljs-built_in">JSON</span>.parse(atob(cookie.split(<span class="hljs-string">'.'</span>)[<span class="hljs-number">1</span>]));
+  <span class="hljs-built_in">console</span>.log(payload.role); <span class="hljs-comment">// e.g. "siteowner"</span>
+}
+</div></code></pre>
+<p>If the cookie is missing or expired, call <code>GET /accounts/me/</code> — it will return <code>{role, name, is_active}</code> and also <strong>refresh the <code>user-role</code> cookie</strong> for future page loads.</p>
 <p><strong>Production domain setup:</strong> Set the environment variable <code>JWT_AUTH_COOKIE_DOMAIN=.savekiteg.com</code> on the server so cookies are shared across all subdomains (e.g., <code>eduonline.savekiteg.com</code> frontend + <code>edutrackonline.savekiteg.com</code> backend). If unset, cookies are scoped to the exact host that set them.</p>
 <h3 id="common-errors">Common Errors</h3>
 <p>These error formats are shared across all endpoints:</p>

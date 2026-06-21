@@ -536,17 +536,21 @@ code {
 </ul>
 <hr>
 <h3 id="get-accountsme">GET /accounts/me/</h3>
-<p><strong>Description:</strong> Returns the current user's role, name, and active status. Used by the frontend to restore session state on page refresh.</p>
+<p><strong>Description:</strong> Returns the current user's role, name, and active status. Also <strong>refreshes the <code>user-role</code> cookie</strong> if present. Used by the frontend to restore session state on page refresh.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"String (siteowner|teacher|assistant|student)"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>
 }
 </div></code></pre>
+<p><strong>Cookie set on success:</strong></p>
+<ul>
+<li><code>user-role</code> — Refreshed JWT containing <code>{user_id, role}</code>, 7 days expiry, Secure, SameSite=None, Path=/</li>
+</ul>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
