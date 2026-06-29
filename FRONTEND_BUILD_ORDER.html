@@ -441,6 +441,24 @@ code {
 <td>Verify OTP, get <code>verification_token</code></td>
 </tr>
 <tr>
+<td>Check field availability</td>
+<td>GET</td>
+<td><code>/accounts/check-field/?field=username&amp;value=john</code></td>
+<td>Real-time check if username/email/phone is taken</td>
+</tr>
+<tr>
+<td>Verify email</td>
+<td>POST</td>
+<td><code>/accounts/verify-email/request/</code></td>
+<td>Request OTP for email verification</td>
+</tr>
+<tr>
+<td>Confirm email</td>
+<td>POST</td>
+<td><code>/accounts/verify-email/confirm/</code></td>
+<td>Verify OTP, get <code>verification_token</code></td>
+</tr>
+<tr>
 <td>Register</td>
 <td>POST</td>
 <td><code>/accounts/student/register/</code></td>
@@ -456,7 +474,7 @@ Step 2:  POST /verify-email/confirm/ { email, otp }
          → Returns { verified, email, verification_token }
          → Save verification_token in React state
 
-Step 3:  POST /student/register/ { verification_token, gmail, ...all fields }
+Step 3:  POST /accounts/student/register/ { verification_token, gmail, ...all fields }
          → Server validates token matches gmail
          → Creates student if valid
 </div></code></pre>
@@ -809,6 +827,7 @@ Step 3:  POST /student/register/ { verification_token, gmail, ...all fields }
 <hr>
 <h2 id="phase-2-teacher-pages">Phase 2: Teacher Pages</h2>
 <p>Build these <strong>in order</strong> after Phase 1 is complete.</p>
+<p><strong>IMPORTANT:</strong> The Lecture CRUD includes only basic fields (name, price, discount, available_days, visibility) and Videos. Homework, Quizzes, and Materials tabs on the lecture detail page are <strong>placeholders</strong> — they become functional when those features are built later.</p>
 <hr>
 <h3 id="page-1-my-courses-page">Page 1: My Courses Page</h3>
 <p><strong>APIs to use:</strong></p>
@@ -843,86 +862,16 @@ Step 3:  POST /student/register/ { verification_token, gmail, ...all fields }
 <li>Click &quot;Manage Content&quot; → navigate to Course Content Page (Page 3)</li>
 </ul>
 <hr>
-<h3 id="page-2-course-students-page">Page 2: Course Students Page</h3>
-<p><strong>APIs to use:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Action</th>
-<th>Method</th>
-<th>Endpoint</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Enrolled students</td>
-<td>GET</td>
-<td><code>/courses/&lt;id&gt;/students/</code></td>
-<td>Approved students with their balance for THIS course only</td>
-</tr>
-<tr>
-<td>Pending enrollments</td>
-<td>GET</td>
-<td><code>/courses/&lt;id&gt;/enrollments/pending/</code></td>
-<td>Pending approval requests</td>
-</tr>
-<tr>
-<td>Approved enrollments</td>
-<td>GET</td>
-<td><code>/courses/&lt;id&gt;/enrollments/approved/</code></td>
-<td>Approved enrollments</td>
-</tr>
-<tr>
-<td>Rejected enrollments</td>
-<td>GET</td>
-<td><code>/courses/&lt;id&gt;/enrollments/rejected/</code></td>
-<td>Rejected enrollments</td>
-</tr>
-<tr>
-<td>Approve enrollment</td>
-<td>POST</td>
-<td><code>/courses/enrollments/&lt;id&gt;/approve/</code></td>
-<td>Approve a pending student</td>
-</tr>
-<tr>
-<td>Reject enrollment</td>
-<td>POST</td>
-<td><code>/courses/enrollments/&lt;id&gt;/reject/</code></td>
-<td>Reject a pending student</td>
-</tr>
-<tr>
-<td>Add balance</td>
-<td>POST</td>
-<td><code>/payments/balance/add/</code></td>
-<td>Add balance to a student for this course</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Enrolled Students Response:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total"</span>: <span class="hljs-number">25</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"student_id"</span>: <span class="hljs-number">1</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed / أحمد"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"4829153"</span>,
-      <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"150.00"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-06-01T10:00:00Z"</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Page sections:</strong></p>
-<ol>
-<li><strong>Summary bar</strong> — Total enrolled: X | Pending: Y | Rejected: Z</li>
-<li><strong>Pending tab</strong> — List of pending students with Approve/Reject buttons</li>
-<li><strong>Enrolled tab</strong> — List of enrolled students with their balances. &quot;Add Balance&quot; button per student</li>
-<li><strong>Rejected tab</strong> — List of rejected students</li>
-</ol>
-<hr>
-<h3 id="page-3-course-content-page">Page 3: Course Content Page</h3>
+<h3 id="page-2-course-content-page-topics-%E2%86%92-lectures-%E2%86%92-videos">Page 2: Course Content Page (Topics → Lectures → Videos)</h3>
 <p><strong>Navigation:</strong> Course → Topics → Lectures (drill down)</p>
+<p><strong>Phase 2.1 — Build these now:</strong></p>
+<ul>
+<li>Topics CRUD (name, description, order)</li>
+<li>Lectures CRUD (name, price, discount, available_days, is_visible, order)</li>
+<li>Videos CRUD (platform, URL, order, duration)</li>
+<li>Lecture purchase tracking (who bought, when, expiry, reopen)</li>
+</ul>
+<p><strong>Lecture detail has placeholder tabs</strong> for Homework, Quiz, Materials — they stay empty until Phase 2.2.</p>
 <p><strong>APIs to use:</strong></p>
 <table>
 <thead>
@@ -1044,7 +993,9 @@ Step 3:  POST /student/register/ { verification_token, gmail, ...all fields }
       <span class="hljs-attr">"extra_days"</span>: <span class="hljs-number">0</span>,
       <span class="hljs-attr">"is_expired"</span>: <span class="hljs-literal">false</span>,
       <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-literal">null</span>,
-      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-literal">null</span>
+      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">"watch_count"</span>: <span class="hljs-number">3</span>,
+      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-number">4</span>
     }
   ]
 }
@@ -1053,10 +1004,96 @@ Step 3:  POST /student/register/ { verification_token, gmail, ...all fields }
 <ul>
 <li><strong>Course level:</strong> List of topics (ordered). &quot;Add Topic&quot; button</li>
 <li><strong>Topic level:</strong> Click topic → see lectures. &quot;Add Lecture&quot; button</li>
-<li><strong>Lecture level:</strong> Shows lecture details, videos list, purchase stats</li>
-<li><strong>Purchase tab:</strong> Table of students who bought (name, code, purchased at, expiry, reopen button)</li>
-<li><strong>Progress tab:</strong> Student watch progress for each video</li>
+<li><strong>Lecture level:</strong> Tabs layout:
+<ul>
+<li><strong>Videos tab</strong> (active now)</li>
+<li><strong>Homework tab</strong> (placeholder — built in Phase 2.2)</li>
+<li><strong>Quiz tab</strong> (placeholder — built in Phase 2.2)</li>
+<li><strong>Materials tab</strong> (placeholder — built in Phase 2.2)</li>
+<li><strong>Purchases tab</strong> (student purchase table + reopen button)</li>
+<li><strong>Progress tab</strong> (student watch progress)</li>
 </ul>
+</li>
+</ul>
+<hr>
+<h3 id="page-3-students-page-teachers-role--one-page">Page 3: Students Page (Teacher's Role — One Page)</h3>
+<p>All student management in a single page per course.</p>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Enrolled students</td>
+<td>GET</td>
+<td><code>/courses/&lt;id&gt;/students/</code></td>
+<td>Approved students with their balance for THIS course only</td>
+</tr>
+<tr>
+<td>Pending enrollments</td>
+<td>GET</td>
+<td><code>/courses/&lt;id&gt;/enrollments/pending/</code></td>
+<td>Pending approval requests</td>
+</tr>
+<tr>
+<td>Approved enrollments</td>
+<td>GET</td>
+<td><code>/courses/&lt;id&gt;/enrollments/approved/</code></td>
+<td>Approved enrollments</td>
+</tr>
+<tr>
+<td>Rejected enrollments</td>
+<td>GET</td>
+<td><code>/courses/&lt;id&gt;/enrollments/rejected/</code></td>
+<td>Rejected enrollments</td>
+</tr>
+<tr>
+<td>Approve enrollment</td>
+<td>POST</td>
+<td><code>/courses/enrollments/&lt;id&gt;/approve/</code></td>
+<td>Approve a pending student</td>
+</tr>
+<tr>
+<td>Reject enrollment</td>
+<td>POST</td>
+<td><code>/courses/enrollments/&lt;id&gt;/reject/</code></td>
+<td>Reject a pending student</td>
+</tr>
+<tr>
+<td>Add balance</td>
+<td>POST</td>
+<td><code>/payments/balance/add/</code></td>
+<td>Add balance to a student for this course</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response samples:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"total"</span>: <span class="hljs-number">25</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"student_id"</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed / أحمد"</span>,
+      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"4829153"</span>,
+      <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"150.00"</span>,
+      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-06-01T10:00:00Z"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Page sections (all in one page):</strong></p>
+<ol>
+<li><strong>Summary bar</strong> — Total enrolled: X | Pending: Y | Rejected: Z</li>
+<li><strong>Pending tab</strong> — List of pending students with Approve/Reject buttons</li>
+<li><strong>Enrolled tab</strong> — List of enrolled students with their balances. &quot;Add Balance&quot; button per student</li>
+<li><strong>Rejected tab</strong> — List of rejected students</li>
+</ol>
 <hr>
 <h3 id="page-4-assistants-page">Page 4: Assistants Page</h3>
 <p><strong>APIs to use:</strong></p>
@@ -1104,7 +1141,78 @@ Step 3:  POST /student/register/ { verification_token, gmail, ...all fields }
 </table>
 <p><strong>Note:</strong> Assistant <code>teacher</code> field is auto-set to the creating teacher's profile. No need to send it.</p>
 <hr>
-<h3 id="page-5-question-bank-page-per-course">Page 5: Question Bank Page (Per-Course)</h3>
+<h2 id="phase-22-lecture-tabs--content-tools">Phase 2.2: Lecture Tabs &amp; Content Tools</h2>
+<p>Build these <strong>after</strong> Phase 2.1 is complete. Each fills in a tab on the lecture detail page.</p>
+<hr>
+<h3 id="page-5-homework-bubble-sheet">Page 5: Homework Bubble Sheet</h3>
+<p><strong>Fills the Homework tab</strong> on the lecture detail page.</p>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create homework</td>
+<td>POST</td>
+<td><code>/learning/homeworks/</code></td>
+<td>Include <code>bubble_questions</code> array in request body</td>
+</tr>
+<tr>
+<td>List homeworks</td>
+<td>GET</td>
+<td><code>/learning/homeworks/</code></td>
+<td>Filter by lecture</td>
+</tr>
+<tr>
+<td>Get homework</td>
+<td>GET</td>
+<td><code>/learning/homeworks/&lt;id&gt;/</code></td>
+<td>With questions</td>
+</tr>
+<tr>
+<td>Update homework</td>
+<td>PUT/PATCH</td>
+<td><code>/learning/homeworks/&lt;id&gt;/</code></td>
+<td>Update</td>
+</tr>
+<tr>
+<td>Delete homework</td>
+<td>DELETE</td>
+<td><code>/learning/homeworks/&lt;id&gt;/</code></td>
+<td>Delete</td>
+</tr>
+<tr>
+<td>View submissions</td>
+<td>GET</td>
+<td><code>/learning/homeworks/&lt;id&gt;/submissions/</code></td>
+<td>Student answers</td>
+</tr>
+<tr>
+<td>Bubble sheet list</td>
+<td>part of homework</td>
+<td><code>bubble_questions</code> field</td>
+<td>Questions defined inline</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Bubble Sheet Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"bubble_questions"</span>: [
+    {<span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">"correct_answers"</span>: <span class="hljs-string">"A"</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">1</span>},
+    {<span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">"correct_answers"</span>: <span class="hljs-string">"A,C"</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">2</span>}
+  ]
+}
+</div></code></pre>
+<hr>
+<h3 id="page-6-question-bank-per-subject">Page 6: Question Bank (Per-Subject)</h3>
 <p><strong>APIs to use:</strong></p>
 <table>
 <thead>
@@ -1148,16 +1256,202 @@ Step 3:  POST /student/register/ { verification_token, gmail, ...all fields }
 </tr>
 </tbody>
 </table>
-<p>See [Question Bank documentation] for details (to be added).</p>
 <hr>
-<h3 id="page-6-quizzes-page-per-lecture">Page 6: Quizzes Page (Per-Lecture)</h3>
-<p><strong>Coming soon</strong> — details to be provided.</p>
+<h3 id="page-7-quizzes-standalone--qbank">Page 7: Quizzes (Standalone + QBank)</h3>
+<p><strong>Fills the Quiz tab</strong> on the lecture detail page.</p>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create quiz</td>
+<td>POST</td>
+<td><code>/learning/quizzes/</code></td>
+<td>With settings + questions</td>
+</tr>
+<tr>
+<td>List quizzes</td>
+<td>GET</td>
+<td><code>/learning/quizzes/</code></td>
+<td>Filter by lecture</td>
+</tr>
+<tr>
+<td>Get quiz</td>
+<td>GET</td>
+<td><code>/learning/quizzes/&lt;id&gt;/</code></td>
+<td>With questions and settings</td>
+</tr>
+<tr>
+<td>Update quiz</td>
+<td>PUT/PATCH</td>
+<td><code>/learning/quizzes/&lt;id&gt;/</code></td>
+<td>Update</td>
+</tr>
+<tr>
+<td>Delete quiz</td>
+<td>DELETE</td>
+<td><code>/learning/quizzes/&lt;id&gt;/</code></td>
+<td>Delete</td>
+</tr>
+<tr>
+<td>Start attempt</td>
+<td>POST</td>
+<td><code>/learning/quizzes/&lt;id&gt;/start/</code></td>
+<td>Student starts</td>
+</tr>
+<tr>
+<td>Submit attempt</td>
+<td>POST</td>
+<td><code>/learning/quizzes/&lt;id&gt;/submit/</code></td>
+<td>Student submits</td>
+</tr>
+<tr>
+<td>Grade written</td>
+<td>POST</td>
+<td><code>/learning/quiz-submissions/&lt;id&gt;/grade-written/</code></td>
+<td>Teacher grades</td>
+</tr>
+<tr>
+<td>Release scores</td>
+<td>POST</td>
+<td><code>/learning/quizzes/&lt;id&gt;/release-scores/</code></td>
+<td>Teacher releases</td>
+</tr>
+<tr>
+<td>Release answers</td>
+<td>POST</td>
+<td><code>/learning/quizzes/&lt;id&gt;/release-answers/</code></td>
+<td>Teacher releases</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Questions supported:</strong> From Question Bank OR standalone (inline text + image + choices).</p>
 <hr>
-<h3 id="page-7-homeworks-page-per-lecture">Page 7: Homeworks Page (Per-Lecture)</h3>
-<p><strong>Coming soon</strong> — details to be provided.</p>
+<h3 id="page-8-study-materials">Page 8: Study Materials</h3>
+<p><strong>Fills the Materials tab</strong> on the lecture detail page.</p>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Upload material</td>
+<td>POST</td>
+<td><code>/materials/</code></td>
+<td>PDF upload (multipart/form-data)</td>
+</tr>
+<tr>
+<td>List materials</td>
+<td>GET</td>
+<td><code>/materials/</code></td>
+<td>Filter by lecture</td>
+</tr>
+<tr>
+<td>Get material</td>
+<td>GET</td>
+<td><code>/materials/&lt;id&gt;/</code></td>
+<td>Download/view</td>
+</tr>
+<tr>
+<td>Update material</td>
+<td>PUT/PATCH</td>
+<td><code>/materials/&lt;id&gt;/</code></td>
+<td>Replace file</td>
+</tr>
+<tr>
+<td>Delete material</td>
+<td>DELETE</td>
+<td><code>/materials/&lt;id&gt;/</code></td>
+<td>Delete</td>
+</tr>
+</tbody>
+</table>
 <hr>
-<h3 id="page-8-dashboard-last">Page 8: Dashboard (Last)</h3>
+<h3 id="page-9-lecture-prerequisites">Page 9: Lecture Prerequisites</h3>
+<p><strong>Gate system:</strong> Student must pass a homework/quiz before accessing this lecture's videos.</p>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List prerequisites</td>
+<td>GET</td>
+<td><code>/courses/lectures/&lt;id&gt;/prerequisites/</code></td>
+<td>Prerequisites for a lecture</td>
+</tr>
+<tr>
+<td>Add prerequisite</td>
+<td>POST</td>
+<td><code>/courses/lectures/&lt;id&gt;/prerequisites/</code></td>
+<td>Require homework/quiz before lecture access</td>
+</tr>
+<tr>
+<td>Remove prerequisite</td>
+<td>DELETE</td>
+<td><code>/courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></td>
+<td>Remove a prerequisite</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Prerequisite types:</strong> <code>homework</code>, <code>quiz</code></p>
+<hr>
+<h2 id="phase-23-reports-last--depends-on-everything">Phase 2.3: Reports (Last — Depends on Everything)</h2>
+<hr>
+<h3 id="page-10-student-report">Page 10: Student Report</h3>
+<p><strong>APIs to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Student report</td>
+<td>GET</td>
+<td><code>/courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
+<td>Full report: purchases, quiz scores, homework grades, balance</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="page-11-dashboard-last">Page 11: Dashboard (Last)</h3>
 <p><strong>Coming last</strong> — teacher dashboard with aggregated stats.</p>
+<hr>
+<h2 id="behavioral-rules-applied-throughout">Behavioral Rules Applied Throughout</h2>
+<ul>
+<li><strong>Watching Times:</strong> 4 max per lecture. Teacher reopens to reset. Locked videos block playback, but homework/quiz/materials remain accessible.</li>
+<li><strong>Lecture Deactivation:</strong> Cannot deactivate a lecture if any student has an active (non-expired) purchase.</li>
+<li><strong>Lecture Delete:</strong> Cannot delete a lecture if ANY purchase exists (active or expired).</li>
+<li><strong>Topic Delete:</strong> Cannot delete a topic if it has any lectures.</li>
+<li><strong>Homework Bubble Sheet:</strong> Auto-graded on submission. Single answer = exact match. Multiple answers = all must match.</li>
+<li><strong>Quiz:</strong> MCQ auto-graded, written manually graded. Questions from QBank or standalone (inline). Timer: 0 = unlimited.</li>
+<li><strong>Enrollment:</strong> Tracks who approved/rejected + timestamp.</li>
+<li><strong>Student Visibility:</strong> Teachers see only their own students. No national_id, birth_date visible.</li>
+</ul>
 
 </body>
 </html>

@@ -1524,6 +1524,92 @@ code {
 </tbody>
 </table>
 <hr>
+<h2 id="10-field-availability-check">10. Field Availability Check</h2>
+<hr>
+<h3 id="get-accountscheck-field">GET /accounts/check-field/</h3>
+<p><strong>Description:</strong> Check if a field value is already taken. Used for real-time validation on registration and profile forms.</p>
+<p><strong>Authentication:</strong> None (public)</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>field</code></td>
+<td>String</td>
+<td><code>username</code>, <code>gmail</code>, or <code>phone_number</code></td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>String</td>
+<td>The value to check</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"available"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">""</span>
+}
+</div></code></pre>
+<p><strong>When unavailable:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"available"</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"This username is already taken."</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>400</code></td>
+<td>Missing or invalid field</td>
+<td><code>{&quot;error&quot;: &quot;Both field and value are required.&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="11-video-security-options">11. Video Security Options</h2>
+<hr>
+<h3 id="get-accountsvideo-security">GET /accounts/video-security/</h3>
+<p><strong>Description:</strong> List available video security/protection options (DRM, watermarking, etc.). Configured via Django Admin — read-only via API.</p>
+<p><strong>Authentication:</strong> None (public)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"price_per_student"</span>: <span class="hljs-string">"String (Decimal)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h3 id="get-accountsvideo-securityid">GET /accounts/video-security/<id>/</h3>
+<p><strong>Description:</strong> Retrieve a single video security option.</p>
+<p><strong>Authentication:</strong> None (public)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"price_per_student"</span>: <span class="hljs-string">"String (Decimal)"</span>
+}
+</div></code></pre>
+<hr>
 
 </body>
 </html>

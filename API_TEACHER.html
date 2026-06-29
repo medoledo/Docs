@@ -990,7 +990,9 @@ code {
       <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime | null"</span>
+      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
+      <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"Integer - Number of times watched"</span>,
+      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"Integer - Maximum watching limit (default: 4)"</span>
     }
   ]
 }
@@ -1320,7 +1322,8 @@ code {
       <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime"</span>,
       <span class="hljs-attr">"note"</span>: <span class="hljs-string">"String"</span>
     }
-  ]
+  ],
+  <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"Integer - Maximum watching limit (default: 4)"</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>
@@ -1513,8 +1516,14 @@ code {
 </div></code></pre>
 <p><strong>Notes:</strong></p>
 <ul>
-<li>Only MCQ questions are allowed in homework</li>
-<li><code>model_answer</code> is shown to students after they submit</li>
+<li>Homework supports two question modes:
+<ol>
+<li><strong>From Question Bank (advanced):</strong> Uses existing <code>question_ids</code> field — questions with text and images from the Question Bank.</li>
+<li><strong>Bubble Sheet (simple):</strong> No questions needed. Just bubble question definitions with <code>choices_count</code>, <code>correct_answers</code>, and <code>points</code>. Students solve from a physical book and submit their answers.</li>
+</ol>
+</li>
+<li><code>model_answer</code> is shown to students after they submit.</li>
+<li>Bubble sheets are auto-graded on submission.</li>
 </ul>
 <hr>
 <h4 id="get-learninghomeworksid">GET /learning/homeworks/{id}/</h4>
@@ -1648,8 +1657,14 @@ code {
 <p><strong>Notes:</strong></p>
 <ul>
 <li><code>passing_score</code> is optional (null = no passing threshold)</li>
-<li><code>question_ids</code> are QuestionBank IDs; they will be assigned in order</li>
+<li>Quiz questions can come from two sources:
+<ol>
+<li><strong>Question Bank:</strong> Send <code>question_ids</code> — references existing questions from the Question Bank.</li>
+<li><strong>Standalone:</strong> Create questions directly on the quiz (text + choices + images) without going through the Question Bank.</li>
+</ol>
+</li>
 <li><code>score_visibility</code> / <code>answers_visibility</code>: <code>immediate</code>, <code>after_close</code>, <code>manual</code></li>
+<li>Timer: <code>0</code> = no time limit.</li>
 </ul>
 <hr>
 <h4 id="get-learningquizzesid">GET /learning/quizzes/{id}/</h4>
@@ -2055,6 +2070,142 @@ code {
 </tr>
 </tbody>
 </table>
+<hr>
+<h2 id="17-student-report">17. Student Report</h2>
+<hr>
+<h4 id="get-coursescoursepkstudent-reportstudentid">GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</h4>
+<p><strong>Description:</strong> Returns everything about a student within a specific course. Teacher/Assistant only.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"student"</span>: {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>
+  },
+  <span class="hljs-attr">"enrollment"</span>: {
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+    <span class="hljs-attr">"approved_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+    <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
+    <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
+  },
+  <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String (Decimal) - Current balance for this course"</span>,
+  <span class="hljs-attr">"purchases"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"String (Decimal)"</span>,
+      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
+      <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"Integer - Number of times watched"</span>,
+      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"Integer - Maximum watching limit"</span>
+    }
+  ],
+  <span class="hljs-attr">"quiz_submissions"</span>: [
+    {
+      <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"attempt"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
+      <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"Boolean | null"</span>,
+      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ],
+  <span class="hljs-attr">"homework_submissions"</span>: [
+    {
+      <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (submitted|graded)"</span>,
+      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Course or student not found</td>
+<td><code>{&quot;error&quot;: &quot;...&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="18-lecture-prerequisites">18. Lecture Prerequisites</h2>
+<hr>
+<h4 id="get-courseslecturesidprerequisites">GET /courses/lectures/<id>/prerequisites/</h4>
+<p><strong>Description:</strong> List all prerequisites for a lecture.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (homework|quiz)"</span>,
+      <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer - ID of the homework or quiz"</span>,
+      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String (Decimal) - Minimum score required"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="post-courseslecturesidprerequisites">POST /courses/lectures/<id>/prerequisites/</h4>
+<p><strong>Description:</strong> Add a prerequisite to a lecture. Student must pass this homework/quiz before accessing the lecture's videos.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) — homework|quiz"</span>,
+  <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer (Required) — ID of the homework or quiz"</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String (Optional) — Decimal, default: 50.0"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 201 Created:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String (Decimal)"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="delete-courseslecturesidprerequisitesprereqid">DELETE /courses/lectures/<id>/prerequisites/&lt;prereq_id&gt;/</h4>
+<p><strong>Description:</strong> Remove a prerequisite from a lecture.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 204 No Content</strong></p>
+<hr>
+<h2 id="19-watching-times-limit">19. Watching Times Limit</h2>
+<p>Each lecture enforces a <strong>watching times limit</strong> (default: 4). Once a student has used all their watching times, the lecture's videos are locked.</p>
+<ul>
+<li>The limit applies to the <strong>entire lecture</strong> — watching any video counts toward the limit.</li>
+<li>Once locked, the student can still access homework, quizzes, and materials for that lecture.</li>
+<li>The teacher can <strong>reopen</strong> the lecture (via the existing reopen endpoint), which resets the watch count.</li>
+<li>The <code>GET /courses/lectures/&lt;id&gt;/purchases/</code> response now includes <code>watch_count</code> and <code>max_watch_count</code> per purchase.</li>
+</ul>
 
 </body>
 </html>
