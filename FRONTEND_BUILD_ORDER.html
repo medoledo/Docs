@@ -559,10 +559,17 @@ Step 3:  POST /accounts/student/register/ { verification_token, gmail, ...all fi
 <li><code>name</code>, <code>phone</code>, <code>secondary_phone</code>, <code>gmail</code></li>
 <li><code>gender</code> (male/female — <strong>required</strong>)</li>
 <li><code>subject</code> (ID from subjects list)</li>
-<li><code>grades</code> (array of grade IDs)</li>
+<li><code>grades</code> (array of grade IDs — <strong>filtered by selected subject</strong>)</li>
 <li><code>is_active</code> (checkbox, default true)</li>
 <li><code>biography</code>, <code>facebook</code> (optional)</li>
 </ul>
+<p><strong>Grade filtering logic:</strong>
+The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code> for each subject. When the user selects a subject, filter the grades multi-select to only show grades whose IDs are in <code>subject.grade_ids</code>:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> subject = subjects.find(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.id === selectedSubjectId);
+<span class="hljs-keyword">const</span> validGrades = allGrades.filter(<span class="hljs-function"><span class="hljs-params">g</span> =&gt;</span> subject.grade_ids.includes(g.id));
+</div></code></pre>
+<p>If no subject is selected, disable the grades field with &quot;Select a subject first&quot;.</p>
+<p><strong>Backend validation:</strong> If a grade outside the subject's range is submitted, the API returns <code>400</code> with <code>{&quot;grades&quot;: [&quot;Subject 'Math' is not available for grade '1st Secondary'.&quot;]}</code>.</p>
 <p><strong>Success response:</strong> Returns full teacher profile with ID. Use this to navigate to the new teacher's detail.</p>
 <hr>
 <h2 id="page-4-teacher-detail-page-viewedit-teacher">Page 4: Teacher Detail Page (View/Edit Teacher)</h2>
@@ -1140,6 +1147,8 @@ Step 3:  POST /accounts/student/register/ { verification_token, gmail, ...all fi
 </tbody>
 </table>
 <p><strong>Note:</strong> Assistant <code>teacher</code> field is auto-set to the creating teacher's profile. No need to send it.</p>
+<p><strong>⚠️ Grade Removal Cascade:</strong>
+If you remove a grade from the teacher's profile (PATCH), all courses for that teacher + grade will be automatically set to <code>is_active = False</code>. This hides them from the teacher's course list and prevents student access. The data is not deleted — it can be restored by changing <code>is_active</code> back to <code>True</code>.</p>
 <hr>
 <h2 id="phase-22-lecture-tabs--content-tools">Phase 2.2: Lecture Tabs &amp; Content Tools</h2>
 <p>Build these <strong>after</strong> Phase 2.1 is complete. Each fills in a tab on the lecture detail page.</p>

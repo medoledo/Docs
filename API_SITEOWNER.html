@@ -574,6 +574,7 @@ code {
 <li>Phone numbers must be valid Egyptian numbers (010, 011, 012, or 015 prefix).</li>
 <li>A User account and TeacherProfile are created atomically in a transaction.</li>
 <li><code>subject</code> is a single Subject ID.</li>
+<li><code>grades</code> must be a subset of <code>subject</code>'s available grades. For example, if a subject is only assigned to &quot;3rd Secondary&quot;, the teacher cannot be assigned &quot;1st Secondary&quot;.</li>
 </ul>
 <hr>
 <h3 id="patch-accountsteachersid">PATCH /accounts/teachers/<id>/</h3>
@@ -608,6 +609,10 @@ code {
 </tr>
 </tbody>
 </table>
+<p><strong>Business Rules:</strong></p>
+<ul>
+<li>If a grade is <strong>removed</strong> from the teacher's profile, all courses for that teacher + grade will be set to <code>is_active = False</code>. The courses become hidden from both the teacher and enrolled students.</li>
+</ul>
 <hr>
 <h2 id="2-student-management">2. Student Management</h2>
 <h3 id="get-accountsstudents">GET /accounts/students/</h3>
@@ -766,6 +771,11 @@ code {
 <td><code>400</code></td>
 <td>Teacher doesn't teach grade</td>
 <td><code>{&quot;grade&quot;: [&quot;Teacher X does not teach grade Y.&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>400</code></td>
+<td>Subject not available for grade</td>
+<td><code>{&quot;grade&quot;: [&quot;Subject X is not available for grade Y.&quot;]}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
