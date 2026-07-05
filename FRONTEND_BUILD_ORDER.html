@@ -731,14 +731,29 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </ul>
 <p><strong>Student Detail view:</strong></p>
 <ul>
-<li>Full profile info (name_ar, name_en, phone, father/mother numbers, school info, etc.)</li>
-<li>Status change buttons:
+<li>
+<p>Full profile info (name_ar, name_en, phone, father/mother numbers, school info, etc.)</p>
+</li>
+<li>
+<p>Status change buttons (with <code>reason</code> field):</p>
 <ul>
-<li>&quot;Verify &amp; Activate&quot; → <code>PATCH {status: &quot;verified&quot;, is_active: true}</code></li>
-<li>&quot;Decline&quot; → <code>PATCH {status: &quot;declined&quot;, is_active: false}</code></li>
-<li>&quot;Suspend (Temporary)&quot; → <code>PATCH {status: &quot;suspended_temporary&quot;, is_active: false}</code></li>
-<li>&quot;Suspend (Permanent)&quot; → <code>PATCH {status: &quot;suspended_permanent&quot;, is_active: false}</code></li>
+<li>&quot;Decline&quot; → <code>PATCH {status: &quot;declined&quot;, is_active: false, reason: &quot;...&quot;}</code> — reason <strong>required</strong></li>
+<li>&quot;Suspend (Temporary)&quot; → <code>PATCH {status: &quot;suspended_temporary&quot;, is_active: false, reason: &quot;...&quot;}</code> — reason <strong>required</strong></li>
+<li>&quot;Suspend (Permanent)&quot; → <code>PATCH {status: &quot;suspended_permanent&quot;, is_active: false, reason: &quot;...&quot;}</code> — reason <strong>required</strong></li>
+<li>&quot;Verify/Reactivate&quot; → <code>PATCH {status: &quot;verified&quot;, is_active: true, reason: &quot;...&quot;}</code> — reason optional</li>
 </ul>
+</li>
+<li>
+<p><strong>Status transition rules</strong> (controlled by backend — frontend should hide invalid actions):</p>
+<ul>
+<li><code>pending</code> → only &quot;Verify&quot; or &quot;Decline&quot;</li>
+<li><code>verified</code> → only &quot;Suspend&quot; (cannot decline or set to pending)</li>
+<li><code>declined</code> → only &quot;Verify&quot; (cannot suspend)</li>
+<li><code>suspended</code> → only &quot;Verify&quot; (reactivate)</li>
+</ul>
+</li>
+<li>
+<p><strong>Status history</strong> is visible in the student detail response under <code>status_history</code> — an array of all past changes with <code>changed_by</code>, <code>from_status</code>, <code>to_status</code>, <code>reason</code>, and <code>created_at</code>.</p>
 </li>
 </ul>
 <p><strong>Default view:</strong> Show pending students first (sort by most recent).</p>

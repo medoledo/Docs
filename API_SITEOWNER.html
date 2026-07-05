@@ -641,13 +641,14 @@ code {
 <p><strong>Success Response — 200 OK:</strong> Single student profile.</p>
 <hr>
 <h3 id="patch-accountsstudentsidstatus">PATCH /accounts/students/<id>/status/</h3>
-<p><strong>Description:</strong> Update a student's status and active flag.</p>
+<p><strong>Description:</strong> Update a student's status and active flag. All changes are logged with the acting user and reason.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (Optional) — verified|pending|declined|suspended_temporary|suspended_permanent"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional)"</span>
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (Required) — verified|declined|suspended_temporary|suspended_permanent"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional)"</span>,
+  <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"String (Optional) — Required for decline and suspension"</span>
 }
 </div></code></pre>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -656,11 +657,79 @@ code {
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>
 }
 </div></code></pre>
+<p><strong>Allowed Status Transitions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Current Status</th>
+<th>Allowed New Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pending</code></td>
+<td><code>verified</code>, <code>declined</code></td>
+</tr>
+<tr>
+<td><code>verified</code></td>
+<td><code>suspended_temporary</code>, <code>suspended_permanent</code></td>
+</tr>
+<tr>
+<td><code>declined</code></td>
+<td><code>verified</code></td>
+</tr>
+<tr>
+<td><code>suspended_temporary</code></td>
+<td><code>verified</code></td>
+</tr>
+<tr>
+<td><code>suspended_permanent</code></td>
+<td><code>verified</code></td>
+</tr>
+</tbody>
+</table>
 <p><strong>Business Rules:</strong></p>
 <ul>
-<li>Changing status to <code>declined</code> or <code>suspended_permanent</code> will also set <code>is_active</code> to <code>false</code>.</li>
-<li>Changing status to <code>verified</code> will also set <code>is_active</code> to <code>true</code>.</li>
+<li>A reason is <strong>required</strong> when declining or suspending a student.</li>
+<li>Changing to <code>declined</code> or <code>suspended</code> automatically sets <code>is_active = false</code>.</li>
+<li>Changing to <code>verified</code> automatically sets <code>is_active = true</code>.</li>
+<li><strong>Cannot</strong> bring a student back to <code>pending</code> once they've been processed.</li>
+<li>Every status change is recorded in an immutable audit log accessible via the student detail response:</li>
 </ul>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"status_history"</span>: [
+    {
+      <span class="hljs-attr">"changed_by"</span>: <span class="hljs-string">"String - Username"</span>,
+      <span class="hljs-attr">"from_status"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"to_status"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>400</code></td>
+<td>Transition not allowed</td>
+<td><code>{&quot;status&quot;: [&quot;Cannot change status from 'pending' to 'suspended_temporary'.&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>400</code></td>
+<td>Missing reason for decline/suspend</td>
+<td><code>{&quot;reason&quot;: [&quot;A reason is required when declining or suspending a student.&quot;]}</code></td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h2 id="3-course-management">3. Course Management</h2>
 <h3 id="post-courses">POST /courses/</h3>
