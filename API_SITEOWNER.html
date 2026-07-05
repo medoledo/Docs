@@ -498,7 +498,9 @@ code {
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
       <span class="hljs-attr">"subject_id"</span>: <span class="hljs-string">"Integer | null"</span>,
       <span class="hljs-attr">"grade_ids"</span>: <span class="hljs-string">"Array[Integer]"</span>,
-      <span class="hljs-attr">"video_security_id"</span>: <span class="hljs-string">"Integer | null"</span>
+      <span class="hljs-attr">"video_security_id"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"courses_count"</span>: <span class="hljs-string">"Integer - Total number of courses for this teacher"</span>,
+      <span class="hljs-attr">"students_count"</span>: <span class="hljs-string">"Integer - Total number of approved enrolled students"</span>
     }
   ]
 }
@@ -612,6 +614,7 @@ code {
 <p><strong>Business Rules:</strong></p>
 <ul>
 <li>If a grade is <strong>removed</strong> from the teacher's profile, all courses for that teacher + grade will be set to <code>is_active = False</code>. The courses become hidden from both the teacher and enrolled students.</li>
+<li>If the teacher's <strong>subject</strong> is changed, <strong>all</strong> active courses for that teacher will be set to <code>is_active = False</code>. The existing grades must also be valid for the new subject — adjust them in the same request if needed.</li>
 </ul>
 <hr>
 <h2 id="2-student-management">2. Student Management</h2>
