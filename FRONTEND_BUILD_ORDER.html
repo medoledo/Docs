@@ -539,11 +539,12 @@ Step 3:  POST /accounts/student/register/ { verification_token, gmail, ...all fi
 </table>
 <p><strong>Teacher Card shows:</strong></p>
 <ul>
-<li>Name</li>
-<li>Subject (from <code>subject_detail.name</code>)</li>
-<li>Grades (from <code>grades_detail[].name</code>)</li>
-<li>Course count (computed from teacher's courses — <strong>TBD</strong>, may need annotation)</li>
-<li>Active/Inactive status badge</li>
+<li>Name (from <code>name</code>)</li>
+<li>Subject (from <code>subject_name</code>)</li>
+<li>Grades (from <code>grade_names</code> — array of strings)</li>
+<li>Course count (from <code>courses_count</code>)</li>
+<li>Student count (from <code>students_count</code>)</li>
+<li>Active/Inactive status badge (from <code>is_active</code>)</li>
 <li>&quot;View Courses&quot; button → navigates to <strong>Teacher Courses Page</strong></li>
 <li>&quot;Edit&quot; button → opens edit modal/inline form</li>
 </ul>
@@ -1149,6 +1150,8 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <p><strong>Note:</strong> Assistant <code>teacher</code> field is auto-set to the creating teacher's profile. No need to send it.</p>
 <p><strong>⚠️ Grade Removal Cascade:</strong>
 If you remove a grade from the teacher's profile (PATCH), all courses for that teacher + grade will be automatically set to <code>is_active = False</code>. This hides them from the teacher's course list and prevents student access. The data is not deleted — it can be restored by changing <code>is_active</code> back to <code>True</code>.</p>
+<p><strong>⚠️ Subject Change Cascade:</strong>
+If you change the teacher's subject, <strong>all</strong> active courses for that teacher will be set to <code>is_active = False</code>. The grades you assign must be valid for the new subject. If they aren't, you'll get a validation error — adjust the grades in the same request.</p>
 <hr>
 <h2 id="phase-22-lecture-tabs--content-tools">Phase 2.2: Lecture Tabs &amp; Content Tools</h2>
 <p>Build these <strong>after</strong> Phase 2.1 is complete. Each fills in a tab on the lecture detail page.</p>
