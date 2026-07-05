@@ -753,6 +753,26 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </ul>
 </li>
 <li>
+<p><strong>Student profile edit rules:</strong></p>
+<ul>
+<li><code>verified</code> → <strong>Cannot edit</strong> — &quot;Contact an administrator&quot;</li>
+<li><code>pending</code> → <strong>Cannot edit</strong> — &quot;Account is pending approval&quot;</li>
+<li><code>declined</code> → <strong>Can edit</strong> — after saving, status resets to <code>pending</code> for re-evaluation</li>
+<li><code>suspended_temporary</code> → <strong>Cannot edit</strong></li>
+<li><code>suspended_permanent</code> → <strong>Blocked from login entirely</strong></li>
+</ul>
+</li>
+<li>
+<p><strong>Login behavior by status:</strong></p>
+<ul>
+<li><code>pending</code> → Logs in, receives <code>{status: &quot;pending&quot;}</code> — show &quot;pending approval&quot; page</li>
+<li><code>verified</code> → Normal login</li>
+<li><code>declined</code> → Logs in, receives <code>{status: &quot;declined&quot;}</code> — show reason + prompt to edit profile</li>
+<li><code>suspended_temporary</code> → Logs in, receives <code>{status: &quot;suspended_temporary&quot;}</code> — show reason</li>
+<li><code>suspended_permanent</code> → <strong>Blocked</strong> — 401 &quot;Your account has been permanently suspended.&quot;</li>
+</ul>
+</li>
+<li>
 <p><strong>Status history</strong> is visible in the student detail response under <code>status_history</code> — an array of all past changes with <code>changed_by</code>, <code>from_status</code>, <code>to_status</code>, <code>reason</code>, and <code>created_at</code>.</p>
 </li>
 </ul>

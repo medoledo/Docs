@@ -400,7 +400,8 @@ code {
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"String (siteowner|teacher|assistant|student)"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String — Only for students: pending|verified|declined|suspended_temporary|suspended_permanent"</span>
 }
 </div></code></pre>
 <blockquote>
@@ -420,6 +421,11 @@ code {
 <td><code>400</code></td>
 <td>Missing username or password</td>
 <td><code>{&quot;error&quot;: &quot;String&quot;}</code></td>
+</tr>
+<tr>
+<td><code>401</code></td>
+<td>Permanently suspended student</td>
+<td><code>{&quot;error&quot;: &quot;Your account has been permanently suspended.&quot;}</code></td>
 </tr>
 <tr>
 <td><code>401</code></td>
