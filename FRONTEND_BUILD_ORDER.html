@@ -870,8 +870,8 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <hr>
 <h2 id="phase-2-teacher--assistant-pages">Phase 2: Teacher &amp; Assistant Pages</h2>
 <p>Build these <strong>in order</strong> after Phase 1 is complete.</p>
-<p><strong>IMPORTANT:</strong> All pages in Phase 2 apply to <strong>both Teacher and Assistant roles</strong> unless noted. Assistants share the same Course Dashboard, content management, enrollments, and all course-related features. The only exception is the <strong>Assistants management page</strong> — assistants can view coworkers but cannot create/delete.</p>
-<p>The Course Dashboard is a <strong>single page</strong> with multiple tabs. The teacher selects a course → enters the dashboard which contains everything about that course. Homework, Quizzes, and Materials tabs are placeholders until Phase 2.2.</p>
+<p><strong>IMPORTANT:</strong> All pages in Phase 2 apply to <strong>both Teacher and Assistant roles</strong> unless noted. The only exception is the <strong>Assistants management page</strong> — assistants can view coworkers but cannot create/delete.</p>
+<p>Dashboards (Course Dashboard, Teacher Dashboard) are built <strong>last</strong> — after all features exist.</p>
 <hr>
 <h3 id="page-1-my-courses-page">Page 1: My Courses Page</h3>
 <p><strong>APIs to use:</strong></p>
@@ -896,128 +896,12 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <p><strong>Page displays:</strong></p>
 <ul>
 <li>Grid of course cards, each showing: name, grade, subject, cover_picture, topic count, enrolled/pending/rejected counts</li>
-<li>Click on a card → navigate to <strong>Course Dashboard</strong></li>
+<li>Click on a card → navigate to <strong>Content Management page</strong></li>
 </ul>
 <hr>
-<h3 id="page-2-course-dashboard-unified--all-course-features">Page 2: Course Dashboard (Unified — All Course Features)</h3>
-<p>When a teacher clicks a course card, they enter a <strong>Course Dashboard</strong> — a single page with 4 tabs.</p>
-<pre class="hljs"><code><div>┌────────────────────────────────────────────────────────────┐
-│  ← Chemistry 3rd Secondary                                 │
-│                                                            │
-│  ┌──────────┬─────────────────────┬─────────┬────────────┐ │
-│  │  📊     │  👥                 │  📚    │  📋        │ │
-│  │Overview │ Students            │ Content │ Reports    │ │
-│  │ (Stats) │ EVERYTHING about    │ Topics  │ (Last —   │ │
-│  │         │ each student:       │→Lectures│  ⏳ built  │ │
-│  │         │ Balance, Purchases, │→Videos  │  after     │ │
-│  │         │ Quizzes, Homeworks, │ Preview │  homework  │ │
-│  │         │ Progress, History   │ Revenue │  &amp; quiz    │ │
-│  │         │                     │ Buyers  │  exist)    │ │
-│  │         │                     │ Expiry  │           │ │
-│  │         │                     │ Reopen  │           │ │
-│  └──────────┴─────────────────────┴─────────┴────────────┘ │
-│                                                            │
-│  ❌ No Settings tab — only SiteOwner can edit courses       │
-└────────────────────────────────────────────────────────────┘
-</div></code></pre>
-<h4 id="tab-1-overview">Tab 1: Overview</h4>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>GET /courses/&lt;id&gt;/</code></td>
-<td>Course stats: enrolled, pending, rejected, topic, lecture, video counts</td>
-</tr>
-</tbody>
-</table>
-<h4 id="tab-2-students-the-big-page--most-important">Tab 2: Students (The BIG Page — Most Important)</h4>
-<p><strong>Purpose:</strong> Everything about every student in this course. Unified — not split by status.</p>
-<table>
-<thead>
-<tr>
-<th>Action</th>
-<th>Endpoint</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Pending enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></td>
-<td>Awaiting approval (with reason prompt)</td>
-</tr>
-<tr>
-<td>Enrolled + balances</td>
-<td><code>GET /courses/&lt;id&gt;/students/</code></td>
-<td>All approved students with their balance for THIS course</td>
-</tr>
-<tr>
-<td>Approved enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></td>
-<td>Full enrollment details per student</td>
-</tr>
-<tr>
-<td>Rejected enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></td>
-<td>Rejected list</td>
-</tr>
-<tr>
-<td>Approve</td>
-<td><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></td>
-<td>Approve + track who/when</td>
-</tr>
-<tr>
-<td>Reject</td>
-<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></td>
-<td>Reject + requires reason</td>
-</tr>
-<tr>
-<td>Bulk action</td>
-<td><code>POST /courses/enrollments/bulk-action/</code></td>
-<td>Approve/reject multiple at once</td>
-</tr>
-<tr>
-<td>Add balance</td>
-<td><code>POST /payments/balance/add/</code></td>
-<td>Add to student's course balance</td>
-</tr>
-<tr>
-<td>Lecture purchases</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/purchases/</code></td>
-<td>Who bought this lecture, when, expiry</td>
-</tr>
-<tr>
-<td>Student progress</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></td>
-<td>Video watch progress per lecture</td>
-</tr>
-<tr>
-<td>Quiz submissions</td>
-<td><code>GET /learning/quiz-submissions/&lt;id&gt;/</code></td>
-<td>Student quiz scores</td>
-</tr>
-<tr>
-<td>Homework submissions</td>
-<td><code>GET /learning/homework-submissions/&lt;id&gt;/</code></td>
-<td>Student homework grades</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Per-student expandable row shows:</strong></p>
-<ul>
-<li>Current balance for this course</li>
-<li>Purchased lectures (with expiry dates, watch counts, reopen button)</li>
-<li>Quiz submissions (scores, passed/failed)</li>
-<li>Homework submissions (scores, graded/pending)</li>
-<li>Overall progress summary</li>
-</ul>
-<h4 id="tab-3-content-topics-%E2%86%92-lectures-%E2%86%92-videos">Tab 3: Content (Topics → Lectures → Videos)</h4>
-<p><strong>Navigation:</strong> Topics list → Click topic → Lectures list → Click lecture → Lecture Detail</p>
+<h3 id="page-2-content-management-topics-%E2%86%92-lectures-%E2%86%92-videos">Page 2: Content Management (Topics → Lectures → Videos)</h3>
+<p><strong>Purpose:</strong> Full CRUD for the course's content hierarchy. This is the core page — teachers spend most of their time here.</p>
+<p><strong>Navigation:</strong> Select course → Topics list → Click topic → Lectures list → Click lecture → Lecture Detail</p>
 <table>
 <thead>
 <tr>
@@ -1030,7 +914,7 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <tr>
 <td>Topics CRUD</td>
 <td><code>GET/POST /courses/topics/</code></td>
-<td>Create topic (cannot delete if has lectures)</td>
+<td>Create topic</td>
 </tr>
 <tr>
 <td>Topic detail</td>
@@ -1067,39 +951,9 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <td><code>DELETE /courses/videos/&lt;id&gt;/</code></td>
 <td>Teacher delete video record</td>
 </tr>
-<tr>
-<td>Lecture purchases</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/purchases/</code></td>
-<td>Who bought, when, expiry, revenue, days left</td>
-</tr>
-<tr>
-<td>Student progress</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></td>
-<td>Video watch progress per student</td>
-</tr>
-<tr>
-<td>Reopen lecture</td>
-<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></td>
-<td>Extend student's access</td>
-</tr>
-<tr>
-<td>Prerequisites</td>
-<td><code>GET/POST/DELETE /courses/lectures/&lt;id&gt;/prerequisites/</code></td>
-<td>Gate: pass homework/quiz first</td>
-</tr>
-<tr>
-<td>Quiz submissions</td>
-<td><code>GET /learning/quiz-submissions/&lt;id&gt;/</code></td>
-<td>Quiz marks for this lecture</td>
-</tr>
-<tr>
-<td>Homework submissions</td>
-<td><code>GET /learning/homework-submissions/&lt;id&gt;/</code></td>
-<td>Homework grades for this lecture</td>
-</tr>
 </tbody>
 </table>
-<p><strong>Bunny Stream Upload Flow (Videos Tab):</strong></p>
+<p><strong>Bunny Stream Upload Flow:</strong></p>
 <pre class="hljs"><code><div>Teacher clicks &quot;Add Video&quot; → POST /courses/videos/ { lecture, name }
     → Video record created with id, bunny_video_id=null
 
@@ -1115,91 +969,18 @@ Frontend polls GET /courses/videos/&lt;id&gt;/ until bunny_status=4 (Finished)
 
 When status=4, Bunny also calls the webhook and backend sets is_active=true
 </div></code></pre>
-<p><strong>Playback (Student):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns a signed URL with 2-hour expiry. The frontend loads this URL in a Bunny Stream player HLS video element.</p>
-<p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to force student-view filtering. Only active topics, visible lectures, and active videos are shown — exactly what a student would see. The teacher can toggle this on/off in the UI to compare views.</p>
-<p><strong>Lecture detail sub-tabs:</strong></p>
+<p><strong>Playback (Student):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns a signed URL with 2-hour expiry. The frontend loads this URL in a Bunny Stream player.</p>
+<p><strong>Lecture detail sub-tabs (built incrementally as pages below are completed):</strong></p>
 <ul>
-<li><strong>Videos</strong> — manage videos (active now)</li>
-<li><strong>Purchases</strong> — who bought, revenue, days left per student, progress, reopen</li>
-<li><strong>Homework</strong> — submissions + grades (active when homework exists)</li>
-<li><strong>Quiz</strong> — submissions + scores (active when quiz exists)</li>
-<li><strong>Materials</strong> — uploaded PDFs (active when materials exist)</li>
-<li><strong>Prerequisites</strong> — gate configuration (active when homework/quiz exists)</li>
+<li><strong>Videos</strong> — manage videos (built here)</li>
+<li><strong>Homework</strong> — submissions + grades (built in Page 4)</li>
+<li><strong>Quiz</strong> — submissions + scores (built in Page 5)</li>
+<li><strong>Materials</strong> — uploaded PDFs (built in Page 6)</li>
+<li><strong>Prerequisites</strong> — gate configuration (built in Page 7)</li>
 </ul>
-<h4 id="tab-4-reports-built-last--after-homework--quizzes-exist">Tab 4: Reports (Built Last — After Homework &amp; Quizzes Exist)</h4>
-<table>
-<thead>
-<tr>
-<th>Action</th>
-<th>Endpoint</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Student report</td>
-<td><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
-<td>Full student report: purchases, quiz scores, homework grades, balance, recharge history</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>Course Settings are NOT available to teachers.</strong> Only the SiteOwner can edit course name, description, or delete a course via <code>PATCH/DELETE /courses/&lt;id&gt;/</code>.</p>
-</blockquote>
+<p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to force student-view filtering. Only active topics, visible lectures, and active videos are shown.</p>
 <hr>
-<h3 id="page-3-assistants-page-teachers-only--standalone">Page 3: Assistants Page (Teachers Only — Standalone)</h3>
-<p><strong>APIs to use:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Action</th>
-<th>Method</th>
-<th>Endpoint</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>List assistants</td>
-<td>GET</td>
-<td><code>/accounts/teacher/assistants/</code></td>
-<td>List my assistants</td>
-</tr>
-<tr>
-<td>Create assistant</td>
-<td>POST</td>
-<td><code>/accounts/teacher/assistants/</code></td>
-<td>Create new assistant</td>
-</tr>
-<tr>
-<td>Get assistant</td>
-<td>GET</td>
-<td><code>/accounts/teacher/assistant/&lt;id&gt;/</code></td>
-<td>View assistant detail</td>
-</tr>
-<tr>
-<td>Update assistant</td>
-<td>PATCH</td>
-<td><code>/accounts/teacher/assistant/&lt;id&gt;/</code></td>
-<td>Update assistant</td>
-</tr>
-<tr>
-<td>Delete assistant</td>
-<td>DELETE</td>
-<td><code>/accounts/teacher/assistant/&lt;id&gt;/</code></td>
-<td>Delete assistant (must deactivate first)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Note:</strong> Assistant <code>teacher</code> field is auto-set to the creating teacher's profile. No need to send it.</p>
-<p><strong>⚠️ Grade Removal Cascade:</strong>
-If you remove a grade from the teacher's profile (PATCH), all courses for that teacher + grade will be automatically set to <code>is_active = False</code>. This hides them from the teacher's course list and prevents student access. The data is not deleted — it can be restored by changing <code>is_active</code> back to <code>True</code>.</p>
-<p><strong>⚠️ Subject Change Cascade:</strong>
-If you change the teacher's subject, <strong>all</strong> active courses for that teacher will be set to <code>is_active = False</code>. The grades you assign must be valid for the new subject. If they aren't, you'll get a validation error — adjust the grades in the same request.</p>
-<hr>
-<h3 id="page-4-homework-bubble-sheet-fills-content-%E2%86%92-lecture-%E2%86%92-homework-tab">Page 4: Homework Bubble Sheet (Fills Content → Lecture → Homework Tab)</h3>
-<p><strong>Fills the Homework tab</strong> on the lecture detail page.</p>
-<p><strong>APIs to use:</strong></p>
+<h3 id="page-3-homework-bubble-sheet-fills-content-%E2%86%92-lecture-%E2%86%92-homework-tab">Page 3: Homework Bubble Sheet (Fills Content → Lecture → Homework Tab)</h3>
 <table>
 <thead>
 <tr>
@@ -1214,7 +995,7 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 <td>Create homework</td>
 <td>POST</td>
 <td><code>/learning/homeworks/</code></td>
-<td>Include <code>bubble_questions</code> array in request body</td>
+<td>Create bubble-sheet homework</td>
 </tr>
 <tr>
 <td>List homeworks</td>
@@ -1226,7 +1007,7 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 <td>Get homework</td>
 <td>GET</td>
 <td><code>/learning/homeworks/&lt;id&gt;/</code></td>
-<td>With questions</td>
+<td>With bubble questions</td>
 </tr>
 <tr>
 <td>Update homework</td>
@@ -1246,12 +1027,6 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 <td><code>/learning/homeworks/&lt;id&gt;/submissions/</code></td>
 <td>Student answers</td>
 </tr>
-<tr>
-<td>Bubble sheet list</td>
-<td>part of homework</td>
-<td><code>bubble_questions</code> field</td>
-<td>Questions defined inline</td>
-</tr>
 </tbody>
 </table>
 <p><strong>Bubble Sheet Request Body:</strong></p>
@@ -1265,8 +1040,7 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 }
 </div></code></pre>
 <hr>
-<h3 id="page-5-quizzes-fills-content-%E2%86%92-lecture-%E2%86%92-quiz-tab">Page 5: Quizzes (Fills Content → Lecture → Quiz Tab)</h3>
-<p><strong>APIs to use:</strong></p>
+<h3 id="page-4-quizzes-fills-content-%E2%86%92-lecture-%E2%86%92-quiz-tab">Page 4: Quizzes (Fills Content → Lecture → Quiz Tab)</h3>
 <table>
 <thead>
 <tr>
@@ -1281,7 +1055,7 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 <td>Create quiz</td>
 <td>POST</td>
 <td><code>/learning/quizzes/</code></td>
-<td>With settings + questions</td>
+<td>With settings</td>
 </tr>
 <tr>
 <td>List quizzes</td>
@@ -1339,10 +1113,9 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 </tr>
 </tbody>
 </table>
-<p><strong>Questions supported:</strong> From Question Bank OR standalone (inline text + image + choices).</p>
+<p><strong>Questions:</strong> Standalone only (inline text + image + choices).</p>
 <hr>
-<h3 id="page-6-study-materials-fills-content-%E2%86%92-lecture-%E2%86%92-materials-tab">Page 6: Study Materials (Fills Content → Lecture → Materials Tab)</h3>
-<p><strong>APIs to use:</strong></p>
+<h3 id="page-5-study-materials-fills-content-%E2%86%92-lecture-%E2%86%92-materials-tab">Page 5: Study Materials (Fills Content → Lecture → Materials Tab)</h3>
 <table>
 <thead>
 <tr>
@@ -1386,9 +1159,7 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 </tbody>
 </table>
 <hr>
-<h3 id="page-7-lecture-prerequisites-fills-content-%E2%86%92-lecture-%E2%86%92-prerequisites">Page 7: Lecture Prerequisites (Fills Content → Lecture → Prerequisites)</h3>
-<p><strong>Gate system:</strong> Student must pass a homework/quiz before accessing this lecture's videos.</p>
-<p><strong>APIs to use:</strong></p>
+<h3 id="page-6-lecture-prerequisites-fills-content-%E2%86%92-lecture-%E2%86%92-prerequisites-tab">Page 6: Lecture Prerequisites (Fills Content → Lecture → Prerequisites Tab)</h3>
 <table>
 <thead>
 <tr>
@@ -1419,10 +1190,143 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 </tr>
 </tbody>
 </table>
-<p><strong>Prerequisite types:</strong> <code>homework</code>, <code>quiz</code></p>
+<p><strong>Types:</strong> <code>homework</code>, <code>quiz</code></p>
 <hr>
-<h3 id="page-8-student-report-available-from-course-dashboard-%E2%86%92-students-tab">Page 8: Student Report (Available from Course Dashboard → Students Tab)</h3>
-<p><strong>APIs to use:</strong></p>
+<h3 id="page-7-students-page-lecture-purchases--enrollments">Page 7: Students Page (Lecture Purchases &amp; Enrollments)</h3>
+<p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, purchases, progress.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pending enrollments</td>
+<td><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></td>
+<td>Awaiting approval</td>
+</tr>
+<tr>
+<td>Enrolled + balances</td>
+<td><code>GET /courses/&lt;id&gt;/students/</code></td>
+<td>All approved students with their course balance</td>
+</tr>
+<tr>
+<td>Approved enrollments</td>
+<td><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></td>
+<td>Full enrollment details</td>
+</tr>
+<tr>
+<td>Rejected enrollments</td>
+<td><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></td>
+<td>Rejected list</td>
+</tr>
+<tr>
+<td>Approve</td>
+<td><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></td>
+<td>Approve + track who/when</td>
+</tr>
+<tr>
+<td>Reject</td>
+<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></td>
+<td>Reject + requires reason</td>
+</tr>
+<tr>
+<td>Bulk action</td>
+<td><code>POST /courses/enrollments/bulk-action/</code></td>
+<td>Approve/reject multiple at once</td>
+</tr>
+<tr>
+<td>Add balance</td>
+<td><code>POST /payments/balance/add/</code></td>
+<td>Add to student's course balance</td>
+</tr>
+<tr>
+<td>Lecture purchases</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/purchases/</code></td>
+<td>Who bought this lecture, when, expiry</td>
+</tr>
+<tr>
+<td>Student progress</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></td>
+<td>Video watch progress per lecture</td>
+</tr>
+<tr>
+<td>Quiz submissions</td>
+<td><code>GET /learning/quiz-submissions/&lt;id&gt;/</code></td>
+<td>Student quiz scores</td>
+</tr>
+<tr>
+<td>Homework submissions</td>
+<td><code>GET /learning/homework-submissions/&lt;id&gt;/</code></td>
+<td>Student homework grades</td>
+</tr>
+<tr>
+<td>Reopen lecture</td>
+<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></td>
+<td>Extend student's access to a lecture</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Per-student expandable row shows:</strong></p>
+<ul>
+<li>Current balance for this course</li>
+<li>Purchased lectures (with expiry dates, watch counts, reopen button)</li>
+<li>Quiz submissions (scores, passed/failed)</li>
+<li>Homework submissions (scores, graded/pending)</li>
+<li>Overall progress summary</li>
+</ul>
+<hr>
+<h3 id="page-8-assistants-page-teachers-only">Page 8: Assistants Page (Teachers Only)</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List assistants</td>
+<td>GET</td>
+<td><code>/accounts/teacher/assistants/</code></td>
+<td>List my assistants</td>
+</tr>
+<tr>
+<td>Create assistant</td>
+<td>POST</td>
+<td><code>/accounts/teacher/assistants/</code></td>
+<td>Create new assistant</td>
+</tr>
+<tr>
+<td>Get assistant</td>
+<td>GET</td>
+<td><code>/accounts/teacher/assistant/&lt;id&gt;/</code></td>
+<td>View assistant detail</td>
+</tr>
+<tr>
+<td>Update assistant</td>
+<td>PATCH</td>
+<td><code>/accounts/teacher/assistant/&lt;id&gt;/</code></td>
+<td>Update assistant</td>
+</tr>
+<tr>
+<td>Delete assistant</td>
+<td>DELETE</td>
+<td><code>/accounts/teacher/assistant/&lt;id&gt;/</code></td>
+<td>Delete assistant</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> Assistant <code>teacher</code> field is auto-set to the creating teacher's profile.</p>
+<p><strong>⚠️ Grade Removal Cascade:</strong> Removing a grade from the teacher's profile sets all courses for that grade to <code>is_active = False</code>.
+<strong>⚠️ Subject Change Cascade:</strong> Changing the teacher's subject sets all active courses to <code>is_active = False</code>.</p>
+<hr>
+<h3 id="page-9-student-report">Page 9: Student Report</h3>
 <table>
 <thead>
 <tr>
@@ -1442,8 +1346,30 @@ If you change the teacher's subject, <strong>all</strong> active courses for tha
 </tbody>
 </table>
 <hr>
-<h3 id="page-9-teacher-dashboard-last--standalone-page">Page 9: Teacher Dashboard (Last — Standalone Page)</h3>
-<p><strong>Coming last</strong> — teacher dashboard with aggregated stats.</p>
+<h3 id="page-10-course-dashboard-built-last">Page 10: Course Dashboard (Built Last)</h3>
+<p>When all features exist, build the <strong>Course Dashboard</strong> — a single page with 4 tabs.</p>
+<pre class="hljs"><code><div>┌────────────────────────────────────────────────────────────┐
+│  ← Chemistry 3rd Secondary                                 │
+│                                                            │
+│  ┌──────────┬─────────────────────┬──────────┬───────────┐ │
+│  │  📊     │  👥                 │  📚     │  📋       │ │
+│  │Overview │ Students            │ Content  │ Reports   │ │
+│  │ (Stats) │ Enrollments,        │ Topics   │ Student   │ │
+│  │         │ Balances, Purchases │→Lectures│ Report    │ │
+│  │         │ Progress, Reopen    │→Videos   │           │ │
+│  │         │                     │ Preview  │           │ │
+│  └──────────┴─────────────────────┴──────────┴───────────┘ │
+│                                                            │
+│  ❌ No Settings tab — only SiteOwner can edit courses       │
+└────────────────────────────────────────────────────────────┘
+</div></code></pre>
+<p><strong>Tab 1: Overview</strong> — <code>GET /courses/&lt;id&gt;/</code> with course stats (enrolled, pending, topic, lecture, video counts).</p>
+<p><strong>Tab 2: Students</strong> — Same as Page 7, embedded as a tab.</p>
+<p><strong>Tab 3: Content</strong> — Same as Page 2, embedded as a tab.</p>
+<p><strong>Tab 4: Reports</strong> — Same as Page 9, embedded as a tab.</p>
+<hr>
+<h3 id="page-11-teacher-dashboard-last--standalone-page">Page 11: Teacher Dashboard (Last — Standalone Page)</h3>
+<p><strong>Coming last</strong> — teacher dashboard with aggregated stats across all courses. <code>GET /courses/dashboard/teacher/</code>.</p>
 <hr>
 <h2 id="behavioral-rules-applied-throughout">Behavioral Rules Applied Throughout</h2>
 <ul>
