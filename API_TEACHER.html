@@ -1416,112 +1416,7 @@ code {
 <li><code>effective_expiry</code> is recalculated as <code>expires_at + extra_days</code>.</li>
 </ul>
 <hr>
-<h2 id="10-question-bank">10. Question Bank</h2>
-<hr>
-<h4 id="get-question-bankquestions">GET /question-bank/questions/</h4>
-<p><strong>Description:</strong> List questions accessible to the authenticated teacher.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Query Parameters:</strong></p>
-<ul>
-<li><code>lesson</code> — Filter by lesson ID</li>
-<li><code>question_type</code> — <code>mcq_single</code>, <code>mcq_multiple</code>, <code>written</code></li>
-<li><code>difficulty</code> — <code>easy</code>, <code>medium</code>, <code>hard</code></li>
-<li><code>is_global</code> — <code>true</code> or <code>false</code></li>
-<li><code>lesson__chapter__subject</code> — Filter by subject</li>
-<li><code>lesson__chapter__grade</code> — Filter by grade</li>
-<li><code>search</code> — Search in question text and explanation</li>
-</ul>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer - Number of items"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
-      <span class="hljs-attr">"lesson"</span>: <span class="hljs-string">"integer - Lesson ID"</span>,
-      <span class="hljs-attr">"lesson_name"</span>: <span class="hljs-string">"String - Lesson name"</span>,
-      <span class="hljs-attr">"chapter_name"</span>: <span class="hljs-string">"String - Chapter name"</span>,
-      <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"String - Subject name"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple|written)"</span>,
-      <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"String (easy|medium|hard)"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"Integer - Question point value"</span>,
-      <span class="hljs-attr">"choice_count"</span>: <span class="hljs-string">"Integer - Number of choices"</span>,
-      <span class="hljs-attr">"is_global"</span>: <span class="hljs-string">"Boolean - Whether question is shared with other teachers"</span>,
-      <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer - User ID of creator"</span>,
-      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h4 id="post-question-bankquestions">POST /question-bank/questions/</h4>
-<p><strong>Description:</strong> Create a new question with optional choices.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lesson"</span>: <span class="hljs-string">"Integer - Lesson ID"</span>,
-  <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple|written)"</span>,
-  <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Question text"</span>,
-  <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"String (easy|medium|hard)"</span>,
-  <span class="hljs-attr">"points"</span>: <span class="hljs-string">"Integer - Question point value"</span>,
-  <span class="hljs-attr">"explanation"</span>: <span class="hljs-string">"String - Explanation"</span>,
-  <span class="hljs-attr">"is_global"</span>: <span class="hljs-string">"Boolean - Whether question is shared with other teachers"</span>,
-  <span class="hljs-attr">"choices"</span>: [
-    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
-    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
-    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
-    {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean - Whether this is correct"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>}
-  ]
-}
-</div></code></pre>
-<p><strong>Notes:</strong></p>
-<ul>
-<li><code>choices</code> is optional for <code>written</code> type questions</li>
-<li>Each choice must have <code>text</code> or <code>image</code> (or both)</li>
-<li>The question itself must have <code>text</code> or <code>image</code> (or both)</li>
-</ul>
-<p><strong>Success Response — 201 Created:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer - Unique identifier"</span>,
-  <span class="hljs-attr">"lesson"</span>: <span class="hljs-string">"Integer - Lesson ID"</span>,
-  <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple|written)"</span>,
-  <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Question text"</span>,
-  ...
-}
-</div></code></pre>
-<hr>
-<h4 id="get-question-bankquestionsid">GET /question-bank/questions/{id}/</h4>
-<p><strong>Description:</strong> Retrieve a single question with all choices (including <code>is_correct</code>).</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<hr>
-<h4 id="put-question-bankquestionsid">PUT /question-bank/questions/{id}/</h4>
-<p><strong>Description:</strong> Update a question. Sending <code>choices</code> will replace all existing choices.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
-<hr>
-<h4 id="delete-question-bankquestionsid">DELETE /question-bank/questions/{id}/</h4>
-<p><strong>Description:</strong> Delete a question.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
-<hr>
-<h4 id="post-question-bankquestionsrandom-select">POST /question-bank/questions/random-select/</h4>
-<p><strong>Description:</strong> Randomly select question IDs from the bank for quiz/homework creation.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lesson"</span>: <span class="hljs-string">"Integer - Lesson ID"</span>,
-  <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple|written)"</span>,
-  <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"String (easy|medium|hard)"</span>,
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer - Number of items"</span>
-}
-</div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total_available"</span>: <span class="hljs-string">"Integer - Total available questions"</span>,
-  <span class="hljs-attr">"requested"</span>: <span class="hljs-string">"Integer - Number requested"</span>,
-  <span class="hljs-attr">"selected"</span>: <span class="hljs-string">"Array[Integer] - Selected question IDs"</span>
-}
-</div></code></pre>
-<hr>
-<h2 id="11-homeworks">11. Homeworks</h2>
+<h2 id="10-homeworks">10. Homeworks</h2>
 <hr>
 <h4 id="get-learninghomeworks">GET /learning/homeworks/</h4>
 <p><strong>Description:</strong> List homeworks.</p>
@@ -1566,18 +1461,12 @@ code {
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean - Whether this item is active"</span>,
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean - Whether this item is published"</span>,
   <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-  <span class="hljs-attr">"question_ids"</span>: <span class="hljs-string">"Array[Integer] - Question IDs"</span>
+  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>
 }
 </div></code></pre>
 <p><strong>Notes:</strong></p>
 <ul>
-<li>Homework supports two question modes:
-<ol>
-<li><strong>From Question Bank (advanced):</strong> Uses existing <code>question_ids</code> field — questions with text and images from the Question Bank.</li>
-<li><strong>Bubble Sheet (simple):</strong> No questions needed. Just bubble question definitions with <code>choices_count</code>, <code>correct_answers</code>, and <code>points</code>. Students solve from a physical book and submit their answers.</li>
-</ol>
-</li>
+<li>Homework uses the <strong>Bubble Sheet</strong> model. Define questions in a separate request to <code>POST /learning/homeworks/&lt;id&gt;/bubble-questions/</code> (see Bubble Sheet section).</li>
 <li><code>model_answer</code> is shown to students after they submit.</li>
 <li>Bubble sheets are auto-graded on submission.</li>
 </ul>
@@ -1597,27 +1486,6 @@ code {
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean"</span>,
   <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"questions"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"question"</span>: <span class="hljs-string">"Integer - QuestionBank ID"</span>,
-      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"question_image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple)"</span>,
-      <span class="hljs-attr">"choices"</span>: [
-        {
-          <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-          <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String"</span>,
-          <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-          <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"Boolean"</span>,
-          <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>
-        }
-      ]
-    }
-  ],
   <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
   <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
@@ -1640,7 +1508,7 @@ code {
 <p><strong>Description:</strong> View a specific submission (includes model answer for the student).</p>
 <p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
 <hr>
-<h2 id="12-quizzes">12. Quizzes</h2>
+<h2 id="11-quizzes">11. Quizzes</h2>
 <hr>
 <h4 id="get-learningquizzes">GET /learning/quizzes/</h4>
 <p><strong>Description:</strong> List quizzes.</p>
@@ -1706,19 +1574,13 @@ code {
     <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"Integer - Maximum number of attempts"</span>,
     <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"String (best|average|last)"</span>,
     <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"Boolean - Whether correct answers are shown after submission"</span>
-  },
-  <span class="hljs-attr">"question_ids"</span>: <span class="hljs-string">"Array[Integer] - Question IDs"</span>
+  }
 }
 </div></code></pre>
 <p><strong>Notes:</strong></p>
 <ul>
 <li><code>passing_score</code> is optional (null = no passing threshold)</li>
-<li>Quiz questions can come from two sources:
-<ol>
-<li><strong>Question Bank:</strong> Send <code>question_ids</code> — references existing questions from the Question Bank.</li>
-<li><strong>Standalone:</strong> Create questions directly on the quiz (text + choices + images) without going through the Question Bank.</li>
-</ol>
-</li>
+<li>Quiz questions are <strong>standalone only</strong> — create them with text, image, and choices directly via separate requests to the quiz questions endpoints.</li>
 <li><code>score_visibility</code> / <code>answers_visibility</code>: <code>immediate</code>, <code>after_close</code>, <code>manual</code></li>
 <li>Timer: <code>0</code> = no time limit.</li>
 </ul>
@@ -1754,7 +1616,6 @@ code {
   <span class="hljs-attr">"questions"</span>: [
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"question"</span>: <span class="hljs-string">"Integer - QuestionBank ID"</span>,
       <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"Integer | null"</span>,
       <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"Integer"</span>,
@@ -1777,7 +1638,7 @@ code {
 </div></code></pre>
 <hr>
 <h4 id="put-learningquizzesid">PUT /learning/quizzes/{id}/</h4>
-<p><strong>Description:</strong> Update a quiz. Sending <code>question_ids</code> replaces all questions.</p>
+<p><strong>Description:</strong> Update a quiz.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
 <hr>
 <h4 id="delete-learningquizzesid">DELETE /learning/quizzes/{id}/</h4>
@@ -1817,7 +1678,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h2 id="13-study-materials">13. Study Materials</h2>
+<h2 id="12-study-materials">12. Study Materials</h2>
 <hr>
 <h4 id="post-materials">POST /materials/</h4>
 <p><strong>Description:</strong> Upload a new PDF study material.</p>
@@ -1880,7 +1741,7 @@ code {
 <p><strong>Description:</strong> Delete a material.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
 <hr>
-<h2 id="14-balance">14. Balance</h2>
+<h2 id="13-balance">13. Balance</h2>
 <hr>
 <h4 id="post-paymentsbalanceadd">POST /payments/balance/add/</h4>
 <p><strong>Description:</strong> Teacher or Assistant directly adds balance to a student's course account. Creates a full audit trail.</p>
@@ -1988,7 +1849,7 @@ code {
 ]
 </div></code></pre>
 <hr>
-<h2 id="15-dashboard">15. Dashboard</h2>
+<h2 id="14-dashboard">14. Dashboard</h2>
 <hr>
 <h4 id="get-coursesdashboardteacher">GET /courses/dashboard/teacher/</h4>
 <p><strong>Description:</strong> Get aggregated stats for the teacher's dashboard.</p>
@@ -2051,7 +1912,7 @@ code {
 <li>Revenue is calculated using database-level aggregation for performance.</li>
 </ul>
 <hr>
-<h2 id="16-notifications">16. Notifications</h2>
+<h2 id="15-notifications">15. Notifications</h2>
 <hr>
 <h4 id="get-notifications">GET /notifications/</h4>
 <p><strong>Description:</strong> List all notifications for the authenticated user.</p>
@@ -2127,7 +1988,7 @@ code {
 </tbody>
 </table>
 <hr>
-<h2 id="17-student-report">17. Student Report</h2>
+<h2 id="16-student-report">16. Student Report</h2>
 <hr>
 <h4 id="get-coursescoursepkstudent-reportstudentid">GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</h4>
 <p><strong>Description:</strong> Returns everything about a student within a specific course. Teacher/Assistant only.</p>
@@ -2207,7 +2068,7 @@ code {
 </tbody>
 </table>
 <hr>
-<h2 id="18-lecture-prerequisites">18. Lecture Prerequisites</h2>
+<h2 id="17-lecture-prerequisites">17. Lecture Prerequisites</h2>
 <hr>
 <h4 id="get-courseslecturesidprerequisites">GET /courses/lectures/<id>/prerequisites/</h4>
 <p><strong>Description:</strong> List all prerequisites for a lecture.</p>
@@ -2254,7 +2115,7 @@ code {
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
-<h2 id="19-watching-times-limit">19. Watching Times Limit</h2>
+<h2 id="18-watching-times-limit">18. Watching Times Limit</h2>
 <p>Each lecture enforces a <strong>watching times limit</strong> (default: 4). Once a student has used all their watching times, the lecture's videos are locked.</p>
 <ul>
 <li>The limit applies to the <strong>entire lecture</strong> — watching any video counts toward the limit.</li>
