@@ -365,12 +365,13 @@ code {
           : 'default'
     });
   </script>
-<h1 id="edutrack-online---teacher-api">EduTrack Online - Teacher API</h1>
+<h1 id="edutrack-online---teacher--assistant-api">EduTrack Online - Teacher &amp; Assistant API</h1>
 <blockquote>
 <p><strong>Version:</strong> 1.1
 <strong>Date:</strong> April 29, 2026
-<strong>Target Audience:</strong> Next.js Frontend Developers (Teacher Views)
+<strong>Target Audience:</strong> Next.js Frontend Developers (Teacher &amp; Assistant Views)
 <strong>Backend:</strong> Django REST Framework</p>
+<p><strong>Note:</strong> This API documentation applies to <strong>both Teacher and Assistant roles</strong> unless explicitly stated. Assistants have access to the same Course Dashboard, content management, enrollments, quizzes, homeworks, and materials as teachers. The only Assistant restriction is they <strong>cannot create or delete assistants</strong> (view-only).</p>
 </blockquote>
 <hr>
 <h3 id="authentication">Authentication</h3>
@@ -763,6 +764,23 @@ code {
 <hr>
 <h4 id="get-coursestopicsid">GET /courses/topics/<id>/</h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>as_student</code></td>
+<td>String</td>
+<td>Set to <code>true</code> to preview what a student sees (hides inactive topics, invisible lectures)</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Success Response — 200 OK:</strong> Single topic with nested lectures.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -895,6 +913,23 @@ code {
 <hr>
 <h4 id="get-courseslecturesid">GET /courses/lectures/<id>/</h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>as_student</code></td>
+<td>String</td>
+<td>Set to <code>true</code> to preview what a student sees (hides inactive videos)</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Success Response — 200 OK:</strong> Single lecture with nested videos.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
