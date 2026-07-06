@@ -1094,6 +1094,13 @@ code {
 </table>
 <hr>
 <h2 id="7-videos">7. Videos</h2>
+<p>All videos are hosted on <strong>Bunny Stream</strong>. The upload flow is:</p>
+<pre class="hljs"><code><div>1. Teacher creates a video record → POST /courses/videos/
+2. Teacher generates the Bunny upload URL → POST /courses/videos/&lt;id&gt;/create-upload/
+3. Frontend uploads the file directly to Bunny's CDN (PUT to upload_url)
+4. Bunny processes the video and calls the webhook when done
+5. Frontend polls GET /courses/videos/&lt;id&gt;/ until status=4 (Finished)
+</div></code></pre>
 <hr>
 <h4 id="get-coursesvideos">GET /courses/videos/</h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
@@ -1113,9 +1120,9 @@ code {
 <td>Filter by lecture ID</td>
 </tr>
 <tr>
-<td><code>platform</code></td>
-<td>String</td>
-<td>Filter by platform (<code>youtube</code>, <code>bunnystream</code>, <code>vdocipher</code>)</td>
+<td><code>bunny_status</code></td>
+<td>Integer</td>
+<td>Filter by encoding status</td>
 </tr>
 <tr>
 <td><code>is_active</code></td>
@@ -1125,7 +1132,7 @@ code {
 <tr>
 <td><code>search</code></td>
 <td>String</td>
-<td>Search by name or video URL</td>
+<td>Search by name</td>
 </tr>
 <tr>
 <td><code>ordering</code></td>
@@ -1134,7 +1141,27 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong> Array of videos (same structure as lecture videos).</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null — Bunny Stream GUID"</span>,
+      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
+      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
 <hr>
 <h4 id="post-coursesvideos">POST /courses/videos/</h4>
 <p><strong>Authentication:</strong> Teacher</p>
@@ -1143,43 +1170,37 @@ code {
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer (Required) — Lecture ID"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"platform"</span>: <span class="hljs-string">"String (Required) — youtube|bunnystream|vdocipher"</span>,
-  <span class="hljs-attr">"video_url"</span>: <span class="hljs-string">"String (Required) — Must match platform format"</span>,
   <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional) — Default: 0"</span>,
   <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer (Optional)"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional) — Default: true"</span>
 }
 </div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-<th>Response Body</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>400</code></td>
-<td>Invalid YouTube URL</td>
-<td><code>{&quot;video_url&quot;: [&quot;YouTube URL must contain 'youtube.com' or 'youtu.be'.&quot;]}</code></td>
-</tr>
-<tr>
-<td><code>400</code></td>
-<td>Invalid Bunny Stream URL</td>
-<td><code>{&quot;video_url&quot;: [&quot;Bunny Stream URL must contain 'bunnycdn' or 'b-cdn.net'.&quot;]}</code></td>
-</tr>
-<tr>
-<td><code>400</code></td>
-<td>Invalid VDO Cipher URL</td>
-<td><code>{&quot;video_url&quot;: [&quot;VDO Cipher URL must be a valid HTTPS URL.&quot;]}</code></td>
-</tr>
-</tbody>
-</table>
+<p><strong>Success Response — 201 Created:</strong> Single video object (same structure as list item).</p>
 <hr>
 <h4 id="get-coursesvideosid">GET /courses/videos/<id>/</h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong> Single video object.</p>
+<hr>
+<h4 id="post-coursesvideosidcreate-upload">POST /courses/videos/<id>/create-upload/</h4>
+<p><strong>Description:</strong> Creates the video entry on Bunny Stream and returns a direct upload URL. The teacher's browser uploads the file directly to Bunny's CDN — <strong>no file passes through our backend</strong>.</p>
+<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
+<p><strong>Request Body:</strong> None</p>
+<p><strong>Success Response — 201 Created:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"Integer — Local video ID"</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String — Bunny Stream GUID"</span>,
+  <span class="hljs-attr">"upload_url"</span>: <span class="hljs-string">"String — URL to PUT the video file to (directly to Bunny CDN)"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"Integer — Initial Bunny status (0=Created)"</span>
+}
+</div></code></pre>
+<p><strong>Upload Instructions (Frontend):</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Direct upload from browser to Bunny CDN — 0 backend load</span>
+<span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(uploadUrl, {
+  <span class="hljs-attr">method</span>: <span class="hljs-string">'PUT'</span>,
+  <span class="hljs-attr">headers</span>: { <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/octet-stream'</span> },
+  <span class="hljs-attr">body</span>: file, <span class="hljs-comment">// File object up to 5GB</span>
+});
+</div></code></pre>
 <hr>
 <h4 id="putpatch-coursesvideosid">PUT/PATCH /courses/videos/<id>/</h4>
 <p><strong>Authentication:</strong> Teacher</p>

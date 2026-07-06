@@ -411,26 +411,31 @@ code {
 <li><a href="#get-coursespurchasesmy">GET /courses/purchases/my/</a></li>
 </ul>
 </li>
-<li><a href="#7-video-watch-progress">Video Watch Progress</a>
+<li><a href="#7-video-playback">Video Playback</a>
+<ul>
+<li><a href="#get-coursesvideosidplay">GET /courses/videos/<id>/play/</a></li>
+</ul>
+</li>
+<li><a href="#8-video-watch-progress">Video Watch Progress</a>
 <ul>
 <li><a href="#get-coursesprogress">GET /courses/progress/</a></li>
 <li><a href="#post-coursesprogressupdate">POST /courses/progress/update/</a></li>
 <li><a href="#get-coursesprogressvideo_id">GET /courses/progress/&lt;video_id&gt;/</a></li>
 </ul>
 </li>
-<li><a href="#8-balance">Balance</a>
+<li><a href="#9-balance">Balance</a>
 <ul>
 <li><a href="#get-paymentsbalancemy">GET /payments/balance/my/</a></li>
 <li><a href="#post-paymentscodesredeem">POST /payments/codes/redeem/</a></li>
 </ul>
 </li>
-<li><a href="#9-homeworks">Homeworks</a>
+<li><a href="#10-homeworks">Homeworks</a>
 <ul>
 <li><a href="#get-learninghomeworksmy">GET /learning/homeworks/my/</a></li>
 <li><a href="#post-learninghomeworksidsubmit">POST /learning/homeworks/<id>/submit/</a></li>
 </ul>
 </li>
-<li><a href="#10-quizzes">Quizzes</a>
+<li><a href="#11-quizzes">Quizzes</a>
 <ul>
 <li><a href="#get-learningquizzesmy">GET /learning/quizzes/my/</a></li>
 <li><a href="#post-learningquizzesidstart">POST /learning/quizzes/<id>/start/</a></li>
@@ -438,12 +443,12 @@ code {
 <li><a href="#get-learningquizzesidresults">GET /learning/quizzes/<id>/results/</a></li>
 </ul>
 </li>
-<li><a href="#11-study-materials">Study Materials</a>
+<li><a href="#12-study-materials">Study Materials</a>
 <ul>
 <li><a href="#get-materialsmy">GET /materials/my/</a></li>
 </ul>
 </li>
-<li><a href="#12-notifications">Notifications</a>
+<li><a href="#13-notifications">Notifications</a>
 <ul>
 <li><a href="#get-notifications">GET /notifications/</a></li>
 <li><a href="#get-notificationsunread-count">GET /notifications/unread-count/</a></li>
@@ -1034,7 +1039,89 @@ code {
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong> Array of purchased lectures.</p>
 <hr>
-<h2 id="7-video-watch-progress">7. Video Watch Progress</h2>
+<h2 id="7-video-playback">7. Video Playback</h2>
+<hr>
+<h3 id="get-coursesvideosidplay">GET /courses/videos/<id>/play/</h3>
+<p><strong>Description:</strong> Get a signed playback URL for a video. Enforces purchase check, expiry, watching limits, and prerequisites before returning the URL.</p>
+<p><strong>Authentication:</strong> Student (must have purchased the lecture)</p>
+<p><strong>Request Body:</strong> None</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"String — Signed Bunny Stream URL (expires in 2 hours)"</span>,
+  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"Integer — Unix timestamp when the URL expires"</span>,
+  <span class="hljs-attr">"token"</span>: <span class="hljs-string">"String — The generated security token"</span>
+}
+</div></code></pre>
+<p><strong>Access Rules:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Blocked?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lecture not purchased</td>
+<td><code>403</code></td>
+</tr>
+<tr>
+<td>Purchase expired</td>
+<td><code>403</code></td>
+</tr>
+<tr>
+<td>Maximum watching limit reached (default: 4)</td>
+<td><code>403</code></td>
+</tr>
+<tr>
+<td>Prerequisite homework not passed</td>
+<td><code>403</code></td>
+</tr>
+<tr>
+<td>Prerequisite quiz not passed</td>
+<td><code>403</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>403</code></td>
+<td>Not purchased</td>
+<td><code>{&quot;error&quot;: &quot;You have not purchased this lecture.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Expired</td>
+<td><code>{&quot;error&quot;: &quot;Your access to this lecture has expired.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Watching limit</td>
+<td><code>{&quot;error&quot;: &quot;You have reached the maximum watching limit...&quot;}</code></td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Prerequisite not met</td>
+<td><code>{&quot;error&quot;: &quot;You must pass the homework (ID X) before accessing this video.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Video not found/not active</td>
+<td><code>{&quot;error&quot;: &quot;Video is not available.&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="8-video-watch-progress">8. Video Watch Progress</h2>
 <hr>
 <h3 id="get-coursesprogress">GET /courses/progress/</h3>
 <p><strong>Description:</strong> List the student's video watch progress.</p>
@@ -1144,7 +1231,7 @@ code {
 </tbody>
 </table>
 <hr>
-<h2 id="8-balance">8. Balance</h2>
+<h2 id="9-balance">9. Balance</h2>
 <hr>
 <h3 id="get-paymentsbalancemy">GET /payments/balance/my/</h3>
 <p><strong>Description:</strong> Get all course balances for the authenticated student. Shows available balance per course.</p>
@@ -1226,7 +1313,7 @@ code {
 <li>Every redemption creates an immutable <code>BalanceTransaction</code> ledger entry.</li>
 </ul>
 <hr>
-<h2 id="9-homeworks">9. Homeworks</h2>
+<h2 id="10-homeworks">10. Homeworks</h2>
 <hr>
 <h3 id="get-learninghomeworksmy">GET /learning/homeworks/my/</h3>
 <p><strong>Description:</strong> Get all homework submissions for the logged-in student.</p>
@@ -1278,7 +1365,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h2 id="10-quizzes">10. Quizzes</h2>
+<h2 id="11-quizzes">11. Quizzes</h2>
 <hr>
 <h3 id="get-learningquizzesmy">GET /learning/quizzes/my/</h3>
 <p><strong>Description:</strong> Get all quiz submissions for the logged-in student.</p>
@@ -1375,7 +1462,7 @@ code {
 <p><strong>Description:</strong> List all student submissions for a quiz.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <hr>
-<h2 id="11-study-materials">11. Study Materials</h2>
+<h2 id="12-study-materials">12. Study Materials</h2>
 <hr>
 <h3 id="get-materialsmy">GET /materials/my/</h3>
 <p><strong>Description:</strong> Get all study materials for lectures the student has purchased.</p>
@@ -1394,7 +1481,7 @@ code {
 ]
 </div></code></pre>
 <hr>
-<h2 id="12-notifications">12. Notifications</h2>
+<h2 id="13-notifications">13. Notifications</h2>
 <hr>
 <h3 id="get-notifications">GET /notifications/</h3>
 <p><strong>Description:</strong> List all notifications for the authenticated user.</p>

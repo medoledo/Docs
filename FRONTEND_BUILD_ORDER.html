@@ -1050,7 +1050,22 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <tr>
 <td>Videos CRUD</td>
 <td><code>GET/POST /courses/videos/</code></td>
-<td>Bunny Stream only</td>
+<td>Create video metadata record</td>
+</tr>
+<tr>
+<td>Create Bunny upload</td>
+<td><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></td>
+<td>Returns <code>upload_url</code> for direct CDN upload</td>
+</tr>
+<tr>
+<td>Generate playback URL</td>
+<td><code>GET /courses/videos/&lt;id&gt;/play/</code></td>
+<td>Signed URL for student playback</td>
+</tr>
+<tr>
+<td>Delete video</td>
+<td><code>DELETE /courses/videos/&lt;id&gt;/</code></td>
+<td>Teacher delete video record</td>
 </tr>
 <tr>
 <td>Lecture purchases</td>
@@ -1084,6 +1099,23 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </tr>
 </tbody>
 </table>
+<p><strong>Bunny Stream Upload Flow (Videos Tab):</strong></p>
+<pre class="hljs"><code><div>Teacher clicks &quot;Add Video&quot; → POST /courses/videos/ { lecture, name }
+    → Video record created with id, bunny_video_id=null
+
+Teacher clicks &quot;Upload&quot; on the video → POST /courses/videos/&lt;id&gt;/create-upload/
+    → Backend calls Bunny API to create video entry
+    → Returns { upload_url, bunny_video_id, status }
+
+Frontend uploads the file DIRECTLY to Bunny CDN — 0 backend load:
+    fetch(uploadUrl, { method: 'PUT', headers: {'Content-Type': 'application/octet-stream'}, body: file })
+
+Frontend polls GET /courses/videos/&lt;id&gt;/ until bunny_status=4 (Finished)
+    → Show progress bar based on status: Created → Uploaded → Processing → Transcoding → ✅ Finished
+
+When status=4, Bunny also calls the webhook and backend sets is_active=true
+</div></code></pre>
+<p><strong>Playback (Student):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns a signed URL with 2-hour expiry. The frontend loads this URL in a Bunny Stream player HLS video element.</p>
 <p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to force student-view filtering. Only active topics, visible lectures, and active videos are shown — exactly what a student would see. The teacher can toggle this on/off in the UI to compare views.</p>
 <p><strong>Lecture detail sub-tabs:</strong></p>
 <ul>
