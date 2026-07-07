@@ -973,14 +973,17 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <p><strong>Lecture detail sub-tabs (built incrementally as pages below are completed):</strong></p>
 <ul>
 <li><strong>Videos</strong> — manage videos (built here)</li>
-<li><strong>Homework</strong> — submissions + grades (built in Page 4)</li>
-<li><strong>Quiz</strong> — submissions + scores (built in Page 5)</li>
+<li><strong>Homework</strong> — submissions + grades (built in Page 3, filtered by <code>?lecture=&lt;id&gt;</code>)</li>
+<li><strong>Quiz</strong> — submissions + scores (built in Page 4, filtered by <code>?lecture=&lt;id&gt;</code>)</li>
 <li><strong>Materials</strong> — uploaded PDFs (built in Page 6)</li>
 <li><strong>Prerequisites</strong> — gate configuration (built in Page 7)</li>
 </ul>
 <p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to force student-view filtering. Only active topics, visible lectures, and active videos are shown.</p>
 <hr>
-<h3 id="page-3-homework-bubble-sheet-fills-content-%E2%86%92-lecture-%E2%86%92-homework-tab">Page 3: Homework Bubble Sheet (Fills Content → Lecture → Homework Tab)</h3>
+<h3 id="page-3-homeworks--standalone-management-page">Page 3: Homeworks — Standalone Management Page</h3>
+<p><strong>Purpose:</strong> Manage ALL homeworks across all courses in one place. Table view with filters, search, and quick status overview.</p>
+<p><strong>Filters available:</strong> <code>lecture</code>, <code>is_active</code>, <code>is_published</code>, search by title/description.
+<strong>Navigation:</strong> Click a homework row → view its submissions. Create homework → associates with a lecture.</p>
 <table>
 <thead>
 <tr>
@@ -992,16 +995,16 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 </thead>
 <tbody>
 <tr>
+<td>List homeworks</td>
+<td>GET</td>
+<td><code>/learning/homeworks/</code></td>
+<td><strong>All homeworks</strong> with filters (<code>?lecture=X</code>, <code>?is_active=true</code>)</td>
+</tr>
+<tr>
 <td>Create homework</td>
 <td>POST</td>
 <td><code>/learning/homeworks/</code></td>
 <td>Create bubble-sheet homework</td>
-</tr>
-<tr>
-<td>List homeworks</td>
-<td>GET</td>
-<td><code>/learning/homeworks/</code></td>
-<td>Filter by lecture</td>
 </tr>
 <tr>
 <td>Get homework</td>
@@ -1025,7 +1028,13 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <td>View submissions</td>
 <td>GET</td>
 <td><code>/learning/homeworks/&lt;id&gt;/submissions/</code></td>
-<td>Student answers</td>
+<td>All student answers for this homework</td>
+</tr>
+<tr>
+<td>View student's homeworks</td>
+<td>GET</td>
+<td><code>/learning/homeworks/my/</code></td>
+<td>Student's own homework history</td>
 </tr>
 </tbody>
 </table>
@@ -1039,8 +1048,12 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
   ]
 }
 </div></code></pre>
+<p><strong>Also fills the Lecture Detail → Homework tab</strong> — From the Content Management page, clicking a lecture's Homework tab shows the same data pre-filtered to that lecture (<code>?lecture=&lt;id&gt;</code>). All tables, filters, and actions are identical — just a different URL filter.</p>
 <hr>
-<h3 id="page-4-quizzes-fills-content-%E2%86%92-lecture-%E2%86%92-quiz-tab">Page 4: Quizzes (Fills Content → Lecture → Quiz Tab)</h3>
+<h3 id="page-4-quizzes--standalone-management-page">Page 4: Quizzes — Standalone Management Page</h3>
+<p><strong>Purpose:</strong> Manage ALL quizzes across all courses in one place. Table view with filters, search, and quick status overview.</p>
+<p><strong>Filters available:</strong> <code>lecture</code>, <code>is_active</code>, <code>is_published</code>.
+<strong>Navigation:</strong> Click a quiz row → view its questions/settings/submissions.</p>
 <table>
 <thead>
 <tr>
@@ -1052,16 +1065,16 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 </thead>
 <tbody>
 <tr>
+<td>List quizzes</td>
+<td>GET</td>
+<td><code>/learning/quizzes/</code></td>
+<td><strong>All quizzes</strong> with filters (<code>?lecture=X</code>, <code>?is_active=true</code>)</td>
+</tr>
+<tr>
 <td>Create quiz</td>
 <td>POST</td>
 <td><code>/learning/quizzes/</code></td>
 <td>With settings</td>
-</tr>
-<tr>
-<td>List quizzes</td>
-<td>GET</td>
-<td><code>/learning/quizzes/</code></td>
-<td>Filter by lecture</td>
 </tr>
 <tr>
 <td>Get quiz</td>
@@ -1082,16 +1095,16 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <td>Delete</td>
 </tr>
 <tr>
-<td>Start attempt</td>
-<td>POST</td>
-<td><code>/learning/quizzes/&lt;id&gt;/start/</code></td>
-<td>Student starts</td>
+<td>View submissions</td>
+<td>GET</td>
+<td><code>/learning/quizzes/&lt;id&gt;/results/</code></td>
+<td>All student submissions</td>
 </tr>
 <tr>
-<td>Submit attempt</td>
-<td>POST</td>
-<td><code>/learning/quizzes/&lt;id&gt;/submit/</code></td>
-<td>Student submits</td>
+<td>View student's quizzes</td>
+<td>GET</td>
+<td><code>/learning/quizzes/my/</code></td>
+<td>Student's own quiz history</td>
 </tr>
 <tr>
 <td>Grade written</td>
@@ -1113,9 +1126,75 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 </tr>
 </tbody>
 </table>
+<p><strong>Also fills the Lecture Detail → Quiz tab</strong> — From the Content Management page, clicking a lecture's Quiz tab shows the same data pre-filtered to that lecture (<code>?lecture=&lt;id&gt;</code>).</p>
 <p><strong>Questions:</strong> Standalone only (inline text + image + choices).</p>
 <hr>
-<h3 id="page-5-study-materials-fills-content-%E2%86%92-lecture-%E2%86%92-materials-tab">Page 5: Study Materials (Fills Content → Lecture → Materials Tab)</h3>
+<h3 id="page-5-exams-standalone-page--course-level-assessments">Page 5: Exams (Standalone Page — Course-Level Assessments)</h3>
+<p><strong>Purpose:</strong> Create and manage exams independently. Exams are course-level assessments with open/close dates. Not attached to a specific lecture, but can be used as a <strong>prerequisite</strong> for a lecture.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List exams</td>
+<td>GET</td>
+<td><code>/learning/exams/</code></td>
+<td>All exams for teacher's courses</td>
+</tr>
+<tr>
+<td>Create exam</td>
+<td>POST</td>
+<td><code>/learning/exams/</code></td>
+<td>With settings</td>
+</tr>
+<tr>
+<td>Get exam</td>
+<td>GET</td>
+<td><code>/learning/exams/&lt;id&gt;/</code></td>
+<td>With questions and settings</td>
+</tr>
+<tr>
+<td>Update exam</td>
+<td>PUT/PATCH</td>
+<td><code>/learning/exams/&lt;id&gt;/</code></td>
+<td>Update</td>
+</tr>
+<tr>
+<td>Delete exam</td>
+<td>DELETE</td>
+<td><code>/learning/exams/&lt;id&gt;/</code></td>
+<td>Delete</td>
+</tr>
+<tr>
+<td>View submissions</td>
+<td>GET</td>
+<td><code>/learning/exams/&lt;id&gt;/results/</code></td>
+<td>All student submissions</td>
+</tr>
+<tr>
+<td>Release scores</td>
+<td>POST</td>
+<td><code>/learning/exams/&lt;id&gt;/release-scores/</code></td>
+<td>Teacher releases scores</td>
+</tr>
+<tr>
+<td>Release answers</td>
+<td>POST</td>
+<td><code>/learning/exams/&lt;id&gt;/release-answers/</code></td>
+<td>Teacher releases answers</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Questions:</strong> Standalone only (inline text + image + choices).</p>
+<p><strong>Note:</strong> Unlike quizzes, exams are created at the <strong>course level</strong>, not lecture level. They appear in the student's Exams page and can gate lecture access via prerequisites.</p>
+<hr>
+<h3 id="page-6-study-materials-fills-content-%E2%86%92-lecture-%E2%86%92-materials-tab">Page 6: Study Materials (Fills Content → Lecture → Materials Tab)</h3>
 <table>
 <thead>
 <tr>
@@ -1159,7 +1238,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 </tbody>
 </table>
 <hr>
-<h3 id="page-6-lecture-prerequisites-fills-content-%E2%86%92-lecture-%E2%86%92-prerequisites-tab">Page 6: Lecture Prerequisites (Fills Content → Lecture → Prerequisites Tab)</h3>
+<h3 id="page-7-lecture-prerequisites-fills-content-%E2%86%92-lecture-%E2%86%92-prerequisites-tab">Page 7: Lecture Prerequisites (Fills Content → Lecture → Prerequisites Tab)</h3>
 <table>
 <thead>
 <tr>
@@ -1190,7 +1269,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 </tr>
 </tbody>
 </table>
-<p><strong>Types:</strong> <code>homework</code>, <code>quiz</code></p>
+<p><strong>Types:</strong> <code>homework</code>, <code>quiz</code>, <code>exam</code></p>
 <hr>
 <h3 id="page-7-students-page-lecture-purchases--enrollments">Page 7: Students Page (Lecture Purchases &amp; Enrollments)</h3>
 <p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, purchases, progress.</p>
@@ -1279,7 +1358,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <li>Overall progress summary</li>
 </ul>
 <hr>
-<h3 id="page-8-assistants-page-teachers-only">Page 8: Assistants Page (Teachers Only)</h3>
+<h3 id="page-9-assistants-page-teachers-only">Page 9: Assistants Page (Teachers Only)</h3>
 <table>
 <thead>
 <tr>
@@ -1326,7 +1405,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <p><strong>⚠️ Grade Removal Cascade:</strong> Removing a grade from the teacher's profile sets all courses for that grade to <code>is_active = False</code>.
 <strong>⚠️ Subject Change Cascade:</strong> Changing the teacher's subject sets all active courses to <code>is_active = False</code>.</p>
 <hr>
-<h3 id="page-9-student-report">Page 9: Student Report</h3>
+<h3 id="page-10-student-report">Page 10: Student Report</h3>
 <table>
 <thead>
 <tr>
@@ -1346,7 +1425,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 </tbody>
 </table>
 <hr>
-<h3 id="page-10-course-dashboard-built-last">Page 10: Course Dashboard (Built Last)</h3>
+<h3 id="page-11-course-dashboard-built-last">Page 11: Course Dashboard (Built Last)</h3>
 <p>When all features exist, build the <strong>Course Dashboard</strong> — a single page with 4 tabs.</p>
 <pre class="hljs"><code><div>┌────────────────────────────────────────────────────────────┐
 │  ← Chemistry 3rd Secondary                                 │
@@ -1368,7 +1447,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <p><strong>Tab 3: Content</strong> — Same as Page 2, embedded as a tab.</p>
 <p><strong>Tab 4: Reports</strong> — Same as Page 9, embedded as a tab.</p>
 <hr>
-<h3 id="page-11-teacher-dashboard-last--standalone-page">Page 11: Teacher Dashboard (Last — Standalone Page)</h3>
+<h3 id="page-12-teacher-dashboard-last--standalone-page">Page 12: Teacher Dashboard (Last — Standalone Page)</h3>
 <p><strong>Coming last</strong> — teacher dashboard with aggregated stats across all courses. <code>GET /courses/dashboard/teacher/</code>.</p>
 <hr>
 <h2 id="behavioral-rules-applied-throughout">Behavioral Rules Applied Throughout</h2>
