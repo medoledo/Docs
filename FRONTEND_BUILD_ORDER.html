@@ -590,13 +590,25 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <td>Get teacher</td>
 <td>GET</td>
 <td><code>/accounts/teachers/&lt;id&gt;/</code></td>
-<td>Full teacher detail with subject/grades</td>
+<td>Full teacher detail with subject/grades, bunny_collection_id</td>
 </tr>
 <tr>
 <td>Update teacher</td>
 <td>PATCH</td>
 <td><code>/accounts/teachers/&lt;id&gt;/</code></td>
 <td>Update teacher fields</td>
+</tr>
+<tr>
+<td>Assign collection</td>
+<td>PATCH</td>
+<td><code>/accounts/teachers/&lt;id&gt;/assign-collection/</code></td>
+<td>Assign a Bunny Stream collection GUID to teacher</td>
+</tr>
+<tr>
+<td>Create collection</td>
+<td>POST</td>
+<td><code>/accounts/teachers/&lt;id&gt;/create-collection/</code></td>
+<td>Auto-create a Bunny collection and assign it</td>
 </tr>
 <tr>
 <td>List assistants</td>
@@ -608,7 +620,8 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </table>
 <p><strong>Teacher Detail sections:</strong></p>
 <ol>
-<li><strong>Profile Info</strong> — name, phone, gmail, subject, grades, active status. Editable.</li>
+<li><strong>Profile Info</strong> — name, phone, gmail, subject, grades, active status, <code>bunny_collection_id</code>. Editable.</li>
+<li><strong>Bunny Collection</strong> — shows current <code>bunny_collection_id</code> (if assigned). Button to assign a collection: <code>PATCH /accounts/teachers/&lt;id&gt;/assign-collection/</code> with <code>{ &quot;collection_id&quot;: &quot;...&quot; }</code>. Or create one via <code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code>.</li>
 <li><strong>Assistants List</strong> — read-only table showing assigned assistants (name, phone, gmail, is_active). Note: assistants are created later by the teacher themselves.</li>
 <li><strong>Create Course Button</strong> → opens a form to create a course for this teacher.</li>
 </ol>

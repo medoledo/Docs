@@ -445,12 +445,43 @@ code {
 }
 </div></code></pre>
 <blockquote>
-<p><strong>List view is lightweight.</strong> To get full teacher details (phone, gmail, gender, profile_picture, biography, facebook, subject_detail with nested grades/divisions/school_types, video_security), use <code>GET /accounts/teachers/&lt;id&gt;/</code>.</p>
+<p><strong>List view is lightweight.</strong> To get full teacher details (phone, gmail, gender, profile_picture, biography, facebook, subject_detail with nested grades/divisions/school_types, video_security, bunny_collection_id), use <code>GET /accounts/teachers/&lt;id&gt;/</code>.</p>
 </blockquote>
 <hr>
 <h3 id="get-accountsteachersid">GET /accounts/teachers/<id>/</h3>
 <p><strong>Authentication:</strong> SiteOwner</p>
-<p><strong>Success Response — 200 OK:</strong> Same structure as list item.</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"phone"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"secondary_phone"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female)"</span>,
+  <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"biography"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"facebook"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"subject_detail"</span>: {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"grade_ids"</span>: <span class="hljs-string">"Array[Integer]"</span>,
+    <span class="hljs-attr">"grades_detail"</span>: [{<span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>}]
+  },
+  <span class="hljs-attr">"grades_detail"</span>: [{<span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>}],
+  <span class="hljs-attr">"video_security_detail"</span>: {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"price_per_student"</span>: <span class="hljs-string">"String (Decimal)"</span>
+  },
+  <span class="hljs-attr">"bunny_collection_id"</span>: <span class="hljs-string">"String | null — Bunny Stream collection GUID assigned to this teacher"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"courses_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"students_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <hr>
 <h3 id="post-accountsteachers">POST /accounts/teachers/</h3>
 <p><strong>Description:</strong> Create a new teacher user and profile atomically. Supports profile picture upload via multipart/form-data.</p>
@@ -474,7 +505,7 @@ code {
   <span class="hljs-attr">"video_security"</span>: <span class="hljs-string">"Integer (Optional) — VideoSecurity ID"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 201 Created:</strong> Same structure as GET list item.</p>
+<p><strong>Success Response — 201 Created:</strong> Returns the full teacher profile (same structure as GET detail above, including <code>bunny_collection_id</code> which will be null until assigned).</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -524,8 +555,8 @@ code {
 <h3 id="patch-accountsteachersid">PATCH /accounts/teachers/<id>/</h3>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
-<p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH).</p>
-<p><strong>Success Response — 200 OK:</strong> Same structure as list item.</p>
+<p><strong>Request Body:</strong> Same as POST body (all fields optional for PATCH). Additionally, <code>bunny_collection_id</code> can be set directly here, or use the dedicated <code>assign-collection</code> endpoint below.</p>
+<p><strong>Success Response — 200 OK:</strong> Returns the full teacher profile (same structure as GET detail above, including <code>bunny_collection_id</code>).</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
