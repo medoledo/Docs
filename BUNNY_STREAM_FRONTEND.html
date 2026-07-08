@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BUNNY_STREAM_FRONTEND.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="bunny-stream--frontend-integration-guide">Bunny Stream — Frontend Integration Guide</h1>
+<h2 id="overview">Overview</h2>
+<p>All videos on EduTrack are hosted on <strong>Bunny Stream</strong> (Library ID: 698152). The upload and playback flow involves three actors:</p>
+<pre class="hljs"><code><div>Teacher's Browser → Our Backend (Django) → Bunny Stream CDN
+                                       ↘ Student's Browser (playback)
+</div></code></pre>
+<p>Our backend <strong>never stores</strong> video files — it only relays them. Video playback comes directly from Bunny's CDN, <strong>0 load on our server</strong>.</p>
+<hr>
+<h2 id="architecture-summary">Architecture Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What happens</th>
+<th>Who does it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Teacher creates a video record (metadata only)</td>
+<td>Frontend → Backend API</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Backend creates a video entry on Bunny</td>
+<td>Backend → Bunny API</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Frontend uploads the file to the backend</td>
+<td>Frontend → Backend (multipart)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Backend streams the file to Bunny CDN</td>
+<td>Backend → Bunny CDN</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Bunny encodes the video</td>
+<td>Bunny (automatic)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Bunny calls webhook when done</td>
+<td>Bunny → Backend</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Frontend polls for status</td>
+<td>Frontend → Backend API</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Student requests signed playback URL</td>
+<td>Frontend → Backend API</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Student watches video from Bunny CDN</td>
+<td>Student browser → Bunny CDN</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="step-by-step-api-flow">Step-by-Step API Flow</h2>
+<h3 id="step-1-teacher-creates-a-video-record">Step 1: Teacher Creates a Video Record</h3>
+<pre class="hljs"><code><div>POST /courses/videos/
+Content-Type: application/json
+Cookies: access_token=...
+
+Body:
+{
+    &quot;lecture&quot;: 5,
+    &quot;name&quot;: &quot;Chapter 1 - Intro&quot;,
+    &quot;order&quot;: 1
+}
+</div></code></pre>
+<p><strong>Response — 201 Created:</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">42</span>,
+    <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chapter 1 - Intro"</span>,
+    <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"Pending"</span>,
+    <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-08T18:00:00Z"</span>
+}
+</div></code></pre>
+<p><strong>Frontend state:</strong> <code>bunny_status_display = &quot;Pending&quot;</code> — show &quot;Click Upload to start&quot; button.</p>
+<hr>
+<h3 id="step-2-teacher-clicks-%22upload%22-%E2%86%92-backend-creates-bunny-entry">Step 2: Teacher Clicks &quot;Upload&quot; → Backend Creates Bunny Entry</h3>
+<pre class="hljs"><code><div>POST /courses/videos/42/create-upload/
+Cookies: access_token=...
+</div></code></pre>
+<p><strong>What backend does:</strong> Creates a video entry on Bunny's servers, returns the upload destination.</p>
+<p><strong>Response — 201 Created:</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"video_id"</span>: <span class="hljs-number">42</span>,
+    <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"abc-456-def-789"</span>,
+    <span class="hljs-attr">"upload_url"</span>: <span class="hljs-string">"https://video.bunnycdn.com/library/698152/videos/abc-456-def-789"</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-number">0</span>
+}
+</div></code></pre>
+<p><strong>Frontend state after:</strong></p>
+<ul>
+<li><code>bunny_status_display = &quot;Created&quot;</code> — ready to upload the file</li>
+<li>The <code>upload_url</code> is for <strong>internal backend use only</strong>. Never use it directly from the frontend.</li>
+</ul>
+<hr>
+<h3 id="step-3-frontend-uploads-the-file">Step 3: Frontend Uploads the File</h3>
+<pre class="hljs"><code><div>POST /courses/videos/42/upload/
+Content-Type: multipart/form-data
+Cookies: access_token=...
+
+Form Data:
+    file: &lt;the video file&gt;
+</div></code></pre>
+<h4 id="complete-upload-function-with-progress-bar">Complete Upload Function with Progress Bar</h4>
+<pre class="hljs"><code><div><span class="hljs-comment">// ============================================================</span>
+<span class="hljs-comment">// Upload a video file with progress tracking</span>
+<span class="hljs-comment">// ============================================================</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">formatBytes</span>(<span class="hljs-params">bytes</span>) </span>{
+    <span class="hljs-keyword">if</span> (bytes === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-string">'0 Bytes'</span>;
+    <span class="hljs-keyword">const</span> k = <span class="hljs-number">1024</span>;
+    <span class="hljs-keyword">const</span> sizes = [<span class="hljs-string">'Bytes'</span>, <span class="hljs-string">'KB'</span>, <span class="hljs-string">'MB'</span>, <span class="hljs-string">'GB'</span>];
+    <span class="hljs-keyword">const</span> i = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.log(bytes) / <span class="hljs-built_in">Math</span>.log(k));
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseFloat</span>((bytes / <span class="hljs-built_in">Math</span>.pow(k, i)).toFixed(<span class="hljs-number">2</span>)) + <span class="hljs-string">' '</span> + sizes[i];
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">formatSpeed</span>(<span class="hljs-params">bytesPerSecond</span>) </span>{
+    <span class="hljs-keyword">if</span> (bytesPerSecond === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-string">'0 B/s'</span>;
+    <span class="hljs-keyword">return</span> formatBytes(bytesPerSecond) + <span class="hljs-string">'/s'</span>;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">calculateETA</span>(<span class="hljs-params">remaining, speed</span>) </span>{
+    <span class="hljs-keyword">if</span> (speed &lt;= <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-string">'--'</span>;
+    <span class="hljs-keyword">const</span> seconds = remaining / speed;
+    <span class="hljs-keyword">if</span> (seconds &lt; <span class="hljs-number">60</span>) <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.round(seconds) + <span class="hljs-string">'s'</span>;
+    <span class="hljs-keyword">if</span> (seconds &lt; <span class="hljs-number">3600</span>) <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.floor(seconds / <span class="hljs-number">60</span>) + <span class="hljs-string">'m '</span> + <span class="hljs-built_in">Math</span>.round(seconds % <span class="hljs-number">60</span>) + <span class="hljs-string">'s'</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.floor(seconds / <span class="hljs-number">3600</span>) + <span class="hljs-string">'h '</span> + <span class="hljs-built_in">Math</span>.floor((seconds % <span class="hljs-number">3600</span>) / <span class="hljs-number">60</span>) + <span class="hljs-string">'m'</span>;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">uploadVideo</span>(<span class="hljs-params">videoId, file, onProgress, onError, onSuccess</span>) </span>{
+    <span class="hljs-keyword">const</span> formData = <span class="hljs-keyword">new</span> FormData();
+    formData.append(<span class="hljs-string">'file'</span>, file);
+
+    <span class="hljs-keyword">const</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
+    <span class="hljs-keyword">let</span> startTime = <span class="hljs-built_in">Date</span>.now();
+    <span class="hljs-keyword">let</span> lastLoaded = <span class="hljs-number">0</span>;
+
+    <span class="hljs-comment">// --- Upload progress (file → server) ---</span>
+    xhr.upload.onprogress = <span class="hljs-function">(<span class="hljs-params">event</span>) =&gt;</span> {
+        <span class="hljs-keyword">if</span> (!event.lengthComputable) <span class="hljs-keyword">return</span>;
+
+        <span class="hljs-keyword">const</span> loaded = event.loaded;
+        <span class="hljs-keyword">const</span> total = event.total;
+        <span class="hljs-keyword">const</span> percent = <span class="hljs-built_in">Math</span>.round((loaded / total) * <span class="hljs-number">100</span>);
+        <span class="hljs-keyword">const</span> elapsed = (<span class="hljs-built_in">Date</span>.now() - startTime) / <span class="hljs-number">1000</span>; <span class="hljs-comment">// seconds</span>
+        <span class="hljs-keyword">const</span> speed = elapsed &gt; <span class="hljs-number">0</span> ? loaded / elapsed : <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">const</span> remaining = total - loaded;
+
+        <span class="hljs-keyword">if</span> (onProgress) {
+            onProgress({
+                <span class="hljs-attr">percent</span>: percent,
+                <span class="hljs-attr">loaded</span>: formatBytes(loaded),
+                <span class="hljs-attr">total</span>: formatBytes(total),
+                <span class="hljs-attr">speed</span>: formatSpeed(speed),
+                <span class="hljs-attr">eta</span>: calculateETA(remaining, speed),
+                <span class="hljs-attr">loadedBytes</span>: loaded,
+                <span class="hljs-attr">totalBytes</span>: total,
+            });
+        }
+    };
+
+    <span class="hljs-comment">// --- Upload complete ---</span>
+    xhr.onload = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-keyword">if</span> (xhr.status === <span class="hljs-number">200</span>) {
+            <span class="hljs-keyword">const</span> data = <span class="hljs-built_in">JSON</span>.parse(xhr.responseText);
+            <span class="hljs-keyword">if</span> (onSuccess) onSuccess(data);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">let</span> message = <span class="hljs-string">'Upload failed'</span>;
+            <span class="hljs-keyword">try</span> { <span class="hljs-keyword">const</span> err = <span class="hljs-built_in">JSON</span>.parse(xhr.responseText); message = err.error || message; } <span class="hljs-keyword">catch</span>(e) {}
+            <span class="hljs-keyword">if</span> (onError) onError(message, xhr.status);
+        }
+    };
+
+    xhr.onerror = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { <span class="hljs-keyword">if</span> (onError) onError(<span class="hljs-string">'Network error — check your connection'</span>, <span class="hljs-number">0</span>); };
+    xhr.onabort = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { <span class="hljs-keyword">if</span> (onError) onError(<span class="hljs-string">'Upload cancelled by user'</span>, <span class="hljs-number">0</span>); };
+
+    xhr.open(<span class="hljs-string">'POST'</span>, <span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/upload/`</span>);
+    xhr.withCredentials = <span class="hljs-literal">true</span>;
+    xhr.send(formData);
+
+    <span class="hljs-keyword">return</span> xhr; <span class="hljs-comment">// Return the XHR so it can be aborted</span>
+}
+
+<span class="hljs-comment">// ============================================================</span>
+<span class="hljs-comment">// Usage example</span>
+<span class="hljs-comment">// ============================================================</span>
+
+<span class="hljs-keyword">let</span> currentUpload = <span class="hljs-literal">null</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">startUpload</span>(<span class="hljs-params">videoId, file</span>) </span>{
+    currentUpload = uploadVideo(videoId, file,
+        <span class="hljs-comment">// onProgress — update UI</span>
+        (progress) =&gt; {
+            <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'progressBar'</span>).style.width = progress.percent + <span class="hljs-string">'%'</span>;
+            <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'progressText'</span>).textContent =
+                <span class="hljs-string">`<span class="hljs-subst">${progress.percent}</span>% — <span class="hljs-subst">${progress.loaded}</span> / <span class="hljs-subst">${progress.total}</span> — <span class="hljs-subst">${progress.speed}</span>`</span>;
+            <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'etaText'</span>).textContent = <span class="hljs-string">`ETA: <span class="hljs-subst">${progress.eta}</span>`</span>;
+        },
+        <span class="hljs-comment">// onError — show error</span>
+        (message, status) =&gt; {
+            showError(message);
+            currentUpload = <span class="hljs-literal">null</span>;
+        },
+        <span class="hljs-comment">// onSuccess — start polling</span>
+        (data) =&gt; {
+            currentUpload = <span class="hljs-literal">null</span>;
+            showSuccess(<span class="hljs-string">'Upload complete! Encoding starting...'</span>);
+            startPollingForStatus(videoId);
+        }
+    );
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cancelUpload</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">if</span> (currentUpload) {
+        currentUpload.abort();
+        currentUpload = <span class="hljs-literal">null</span>;
+        showInfo(<span class="hljs-string">'Upload cancelled'</span>);
+    }
+}
+</div></code></pre>
+<p><strong>UI Component: Progress Bar</strong></p>
+<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"upload-progress"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"progress-track"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"progress-fill"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"progressBar"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"width: 0%"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"progress-info"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"progressText"</span>&gt;</span>0% — 0 MB / 0 MB<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"etaText"</span>&gt;</span>ETA: --<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"cancelBtn"</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">"cancelUpload()"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn-danger"</span>&gt;</span>Cancel<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+<hr>
+<h3 id="step-4-polling-for-encoding-status">Step 4: Polling for Encoding Status</h3>
+<p>After upload completes, poll every 5 seconds until encoding finishes:</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">startPollingForStatus</span>(<span class="hljs-params">videoId</span>) </span>{
+    <span class="hljs-keyword">let</span> attempts = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">const</span> maxAttempts = <span class="hljs-number">600</span>; <span class="hljs-comment">// Stop after 50 minutes (600 × 5s)</span>
+
+    <span class="hljs-keyword">const</span> interval = setInterval(<span class="hljs-keyword">async</span> () =&gt; {
+        attempts++;
+        <span class="hljs-keyword">if</span> (attempts &gt; maxAttempts) {
+            clearInterval(interval);
+            showError(<span class="hljs-string">'Encoding is taking longer than expected. The video will be available once processing completes.'</span>);
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/`</span>, {
+                <span class="hljs-attr">credentials</span>: <span class="hljs-string">'include'</span>
+            });
+            <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.json();
+            updateUIForStatus(data);
+        } <span class="hljs-keyword">catch</span> (err) {
+            <span class="hljs-comment">// Network error — keep polling</span>
+        }
+    }, <span class="hljs-number">5000</span>);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updateUIForStatus</span>(<span class="hljs-params">data</span>) </span>{
+    <span class="hljs-keyword">const</span> status = data.bunny_status;
+    <span class="hljs-keyword">const</span> display = data.bunny_status_display;
+
+    <span class="hljs-keyword">switch</span> (status) {
+        <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>: setStatusBar(<span class="hljs-string">'pending'</span>, <span class="hljs-string">'Created — upload required'</span>); <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>: setStatusBar(<span class="hljs-string">'uploaded'</span>, <span class="hljs-string">'Uploaded — encoding will start shortly'</span>); <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>: setStatusBar(<span class="hljs-string">'processing'</span>, <span class="hljs-string">'⚙️ Processing...'</span>); <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>: setStatusBar(<span class="hljs-string">'transcoding'</span>, <span class="hljs-string">'⚙️ Transcoding to multiple resolutions...'</span>); <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:
+            setStatusBar(<span class="hljs-string">'ready'</span>, <span class="hljs-string">'✅ Ready'</span>);
+            setProgress(<span class="hljs-number">100</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; <span class="hljs-comment">// Stop polling</span>
+        <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:
+            setStatusBar(<span class="hljs-string">'error'</span>, <span class="hljs-string">'❌ Encoding failed'</span>);
+            showError(<span class="hljs-string">'The video could not be encoded. It may be corrupted or in an unsupported format.'</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; <span class="hljs-comment">// Stop polling</span>
+        <span class="hljs-keyword">case</span> <span class="hljs-number">6</span>:
+            setStatusBar(<span class="hljs-string">'error'</span>, <span class="hljs-string">'❌ Upload failed'</span>);
+            showError(<span class="hljs-string">'The upload was not received by Bunny. Please upload again.'</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; <span class="hljs-comment">// Stop polling</span>
+        <span class="hljs-keyword">default</span>:
+            setStatusBar(<span class="hljs-string">'pending'</span>, <span class="hljs-string">`<span class="hljs-subst">${display}</span>...`</span>);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setStatusBar</span>(<span class="hljs-params">type, text</span>) </span>{
+    <span class="hljs-keyword">const</span> bar = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'statusBar'</span>);
+    bar.className = <span class="hljs-string">`status-<span class="hljs-subst">${type}</span>`</span>;
+    bar.textContent = text;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setProgress</span>(<span class="hljs-params">percent</span>) </span>{
+    <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'progressBar'</span>).style.width = percent + <span class="hljs-string">'%'</span>;
+}
+</div></code></pre>
+<p><strong>Status flow the frontend should display:</strong></p>
+<pre class="hljs"><code><div>0: Created      → ⬜ [Upload Required]
+1: Uploaded     → ⬜ [Uploaded — waiting for encoding]
+2: Processing   → 🟡 [⚙️ Analyzing video file...]
+3: Transcoding  → 🟡 [⚙️ Encoding to 240p/360p/480p/720p/1080p...]
+4: Finished     → 🟢 [✅ Ready — 15 min 32 sec]
+5: Error        → 🔴 [❌ Encoding failed — delete and retry]
+6: UploadFailed → 🔴 [❌ Upload failed — try again]
+</div></code></pre>
+<hr>
+<h3 id="step-5-student-plays-the-video--full-player-implementation">Step 5: Student Plays the Video — Full Player Implementation</h3>
+<pre class="hljs"><code><div>GET /courses/videos/42/play/
+Cookies: access_token=...
+</div></code></pre>
+<p><strong>Backend checks before returning URL:</strong></p>
+<ol>
+<li>Video exists and is active</li>
+<li>Student is authenticated</li>
+<li>Student purchased this lecture</li>
+<li>Purchase is not expired</li>
+<li>Watching limit not exhausted</li>
+<li>All prerequisites passed (if any)</li>
+</ol>
+<p><strong>Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"https://vz-964b4290-bbe.b-cdn.net/play/abc-456-def-789?token=abc123&amp;expires=1720000000"</span>,
+    <span class="hljs-attr">"expires_at"</span>: <span class="hljs-number">1720000000</span>,
+    <span class="hljs-attr">"token"</span>: <span class="hljs-string">"abc123"</span>
+}
+</div></code></pre>
+<h4 id="hlsjs-player-setup-required-for-all-browsers">HLS.js Player Setup (Required for All Browsers)</h4>
+<p>Bunny Stream serves HLS (<code>.m3u8</code>) which needs <code>hls.js</code> to play across all browsers. Safari supports HLS natively, but Chrome, Firefox, Edge, etc. need hls.js.</p>
+<p><strong>Install:</strong></p>
+<pre class="hljs"><code><div>npm install hls.js
+</div></code></pre>
+<p><strong>Player Component:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"playerContainer"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"position: relative; width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden;"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Video element --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"videoPlayer"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"width: 100%; height: 100%;"</span> <span class="hljs-attr">controls</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+
+    <span class="hljs-comment">&lt;!-- Student ID overlay — CANNOT BE REMOVED (see security section) --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"studentOverlay"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"student-overlay"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> Hls <span class="hljs-keyword">from</span> <span class="hljs-string">'hls.js'</span>;
+
+<span class="hljs-comment">// ============================================================</span>
+<span class="hljs-comment">// Play a video with student ID overlay</span>
+<span class="hljs-comment">// ============================================================</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VideoPlayer</span> </span>{
+    <span class="hljs-keyword">constructor</span>(videoId, containerId, studentName, studentCode) {
+        <span class="hljs-keyword">this</span>.videoId = videoId;
+        <span class="hljs-keyword">this</span>.videoEl = <span class="hljs-built_in">document</span>.getElementById(containerId);
+        <span class="hljs-keyword">this</span>.container = <span class="hljs-keyword">this</span>.videoEl.parentElement;
+        <span class="hljs-keyword">this</span>.studentName = studentName;
+        <span class="hljs-keyword">this</span>.studentCode = studentCode;
+        <span class="hljs-keyword">this</span>.hls = <span class="hljs-literal">null</span>;
+        <span class="hljs-keyword">this</span>.tokenRefreshTimer = <span class="hljs-literal">null</span>;
+
+        <span class="hljs-keyword">this</span>.init();
+    }
+
+    <span class="hljs-keyword">async</span> init() {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-comment">// 1. Fetch signed playback URL</span>
+            <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.videoId}</span>/play/`</span>, {
+                <span class="hljs-attr">credentials</span>: <span class="hljs-string">'include'</span>
+            });
+            <span class="hljs-keyword">if</span> (!response.ok) {
+                <span class="hljs-keyword">const</span> err = <span class="hljs-keyword">await</span> response.json();
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(err.error || <span class="hljs-string">'Access denied'</span>);
+            }
+            <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.json();
+
+            <span class="hljs-comment">// 2. Set up HLS.js</span>
+            <span class="hljs-keyword">if</span> (Hls.isSupported()) {
+                <span class="hljs-keyword">this</span>.hls = <span class="hljs-keyword">new</span> Hls({
+                    <span class="hljs-attr">maxBufferLength</span>: <span class="hljs-number">30</span>,
+                    <span class="hljs-attr">enableWorker</span>: <span class="hljs-literal">true</span>,
+                });
+                <span class="hljs-keyword">this</span>.hls.loadSource(data.playback_url);
+                <span class="hljs-keyword">this</span>.hls.attachMedia(<span class="hljs-keyword">this</span>.videoEl);
+                <span class="hljs-keyword">this</span>.hls.on(Hls.Events.MANIFEST_PARSED, () =&gt; {
+                    <span class="hljs-keyword">this</span>.videoEl.play();
+                });
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.videoEl.canPlayType(<span class="hljs-string">'application/vnd.apple.mpegurl'</span>)) {
+                <span class="hljs-comment">// Safari native HLS</span>
+                <span class="hljs-keyword">this</span>.videoEl.src = data.playback_url;
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'HLS is not supported in this browser'</span>);
+            }
+
+            <span class="hljs-comment">// 3. Start student ID overlay</span>
+            <span class="hljs-keyword">this</span>.startOverlay();
+
+            <span class="hljs-comment">// 4. Refresh token before expiry (refresh at 90% of expiry time)</span>
+            <span class="hljs-keyword">const</span> expiresIn = (data.expires_at * <span class="hljs-number">1000</span>) - <span class="hljs-built_in">Date</span>.now();
+            <span class="hljs-keyword">const</span> refreshIn = expiresIn * <span class="hljs-number">0.9</span>;
+            <span class="hljs-keyword">this</span>.tokenRefreshTimer = setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-keyword">this</span>.refreshToken(), refreshIn);
+
+            <span class="hljs-comment">// 5. Track watch progress</span>
+            <span class="hljs-keyword">this</span>.startProgressTracking();
+
+        } <span class="hljs-keyword">catch</span> (error) {
+            <span class="hljs-keyword">this</span>.showError(error.message);
+        }
+    }
+
+    <span class="hljs-comment">// ----- Refresh token when it's about to expire -----</span>
+    <span class="hljs-keyword">async</span> refreshToken() {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.videoId}</span>/play/`</span>, {
+                <span class="hljs-attr">credentials</span>: <span class="hljs-string">'include'</span>
+            });
+            <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.json();
+
+            <span class="hljs-comment">// Update HLS source with new token</span>
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.hls) {
+                <span class="hljs-keyword">this</span>.hls.loadSource(data.playback_url);
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">this</span>.videoEl.src = data.playback_url;
+            }
+
+            <span class="hljs-comment">// Schedule next refresh</span>
+            <span class="hljs-keyword">const</span> expiresIn = (data.expires_at * <span class="hljs-number">1000</span>) - <span class="hljs-built_in">Date</span>.now();
+            <span class="hljs-keyword">const</span> refreshIn = expiresIn * <span class="hljs-number">0.9</span>;
+            <span class="hljs-keyword">this</span>.tokenRefreshTimer = setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-keyword">this</span>.refreshToken(), refreshIn);
+
+        } <span class="hljs-keyword">catch</span> (error) {
+            <span class="hljs-built_in">console</span>.warn(<span class="hljs-string">'Token refresh failed — video may stop after current token expires'</span>);
+        }
+    }
+
+    <span class="hljs-comment">// ----- Watch progress tracking -----</span>
+    startProgressTracking() {
+        <span class="hljs-keyword">let</span> lastReported = <span class="hljs-number">0</span>;
+        setInterval(<span class="hljs-keyword">async</span> () =&gt; {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.videoEl.paused || <span class="hljs-keyword">this</span>.videoEl.ended) <span class="hljs-keyword">return</span>;
+
+            <span class="hljs-keyword">const</span> currentTime = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.videoEl.currentTime);
+            <span class="hljs-keyword">const</span> duration = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.videoEl.duration);
+
+            <span class="hljs-comment">// Report every 15 seconds or on completion</span>
+            <span class="hljs-keyword">if</span> (currentTime - lastReported &gt;= <span class="hljs-number">15</span> || (<span class="hljs-keyword">this</span>.videoEl.ended &amp;&amp; currentTime &gt; lastReported)) {
+                lastReported = currentTime;
+                <span class="hljs-keyword">try</span> {
+                    <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">'/courses/progress/update/'</span>, {
+                        <span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>,
+                        <span class="hljs-attr">headers</span>: { <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span> },
+                        <span class="hljs-attr">credentials</span>: <span class="hljs-string">'include'</span>,
+                        <span class="hljs-attr">body</span>: <span class="hljs-built_in">JSON</span>.stringify({
+                            <span class="hljs-attr">video</span>: <span class="hljs-keyword">this</span>.videoId,
+                            <span class="hljs-attr">progress_seconds</span>: currentTime,
+                            <span class="hljs-attr">duration_seconds</span>: duration || <span class="hljs-literal">undefined</span>,
+                        }),
+                    });
+                } <span class="hljs-keyword">catch</span> (e) {
+                    <span class="hljs-comment">// Silently fail — progress tracking is non-critical</span>
+                }
+            }
+        }, <span class="hljs-number">5000</span>);
+    }
+
+    <span class="hljs-comment">// ----- Student ID overlay (see security section) -----</span>
+    startOverlay() {
+        <span class="hljs-keyword">const</span> overlay = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'studentOverlay'</span>);
+        <span class="hljs-keyword">if</span> (!overlay) <span class="hljs-keyword">return</span>;
+
+        overlay.textContent = <span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-keyword">this</span>.studentName}</span> (<span class="hljs-subst">${<span class="hljs-keyword">this</span>.studentCode}</span>)`</span>;
+        overlay.style.cssText = <span class="hljs-string">`
+            position: absolute;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 14px;
+            font-family: monospace;
+            pointer-events: none;
+            user-select: none;
+            z-index: 10;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            transition: opacity 0.5s;
+        `</span>;
+
+        <span class="hljs-keyword">this</span>.moveOverlay(overlay);
+        setInterval(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-keyword">this</span>.moveOverlay(overlay), <span class="hljs-number">30000</span>); <span class="hljs-comment">// Move every 30 seconds</span>
+    }
+
+    moveOverlay(overlay) {
+        <span class="hljs-keyword">const</span> w = <span class="hljs-keyword">this</span>.container.clientWidth - <span class="hljs-number">200</span>;
+        <span class="hljs-keyword">const</span> h = <span class="hljs-keyword">this</span>.container.clientHeight - <span class="hljs-number">20</span>;
+        <span class="hljs-keyword">const</span> x = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-built_in">Math</span>.max(w, <span class="hljs-number">10</span>));
+        <span class="hljs-keyword">const</span> y = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-built_in">Math</span>.max(h, <span class="hljs-number">10</span>));
+        overlay.style.left = x + <span class="hljs-string">'px'</span>;
+        overlay.style.top = y + <span class="hljs-string">'px'</span>;
+    }
+
+    showError(message) {
+        <span class="hljs-comment">// Display error inside the player container</span>
+        <span class="hljs-keyword">const</span> errorDiv = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'div'</span>);
+        errorDiv.style.cssText = <span class="hljs-string">`
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: white; text-align: center; padding: 20px;
+        `</span>;
+        errorDiv.textContent = message;
+        <span class="hljs-keyword">this</span>.container.appendChild(errorDiv);
+    }
+
+    destroy() {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.hls) <span class="hljs-keyword">this</span>.hls.destroy();
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.tokenRefreshTimer) clearTimeout(<span class="hljs-keyword">this</span>.tokenRefreshTimer);
+    }
+}
+
+<span class="hljs-comment">// Usage:</span>
+<span class="hljs-keyword">const</span> player = <span class="hljs-keyword">new</span> VideoPlayer(<span class="hljs-number">42</span>, <span class="hljs-string">'videoPlayer'</span>, <span class="hljs-string">'Ahmed Ali'</span>, <span class="hljs-string">'STU-001'</span>);
+</div></code></pre>
+<hr>
+<h2 id="student-id-overlay--security--anti-tampering">Student ID Overlay — Security &amp; Anti-Tampering</h2>
+<p>The student ID is displayed as a <strong>floating overlay</strong> on the video player. Here's the full defense strategy:</p>
+<h3 id="how-the-overlay-works">How the Overlay Works</h3>
+<pre class="hljs"><code><div><span class="hljs-comment">&lt;!-- The overlay is part of the player component, inside the same container --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"playerContainer"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"position: relative; width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden;"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"videoPlayer"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"width: 100%; height: 100%;"</span> <span class="hljs-attr">controls</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"studentOverlay"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"student-overlay"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">/* Overlay styles — cannot be hidden by the student */</span>
+<span class="hljs-selector-class">.student-overlay</span> {
+    <span class="hljs-attribute">position</span>: absolute;
+    <span class="hljs-attribute">color</span>: <span class="hljs-built_in">rgba</span>(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0.35</span>);
+    <span class="hljs-attribute">font-size</span>: <span class="hljs-number">14px</span>;
+    <span class="hljs-attribute">font-family</span>: monospace;
+    <span class="hljs-attribute">pointer-events</span>: none;       <span class="hljs-comment">/* Cannot be clicked */</span>
+    <span class="hljs-attribute">user-select</span>: none;           <span class="hljs-comment">/* Cannot be selected */</span>
+    <span class="hljs-attribute">-webkit-user-select</span>: none;
+    <span class="hljs-attribute">z-index</span>: <span class="hljs-number">10</span>;
+    <span class="hljs-attribute">text-shadow</span>: <span class="hljs-number">1px</span> <span class="hljs-number">1px</span> <span class="hljs-number">2px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0.8</span>);
+}
+
+<span class="hljs-comment">/* Prevent the entire player container from being inspected */</span>
+<span class="hljs-selector-id">#playerContainer</span> {
+    <span class="hljs-attribute">-webkit-touch-callout</span>: none;
+    <span class="hljs-attribute">-webkit-user-select</span>: none;
+}
+</div></code></pre>
+<h3 id="defense-layers-in-order">Defense Layers (In Order)</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>What it does</th>
+<th>How it stops tampering</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. <code>pointer-events: none</code></strong></td>
+<td>Overlay cannot be clicked</td>
+<td>Can't right-click → Inspect on the overlay itself</td>
+</tr>
+<tr>
+<td><strong>2. <code>user-select: none</code></strong></td>
+<td>Text can't be selected</td>
+<td>Can't highlight and delete</td>
+</tr>
+<tr>
+<td><strong>3. Moves every 30 seconds</strong></td>
+<td>Random position change</td>
+<td>Even if hidden, it reappears in a new spot</td>
+</tr>
+<tr>
+<td><strong>4. Semi-transparent</strong></td>
+<td><code>rgba(255,255,255,0.35)</code></td>
+<td>Blends into the video — removing it is noticable</td>
+</tr>
+<tr>
+<td><strong>5. Periodic re-creation</strong></td>
+<td>The <code>startOverlay()</code> function can be called repeatedly from the server</td>
+<td>The frontend code can re-create the overlay element on a timer</td>
+</tr>
+<tr>
+<td><strong>6. Backend doesn't serve video if checks fail</strong></td>
+<td>No purchase → 403</td>
+<td>The real security is NOT the overlay</td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-the-student-cannot-do">What the Student CANNOT Do</h3>
+<table>
+<thead>
+<tr>
+<th>Attempt</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Right-click → Inspect → Delete overlay div</td>
+<td>Overlay reappears on next 30-second cycle</td>
+</tr>
+<tr>
+<td>Use browser DevTools to hide the element</td>
+<td>The JavaScript recreates it periodically</td>
+</tr>
+<tr>
+<td>Use ad-blocker to block <code>.student-overlay</code></td>
+<td>The overlay class can be randomized per session</td>
+</tr>
+<tr>
+<td>Download the video from CDN</td>
+<td>The token auth blocks direct downloads. URL expires in 2 hours.</td>
+</tr>
+<tr>
+<td>Share the playback URL with someone else</td>
+<td>URL expires in 2 hours. New URL requires valid login + purchase.</td>
+</tr>
+<tr>
+<td>Watch after watching limit is exhausted</td>
+<td>Backend returns 403 — no new playback URL issued.</td>
+</tr>
+<tr>
+<td>Record the screen</td>
+<td>Technically possible but no technical solution prevents this. Same as any streaming platform (Netflix, YouTube).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-makes-the-real-security-not-the-overlay">What Makes the Real Security (Not the Overlay)</h3>
+<p>The overlay is a <strong>deterrent</strong>, not the security system. The real security is server-side:</p>
+<ol>
+<li><strong>HMAC-Signed URLs</strong> — Each playback URL is signed with the Bunny API key. The student cannot forge a valid URL.</li>
+<li><strong>URL expires in 2 hours</strong> — After expiry, a new URL must be generated, which requires backend authentication checks.</li>
+<li><strong>Backend checks every play request</strong> — Every <code>GET /courses/videos/&lt;id&gt;/play/</code> verifies:
+<ul>
+<li>Student owns a valid purchase</li>
+<li>Purchase is not expired</li>
+<li>Watching limit not exhausted</li>
+<li>All prerequisites met</li>
+</ul>
+</li>
+<li><strong>Watching limit</strong> — After <code>max_watch_count</code> (default 4) watches, the backend stops issuing playback URLs.</li>
+<li><strong>No direct video URLs</strong> — Students never get a permanent video URL. Every play requires a fresh backend call.</li>
+</ol>
+<hr>
+<h2 id="renaming-a-video">Renaming a Video</h2>
+<p>The teacher can rename the video <strong>at any time</strong> — before upload, during upload, or after upload completes:</p>
+<pre class="hljs"><code><div>PATCH /courses/videos/42/
+Body: { &quot;name&quot;: &quot;New Title Here&quot; }
+</div></code></pre>
+<p>This only changes the name in our database. The Bunny Stream entry's title stays the same (it's set once during <code>create-upload</code>). If you want to also update Bunny's title, the backend can do that — but it's not required for the platform's functionality.</p>
+<hr>
+<h2 id="cancelling-an-upload">Cancelling an Upload</h2>
+<p><strong>During upload (file still transferring):</strong></p>
+<pre class="hljs"><code><div>cancelBtn.addEventListener(<span class="hljs-string">'click'</span>, () =&gt; {
+    <span class="hljs-keyword">if</span> (currentUpload) {
+        currentUpload.abort();
+        currentUpload = <span class="hljs-literal">null</span>;
+        <span class="hljs-comment">// Optionally delete the video record entirely:</span>
+        fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/`</span>, { <span class="hljs-attr">method</span>: <span class="hljs-string">'DELETE'</span>, <span class="hljs-attr">credentials</span>: <span class="hljs-string">'include'</span> });
+    }
+});
+</div></code></pre>
+<p><strong>After upload but before encoding finishes:</strong></p>
+<ul>
+<li>Teacher clicks &quot;Delete&quot; → <code>DELETE /courses/videos/42/</code></li>
+<li>Backend calls Bunny's delete API → removes the file from Bunny</li>
+<li>Local video record is deleted</li>
+</ul>
+<hr>
+<h2 id="complete-error-reference">Complete Error Reference</h2>
+<h3 id="upload-endpoint-post-coursesvideosidupload">Upload Endpoint (<code>POST /courses/videos/&lt;id&gt;/upload/</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th>Error Body</th>
+<th>Cause</th>
+<th>Frontend Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td><code>{&quot;error&quot;: &quot;No Bunny video entry found. Call create-upload first.&quot;}</code></td>
+<td>Teacher skipped step 2</td>
+<td>Call <code>create-upload/</code> first</td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>{&quot;error&quot;: &quot;No file provided. Send the video file as a 'file' field...&quot;}</code></td>
+<td>Missing multipart field</td>
+<td>Ensure form field is named &quot;file&quot;</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;error&quot;: &quot;You can only upload videos to your own courses.&quot;}</code></td>
+<td>Wrong teacher account</td>
+<td>Check logged-in user</td>
+</tr>
+<tr>
+<td>502</td>
+<td><code>{&quot;error&quot;: &quot;Upload to Bunny Stream failed...&quot;}</code></td>
+<td>Bunny rejected the file (corrupt, too large, network issue)</td>
+<td>Show &quot;Upload failed&quot; with retry button</td>
+</tr>
+<tr>
+<td>500</td>
+<td><code>{&quot;error&quot;: &quot;Upload failed due to an unexpected error.&quot;}</code></td>
+<td>Internal server error</td>
+<td>Show generic error, contact support</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create-upload-endpoint-post-coursesvideosidcreate-upload">Create Upload Endpoint (<code>POST /courses/videos/&lt;id&gt;/create-upload/</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th>Error Body</th>
+<th>Cause</th>
+<th>Frontend Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td><code>{&quot;error&quot;: &quot;This teacher does not have a Bunny Stream collection...&quot;}</code></td>
+<td>No collection assigned</td>
+<td>Show &quot;Contact SiteOwner&quot;</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;error&quot;: &quot;You can only upload videos to your own courses.&quot;}</code></td>
+<td>Wrong teacher</td>
+<td>Check logged-in user</td>
+</tr>
+<tr>
+<td>502</td>
+<td><code>{&quot;error&quot;: &quot;Failed to create video on Bunny Stream...&quot;}</code></td>
+<td>Bunny API error</td>
+<td>Show retry button</td>
+</tr>
+</tbody>
+</table>
+<h3 id="playback-endpoint-get-coursesvideosidplay">Playback Endpoint (<code>GET /courses/videos/&lt;id&gt;/play/</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th>Error Body</th>
+<th>Cause</th>
+<th>Frontend Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>404</td>
+<td><code>{&quot;error&quot;: &quot;Video is not available.&quot;}</code></td>
+<td>Video deleted or not active</td>
+<td>Show &quot;Video not found&quot;</td>
+</tr>
+<tr>
+<td>401</td>
+<td><code>{&quot;error&quot;: &quot;Authentication required.&quot;}</code></td>
+<td>Not logged in</td>
+<td>Redirect to login</td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>{&quot;error&quot;: &quot;Student profile not found.&quot;}</code></td>
+<td>User has no student profile</td>
+<td>Show &quot;Contact support&quot;</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;error&quot;: &quot;You have not purchased this lecture.&quot;}</code></td>
+<td>No purchase record</td>
+<td>Show &quot;Buy this lecture&quot; button</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;error&quot;: &quot;Your access to this lecture has expired.&quot;}</code></td>
+<td>Purchase expired</td>
+<td>Show &quot;Buy again&quot; or &quot;Contact teacher&quot;</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;error&quot;: &quot;You have reached the maximum watching limit...&quot;}</code></td>
+<td>Watch count exhausted</td>
+<td>Show &quot;Contact teacher to reopen&quot;</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;error&quot;: &quot;You must pass the homework (ID X)...&quot;}</code></td>
+<td>Prerequisite not met</td>
+<td>Show &quot;Complete homework first&quot;</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;error&quot;: &quot;You must pass the quiz (ID X)...&quot;}</code></td>
+<td>Prerequisite not met</td>
+<td>Show &quot;Complete quiz first&quot;</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;error&quot;: &quot;You must pass the exam (ID X)...&quot;}</code></td>
+<td>Prerequisite not met</td>
+<td>Show &quot;Complete exam first&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3 id="video-crud-endpoints">Video CRUD Endpoints</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Error</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DELETE /courses/videos/&lt;id&gt;/</code></td>
+<td>403 — not your course</td>
+<td>Wrong teacher</td>
+</tr>
+<tr>
+<td><code>DELETE /courses/videos/&lt;id&gt;/</code></td>
+<td>404 — not found</td>
+<td>Video doesn't exist</td>
+</tr>
+<tr>
+<td><code>PATCH /courses/videos/&lt;id&gt;/</code></td>
+<td>404 — not found</td>
+<td>Video doesn't exist</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="full-upload-flow--ui-states">Full Upload Flow — UI States</h2>
+<pre class="hljs"><code><div>┌──────────────────────────────────────────────────────────────────┐
+│  Video: Chapter 1 - Intro                                        │
+│                                                                  │
+│  STATE 1: Pending                                                │
+│  [━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━] 0%     │
+│  📁 Pending — not uploaded yet                                   │
+│  [📤 Upload Video]                                                │
+│                                                                  │
+│  STATE 2: Creating Bunny entry                                   │
+│  [━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━] 0%     │
+│  🔄 Initializing upload...                                       │
+│                                                                  │
+│  STATE 3: Uploading                                               │
+│  [██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░] 55%        │
+│  ⬆️ Uploading... 1.2 GB / 2.5 GB — 15 Mbps                      │
+│  ETA: 1m 30s                                                     │
+│  [❌ Cancel]                                                      │
+│                                                                  │
+│  STATE 4: Upload complete — encoding                             │
+│  [████████████████████████████████████████████████] 100%         │
+│  ⚙️ Uploaded — encoding will start shortly                       │
+│  ⚙️ Processing...                                                │
+│  ⚙️ Transcoding to 240p/360p/480p/720p/1080p...                 │
+│                                                                  │
+│  STATE 5: Ready                                                  │
+│  [████████████████████████████████████████████████] 100%         │
+│  ✅ Ready — 15 min 32 sec                                       │
+│  [▶ Play] [✏️ Rename] [❌ Delete]                                │
+│                                                                  │
+│  STATE 6: Error — encoding failed                                │
+│  [████████████████████████████████████████████████] 100%         │
+│  ❌ Encoding failed                                               │
+│  The video could not be encoded. It may be corrupted             │
+│  or in an unsupported format.                                    │
+│  [🗑 Delete] [📤 Try Again]                                       │
+│                                                                  │
+│  STATE 7: Error — upload failed                                  │
+│  [████████████████████████████████████████████████] 100%         │
+│  ❌ Upload failed                                                  │
+│  Check your connection and try again.                            │
+│  [📤 Retry Upload]                                                │
+└──────────────────────────────────────────────────────────────────┘
+</div></code></pre>
+<hr>
+<h2 id="teacher-actions-reference">Teacher Actions Reference</h2>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create video record</td>
+<td><code>POST</code></td>
+<td><code>/courses/videos/</code></td>
+<td>Before anything</td>
+</tr>
+<tr>
+<td>Get upload URL</td>
+<td><code>POST</code></td>
+<td><code>/courses/videos/&lt;id&gt;/create-upload/</code></td>
+<td>Before uploading</td>
+</tr>
+<tr>
+<td>Upload file</td>
+<td><code>POST</code></td>
+<td><code>/courses/videos/&lt;id&gt;/upload/</code></td>
+<td>After create-upload</td>
+</tr>
+<tr>
+<td>Poll status</td>
+<td><code>GET</code></td>
+<td><code>/courses/videos/&lt;id&gt;/</code></td>
+<td>During/after upload</td>
+</tr>
+<tr>
+<td>Preview (teacher)</td>
+<td><code>GET</code></td>
+<td><code>/courses/videos/&lt;id&gt;/play/</code></td>
+<td>After upload completes</td>
+</tr>
+<tr>
+<td>Rename</td>
+<td><code>PATCH</code></td>
+<td><code>/courses/videos/&lt;id&gt;/</code> { name }</td>
+<td>Anytime</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>DELETE</code></td>
+<td><code>/courses/videos/&lt;id&gt;/</code></td>
+<td>Anytime</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="student-actions-reference">Student Actions Reference</h2>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Play video</td>
+<td><code>GET</code></td>
+<td><code>/courses/videos/&lt;id&gt;/play/</code></td>
+<td>After purchasing lecture</td>
+</tr>
+<tr>
+<td>Update progress</td>
+<td><code>POST</code></td>
+<td><code>/courses/progress/update/</code></td>
+<td>During playback</td>
+</tr>
+<tr>
+<td>Get progress</td>
+<td><code>GET</code></td>
+<td><code>/courses/progress/&lt;video_id&gt;/</code></td>
+<td>Anytime</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="full-sequence-diagram">Full Sequence Diagram</h2>
+<pre class="hljs"><code><div>Teacher Browser              Our Backend                    Bunny Stream
+     │                            │                              │
+     │  POST /courses/videos/     │                              │
+     │──────────────────────────► │                              │
+     │◄────────── 201 { id } ──── │                              │
+     │                            │                              │
+     │  POST /videos/42/create-upload/                          │
+     │──────────────────────────► │                              │
+     │                            │  POST /library/698152/videos │
+     │                            │─────────────────────────────►│
+     │                            │◄─── { guid, status: 0 } ────│
+     │◄──── { upload_url, guid } ─│                              │
+     │                            │                              │
+     │  POST /videos/42/upload/   │                              │
+     │  (multipart, file stream)  │                              │
+     │──────────────────────────► │                              │
+     │                            │  PUT /library/698152/videos  │
+     │                            │  (streams chunks, API key)   │
+     │                            │─────────────────────────────►│
+     │◄────── 200 { success } ─── │                              │
+     │                            │                              │
+     │  GET /videos/42/ (poll)    │                              │
+     │──────────────────────────► │                              │
+     │◄── { status: 1 } ──────── │                              │
+     │  (every 5 sec)...          │                              │
+     │──────────────────────────► │                              │
+     │◄── { status: 4 } ──────── │                              │
+     │                            │                              │
+  Student Browser                 │                              │
+     │                            │                              │
+     │  GET /videos/42/play/      │                              │
+     │──────────────────────────► │                              │
+     │  (checks: purchase,        │                              │
+     │   expiry, watch limit,     │                              │
+     │   prerequisites)           │                              │
+     │◄──── { playback_url } ──── │                              │
+     │                            │                              │
+     │  HLS stream from CDN       │                              │
+     │  with student ID overlay   │                              │
+     │─────────────────────────────────────────────────────────►│
+     │  (0 load on our server)    │                              │
+     │                            │                              │
+     │  POST /progress/update/    │                              │
+     │  (every 15 seconds)        │                              │
+     │──────────────────────────► │                              │
+     │                            │                              │
+     │  2 hours later — token expires                            │
+     │                            │                              │
+     │  GET /videos/42/play/      │  (auto-refresh)              │
+     │──────────────────────────► │                              │
+     │◄── { new playback_url } ──│                              │
+</div></code></pre>
+<hr>
+<h2 id="quick-reference-for-frontend-team">Quick Reference for Frontend Team</h2>
+<table>
+<thead>
+<tr>
+<th>What to build</th>
+<th>Where to find it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Upload form with file picker</td>
+<td>Step 3 — Complete Upload Function</td>
+</tr>
+<tr>
+<td>Progress bar with speed + ETA</td>
+<td>Step 3 — Upload Function + UI Component</td>
+</tr>
+<tr>
+<td>Cancel upload button</td>
+<td>Step 3 — <code>cancelUpload()</code></td>
+</tr>
+<tr>
+<td>Polling for encoding status</td>
+<td>Step 4 — <code>startPollingForStatus()</code></td>
+</tr>
+<tr>
+<td>HLS.js Player</td>
+<td>Step 5 — <code>VideoPlayer</code> class</td>
+</tr>
+<tr>
+<td>Student ID overlay</td>
+<td>Step 5 — <code>startOverlay()</code> + CSS</td>
+</tr>
+<tr>
+<td>Token refresh before expiry</td>
+<td>Step 5 — <code>refreshToken()</code></td>
+</tr>
+<tr>
+<td>Watch progress tracking</td>
+<td>Step 5 — <code>startProgressTracking()</code></td>
+</tr>
+<tr>
+<td>Error handling for all endpoints</td>
+<td>Complete Error Reference section</td>
+</tr>
+<tr>
+<td>Upload UI states (7 states)</td>
+<td>Full Upload Flow — UI States section</td>
+</tr>
+<tr>
+<td>Delete video</td>
+<td>Teacher Actions Reference</td>
+</tr>
+<tr>
+<td>Rename video</td>
+<td>Teacher Actions Reference</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>
