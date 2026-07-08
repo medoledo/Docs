@@ -456,7 +456,7 @@ code {
 <tbody>
 <tr>
 <td><code>access_token</code></td>
-<td>JWT access token</td>
+<td>JWT access token (contains <code>user_id</code> + <code>role</code> in payload)</td>
 <td>30 min</td>
 <td><code>true</code></td>
 <td><code>true</code></td>
@@ -466,20 +466,10 @@ code {
 </tr>
 <tr>
 <td><code>refresh_token</code></td>
-<td>JWT refresh token</td>
+<td>JWT refresh token (contains <code>user_id</code> + <code>role</code> in payload)</td>
 <td>7 days</td>
 <td><code>true</code></td>
 <td><code>true</code></td>
-<td><code>None</code></td>
-<td>Same as above</td>
-<td><code>/</code></td>
-</tr>
-<tr>
-<td><code>user-role</code></td>
-<td>JWT containing <code>{user_id, role}</code></td>
-<td>7 days</td>
-<td><code>true</code></td>
-<td><strong><code>false</code></strong> (JS-readable)</td>
 <td><code>None</code></td>
 <td>Same as above</td>
 <td><code>/</code></td>
@@ -487,16 +477,12 @@ code {
 </tbody>
 </table>
 <p><strong>Important:</strong> <code>SameSite=None</code> + <code>Secure=true</code> means cookies are only sent over HTTPS and are included in cross-origin requests. During localhost development, the frontend must either use a proxy or enable <code>chrome://flags/#allow-insecure-localhost</code>.</p>
-<h4 id="user-role-cookie-js-readable"><code>user-role</code> Cookie (JS-Readable)</h4>
-<p>The <code>user-role</code> cookie is <strong>not httpOnly</strong> — JavaScript can read it. The frontend should use it as a performance optimization:</p>
-<pre class="hljs"><code><div><span class="hljs-comment">// On page load — instant role check, no API call</span>
-<span class="hljs-keyword">const</span> cookie = getCookie(<span class="hljs-string">'user-role'</span>);
-<span class="hljs-keyword">if</span> (cookie) {
-  <span class="hljs-keyword">const</span> payload = <span class="hljs-built_in">JSON</span>.parse(atob(cookie.split(<span class="hljs-string">'.'</span>)[<span class="hljs-number">1</span>]));
-  <span class="hljs-built_in">console</span>.log(payload.role); <span class="hljs-comment">// e.g. "siteowner"</span>
-}
+<h4 id="reading-role-from-the-access-token">Reading Role from the Access Token</h4>
+<p>Both the access and refresh tokens contain the <code>role</code> claim in their JWT payload. The frontend can decode the role from the access token without needing a separate cookie or API call:</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Decode role from access token (via document.cookie or reading the httpOnly cookie on the server side)</span>
+<span class="hljs-comment">// The access token payload contains: { user_id, role, exp, iat, jti, token_type }</span>
 </div></code></pre>
-<p>If the cookie is missing or expired, call <code>GET /accounts/me/</code> — it will return <code>{role, name, is_active}</code> and also <strong>refresh the <code>user-role</code> cookie</strong> for future page loads.</p>
+<p>For session restoration on page refresh, call <code>GET /accounts/me/</code> — it returns <code>{role, name, is_active}</code> without needing cookies.</p>
 <p><strong>Production domain setup:</strong> Set the environment variable <code>JWT_AUTH_COOKIE_DOMAIN=.savekiteg.com</code> on the server so cookies are shared across all subdomains (e.g., <code>eduonline.savekiteg.com</code> frontend + <code>edutrackonline.savekiteg.com</code> backend). If unset, cookies are scoped to the exact host that set them.</p>
 <h3 id="common-errors">Common Errors</h3>
 <p>These error formats are shared across all endpoints:</p>
@@ -617,22 +603,6 @@ code {
 <td>Yes</td>
 </tr>
 <tr>
-<td><code>GET /accounts/subjects/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><code>GET /accounts/public/teachers/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr>
 <td><code>GET /accounts/teachers/</code></td>
 <td>Yes</td>
 <td>No</td>
@@ -642,6 +612,30 @@ code {
 </tr>
 <tr>
 <td><code>POST /accounts/teachers/</code></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /accounts/teachers/&lt;id&gt;/</code></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>PATCH /accounts/teachers/&lt;id&gt;/assign-collection/</code></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
@@ -665,15 +659,23 @@ code {
 <td>No</td>
 </tr>
 <tr>
-<td><code>GET /courses/</code></td>
+<td><code>GET /accounts/subjects/</code></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
-<td>No</td>
+<td>Yes</td>
 </tr>
 <tr>
-<td><code>GET /courses/by-subject/&lt;id&gt;/</code></td>
+<td><code>GET /accounts/public/teachers/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>GET /courses/</code></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
@@ -689,11 +691,43 @@ code {
 <td>No</td>
 </tr>
 <tr>
+<td><code>GET /courses/&lt;id&gt;/preview/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /courses/my_courses/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
 <td><code>GET /courses/&lt;id&gt;/lectures/</code></td>
 <td>No</td>
 <td>No</td>
 <td>No</td>
 <td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /courses/videos/&lt;id&gt;/play/</code></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
 <td>No</td>
 </tr>
 <tr>
@@ -713,11 +747,35 @@ code {
 <td>No</td>
 </tr>
 <tr>
+<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></td>
+<td>No</td>
+<td>Yes**</td>
+<td>Yes**</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /courses/enrollments/bulk-action/</code></td>
+<td>No</td>
+<td>Yes**</td>
+<td>Yes**</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
 <td><code>POST /courses/purchases/buy/</code></td>
 <td>No</td>
 <td>No</td>
 <td>No</td>
 <td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></td>
+<td>No</td>
+<td>Yes**</td>
+<td>Yes**</td>
+<td>No</td>
 <td>No</td>
 </tr>
 <tr>
@@ -728,10 +786,202 @@ code {
 <td>No</td>
 <td>No</td>
 </tr>
+<tr>
+<td><code>GET /learning/homeworks/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/homeworks/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /learning/homeworks/&lt;id&gt;/submissions/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/homeworks/&lt;id&gt;/submit/</code></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /learning/quizzes/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/quizzes/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/quizzes/&lt;id&gt;/start/</code></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/quizzes/&lt;id&gt;/submit/</code></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/quizzes/&lt;id&gt;/release-scores/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/quizzes/&lt;id&gt;/release-answers/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/quiz-submissions/&lt;id&gt;/grade-written/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /learning/exams/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/exams/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /learning/exams/&lt;id&gt;/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/exams/&lt;id&gt;/start/</code></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/exams/&lt;id&gt;/submit/</code></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /learning/exams/&lt;id&gt;/results/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/exams/&lt;id&gt;/release-scores/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/exams/&lt;id&gt;/release-answers/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /learning/exams/my/</code></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /learning/exam-submissions/&lt;id&gt;/grade-written/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /materials/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes*</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /materials/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET /notifications/</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
 </tbody>
 </table>
 <blockquote>
-<p>* Must be enrolled and approved<br>
+<p>* Must be enrolled and approved in the relevant course<br>
 ** Must own the course (or be the course teacher's assistant)</p>
 </blockquote>
 <hr>

@@ -1271,7 +1271,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 </table>
 <p><strong>Types:</strong> <code>homework</code>, <code>quiz</code>, <code>exam</code></p>
 <hr>
-<h3 id="page-7-students-page-lecture-purchases--enrollments">Page 7: Students Page (Lecture Purchases &amp; Enrollments)</h3>
+<h3 id="page-8-students-page-lecture-purchases--enrollments">Page 8: Students Page (Lecture Purchases &amp; Enrollments)</h3>
 <p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, purchases, progress.</p>
 <table>
 <thead>
@@ -1457,10 +1457,85 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <li><strong>Lecture Delete:</strong> Cannot delete a lecture if ANY purchase exists (active or expired).</li>
 <li><strong>Topic Delete:</strong> Cannot delete a topic if it has any lectures.</li>
 <li><strong>Homework Bubble Sheet:</strong> Auto-graded on submission. Single answer = exact match. Multiple answers = all must match.</li>
-<li><strong>Quiz:</strong> MCQ auto-graded, written manually graded. Questions from QBank or standalone (inline). Timer: 0 = unlimited.</li>
+<li><strong>Quiz:</strong> MCQ auto-graded, written manually graded. Questions are standalone only (inline text + image + choices). Timer: 0 = unlimited.</li>
 <li><strong>Enrollment:</strong> Tracks who approved/rejected + timestamp.</li>
 <li><strong>Student Visibility:</strong> Teachers see only their own students. No national_id, birth_date visible.</li>
+<li><strong>Exams:</strong> Course-level assessments with open/close dates. Same as quizzes but independent of lectures. Can gate video access via prerequisites.</li>
 </ul>
+<hr>
+<h2 id="phase-3-student-pages-build-after-phase-2">Phase 3: Student Pages (Build After Phase 2)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Page</th>
+<th>Key Endpoints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Student Dashboard</strong> (Home — enrolled courses)</td>
+<td><code>GET /courses/enrolled/</code>, <code>GET /payments/balance/my/</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Course Catalog</strong> (Browse by subject)</td>
+<td><code>GET /accounts/subjects/</code>, <code>GET /courses/by-subject/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Course Preview</strong> (Topics + prices)</td>
+<td><code>GET /courses/&lt;id&gt;/preview/</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>My Enrollments</strong> (Pending/approved/rejected)</td>
+<td><code>GET /courses/enrollments/my/</code>, <code>POST .../enroll/</code>, <code>POST .../&lt;id&gt;/cancel/</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Course Lectures</strong> (Inside an enrolled course)</td>
+<td><code>GET /courses/&lt;id&gt;/lectures/</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Purchase Lecture</strong> (Balance → deduct)</td>
+<td><code>POST /courses/purchases/buy/</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Recharge Codes</strong> (Enter code → add balance)</td>
+<td><code>POST /payments/codes/redeem/</code>, <code>GET /payments/balance/my/</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Lecture Player</strong> (Video + Homework + Quiz + Materials tabs)</td>
+<td><code>GET /courses/videos/&lt;id&gt;/play/</code>, <code>POST /courses/progress/update/</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Homework Submission</strong> (Bubble sheet)</td>
+<td><code>POST /learning/homeworks/&lt;id&gt;/submit/</code></td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Quiz Taking</strong> (Start → answer → submit)</td>
+<td><code>POST /learning/quizzes/&lt;id&gt;/start/</code>, <code>POST .../submit/</code></td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Exam Taking</strong> (Start → answer → submit)</td>
+<td><code>POST /learning/exams/&lt;id&gt;/start/</code>, <code>POST .../submit/</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>Profile &amp; Notifications</strong></td>
+<td><code>GET/PATCH /accounts/profile/me/</code>, <code>GET /notifications/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Student authentication:</strong> After login, frontend reads <code>status</code> from login response (<code>pending|verified|declined|suspended_temporary|suspended_permanent</code>). <code>suspended_permanent</code> students cannot log in (get 401). <code>declined</code> students can edit their profile to reset to <code>pending</code>.</p>
 
 </body>
 </html>

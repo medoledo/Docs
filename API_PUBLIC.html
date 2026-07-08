@@ -386,8 +386,10 @@ code {
 <ul>
 <li><code>access_token</code> — JWT access token, 30 min expiry, httpOnly, Secure, SameSite=None, Path=/</li>
 <li><code>refresh_token</code> — JWT refresh token, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
-<li><code>user-role</code> — JWT containing <code>{user_id, role}</code>, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
 </ul>
+<blockquote>
+<p>Both tokens contain <code>role</code> in their JWT payload. The frontend can decode the access token to read <code>user_id</code> and <code>role</code> without additional API calls.</p>
+</blockquote>
 <p><strong>Authentication:</strong> Public (no login required)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
@@ -613,6 +615,7 @@ code {
 <li>OTP expires after 10 minutes.</li>
 <li>Previous unused OTPs for the same user are invalidated when a new one is requested.</li>
 <li>An email with the OTP code is sent to the user's email address.</li>
+<li>Unauthenticated requests are throttled to 60/min globally.</li>
 </ul>
 <hr>
 <h3 id="post-accountsverify-otp">POST /accounts/verify-otp/</h3>
@@ -668,7 +671,7 @@ code {
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String (Required) â€” 6-digit code"</span>,
-  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String (Optional) â€” From verify-otp response"</span>,
+  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String (Required) â€” From verify-otp response"</span>,
   <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"String (Required) â€” Minimum 8 characters"</span>
 }
 </div></code></pre>
@@ -704,6 +707,11 @@ code {
 </tr>
 <tr>
 <td><code>400</code></td>
+<td>Missing reset token</td>
+<td><code>{&quot;error&quot;: &quot;Reset token is required. Please verify your OTP first.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>400</code></td>
 <td>Invalid reset token</td>
 <td><code>{&quot;error&quot;: &quot;Invalid reset token&quot;}</code></td>
 </tr>
@@ -718,6 +726,7 @@ code {
 <ul>
 <li>All refresh tokens for the user are deleted, forcing re-login on all devices.</li>
 <li>The OTP is marked as used and cannot be reused.</li>
+<li>Unauthenticated requests (including forgot-password and verify-otp) are rate-limited to 60 requests per minute globally.</li>
 </ul>
 <hr>
 <h3 id="post-accountschange-password">POST /accounts/change-password/</h3>

@@ -690,7 +690,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h2 id="5-course-content-management">5. Course Content Management</h2>
+<h2 id="4-course-content-management">4. Course Content Management</h2>
 <hr>
 <h4 id="get-coursestopics">GET /courses/topics/</h4>
 <p><strong>Description:</strong> List all topics.</p>
@@ -855,7 +855,7 @@ code {
 <li>Students see only visible lectures.</li>
 </ul>
 <hr>
-<h2 id="6-lectures">6. Lectures</h2>
+<h2 id="5-lectures">5. Lectures</h2>
 <hr>
 <h4 id="get-courseslectures">GET /courses/lectures/</h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
@@ -952,9 +952,9 @@ code {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"platform"</span>: <span class="hljs-string">"String (youtube|bunnystream|vdocipher)"</span>,
-      <span class="hljs-attr">"platform_display"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"video_url"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null — Bunny Stream GUID"</span>,
+      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
+      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
       <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
       <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
@@ -984,9 +984,9 @@ code {
     <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
     <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
     <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"platform"</span>: <span class="hljs-string">"String (youtube|bunnystream|vdocipher)"</span>,
-    <span class="hljs-attr">"platform_display"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"video_url"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null — Bunny Stream GUID"</span>,
+    <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
+    <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
     <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
     <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
     <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
@@ -1093,7 +1093,7 @@ code {
 </tbody>
 </table>
 <hr>
-<h2 id="7-videos">7. Videos</h2>
+<h2 id="6-videos">6. Videos</h2>
 <p>All videos are hosted on <strong>Bunny Stream</strong>. The upload flow is:</p>
 <pre class="hljs"><code><div>1. Teacher creates a video record → POST /courses/videos/
 2. Teacher generates the Bunny upload URL → POST /courses/videos/&lt;id&gt;/create-upload/
@@ -1208,7 +1208,7 @@ code {
 <h4 id="delete-coursesvideosid">DELETE /courses/videos/<id>/</h4>
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
-<h2 id="8-enrollments">8. Enrollments</h2>
+<h2 id="7-enrollments">7. Enrollments</h2>
 <hr>
 <h4 id="get-coursesenrollmentspending">GET /courses/enrollments/pending/</h4>
 <p><strong>Description:</strong> List pending enrollment requests for the teacher's courses.</p>
@@ -1342,7 +1342,7 @@ code {
 <li>Notifications are sent to all affected students.</li>
 </ul>
 <hr>
-<h2 id="9-purchases">9. Purchases</h2>
+<h2 id="8-purchases">8. Purchases</h2>
 <hr>
 <h4 id="patch-coursespurchasesidreopen">PATCH /courses/purchases/<id>/reopen/</h4>
 <p><strong>Description:</strong> Teacher/Assistant extends a student's access to a lecture by adding extra days.</p>
@@ -1415,6 +1415,119 @@ code {
 <li>Assistants can only reopen lectures for their teacher's courses.</li>
 <li><code>effective_expiry</code> is recalculated as <code>expires_at + extra_days</code>.</li>
 </ul>
+<hr>
+<h2 id="9-exams">9. Exams</h2>
+<hr>
+<h4 id="get-learningexams">GET /learning/exams/</h4>
+<p><strong>Description:</strong> List exams.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Query Parameters:</strong></p>
+<ul>
+<li><code>course</code> — Filter by course ID</li>
+<li><code>is_active</code> — <code>true</code> or <code>false</code></li>
+<li><code>is_published</code> — <code>true</code> or <code>false</code></li>
+</ul>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="post-learningexams">POST /learning/exams/</h4>
+<p><strong>Description:</strong> Create a new exam with settings.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"integer - Course ID"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string - Exam title"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string - Description"</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+  <span class="hljs-attr">"settings"</span>: {
+    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer - Time limit in minutes"</span>,
+    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (immediate|after_close|manual)"</span>,
+    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (immediate|after_close|manual)"</span>,
+    <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string (fixed|random)"</span>,
+    <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"boolean"</span>,
+    <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"boolean"</span>,
+    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer"</span>,
+    <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"string (best|average|last)"</span>,
+    <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"boolean"</span>
+  }
+}
+</div></code></pre>
+<hr>
+<h4 id="get-learningexamsid">GET /learning/exams/{id}/</h4>
+<p><strong>Description:</strong> Retrieve an exam with questions and settings.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+  <span class="hljs-attr">"settings"</span>: { ... },
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"integer | null"</span>,
+      <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (mcq_single|mcq_multiple|written)"</span>,
+      <span class="hljs-attr">"choices"</span>: [{<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"boolean"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}]
+    }
+  ],
+  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="put-learningexamsid">PUT /learning/exams/{id}/</h4>
+<p><strong>Description:</strong> Update an exam.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<hr>
+<h4 id="delete-learningexamsid">DELETE /learning/exams/{id}/</h4>
+<p><strong>Description:</strong> Delete an exam and all its submissions.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<hr>
+<h4 id="get-learningexamsidresults">GET /learning/exams/{id}/results/</h4>
+<p><strong>Description:</strong> List all submissions for an exam.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<hr>
+<h4 id="post-learningexamsidrelease-scores">POST /learning/exams/{id}/release-scores/</h4>
+<p><strong>Description:</strong> Release scores for all submissions.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<hr>
+<h4 id="post-learningexamsidrelease-answers">POST /learning/exams/{id}/release-answers/</h4>
+<p><strong>Description:</strong> Release correct answers for all submissions.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
 <hr>
 <h2 id="10-homeworks">10. Homeworks</h2>
 <hr>
@@ -2080,7 +2193,7 @@ code {
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (homework|quiz)"</span>,
+      <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (homework|quiz|exam)"</span>,
       <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer - ID of the homework or quiz"</span>,
       <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String (Decimal) - Minimum score required"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
@@ -2094,7 +2207,7 @@ code {
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) — homework|quiz"</span>,
+  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) — homework|quiz|exam"</span>,
   <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer (Required) — ID of the homework or quiz"</span>,
   <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String (Optional) — Decimal, default: 50.0"</span>
 }
