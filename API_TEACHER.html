@@ -800,8 +800,8 @@ code {
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"price"</span>: <span class="hljs-string">"Decimal"</span>,
-      <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal"</span>,
-      <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal"</span>,
+      <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal — Flat discount amount in EGP (not percentage)"</span>,
+      <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal — Price after subtracting discount (never below 0)"</span>,
       <span class="hljs-attr">"formatted_price"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean"</span>,
@@ -956,8 +956,6 @@ code {
       <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
       <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
       <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
       <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
@@ -987,10 +985,8 @@ code {
     <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null — Bunny Stream GUID"</span>,
     <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
     <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
-    <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
-    <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
-    <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
     <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
     <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
   }
@@ -1137,7 +1133,7 @@ code {
 <tr>
 <td><code>ordering</code></td>
 <td>String</td>
-<td><code>order</code>, <code>created_at</code>, <code>duration_minutes</code></td>
+<td><code>order</code>, <code>created_at</code></td>
 </tr>
 </tbody>
 </table>
@@ -1153,8 +1149,6 @@ code {
       <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
       <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
       <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"duration_display"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
       <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
@@ -1171,7 +1165,6 @@ code {
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer (Required) — Lecture ID"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional) — Default: 0"</span>,
-  <span class="hljs-attr">"duration_minutes"</span>: <span class="hljs-string">"Integer (Optional)"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional) — Default: true"</span>
 }
 </div></code></pre>
@@ -1339,7 +1332,6 @@ code {
 <ul>
 <li>Only enrollments for the teacher's courses are processed.</li>
 <li>Non-pending enrollments are skipped with an error entry.</li>
-<li>Notifications are sent to all affected students.</li>
 </ul>
 <hr>
 <h2 id="8-purchases">8. Purchases</h2>
@@ -1347,12 +1339,7 @@ code {
 <h4 id="patch-coursespurchasesidreopen">PATCH /courses/purchases/<id>/reopen/</h4>
 <p><strong>Description:</strong> Teacher/Assistant extends a student's access to a lecture by adding extra days.</p>
 <p><strong>Authentication:</strong> Teacher (lecture course owner), Assistant</p>
-<p><strong>Content-Type:</strong> <code>application/json</code></p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer (Required) — Minimum 1"</span>
-}
-</div></code></pre>
+<p><strong>Request Body:</strong> None (always grants exactly 1 extra day).</p>
 <p><strong>Success Response — 200 OK:</strong> Updated purchased lecture.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -1366,17 +1353,15 @@ code {
   <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"Decimal"</span>,
-  <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer — Total extra days granted (cumulative)"</span>,
   <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
   <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Integer | null"</span>,
   <span class="hljs-attr">"reopened_by_name"</span>: <span class="hljs-string">"String | null"</span>,
   <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
   <span class="hljs-attr">"reopen_logs"</span>: [
     {
-      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime"</span>,
-      <span class="hljs-attr">"note"</span>: <span class="hljs-string">"String"</span>
+      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime"</span>
     }
   ],
   <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"Integer - Maximum watching limit (default: 4)"</span>
@@ -1399,8 +1384,8 @@ code {
 </tr>
 <tr>
 <td><code>400</code></td>
-<td>Invalid extra_days</td>
-<td><code>{&quot;extra_days&quot;: [&quot;Ensure this value is greater than or equal to 1.&quot;]}</code></td>
+<td>Max reopen limit reached</td>
+<td><code>{&quot;error&quot;: &quot;Maximum reopen limit (2) reached for this purchase.&quot;}</code></td>
 </tr>
 <tr>
 <td><code>404</code></td>
@@ -1411,6 +1396,8 @@ code {
 </table>
 <p><strong>Business Rules:</strong></p>
 <ul>
+<li>Each reopen grants exactly <strong>1 extra day</strong>.</li>
+<li>Maximum <strong>2 reopens</strong> per purchase.</li>
 <li>Teachers can only reopen lectures in their own courses.</li>
 <li>Assistants can only reopen lectures for their teacher's courses.</li>
 <li><code>effective_expiry</code> is recalculated as <code>expires_at + extra_days</code>.</li>
@@ -1858,7 +1845,6 @@ code {
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer - Lecture ID"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String - Material title"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String - Description (optional)"</span>,
   <span class="hljs-attr">"file"</span>: &lt;PDF_OR_IMAGE_FILE&gt;
 }
 </div></code></pre>
@@ -1875,7 +1861,6 @@ code {
   <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String — Lecture name"</span>,
   <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String — Course name"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String — Material title"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String — Description"</span>,
   <span class="hljs-attr">"file"</span>: <span class="hljs-string">"String (URL) — File download URL"</span>,
   <span class="hljs-attr">"file_url"</span>: <span class="hljs-string">"String (URL) — Absolute URL to the file"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean — Whether this material is active"</span>,
@@ -2040,7 +2025,6 @@ code {
 <li>Amount is parsed as <code>Decimal</code> — no float precision errors.</li>
 <li>Creates an immutable <code>BalanceTransaction</code> with <code>balance_before</code> and <code>balance_after</code>.</li>
 <li>Creates a <code>StudentActivity</code> log entry with type <code>BALANCE_ADDED</code>.</li>
-<li>Sends a <code>Notification</code> to the student.</li>
 </ul>
 <hr>
 <h4 id="get-paymentsbalancestudents">GET /payments/balance/students/</h4>
@@ -2145,83 +2129,7 @@ code {
 <li>Revenue is calculated using database-level aggregation for performance.</li>
 </ul>
 <hr>
-<h2 id="15-notifications">15. Notifications</h2>
-<hr>
-<h4 id="get-notifications">GET /notifications/</h4>
-<p><strong>Description:</strong> List all notifications for the authenticated user.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Query Parameters:</strong></p>
-<ul>
-<li><code>is_read</code> — <code>true</code> or <code>false</code></li>
-<li><code>notification_type</code> — <code>enrollment_approved</code>, <code>enrollment_rejected</code>, <code>balance_added</code>, etc.</li>
-</ul>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"notification_type"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"notification_type_display"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"message"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"is_read"</span>: <span class="hljs-string">"Boolean"</span>,
-      <span class="hljs-attr">"metadata"</span>: <span class="hljs-string">"Object | null"</span>,
-      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h4 id="get-notificationsunread-count">GET /notifications/unread-count/</h4>
-<p><strong>Description:</strong> Get count of unread notifications.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>
-}
-</div></code></pre>
-<hr>
-<h4 id="post-notificationsmark-all-read">POST /notifications/mark-all-read/</h4>
-<p><strong>Description:</strong> Mark all notifications as read.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"All notifications marked as read"</span>
-}
-</div></code></pre>
-<hr>
-<h4 id="post-notificationsidmark-read">POST /notifications/<id>/mark-read/</h4>
-<p><strong>Description:</strong> Mark a notification as read.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Notification marked as read"</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-<th>Response Body</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>404</code></td>
-<td>Notification not found</td>
-<td><code>{&quot;error&quot;: &quot;Notification not found&quot;}</code></td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="16-student-report">16. Student Report</h2>
+<h2 id="15-student-report">15. Student Report</h2>
 <hr>
 <h4 id="get-coursescoursepkstudent-reportstudentid">GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</h4>
 <p><strong>Description:</strong> Returns everything about a student within a specific course. Teacher/Assistant only.</p>
@@ -2301,7 +2209,7 @@ code {
 </tbody>
 </table>
 <hr>
-<h2 id="17-lecture-prerequisites">17. Lecture Prerequisites</h2>
+<h2 id="16-lecture-prerequisites">16. Lecture Prerequisites</h2>
 <hr>
 <h4 id="get-courseslecturesidprerequisites">GET /courses/lectures/<id>/prerequisites/</h4>
 <p><strong>Description:</strong> List all prerequisites for a lecture.</p>
@@ -2348,7 +2256,7 @@ code {
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
-<h2 id="18-watching-times-limit">18. Watching Times Limit</h2>
+<h2 id="17-watching-times-limit">17. Watching Times Limit</h2>
 <p>Each lecture enforces a <strong>watching times limit</strong> (default: 4). Once a student has used all their watching times, the lecture's videos are locked.</p>
 <ul>
 <li>The limit applies to the <strong>entire lecture</strong> — watching any video counts toward the limit.</li>

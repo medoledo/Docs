@@ -456,14 +456,6 @@ code {
 <li><a href="#get-materialsmy">GET /materials/my/</a></li>
 </ul>
 </li>
-<li><a href="#14-notifications">Notifications</a>
-<ul>
-<li><a href="#get-notifications">GET /notifications/</a></li>
-<li><a href="#get-notificationsunread-count">GET /notifications/unread-count/</a></li>
-<li><a href="#post-notificationsmark-all-read">POST /notifications/mark-all-read/</a></li>
-<li><a href="#post-notificationsidmark-read">POST /notifications/<id>/mark-read/</a></li>
-</ul>
-</li>
 </ol>
 <hr>
 <h2 id="1-profile-management">1. Profile Management</h2>
@@ -484,7 +476,6 @@ code {
   <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String | null"</span>,
   <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String | null"</span>,
-  <span class="hljs-attr">"father_job"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"Integer | null"</span>,
   <span class="hljs-attr">"school_type_name"</span>: <span class="hljs-string">"String | null"</span>,
   <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"Integer | null"</span>,
@@ -492,7 +483,6 @@ code {
   <span class="hljs-attr">"division"</span>: <span class="hljs-string">"Integer | null"</span>,
   <span class="hljs-attr">"division_name"</span>: <span class="hljs-string">"String | null"</span>,
   <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"String | null"</span>,
-  <span class="hljs-attr">"national_id"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"birth_date"</span>: <span class="hljs-string">"Date (YYYY-MM-DD)"</span>,
   <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female)"</span>,
   <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String"</span>,
@@ -995,10 +985,8 @@ code {
   <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
   <span class="hljs-attr">"reopen_logs"</span>: [
     {
-      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime"</span>,
-      <span class="hljs-attr">"note"</span>: <span class="hljs-string">"String"</span>
+      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime"</span>
     }
   ]
 }
@@ -1571,82 +1559,6 @@ code {
   }
 ]
 </div></code></pre>
-<hr>
-<h2 id="14-notifications">14. Notifications</h2>
-<hr>
-<h3 id="get-notifications">GET /notifications/</h3>
-<p><strong>Description:</strong> List all notifications for the authenticated user.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Query Parameters:</strong></p>
-<ul>
-<li><code>is_read</code> — <code>true</code> or <code>false</code></li>
-<li><code>notification_type</code> — <code>enrollment_approved</code>, <code>enrollment_rejected</code>, <code>balance_added</code>, etc.</li>
-</ul>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"notification_type"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"notification_type_display"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"message"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"is_read"</span>: <span class="hljs-string">"Boolean"</span>,
-      <span class="hljs-attr">"metadata"</span>: <span class="hljs-string">"Object | null"</span>,
-      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h3 id="get-notificationsunread-count">GET /notifications/unread-count/</h3>
-<p><strong>Description:</strong> Get count of unread notifications.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>
-}
-</div></code></pre>
-<hr>
-<h3 id="post-notificationsmark-all-read">POST /notifications/mark-all-read/</h3>
-<p><strong>Description:</strong> Mark all notifications as read.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"All notifications marked as read"</span>
-}
-</div></code></pre>
-<hr>
-<h3 id="post-notificationsidmark-read">POST /notifications/<id>/mark-read/</h3>
-<p><strong>Description:</strong> Mark a notification as read.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Notification marked as read"</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-<th>Response Body</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>404</code></td>
-<td>Notification not found</td>
-<td><code>{&quot;error&quot;: &quot;Notification not found&quot;}</code></td>
-</tr>
-</tbody>
-</table>
 <hr>
 <p><em>Documentation generated by OpenCode AI Agent</em>
 <em>Project: EduTrack Online Backend</em>

@@ -384,8 +384,8 @@ code {
 <p><strong>Description:</strong> Authenticates a user with username and password. Returns user data in the JSON body and sets JWT tokens as HTTP-Only cookies.</p>
 <p><strong>Cookies set on success:</strong></p>
 <ul>
-<li><code>access_token</code> — JWT access token, 30 min expiry, httpOnly, Secure, SameSite=None, Path=/</li>
-<li><code>refresh_token</code> — JWT refresh token, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
+<li><code>access_token</code> � JWT access token, 30 min expiry, httpOnly, Secure, SameSite=None, Path=/</li>
+<li><code>refresh_token</code> � JWT refresh token, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
 </ul>
 <blockquote>
 <p>Both tokens contain <code>role</code> in their JWT payload. The frontend can decode the access token to read <code>user_id</code> and <code>role</code> without additional API calls.</p>
@@ -398,12 +398,12 @@ code {
   <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required)"</span>
 }
 </div></code></pre>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"String (siteowner|teacher|assistant|student)"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String — Only for students: pending|verified|declined|suspended_temporary|suspended_permanent"</span>
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String � Only for students: pending|verified|declined|suspended_temporary|suspended_permanent"</span>
 }
 </div></code></pre>
 <blockquote>
@@ -458,7 +458,7 @@ code {
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Successfully logged out"</span>
 }
@@ -490,7 +490,7 @@ code {
 <p><strong>Authentication:</strong> Public (reads token from cookie)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"String (siteowner|teacher|assistant|student)"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
@@ -548,7 +548,7 @@ code {
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response � 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"String (siteowner|teacher|assistant|student)"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
@@ -557,7 +557,7 @@ code {
 </div></code></pre>
 <p><strong>Cookie set on success:</strong></p>
 <ul>
-<li><code>user-role</code> — Refreshed JWT containing <code>{user_id, role}</code>, 7 days expiry, Secure, SameSite=None, Path=/</li>
+<li><code>user-role</code> � Refreshed JWT containing <code>{user_id, role}</code>, 7 days expiry, Secure, SameSite=None, Path=/</li>
 </ul>
 <p><strong>Error Responses:</strong></p>
 <table>
@@ -585,10 +585,10 @@ code {
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String (Required) â€” Email address associated with the account"</span>
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String (Required) — Email address associated with the account"</span>
 }
 </div></code></pre>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"If an account exists with this email, you will receive a reset code."</span>
 }
@@ -625,13 +625,13 @@ code {
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String (Required) â€” 6-digit code"</span>
+  <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String (Required) — 6-digit code"</span>
 }
 </div></code></pre>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"valid"</span>: <span class="hljs-string">"boolean - Whether the OTP is valid"</span>,
-  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String — 32-character hex token"</span>,
+  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String � 32-character hex token"</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"OTP verified successfully"</span>
 }
 </div></code></pre>
@@ -670,12 +670,12 @@ code {
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String (Required) â€” 6-digit code"</span>,
-  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String (Required) â€” From verify-otp response"</span>,
-  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"String (Required) â€” Minimum 8 characters"</span>
+  <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String (Required) — 6-digit code"</span>,
+  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String (Required) — From verify-otp response"</span>,
+  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"String (Required) — Minimum 8 characters"</span>
 }
 </div></code></pre>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Password reset successfully. Please log in again."</span>
 }
@@ -735,12 +735,12 @@ code {
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"old_password"</span>: <span class="hljs-string">"String (Required) â€” Current password"</span>,
-  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"String (Required) â€” Minimum 8 characters"</span>,
-  <span class="hljs-attr">"new_password_confirm"</span>: <span class="hljs-string">"String (Required) â€” Must match new_password"</span>
+  <span class="hljs-attr">"old_password"</span>: <span class="hljs-string">"String (Required) — Current password"</span>,
+  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"String (Required) — Minimum 8 characters"</span>,
+  <span class="hljs-attr">"new_password_confirm"</span>: <span class="hljs-string">"String (Required) — Must match new_password"</span>
 }
 </div></code></pre>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Password changed successfully. Please log in again."</span>
 }
@@ -795,10 +795,10 @@ code {
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String (Required) â€” Email address to verify"</span>
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String (Required) — Email address to verify"</span>
 }
 </div></code></pre>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Verification code sent to your email."</span>
 }
@@ -833,10 +833,10 @@ code {
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String (Required) â€” 6-digit code"</span>
+  <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String (Required) — 6-digit code"</span>
 }
 </div></code></pre>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"verified"</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String - The verified email address"</span>,
@@ -887,29 +887,28 @@ code {
 <p><strong>Prerequisite:</strong> Call <code>POST /verify-email/confirm/</code> first to obtain a <code>verification_token</code>. Include it in this request.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"verification_token"</span>: <span class="hljs-string">"String (Required) — Token from verify-email/confirm"</span>,
-  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String (Required) — Unique, case-insensitive"</span>,
-  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required) — Minimum 8 characters"</span>,
-  <span class="hljs-attr">"password_confirm"</span>: <span class="hljs-string">"String (Required) — Must match password"</span>,
-  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"String (Required) — Arabic name"</span>,
-  <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String (Required) — English name"</span>,
-  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String (Required) — Egyptian format"</span>,
+  <span class="hljs-attr">"verification_token"</span>: <span class="hljs-string">"String (Required) � Token from verify-email/confirm"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String (Required) � Unique, case-insensitive"</span>,
+  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required) � Minimum 8 characters"</span>,
+  <span class="hljs-attr">"password_confirm"</span>: <span class="hljs-string">"String (Required) � Must match password"</span>,
+  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"String (Required) � Arabic name"</span>,
+  <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String (Required) � English name"</span>,
+  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String (Required) � Egyptian format"</span>,
   <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"father_job"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"Integer (Required)"</span>,
   <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"Integer (Required)"</span>,
   <span class="hljs-attr">"division"</span>: <span class="hljs-string">"Integer (Required)"</span>,
   <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"national_id"</span>: <span class="hljs-string">"String (Required) — 14 digits"</span>,
+
   <span class="hljs-attr">"birth_date"</span>: <span class="hljs-string">"Date (YYYY-MM-DD) (Required)"</span>,
-  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Required) — male|female"</span>,
-  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) — Must be globally unique, must match verified email"</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Required) � male|female"</span>,
+  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) � Must be globally unique, must match verified email"</span>,
   <span class="hljs-attr">"governorate"</span>: <span class="hljs-string">"Integer (Required)"</span>,
-  <span class="hljs-attr">"area"</span>: <span class="hljs-string">"Integer (Required) — Must belong to the selected governorate"</span>
+  <span class="hljs-attr">"area"</span>: <span class="hljs-string">"Integer (Required) � Must belong to the selected governorate"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 201 Created:</strong></p>
+<p><strong>Success Response � 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"String - Success message"</span>,
   <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String - Auto-generated 7-digit code"</span>,
@@ -1024,7 +1023,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -1052,7 +1051,7 @@ code {
 <h3 id="get-accountspublicteachersid">GET /accounts/public/teachers/<id>/</h3>
 <p><strong>Description:</strong> Get detailed public profile for a single teacher.</p>
 <p><strong>Authentication:</strong> Public</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
@@ -1127,7 +1126,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -1143,7 +1142,7 @@ code {
 <hr>
 <h4 id="get-accountsgradesid">GET /accounts/grades/<id>/</h4>
 <p><strong>Authentication:</strong> Public</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
@@ -1172,7 +1171,7 @@ code {
 <p><strong>Description:</strong> List all school types. Same pattern as grades.</p>
 <p><strong>Authentication:</strong> Public</p>
 <p><strong>Query Parameters:</strong> Same as grades (<code>search</code>, <code>all</code>, <code>page</code>, <code>page_size</code>)</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -1188,7 +1187,7 @@ code {
 <hr>
 <h4 id="get-accountsschool-typesid">GET /accounts/school-types/<id>/</h4>
 <p><strong>Authentication:</strong> Public</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
@@ -1231,7 +1230,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -1261,7 +1260,7 @@ code {
 <hr>
 <h4 id="get-accountsdivisionsid">GET /accounts/divisions/<id>/</h4>
 <p><strong>Authentication:</strong> Public</p>
-<p><strong>Success Response â€” 200 OK:</strong> Same structure as list item.</p>
+<p><strong>Success Response — 200 OK:</strong> Same structure as list item.</p>
 <hr>
 <h3 id="subjects">Subjects</h3>
 <h4 id="get-accountssubjects">GET /accounts/subjects/</h4>
@@ -1304,7 +1303,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -1341,7 +1340,7 @@ code {
 <hr>
 <h4 id="get-accountssubjectsid">GET /accounts/subjects/<id>/</h4>
 <p><strong>Authentication:</strong> Public</p>
-<p><strong>Success Response â€” 200 OK:</strong> Same structure as list item.</p>
+<p><strong>Success Response — 200 OK:</strong> Same structure as list item.</p>
 <hr>
 <h2 id="7-location-lookups-read-only-get">7. Location Lookups (Read-Only GET)</h2>
 <hr>
@@ -1349,7 +1348,7 @@ code {
 <h4 id="get-accountsgovernorates">GET /accounts/governorates/</h4>
 <p><strong>Description:</strong> List all governorates.</p>
 <p><strong>Authentication:</strong> Public</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -1365,7 +1364,7 @@ code {
 <hr>
 <h4 id="get-accountsgovernoratesid">GET /accounts/governorates/<id>/</h4>
 <p><strong>Authentication:</strong> Public</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
@@ -1393,7 +1392,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -1411,7 +1410,7 @@ code {
 <hr>
 <h4 id="get-accountsareasid">GET /accounts/areas/<id>/</h4>
 <p><strong>Authentication:</strong> Public</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
@@ -1420,105 +1419,15 @@ code {
 }
 </div></code></pre>
 <hr>
-<h2 id="8-curriculum-read-only-get">8. Curriculum (Read-Only GET)</h2>
-<hr>
-<h3 id="chapters">Chapters</h3>
-<h4 id="get-curriculumchapters">GET /curriculum/chapters/</h4>
-<p><strong>Description:</strong> List all chapters. Filter by <code>subject</code> and/or <code>grade</code>.</p>
-<p><strong>Authentication:</strong> None (public read)</p>
-<p><strong>Query Parameters:</strong></p>
-<ul>
-<li><code>subject</code> â€” Filter by subject ID</li>
-<li><code>grade</code> â€” Filter by grade ID</li>
-</ul>
-<p><strong>Success Response â€” 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer - Number of items"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
-      <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"integer - Subject ID"</span>,
-      <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"string - Subject name"</span>,
-      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"integer - Grade ID"</span>,
-      <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"string - Grade name"</span>,
-      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Chapter name"</span>,
-      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>,
-      <span class="hljs-attr">"lesson_count"</span>: <span class="hljs-string">"integer - Number of lessons"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h4 id="get-curriculumchaptersid">GET /curriculum/chapters/<id>/</h4>
-<p><strong>Description:</strong> Retrieve a single chapter with nested lessons.</p>
-<p><strong>Authentication:</strong> None (public read)</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
-  <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"integer - Subject ID"</span>,
-  <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"string - Subject name"</span>,
-  <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"integer - Grade ID"</span>,
-  <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"string - Grade name"</span>,
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Chapter name"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>,
-  <span class="hljs-attr">"lessons"</span>: [
-    {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Lesson name"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>},
-    {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Lesson name"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>}
-  ],
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-}
-</div></code></pre>
-<hr>
-<h3 id="lessons">Lessons</h3>
-<h4 id="get-curriculumlessons">GET /curriculum/lessons/</h4>
-<p><strong>Description:</strong> List all lessons. Filter by <code>chapter</code>.</p>
-<p><strong>Authentication:</strong> None (public read)</p>
-<p><strong>Query Parameters:</strong></p>
-<ul>
-<li><code>chapter</code> â€” Filter by chapter ID</li>
-</ul>
-<hr>
-<h4 id="get-curriculumlessonsid">GET /curriculum/lessons/<id>/</h4>
-<p><strong>Description:</strong> Retrieve a single lesson.</p>
-<p><strong>Authentication:</strong> None (public read)</p>
-<hr>
-<h3 id="curriculum-by-subject--grade">Curriculum by Subject &amp; Grade</h3>
-<h4 id="get-curriculumby-subject-gradesubjectidgradeid">GET /curriculum/by-subject-grade/?subject=<id>&amp;grade=<id></h4>
-<p><strong>Description:</strong> Get all chapters with nested lessons for a specific subject + grade combination.</p>
-<p><strong>Authentication:</strong> None (public read)</p>
-<p><strong>Query Parameters:</strong></p>
-<ul>
-<li><code>subject</code> (required) â€” Subject ID</li>
-<li><code>grade</code> (required) â€” Grade ID</li>
-</ul>
-<p><strong>Success Response â€” 200 OK:</strong></p>
-<pre class="hljs"><code><div>[
-  {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
-    <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"integer - Subject ID"</span>,
-    <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"string - Subject name"</span>,
-    <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"integer - Grade ID"</span>,
-    <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"string - Grade name"</span>,
-    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Chapter name"</span>,
-    <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>,
-    <span class="hljs-attr">"lessons"</span>: [
-      {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Lesson name"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>},
-      {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Lesson name"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Sort order"</span>}
-    ]
-  }
-]
-</div></code></pre>
-<hr>
-<h2 id="9-public-key">9. Public Key</h2>
+<h2 id="8-public-key">8. Public Key</h2>
 <hr>
 <h3 id="get-accountspublic-key">GET /accounts/public-key/</h3>
 <p><strong>Description:</strong> Returns the RSA public key used for JWT verification (RS256 algorithm). Frontends can use this to verify token signatures locally.</p>
 <p><strong>Authentication:</strong> None (public)</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response � 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"public_key"</span>: <span class="hljs-string">"String — PEM-formatted RSA public key"</span>,
-  <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"String — Always 'RS256'"</span>
+  <span class="hljs-attr">"public_key"</span>: <span class="hljs-string">"String � PEM-formatted RSA public key"</span>,
+  <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"String � Always 'RS256'"</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>
@@ -1539,7 +1448,7 @@ code {
 </tbody>
 </table>
 <hr>
-<h2 id="10-field-availability-check">10. Field Availability Check</h2>
+<h2 id="9-field-availability-check">9. Field Availability Check</h2>
 <hr>
 <h3 id="get-accountscheck-field">GET /accounts/check-field/</h3>
 <p><strong>Description:</strong> Check if a field value is already taken. Used for real-time validation on registration and profile forms.</p>
@@ -1566,7 +1475,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response � 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"available"</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">""</span>
@@ -1596,12 +1505,12 @@ code {
 </tbody>
 </table>
 <hr>
-<h2 id="11-video-security-options">11. Video Security Options</h2>
+<h2 id="10-video-security-options">10. Video Security Options</h2>
 <hr>
 <h3 id="get-accountsvideo-security">GET /accounts/video-security/</h3>
-<p><strong>Description:</strong> List available video security/protection options (DRM, watermarking, etc.). Configured via Django Admin — read-only via API.</p>
+<p><strong>Description:</strong> List available video security/protection options (DRM, watermarking, etc.). Configured via Django Admin � read-only via API.</p>
 <p><strong>Authentication:</strong> None (public)</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response � 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -1617,7 +1526,7 @@ code {
 <h3 id="get-accountsvideo-securityid">GET /accounts/video-security/<id>/</h3>
 <p><strong>Description:</strong> Retrieve a single video security option.</p>
 <p><strong>Authentication:</strong> None (public)</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response � 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,

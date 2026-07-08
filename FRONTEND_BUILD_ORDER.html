@@ -488,12 +488,10 @@ Step 3:  POST /accounts/student/register/ { verification_token, gmail, ...all fi
 <li><code>name_en</code> (English name)</li>
 <li><code>phone_number</code> (Egyptian format: 010/011/012/015 + 8 digits)</li>
 <li><code>father_number</code>, <code>mother_number</code> (parent phones)</li>
-<li><code>father_job</code></li>
 <li><code>school_type</code> (select from dropdown)</li>
 <li><code>grade</code> (select from dropdown)</li>
 <li><code>division</code> (select from dropdown, filters by school_type + grade)</li>
 <li><code>school_name</code> (text input)</li>
-<li><code>national_id</code> (14 digits)</li>
 <li><code>birth_date</code> (date picker)</li>
 <li><code>gender</code> (male/female)</li>
 <li><code>governorate</code> (select from dropdown)</li>
@@ -732,7 +730,7 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </table>
 <p><strong>Student List Filters:</strong></p>
 <ul>
-<li>Search by name, student_code, phone, national_id, gmail</li>
+<li>Search by name, student_code, phone, gmail</li>
 <li>Filter by <code>status</code> (verified/pending/declined/suspended)</li>
 <li>Filter by <code>grade</code>, <code>school_type</code></li>
 <li>Sort by created_at, name, student_code</li>
@@ -837,16 +835,6 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <td>List video security</td>
 <td>GET</td>
 <td><code>/accounts/video-security/</code></td>
-</tr>
-<tr>
-<td>List chapters</td>
-<td>GET</td>
-<td><code>/curriculum/chapters/</code></td>
-</tr>
-<tr>
-<td>List lessons</td>
-<td>GET</td>
-<td><code>/curriculum/lessons/</code></td>
 </tr>
 </tbody>
 </table>
@@ -977,7 +965,7 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <pre class="hljs"><code><div>← Back to Content
 
 Lecture: Intro to Chemical Reactions
-Price: 50 EGP | Discount: 10% | Available: 30 days
+Price: 50 EGP | Discount: 10 EGP | Available: 30 days
 
 [ Videos ] [ Purchases ] [ Homework ] [ Quiz ] [ Materials ] [ Prerequisites ]
 </div></code></pre>
@@ -1053,7 +1041,7 @@ Price: 50 EGP | Discount: 10% | Available: 30 days
 </tr>
 <tr>
 <td>Reopen lecture</td>
-<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> { extra_days }</td>
+<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body — always 1 day, max 2)</td>
 </tr>
 </tbody>
 </table>
@@ -1875,7 +1863,8 @@ Ahmed Ali    │ S-001   │ 200 EGP │ [+Balance] [Report] [Reopen]
 <li><strong>Homework Bubble Sheet:</strong> Auto-graded on submission. Title required. <code>show_grades</code> controls whether students see correct answers after submission. Single answer = exact match. Multiple answers = all must match.</li>
 <li><strong>Quiz:</strong> MCQ auto-graded, written manually graded. Questions are standalone only (inline text + image + choices). Timer: 0 = unlimited.</li>
 <li><strong>Enrollment:</strong> Tracks who approved/rejected + timestamp.</li>
-<li><strong>Student Visibility:</strong> Teachers see only their own students. No national_id, birth_date visible.</li>
+<li><strong>Student Visibility:</strong> Teachers see only their own students. Sensitive fields are excluded.</li>
+<li><strong>Status History:</strong> The student detail response includes <code>status_history</code> — an array of <code>{changed_by, from_status, to_status, reason, created_at}</code> showing all status changes. Display this as a timeline in the student detail page.</li>
 <li><strong>Exams:</strong> Course-level assessments with open/close dates. Same as quizzes but independent of lectures. Can gate video access via prerequisites.</li>
 </ul>
 <hr>
@@ -1946,8 +1935,8 @@ Ahmed Ali    │ S-001   │ 200 EGP │ [+Balance] [Report] [Reopen]
 </tr>
 <tr>
 <td>12</td>
-<td><strong>Profile &amp; Notifications</strong></td>
-<td><code>GET/PATCH /accounts/profile/me/</code>, <code>GET /notifications/</code></td>
+<td><strong>Profile</strong></td>
+<td><code>GET/PATCH /accounts/profile/me/</code></td>
 </tr>
 </tbody>
 </table>
