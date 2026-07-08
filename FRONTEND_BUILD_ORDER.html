@@ -886,15 +886,20 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <p><strong>IMPORTANT:</strong> All pages in Phase 2 apply to <strong>both Teacher and Assistant roles</strong> unless noted. The only exception is the <strong>Assistants management page</strong> — assistants can view coworkers but cannot create/delete.</p>
 <p>Dashboards (Course Dashboard, Teacher Dashboard) are built <strong>last</strong> — after all features exist.</p>
 <hr>
-<h3 id="page-1-my-courses-page">Page 1: My Courses Page</h3>
-<p><strong>APIs to use:</strong></p>
+<h3 id="page-1-my-courses-page-entry-point">Page 1: My Courses Page (Entry Point)</h3>
+<p>Teacher logs in → <code>POST /accounts/login/</code> → JWT cookies set → <code>GET /accounts/me/</code> → redirects to My Courses.</p>
+<p><strong>Page layout:</strong> Grid of course cards, each showing:</p>
+<ul>
+<li>Course name, grade, subject, cover picture</li>
+<li>Topic count, enrolled/pending/rejected counts</li>
+<li>Click card → navigate to Content Management</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
-<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
@@ -902,166 +907,560 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <td>My courses</td>
 <td>GET</td>
 <td><code>/courses/my_courses/</code></td>
-<td>List courses assigned to this teacher</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Page displays:</strong></p>
-<ul>
-<li>Grid of course cards, each showing: name, grade, subject, cover_picture, topic count, enrolled/pending/rejected counts</li>
-<li>Click on a card → navigate to <strong>Content Management page</strong></li>
-</ul>
 <hr>
 <h3 id="page-2-content-management-topics-%E2%86%92-lectures-%E2%86%92-videos">Page 2: Content Management (Topics → Lectures → Videos)</h3>
-<p><strong>Purpose:</strong> Full CRUD for the course's content hierarchy. This is the core page — teachers spend most of their time here.</p>
+<p><strong>Purpose:</strong> The core page where teachers build their course content hierarchy. Teacher spends most time here.</p>
 <p><strong>Navigation:</strong> Select course → Topics list → Click topic → Lectures list → Click lecture → Lecture Detail</p>
+<p><strong>Page layout (left-to-right hierarchy):</strong></p>
+<pre class="hljs"><code><div>Course: Chemistry 3rd Secondary
+┌────────────────────────────────────────────────┐
+│  Unit 1: Chemical Reactions          [+ Topic] │
+│  ├── Lecture 1: Intro               [3 videos] │
+│  ├── Lecture 2: Balancing           [2 videos] │
+│  └── + Add Lecture                             │
+│                                                │
+│  Unit 2: Organic Chemistry                     │
+│  ├── Lecture 3: Hydrocarbons        [0 videos] │
+│  └── + Add Lecture                             │
+└────────────────────────────────────────────────┘
+</div></code></pre>
+<p><strong>Topic CRUD:</strong></p>
 <table>
 <thead>
 <tr>
 <th>Action</th>
 <th>Endpoint</th>
-<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Topics CRUD</td>
-<td><code>GET/POST /courses/topics/</code></td>
-<td>Create topic</td>
+<td>Create</td>
+<td><code>POST /courses/topics/</code> { course, name, description, order }</td>
 </tr>
 <tr>
-<td>Topic detail</td>
-<td><code>GET/PUT/DELETE /courses/topics/&lt;id&gt;/</code></td>
-<td>With nested lectures</td>
+<td>Update</td>
+<td><code>PUT /courses/topics/&lt;id&gt;/</code></td>
 </tr>
 <tr>
-<td>Lectures CRUD</td>
-<td><code>GET/POST /courses/lectures/</code></td>
-<td>With price, discount, available_days</td>
+<td>Delete</td>
+<td><code>DELETE /courses/topics/&lt;id&gt;/</code> (blocked if has lectures)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lecture CRUD:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create</td>
+<td><code>POST /courses/lectures/</code> { topic, name, price, discount, available_days, description }</td>
 </tr>
 <tr>
-<td>Lecture detail</td>
-<td><code>GET/PUT/DELETE /courses/lectures/&lt;id&gt;/</code></td>
-<td>With videos + all section tabs</td>
+<td>Update</td>
+<td><code>PUT /courses/lectures/&lt;id&gt;/</code> (blocked if is_visible=false &amp; active purchases exist)</td>
 </tr>
 <tr>
-<td>Videos CRUD</td>
-<td><code>GET/POST /courses/videos/</code></td>
-<td>Create video metadata record</td>
+<td>Delete</td>
+<td><code>DELETE /courses/lectures/&lt;id&gt;/</code> (blocked if any purchases exist)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Click a lecture → Lecture Detail page with sub-tabs:</strong></p>
+<pre class="hljs"><code><div>← Back to Content
+
+Lecture: Intro to Chemical Reactions
+Price: 50 EGP | Discount: 10% | Available: 30 days
+
+[ Videos ] [ Purchases ] [ Homework ] [ Quiz ] [ Materials ] [ Prerequisites ]
+</div></code></pre>
+<p><strong>Each sub-tab is built when its corresponding page below is completed.</strong></p>
+<p><strong>Video tab (built here):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List videos</td>
+<td><code>GET /courses/videos/?lecture=&lt;id&gt;</code></td>
 </tr>
 <tr>
-<td>Create Bunny upload</td>
-<td><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></td>
-<td>Returns <code>upload_url</code> for direct CDN upload</td>
+<td>Create video</td>
+<td><code>POST /courses/videos/</code> { lecture, name, order }</td>
 </tr>
 <tr>
-<td>Generate playback URL</td>
-<td><code>GET /courses/videos/&lt;id&gt;/play/</code></td>
-<td>Signed URL for student playback</td>
+<td>Get video</td>
+<td><code>GET /courses/videos/&lt;id&gt;/</code></td>
 </tr>
 <tr>
 <td>Delete video</td>
 <td><code>DELETE /courses/videos/&lt;id&gt;/</code></td>
-<td>Teacher delete video record</td>
+</tr>
+<tr>
+<td>Create Bunny upload</td>
+<td><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Bunny Stream Upload Flow:</strong></p>
-<pre class="hljs"><code><div>Teacher clicks &quot;Add Video&quot; → POST /courses/videos/ { lecture, name }
-    → Video record created with id, bunny_video_id=null
-
-Teacher clicks &quot;Upload&quot; on the video → POST /courses/videos/&lt;id&gt;/create-upload/
-    → Backend calls Bunny API to create video entry
-    → Returns { upload_url, bunny_video_id, status }
-
-Frontend uploads the file DIRECTLY to Bunny CDN — 0 backend load:
-    fetch(uploadUrl, { method: 'PUT', headers: {'Content-Type': 'application/octet-stream'}, body: file })
-
-Frontend polls GET /courses/videos/&lt;id&gt;/ until bunny_status=4 (Finished)
-    → Show progress bar based on status: Created → Uploaded → Processing → Transcoding → ✅ Finished
-
-When status=4, Bunny also calls the webhook and backend sets is_active=true
+<p><strong>Bunny Upload Flow in the UI:</strong></p>
+<ol>
+<li>Teacher clicks &quot;Add Video&quot; → modal: name, order → Video record created (<code>bunny_video_id=null</code>, status=&quot;Pending&quot;)</li>
+<li>Teacher clicks &quot;Upload&quot; on the pending row → <code>POST .../create-upload/</code> → returns <code>upload_url</code></li>
+<li>Frontend starts PUT upload directly to Bunny CDN with progress bar (0% → 100%)</li>
+<li>Frontend polls <code>GET /courses/videos/&lt;id&gt;/</code> every 5 seconds</li>
+<li>UI shows live status: Created → Uploaded → Processing → Transcoding → <strong>Ready ✅</strong></li>
+<li>When status=4, <code>is_active=true</code>, teacher sees &quot;Ready&quot; badge</li>
+</ol>
+<pre class="hljs"><code><div>Video List UI Table:
+# │ Name          │ Status                            │ Actions
+──┼───────────────┼───────────────────────────────────┼────────────
+1 │ Intro         │ ✅ Ready                         │ [Preview] [Delete]
+2 │ Types         │ ⬆️ ████████░░ 80% Uploading      │ [Cancel]
+3 │ Graphs        │ 📝 Pending (not uploaded yet)    │ [Upload] [Delete]
+4 │ Advanced      │ ❌ Error — encoding failed        │ [Retry] [Delete]
 </div></code></pre>
-<p><strong>Playback (Student):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns a signed URL with 2-hour expiry. The frontend loads this URL in a Bunny Stream player.</p>
-<p><strong>Lecture detail sub-tabs (built incrementally as pages below are completed):</strong></p>
-<ul>
-<li><strong>Videos</strong> — manage videos (built here)</li>
-<li><strong>Homework</strong> — submissions + grades (built in Page 3, filtered by <code>?lecture=&lt;id&gt;</code>)</li>
-<li><strong>Quiz</strong> — submissions + scores (built in Page 4, filtered by <code>?lecture=&lt;id&gt;</code>)</li>
-<li><strong>Materials</strong> — uploaded PDFs (built in Page 6)</li>
-<li><strong>Prerequisites</strong> — gate configuration (built in Page 7)</li>
-</ul>
-<p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to force student-view filtering. Only active topics, visible lectures, and active videos are shown.</p>
+<p><strong>Playback Preview (teacher):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns signed URL. Teacher can preview own videos.</p>
+<p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to see exactly what students see (only active topics, visible lectures, active videos).</p>
 <hr>
-<h3 id="page-3-homeworks--standalone-management-page">Page 3: Homeworks — Standalone Management Page</h3>
-<p><strong>Purpose:</strong> Manage ALL homeworks across all courses in one place. Table view with filters, search, and quick status overview.</p>
-<p><strong>Filters available:</strong> <code>lecture</code>, <code>is_active</code>, <code>is_published</code>, search by title/description.
-<strong>Navigation:</strong> Click a homework row → view its submissions. Create homework → associates with a lecture.</p>
+<h3 id="page-3-lecture-detail--purchases-tab">Page 3: Lecture Detail — Purchases Tab</h3>
+<p><strong>Purpose:</strong> See who bought this lecture, how much they paid, when it expires, and reopen access.</p>
 <table>
 <thead>
 <tr>
 <th>Action</th>
-<th>Method</th>
 <th>Endpoint</th>
-<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>List homeworks</td>
-<td>GET</td>
-<td><code>/learning/homeworks/</code></td>
-<td><strong>All homeworks</strong> with filters (<code>?lecture=X</code>, <code>?is_active=true</code>)</td>
+<td>List purchases</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/purchases/</code></td>
 </tr>
 <tr>
-<td>Create homework</td>
-<td>POST</td>
-<td><code>/learning/homeworks/</code></td>
-<td>Create bubble-sheet homework</td>
+<td>List student progress</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></td>
 </tr>
 <tr>
-<td>Get homework</td>
-<td>GET</td>
-<td><code>/learning/homeworks/&lt;id&gt;/</code></td>
-<td>With bubble questions</td>
-</tr>
-<tr>
-<td>Update homework</td>
-<td>PUT/PATCH</td>
-<td><code>/learning/homeworks/&lt;id&gt;/</code></td>
-<td>Update</td>
-</tr>
-<tr>
-<td>Delete homework</td>
-<td>DELETE</td>
-<td><code>/learning/homeworks/&lt;id&gt;/</code></td>
-<td>Delete</td>
-</tr>
-<tr>
-<td>View submissions</td>
-<td>GET</td>
-<td><code>/learning/homeworks/&lt;id&gt;/submissions/</code></td>
-<td>All student answers for this homework</td>
-</tr>
-<tr>
-<td>View student's homeworks</td>
-<td>GET</td>
-<td><code>/learning/homeworks/my/</code></td>
-<td>Student's own homework history</td>
+<td>Reopen lecture</td>
+<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> { extra_days }</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Bubble Sheet Request Body:</strong></p>
+<p><strong>UI Table:</strong></p>
+<pre class="hljs"><code><div>Student      │ Code    │ Paid   │ Expires    │ Watched │ Actions
+─────────────┼─────────┼────────┼────────────┼─────────┼─────────────
+Ahmed Ali    │ S-001   │ 45 EGP │ 2026-08-07│ 2/4     │ [Reopen]
+Sara Ahmed   │ S-002   │ 45 EGP │ 2026-08-05│ 4/4 🔒  │ [Reopen]
+</div></code></pre>
+<p>Click &quot;Reopen&quot; → modal: extra days + optional note → access extended + audit logged.</p>
+<hr>
+<h3 id="page-4-homework-bubble-sheet-standalone--lecture-tab">Page 4: Homework Bubble Sheet (Standalone + Lecture Tab)</h3>
+<p><strong>Purpose:</strong> Create bubble-sheet homework with questions. View submissions with per-question results.</p>
+<p><strong>Standalone management page:</strong> Table of all homeworks across courses with filters (<code>?lecture=</code>, <code>?is_published=</code>).</p>
+<p><strong>Lecture tab:</strong> Same component, pre-filtered by <code>?lecture=&lt;id&gt;</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List</td>
+<td><code>GET /learning/homeworks/</code></td>
+</tr>
+<tr>
+<td>Create</td>
+<td><code>POST /learning/homeworks/</code></td>
+</tr>
+<tr>
+<td>Get</td>
+<td><code>GET /learning/homeworks/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Update</td>
+<td><code>PUT /learning/homeworks/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>DELETE /learning/homeworks/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>List submissions</td>
+<td><code>GET /learning/homeworks/&lt;id&gt;/submissions/</code></td>
+</tr>
+<tr>
+<td>Submission detail</td>
+<td><code>GET /learning/homework-submissions/&lt;id&gt;/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Create form:</strong></p>
+<pre class="hljs"><code><div>Title: [Week 1 Homework______________]
+Description: [________________]
+Published: [  ] (toggle)
+Show grades to students: [  ] (toggle — when on, students see correct answers after submission)
+
+Bubble Questions:
+Q1: Choices [4 ▼] | Answer [A] | Explanation (optional): [_________] | Points: [1]
+Q2: Choices [5 ▼] | Answer [B] | Explanation (optional): [_________] | Points: [2]
++ Add Question
+</div></code></pre>
+<p><strong>Request body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Week 1 HW - Chapter 1"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Chapter 1 exercises"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">"bubble_questions"</span>: [
-    {<span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">"correct_answers"</span>: <span class="hljs-string">"A"</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">1</span>},
-    {<span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">"correct_answers"</span>: <span class="hljs-string">"A,C"</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">2</span>}
+    {<span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"A"</span>, <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-string">"Optional"</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">1</span>},
+    {<span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"A,C"</span>, <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-string">""</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">2</span>}
   ]
 }
 </div></code></pre>
-<p><strong>Also fills the Lecture Detail → Homework tab</strong> — From the Content Management page, clicking a lecture's Homework tab shows the same data pre-filtered to that lecture (<code>?lecture=&lt;id&gt;</code>). All tables, filters, and actions are identical — just a different URL filter.</p>
+<p><strong>Submissions table (teacher view):</strong></p>
+<pre class="hljs"><code><div>Student      │ Code    │ Score │ Status │ Submitted
+─────────────┼─────────┼───────┼────────┼──────────────
+Ahmed Ali    │ S-001   │ 2/3   │ Graded │ 2026-07-08
+Sara Ahmed   │ S-002   │ 3/3   │ Graded │ 2026-07-07
+</div></code></pre>
+<p>Click a submission → per-question results:</p>
+<pre class="hljs"><code><div>Q1: Student answered B | Correct: A | ❌ Wrong | Explanation: Because...
+Q2: Student answered B | Correct: B | ✅ Correct
+</div></code></pre>
+<hr>
+<h3 id="page-5-quizzes-standalone--lecture-tab">Page 5: Quizzes (Standalone + Lecture Tab)</h3>
+<p><strong>Purpose:</strong> Create quizzes with standalone questions (text + image + choices). View submissions, manually grade written answers, release scores/answers.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List</td>
+<td><code>GET /learning/quizzes/</code></td>
+</tr>
+<tr>
+<td>Create</td>
+<td><code>POST /learning/quizzes/</code> { lecture, title, settings }</td>
+</tr>
+<tr>
+<td>Get</td>
+<td><code>GET /learning/quizzes/&lt;id&gt;/</code> (with questions)</td>
+</tr>
+<tr>
+<td>Update</td>
+<td><code>PUT /learning/quizzes/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>DELETE /learning/quizzes/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>List submissions</td>
+<td><code>GET /learning/quizzes/&lt;id&gt;/results/</code></td>
+</tr>
+<tr>
+<td>Grade written</td>
+<td><code>POST /learning/quiz-submissions/&lt;id&gt;/grade-written/</code></td>
+</tr>
+<tr>
+<td>Release scores</td>
+<td><code>POST /learning/quizzes/&lt;id&gt;/release-scores/</code></td>
+</tr>
+<tr>
+<td>Release answers</td>
+<td><code>POST /learning/quizzes/&lt;id&gt;/release-answers/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Questions:</strong> Standalone only (inline text + image + MCQ choices + written).</p>
+<hr>
+<h3 id="page-6-exams-standalone-course-level">Page 6: Exams (Standalone Course-Level)</h3>
+<p><strong>Purpose:</strong> Create exams independent of lectures. Can be used as prerequisites.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List</td>
+<td><code>GET /learning/exams/</code></td>
+</tr>
+<tr>
+<td>Create</td>
+<td><code>POST /learning/exams/</code> { course, title, open_date, close_date, settings }</td>
+</tr>
+<tr>
+<td>Get</td>
+<td><code>GET /learning/exams/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Update</td>
+<td><code>PUT /learning/exams/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>DELETE /learning/exams/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>List submissions</td>
+<td><code>GET /learning/exams/&lt;id&gt;/results/</code></td>
+</tr>
+<tr>
+<td>Release scores</td>
+<td><code>POST /learning/exams/&lt;id&gt;/release-scores/</code></td>
+</tr>
+<tr>
+<td>Release answers</td>
+<td><code>POST /learning/exams/&lt;id&gt;/release-answers/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> Created at <strong>course level</strong>, not lecture level. Appears in student's Exams page and can gate lecture access via prerequisites.</p>
+<hr>
+<h3 id="page-7-study-materials-lecture-detail-%E2%86%92-materials-tab">Page 7: Study Materials (Lecture Detail → Materials Tab)</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Upload</td>
+<td><code>POST /materials/</code> (multipart: lecture, title, file)</td>
+</tr>
+<tr>
+<td>List</td>
+<td><code>GET /materials/?lecture=&lt;id&gt;</code></td>
+</tr>
+<tr>
+<td>Get</td>
+<td><code>GET /materials/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Update</td>
+<td><code>PUT /materials/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>DELETE /materials/&lt;id&gt;/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Accepted formats:</strong> PDF, JPG, JPEG, PNG — <strong>Max size:</strong> 20 MB<br>
+<strong>Write access:</strong> Teachers, assistants, and siteowners (students read-only)<br>
+<strong>File uploads</strong> get a unique UUID filename — no overwrites</p>
+<hr>
+<h3 id="page-8-lecture-prerequisites-lecture-detail-%E2%86%92-prerequisites-tab">Page 8: Lecture Prerequisites (Lecture Detail → Prerequisites Tab)</h3>
+<p><strong>Purpose:</strong> Gate lecture video access behind homework/quiz/exam passing scores.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></td>
+</tr>
+<tr>
+<td>Add</td>
+<td><code>POST /courses/lectures/&lt;id&gt;/prerequisites/</code> { content_type, content_id, passing_score }</td>
+</tr>
+<tr>
+<td>Remove</td>
+<td><code>DELETE /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Valid types:</strong> <code>homework</code>, <code>quiz</code>, <code>exam</code></p>
+<pre class="hljs"><code><div>Current prerequisites for &quot;Intro to Reactions&quot;:
+  - Homework #5 (must score &gt;= 50%)  [Remove]
+  - Quiz #2 (must score &gt;= 70%)      [Remove]
+
++ Add Prerequisite
+  Type: [Homework ▼]  ID: [____]  Passing Score: [50]%
+</div></code></pre>
+<hr>
+<h3 id="page-9-students-page-enrollments--purchases--balances">Page 9: Students Page (Enrollments + Purchases + Balances)</h3>
+<p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, add balance, reopen access.</p>
+<p><strong>Page layout:</strong></p>
+<pre class="hljs"><code><div>Course: Chemistry 3rd Secondary
+
+Pending (3) | Approved (24) | Rejected (2)
+
+── Pending Tab ──
+Student      │ Code    │ Requested    │ Actions
+─────────────┼─────────┼──────────────┼────────────────
+Ali Hassan   │ S-010   │ 2026-07-07   │ [Approve] [Reject] (reason required)
+Nora Ahmed   │ S-011   │ 2026-07-06   │ [Approve] [Reject]
+
+── Approved Tab (expandable rows) ──
+Student      │ Code    │ Balance │ Actions
+─────────────┼─────────┼─────────┼─────────────────────────────
+Ahmed Ali    │ S-001   │ 200 EGP │ [+Balance] [Report] [Reopen]
+  ▶ Expanded:
+    - Lecture 1: Intro → Bought Jul 1 → Expires Jul 31 → Watch 2/4 → [Reopen]
+    - Lecture 2: Types → Bought Jul 3 → Expires Aug 2 → Watch 1/4 → [Reopen]
+    - Quiz 1: 80% ✅
+    - Homework 1: 2/3
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pending enrollments</td>
+<td><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></td>
+</tr>
+<tr>
+<td>Approved enrollments</td>
+<td><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></td>
+</tr>
+<tr>
+<td>Rejected enrollments</td>
+<td><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></td>
+</tr>
+<tr>
+<td>Enrolled + balances</td>
+<td><code>GET /courses/&lt;id&gt;/students/</code></td>
+</tr>
+<tr>
+<td>Approve</td>
+<td><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></td>
+</tr>
+<tr>
+<td>Reject</td>
+<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code> (reason required)</td>
+</tr>
+<tr>
+<td>Bulk approve/reject</td>
+<td><code>POST /courses/enrollments/bulk-action/</code></td>
+</tr>
+<tr>
+<td>Add balance</td>
+<td><code>POST /payments/balance/add/</code> { student_id, course_id, amount, reason }</td>
+</tr>
+<tr>
+<td>List purchases</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/purchases/</code></td>
+</tr>
+<tr>
+<td>Student progress</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></td>
+</tr>
+<tr>
+<td>Reopen</td>
+<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> { extra_days }</td>
+</tr>
+<tr>
+<td>Quiz submissions</td>
+<td><code>GET /learning/quiz-submissions/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Homework submissions</td>
+<td><code>GET /learning/homework-submissions/&lt;id&gt;/</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="page-10-student-report">Page 10: Student Report</h3>
+<p><strong>Purpose:</strong> Full report of everything about a student within a course.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full report</td>
+<td><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response includes:</strong> student info, enrollment status, balance, purchases (with watch counts/expiry), quiz submissions, exam submissions, homework submissions.</p>
+<hr>
+<h3 id="page-11-assistants-page-teachers-only">Page 11: Assistants Page (Teachers Only)</h3>
+<p><strong>Purpose:</strong> Manage assistants who share all course management capabilities.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List</td>
+<td><code>GET /accounts/teacher/assistants/</code></td>
+</tr>
+<tr>
+<td>Create</td>
+<td><code>POST /accounts/teacher/assistants/</code> { username, password, name, phone, gmail, gender }</td>
+</tr>
+<tr>
+<td>Get</td>
+<td><code>GET /accounts/teacher/assistant/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Update</td>
+<td><code>PATCH /accounts/teacher/assistant/&lt;id&gt;/</code></td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>DELETE /accounts/teacher/assistant/&lt;id&gt;/</code> (must be deactivated first)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> Assistant creation is <strong>teacher-only</strong>. Assistants can view other assistants but cannot create/delete.</p>
+<hr>
+<h3 id="page-12-course-dashboard-unified--built-last">Page 12: Course Dashboard (Unified — Built Last)</h3>
+<p>When all features exist, build a <strong>single page</strong> that unifies everything into 4 tabs:</p>
+<pre class="hljs"><code><div>┌────────────────────────────────────────────────────────────┐
+│  ← Chemistry 3rd Secondary                                 │
+│                                                            │
+│  ┌──────────┬─────────────────────┬──────────┬───────────┐ │
+│  │  📊     │  👥                 │  📚     │  📋       │ │
+│  │Overview │ Students            │ Content  │ Reports   │ │
+│  │ (Stats) │ Same as Page 9      │ Same as  │ Same as   │ │
+│  │         │ (embedded)          │ Page 2   │ Page 10   │ │
+│  │         │                     │ (embedded)│ (embedded)│ │
+│  └──────────┴─────────────────────┴──────────┴───────────┘ │
+└────────────────────────────────────────────────────────────┘
+</div></code></pre>
+<p><strong>Tab 1 — Overview:</strong> <code>GET /courses/&lt;id&gt;/</code> — enrolled/pending/rejected counts, topic/lecture/video counts.</p>
+<hr>
+<h3 id="page-13-teacher-dashboard-last--standalone">Page 13: Teacher Dashboard (Last — Standalone)</h3>
+<p><strong>Purpose:</strong> Aggregated stats across all courses. <code>GET /courses/dashboard/teacher/</code> — total courses, students, revenue, recent enrollments, recent purchases, per-course breakdown.</p>
 <hr>
 <h3 id="page-4-quizzes--standalone-management-page">Page 4: Quizzes — Standalone Management Page</h3>
 <p><strong>Purpose:</strong> Manage ALL quizzes across all courses in one place. Table view with filters, search, and quick status overview.</p>
@@ -1222,7 +1621,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <td>Upload material</td>
 <td>POST</td>
 <td><code>/materials/</code></td>
-<td>PDF upload (multipart/form-data)</td>
+<td>PDF / Image upload (multipart/form-data)</td>
 </tr>
 <tr>
 <td>List materials</td>
@@ -1250,6 +1649,10 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 </tr>
 </tbody>
 </table>
+<p><strong>Accepted formats:</strong> PDF, JPG, JPEG, PNG — <strong>Max:</strong> 20 MB<br>
+<strong>Upload only by:</strong> Teachers, Assistants, and SiteOwner (not students)<br>
+<strong>Unique filenames:</strong> UUID-based path — files with same name never collide<br>
+<strong>Student access:</strong> Only materials for purchased lectures are visible (list + detail returns 404 otherwise)</p>
 <hr>
 <h3 id="page-7-lecture-prerequisites-fills-content-%E2%86%92-lecture-%E2%86%92-prerequisites-tab">Page 7: Lecture Prerequisites (Fills Content → Lecture → Prerequisites Tab)</h3>
 <table>
@@ -1469,7 +1872,7 @@ When status=4, Bunny also calls the webhook and backend sets is_active=true
 <li><strong>Lecture Deactivation:</strong> Cannot deactivate a lecture if any student has an active (non-expired) purchase.</li>
 <li><strong>Lecture Delete:</strong> Cannot delete a lecture if ANY purchase exists (active or expired).</li>
 <li><strong>Topic Delete:</strong> Cannot delete a topic if it has any lectures.</li>
-<li><strong>Homework Bubble Sheet:</strong> Auto-graded on submission. Single answer = exact match. Multiple answers = all must match.</li>
+<li><strong>Homework Bubble Sheet:</strong> Auto-graded on submission. Title required. <code>show_grades</code> controls whether students see correct answers after submission. Single answer = exact match. Multiple answers = all must match.</li>
 <li><strong>Quiz:</strong> MCQ auto-graded, written manually graded. Questions are standalone only (inline text + image + choices). Timer: 0 = unlimited.</li>
 <li><strong>Enrollment:</strong> Tracks who approved/rejected + timestamp.</li>
 <li><strong>Student Visibility:</strong> Teachers see only their own students. No national_id, birth_date visible.</li>

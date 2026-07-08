@@ -1322,6 +1322,7 @@ code {
 </ul>
 <hr>
 <h2 id="10-homeworks">10. Homeworks</h2>
+<p>Homework uses the <strong>Bubble Sheet</strong> model. Students see question numbers with A/B/C/D choices, select answers, and submit. All questions are auto-graded immediately.</p>
 <hr>
 <h3 id="get-learninghomeworksmy">GET /learning/homeworks/my/</h3>
 <p><strong>Description:</strong> Get all homework submissions for the logged-in student.</p>
@@ -1329,47 +1330,89 @@ code {
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>[
   {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
-    <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"integer - Homework ID"</span>,
-    <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"String - Homework title"</span>,
-    <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String - Lecture name"</span>,
-    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) - Student score"</span>,
-    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (submitted|graded)"</span>,
-    <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+    <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"integer"</span>,
+    <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"string - Description of the homework"</span>,
+    <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
+    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal)"</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string (submitted|graded)"</span>,
+    <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
   }
 ]
 </div></code></pre>
 <hr>
+<h3 id="get-learninghomeworksid">GET /learning/homeworks/<id>/</h3>
+<p><strong>Description:</strong> Get the homework detail (bubble questions with choices count). Student sees only question number and choices count — no correct answers.</p>
+<p><strong>Authentication:</strong> Student (must have purchased the lecture)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title (required)"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"bubble_questions"</span>: [
+    {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-string">"integer"</span>},
+    {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-string">"integer"</span>}
+  ]
+}
+</div></code></pre>
+<hr>
 <h3 id="post-learninghomeworksidsubmit">POST /learning/homeworks/<id>/submit/</h3>
-<p><strong>Description:</strong> Submit homework answers. Auto-corrected immediately.</p>
+<p><strong>Description:</strong> Submit bubble sheet answers. Auto-graded immediately.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Access Control:</strong></p>
 <ul>
 <li>Must have purchased the lecture</li>
 <li>Must be enrolled in the course</li>
-<li>Homework must be published and within open/close dates</li>
+<li>Homework must be published</li>
 <li>One submission only per student</li>
 </ul>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"answers"</span>: [
-    {
-      <span class="hljs-attr">"homework_question_id"</span>: <span class="hljs-string">"integer - Homework question ID"</span>,
-      <span class="hljs-attr">"choice_id"</span>: <span class="hljs-string">"integer - Selected choice ID"</span>
-    },
-    {
-      <span class="hljs-attr">"homework_question_id"</span>: <span class="hljs-string">"integer - Homework question ID"</span>,
-      <span class="hljs-attr">"choice_id"</span>: <span class="hljs-string">"integer - Selected choice ID"</span>
-    }
+  <span class="hljs-attr">"bubble_answers"</span>: [
+    {<span class="hljs-attr">"bubble_question_id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"A"</span>},
+    {<span class="hljs-attr">"bubble_question_id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"C"</span>},
+    {<span class="hljs-attr">"bubble_question_id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"A,C"</span>}
   ]
 }
 </div></code></pre>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Homework submitted and auto-graded."</span>,
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer - Submission ID"</span>,
-  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) - Student score"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (submitted|graded)"</span>
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal)"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string (submitted|graded)"</span>
+}
+</div></code></pre>
+<hr>
+<h3 id="get-learninghomework-submissionsid">GET /learning/homework-submissions/<id>/</h3>
+<p><strong>Description:</strong> View submission results with per-question details.</p>
+<p><strong>Access Control:</strong></p>
+<ul>
+<li>Students: only see <code>correct_answer</code> and <code>answer_explanation</code> if the teacher enabled <code>show_grades</code> on the homework.</li>
+<li>Teachers/Assistants: always see all fields.</li>
+</ul>
+<p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"homework"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal)"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"bubble_answers"</span>: [
+    {
+      <span class="hljs-attr">"bubble_question"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"string | null — Only shown to students if show_grades=true"</span>,
+      <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-string">"string | null — Only shown to students if show_grades=true"</span>,
+      <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"points_earned"</span>: <span class="hljs-string">"string (decimal)"</span>
+    }
+  ]
 }
 </div></code></pre>
 <hr>

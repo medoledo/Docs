@@ -1530,96 +1530,152 @@ code {
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <hr>
 <h2 id="10-homeworks">10. Homeworks</h2>
+<p>Homework uses the <strong>Bubble Sheet</strong> model. Teachers create questions with a correct answer and optional explanation. Students see question numbers with A/B/C/D choices, submit their answers, and get auto-graded immediately.</p>
 <hr>
 <h4 id="get-learninghomeworks">GET /learning/homeworks/</h4>
 <p><strong>Description:</strong> List homeworks.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see their course homeworks)</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Query Parameters:</strong></p>
 <ul>
 <li><code>lecture</code> — Filter by lecture ID</li>
-<li><code>is_active</code> — <code>true</code> or <code>false</code></li>
 <li><code>is_published</code> — <code>true</code> or <code>false</code></li>
 </ul>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer - Number of items"</span>,
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer - Unique identifier"</span>,
-      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer - Lecture ID"</span>,
-      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String - Lecture name"</span>,
-      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String - Homework title"</span>,
-      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String - Description"</span>,
-      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean - Whether this item is active"</span>,
-      <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean - Whether this item is published"</span>,
-      <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer - Total points"</span>,
-      <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer - Number of questions"</span>,
-      <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title (required)"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"show_grades"</span>: <span class="hljs-string">"boolean — When true, students see correct answers after submission"</span>,
+      <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
     }
   ]
 }
 </div></code></pre>
 <hr>
 <h4 id="post-learninghomeworks">POST /learning/homeworks/</h4>
-<p><strong>Description:</strong> Create a new homework.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
+<p><strong>Description:</strong> Create a homework with inline bubble questions.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer - Lecture ID"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String - Homework title"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String - Description"</span>,
-  <span class="hljs-attr">"model_answer"</span>: <span class="hljs-string">"String - Model answer"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean - Whether this item is active"</span>,
-  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean - Whether this item is published"</span>,
-  <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer - Lecture ID"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title (required)"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string - Description"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"show_grades"</span>: <span class="hljs-string">"boolean - When true, students see correct answers after submission"</span>,
+  <span class="hljs-attr">"bubble_questions"</span>: [
+    {<span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"A"</span>, <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-string">"Optional explanation"</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">1</span>},
+    {<span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"B,D"</span>, <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-string">""</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">2</span>}
+  ]
 }
 </div></code></pre>
 <p><strong>Notes:</strong></p>
 <ul>
-<li>Homework uses the <strong>Bubble Sheet</strong> model. Define questions in a separate request to <code>POST /learning/homeworks/&lt;id&gt;/bubble-questions/</code> (see Bubble Sheet section).</li>
-<li><code>model_answer</code> is shown to students after they submit.</li>
+<li><code>bubble_questions</code> is optional — questions can be added/updated later via PUT/PATCH with the same body format.</li>
+<li><code>choices_count</code>: number of answer choices (4 = A/B/C/D, 5 = A/B/C/D/E, up to 8).</li>
+<li><code>correct_answer</code>: single answer <code>&quot;A&quot;</code> or multiple answers <code>&quot;A,C&quot;</code>.</li>
+<li><code>answer_explanation</code>: optional field shown to students after submission (only if <code>show_grades=true</code>).</li>
 <li>Bubble sheets are auto-graded on submission.</li>
 </ul>
 <hr>
 <h4 id="get-learninghomeworksid">GET /learning/homeworks/{id}/</h4>
-<p><strong>Description:</strong> Retrieve a homework with questions.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner (students must have purchased the lecture)</p>
+<p><strong>Description:</strong> Retrieve a homework with all bubble questions (teacher view).</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"model_answer"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
-  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"Boolean"</span>,
-  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"question_count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title (required)"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"bubble_questions"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"choices_count"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer"</span>
+    }
+  ],
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
 }
 </div></code></pre>
 <hr>
-<h4 id="put-learninghomeworksid">PUT /learning/homeworks/{id}/</h4>
-<p><strong>Description:</strong> Update a homework.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
+<h4 id="putpatch-learninghomeworksid">PUT/PATCH /learning/homeworks/{id}/</h4>
+<p><strong>Description:</strong> Update a homework. Send <code>bubble_questions</code> to replace all existing questions.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH). Send <code>bubble_questions: []</code> to remove all questions.</p>
 <hr>
 <h4 id="delete-learninghomeworksid">DELETE /learning/homeworks/{id}/</h4>
-<p><strong>Description:</strong> Delete a homework.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
+<p><strong>Description:</strong> Delete a homework and all its submissions.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
 <hr>
 <h4 id="get-learninghomeworksidsubmissions">GET /learning/homeworks/{id}/submissions/</h4>
 <p><strong>Description:</strong> List all submissions for a homework.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"homework"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal)"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string (submitted|graded)"</span>,
+      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
 <hr>
 <h4 id="get-learninghomework-submissionsid">GET /learning/homework-submissions/{id}/</h4>
-<p><strong>Description:</strong> View a specific submission (includes model answer for the student).</p>
+<p><strong>Description:</strong> View a specific submission with per-question results.</p>
 <p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"homework"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal)"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"bubble_answers"</span>: [
+    {
+      <span class="hljs-attr">"bubble_question"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"points_earned"</span>: <span class="hljs-string">"string (decimal)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Notes:</strong></p>
+<ul>
+<li><code>answer_explanation</code> and <code>correct_answer</code> are always shown to teachers/assistants.</li>
+<li>For students, they are only shown if the homework has <code>show_grades=true</code>.</li>
+<li>Score is immediately available after auto-grading.</li>
+</ul>
 <hr>
 <h2 id="11-quizzes">11. Quizzes</h2>
 <hr>
@@ -1792,23 +1848,25 @@ code {
 </div></code></pre>
 <hr>
 <h2 id="12-study-materials">12. Study Materials</h2>
+<p>Study materials are PDF or image files attached to lectures. Only <strong>teachers and assistants</strong> can create, update, or delete them. Students and siteowners are <strong>read-only</strong>.</p>
 <hr>
 <h4 id="post-materials">POST /materials/</h4>
-<p><strong>Description:</strong> Upload a new PDF study material.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
+<p><strong>Description:</strong> Upload a new PDF or image study material.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer - Lecture ID"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String - Material title"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String - Description"</span>,
-  <span class="hljs-attr">"file"</span>: &lt;PDF_FILE&gt;
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String - Description (optional)"</span>,
+  <span class="hljs-attr">"file"</span>: &lt;PDF_OR_IMAGE_FILE&gt;
 }
 </div></code></pre>
 <p><strong>Validation:</strong></p>
 <ul>
-<li>Only PDF files are accepted</li>
-<li>Maximum file size: 50 MB</li>
+<li>Accepted formats: PDF, JPG, JPEG, PNG</li>
+<li>Maximum file size: 20 MB</li>
+<li>Each upload gets a <strong>unique filename</strong> (UUID-based) — files with identical names never overwrite each other</li>
 </ul>
 <p><strong>Error Responses:</strong></p>
 <table>
@@ -1823,36 +1881,81 @@ code {
 <tr>
 <td><code>400</code></td>
 <td>File too large</td>
-<td><code>{&quot;file&quot;: [&quot;File too large. Size should not exceed 50 MB.&quot;]}</code></td>
+<td><code>{&quot;file&quot;: [&quot;File too large. Size should not exceed 20 MB.&quot;]}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
 <td>Invalid file type</td>
-<td><code>{&quot;file&quot;: [&quot;File extension 'xyz' is not allowed. Allowed extensions are: pdf.&quot;]}</code></td>
+<td><code>{&quot;file&quot;: [&quot;File extension 'xyz' is not allowed. Allowed extensions are: pdf, jpg, jpeg, png.&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Insufficient role (student or siteowner)</td>
+<td><code>{&quot;detail&quot;: &quot;You do not have permission to perform this action.&quot;}</code></td>
 </tr>
 </tbody>
 </table>
 <hr>
 <h4 id="get-materials">GET /materials/</h4>
 <p><strong>Description:</strong> List study materials.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see their course materials)</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Query Parameters:</strong></p>
 <ul>
 <li><code>lecture</code> — Filter by lecture ID</li>
 <li><code>is_active</code> — <code>true</code> or <code>false</code></li>
 </ul>
+<p><strong>Data isolation by role:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>What they see</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Student</strong></td>
+<td>Only active materials for lectures they've <strong>purchased</strong></td>
+</tr>
+<tr>
+<td><strong>Teacher</strong></td>
+<td>All materials in their own courses</td>
+</tr>
+<tr>
+<td><strong>Assistant</strong></td>
+<td>All materials in their assigned teacher's courses</td>
+</tr>
+<tr>
+<td><strong>SiteOwner</strong></td>
+<td>All materials</td>
+</tr>
+<tr>
+<td><strong>Other</strong></td>
+<td>No materials</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h4 id="get-materialsid">GET /materials/{id}/</h4>
 <p><strong>Description:</strong> Retrieve a single material.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner (students must have purchased the lecture)</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Data isolation:</strong></p>
+<ul>
+<li><strong>Students</strong> get <code>404</code> if they haven't purchased the material's lecture</li>
+<li><strong>Teachers</strong> get <code>404</code> if the material belongs to another teacher's course</li>
+<li><strong>Assistants</strong> get <code>404</code> if the material belongs to a different teacher</li>
+<li><strong>SiteOwner</strong> can retrieve any material</li>
+</ul>
 <hr>
 <h4 id="put-materialsid">PUT /materials/{id}/</h4>
-<p><strong>Description:</strong> Update a material (replace PDF, change title, etc.).</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
+<p><strong>Description:</strong> Update a material (replace file, change title, etc.).</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Data isolation:</strong> Teachers can only update materials in their own courses. Assistants can only update their assigned teacher's materials. Others get <code>403</code> or <code>404</code>.</p>
 <hr>
 <h4 id="delete-materialsid">DELETE /materials/{id}/</h4>
 <p><strong>Description:</strong> Delete a material.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, SiteOwner</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Data isolation:</strong> Teachers can only delete materials in their own courses. Assistants can only delete their assigned teacher's materials. Others get <code>403</code> or <code>404</code>.</p>
 <hr>
 <h2 id="13-balance">13. Balance</h2>
 <hr>
