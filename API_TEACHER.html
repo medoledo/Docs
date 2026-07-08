@@ -1868,6 +1868,23 @@ code {
 <li>Maximum file size: 20 MB</li>
 <li>Each upload gets a <strong>unique filename</strong> (UUID-based) — files with identical names never overwrite each other</li>
 </ul>
+<p><strong>Success Response — 201 Created:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer — Lecture ID"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String — Lecture name"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String — Course name"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String — Material title"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String — Description"</span>,
+  <span class="hljs-attr">"file"</span>: <span class="hljs-string">"String (URL) — File download URL"</span>,
+  <span class="hljs-attr">"file_url"</span>: <span class="hljs-string">"String (URL) — Absolute URL to the file"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean — Whether this material is active"</span>,
+  <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer — User ID of the creator"</span>,
+  <span class="hljs-attr">"created_by_name"</span>: <span class="hljs-string">"String — Creator's username"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
