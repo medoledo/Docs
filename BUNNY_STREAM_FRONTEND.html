@@ -365,776 +365,510 @@ code {
           : 'default'
     });
   </script>
-<h1 id="bunny-stream--frontend-integration-guide-nextjs">Bunny Stream — Frontend Integration Guide (Next.js)</h1>
+<h1 id="edutrack-online---bunny-stream-api">EduTrack Online - Bunny Stream API</h1>
+<blockquote>
+<p><strong>Target Audience:</strong> Next.js Frontend Developers
+<strong>Library ID:</strong> 698152
+<strong>CDN Hostname:</strong> <code>vz-964b4290-bbe.b-cdn.net</code></p>
+</blockquote>
+<hr>
 <h2 id="overview">Overview</h2>
-<p>All videos on EduTrack are hosted on <strong>Bunny Stream</strong> (Library ID: 698152). The upload and playback flow involves three actors:</p>
-<pre class="hljs"><code><div>Teacher's Browser → Our Backend (Django) → Bunny Stream CDN
-                                       ↘ Student's Browser (playback)
+<p>All videos on EduTrack are hosted on <strong>Bunny Stream</strong>. The backend never stores video files — it relays uploads to Bunny and generates signed playback URLs.</p>
+<h3 id="upload-flow">Upload Flow</h3>
+<pre class="hljs"><code><div>Teacher Browser → POST /courses/videos/&lt;id&gt;/upload/ → Backend streams to Bunny CDN
 </div></code></pre>
-<p>Our backend <strong>never stores</strong> video files — it only relays them. Video playback comes directly from Bunny's CDN, <strong>0 load on our server</strong>.</p>
+<h3 id="playback-flow">Playback Flow</h3>
+<pre class="hljs"><code><div>Student Browser → GET /courses/videos/&lt;id&gt;/play/ → Backend checks permissions → Returns signed HLS URL
+                                            ↘ Student streams directly from Bunny CDN (0 server load)
+</div></code></pre>
 <hr>
-<h2 id="architecture-summary">Architecture Summary</h2>
+<h2 id="1-video-crud">1. Video CRUD</h2>
+<hr>
+<h4 id="post-coursesvideos">POST /courses/videos/</h4>
+<p><strong>Description:</strong> Create a video metadata record. <code>bunny_video_id</code> is null until the upload flow is completed.</p>
+<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer - Lecture ID"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Video title"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Display order (optional, default: 0)"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean (optional, default: true)"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 201 Created:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-literal">null</span>,
+  <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-literal">null</span>,
+  <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"Pending"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="get-coursesvideos">GET /courses/videos/</h4>
+<p><strong>Description:</strong> List videos. Supports filtering and ordering.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
 <tr>
-<th>Step</th>
-<th>What happens</th>
-<th>Who does it</th>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td>Teacher creates a video record (metadata only)</td>
-<td>Frontend → Backend API</td>
+<td><code>lecture</code></td>
+<td>Integer</td>
+<td>Filter by lecture ID</td>
 </tr>
 <tr>
-<td>2</td>
-<td>Backend creates a video entry on Bunny</td>
-<td>Backend → Bunny API</td>
+<td><code>bunny_status</code></td>
+<td>Integer</td>
+<td>Filter by encoding status</td>
 </tr>
 <tr>
-<td>3</td>
-<td>Frontend uploads the file to the backend</td>
-<td>Frontend → Backend (multipart)</td>
+<td><code>is_active</code></td>
+<td>Boolean</td>
+<td>Filter by active status</td>
 </tr>
 <tr>
-<td>4</td>
-<td>Backend streams the file to Bunny CDN</td>
-<td>Backend → Bunny CDN</td>
+<td><code>search</code></td>
+<td>String</td>
+<td>Search by name</td>
 </tr>
 <tr>
-<td>5</td>
-<td>Bunny encodes the video</td>
-<td>Bunny (automatic)</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Bunny calls webhook when done</td>
-<td>Bunny → Backend</td>
-</tr>
-<tr>
-<td>7</td>
-<td>Frontend polls for status</td>
-<td>Frontend → Backend API</td>
-</tr>
-<tr>
-<td>8</td>
-<td>Student requests signed playback URL</td>
-<td>Frontend → Backend API</td>
-</tr>
-<tr>
-<td>9</td>
-<td>Student watches video from Bunny CDN</td>
-<td>Student browser → Bunny CDN</td>
+<td><code>ordering</code></td>
+<td>String</td>
+<td><code>order</code>, <code>created_at</code></td>
 </tr>
 </tbody>
 </table>
-<hr>
-<h2 id="step-by-step-api-flow-what-the-frontend-must-do">Step-by-Step API Flow (What the Frontend Must Do)</h2>
-<h3 id="step-1-teacher-creates-a-video-record">Step 1: Teacher Creates a Video Record</h3>
-<pre class="hljs"><code><div>POST /courses/videos/
-</div></code></pre>
-<p><strong>Request body:</strong></p>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-    <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
-    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chapter 1 - Intro"</span>,
-    <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>
-}
-</div></code></pre>
-<p><strong>Response — 201:</strong> The video record is created. <code>bunny_video_id</code> is null, <code>bunny_status_display</code> is &quot;Pending&quot;.</p>
-<p><strong>Frontend:</strong> Show the video in a table with status &quot;Pending&quot; and an &quot;Upload&quot; button.</p>
-<hr>
-<h3 id="step-2-teacher-clicks-%22upload%22-%E2%86%92-generate-bunny-upload">Step 2: Teacher Clicks &quot;Upload&quot; → Generate Bunny Upload</h3>
-<pre class="hljs"><code><div>POST /courses/videos/42/create-upload/
-</div></code></pre>
-<p>No request body needed. Backend creates a video entry on Bunny's servers.</p>
-<p><strong>Response — 201:</strong></p>
-<pre class="hljs"><code><div>{
-    <span class="hljs-attr">"video_id"</span>: <span class="hljs-number">42</span>,
-    <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"abc-456-def-789"</span>,
-    <span class="hljs-attr">"upload_url"</span>: <span class="hljs-string">"https://video.bunnycdn.com/library/698152/videos/abc-456-def-789"</span>,
-    <span class="hljs-attr">"status"</span>: <span class="hljs-number">0</span>
-}
-</div></code></pre>
-<p>The <code>upload_url</code> is for <strong>backend use only</strong> — never use it from the frontend directly. It requires the secret API key.</p>
-<p><strong>Frontend:</strong> After this call, update the UI state to &quot;Ready to upload&quot; (status bar moves from &quot;Pending&quot; to &quot;Initialize&quot;).</p>
-<hr>
-<h3 id="step-3-upload-the-video-file-via-backend-proxy">Step 3: Upload the Video File (via Backend Proxy)</h3>
-<pre class="hljs"><code><div>POST /courses/videos/42/upload/
-Content-Type: multipart/form-data
-Form field name: &quot;file&quot;
-</div></code></pre>
-<p><strong>How to upload (Next.js):</strong></p>
-<p>Create an upload component that:</p>
-<ol>
-<li><strong>Picks the file</strong> — <code>&lt;input type=&quot;file&quot; accept=&quot;video/*&quot; /&gt;</code></li>
-<li><strong>Sends it as multipart/form-data</strong> — using <code>FormData</code> with the file appended as <code>&quot;file&quot;</code></li>
-<li><strong>Tracks progress</strong> — use <code>XMLHttpRequest</code> (not <code>fetch</code>) because XHR supports <code>upload.onprogress</code> for progress events. <code>fetch</code> does NOT support upload progress natively.</li>
-<li><strong>Allows cancellation</strong> — call <code>xhr.abort()</code> to cancel</li>
-</ol>
-<p><strong>Why XHR and not fetch:</strong> The native <code>fetch</code> API does not provide upload progress events. You MUST use <code>XMLHttpRequest</code> for the upload to show progress. Create a small utility or use a library like <code>axios</code> which provides <code>onUploadProgress</code>.</p>
-<pre class="hljs"><code><div>// Upload utility example (Next.js compatible)
-
-const uploadVideo = async (
-  videoId: number,
-  file: File,
-  onProgress?: (percent: number) =&gt; void,
-  signal?: AbortSignal
-): Promise&lt;{ success: boolean; bunny_video_id: string }&gt; =&gt; {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const xhr = new XMLHttpRequest();
-
-  return new Promise((resolve, reject) =&gt; {
-    xhr.upload.onprogress = (e) =&gt; {
-      if (e.lengthComputable &amp;&amp; onProgress) {
-        onProgress(Math.round((e.loaded / e.total) * 100));
-      }
-    };
-
-    xhr.onload = () =&gt; {
-      if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
-      else reject(new Error(JSON.parse(xhr.responseText).error || 'Upload failed'));
-    };
-
-    xhr.onerror = () =&gt; reject(new Error('Network error'));
-    xhr.onabort = () =&gt; reject(new Error('Cancelled'));
-
-    xhr.open('POST', `/courses/videos/${videoId}/upload/`);
-    xhr.withCredentials = true;
-    xhr.send(formData);
-
-    if (signal) {
-      signal.addEventListener('abort', () =&gt; xhr.abort());
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"string | null"</span>,
+      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"integer | null"</span>,
+      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
     }
-  });
-};
-</div></code></pre>
-<p><strong>Response — 200:</strong></p>
-<pre class="hljs"><code><div>{
-    <span class="hljs-attr">"success"</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">"video_id"</span>: <span class="hljs-number">42</span>,
-    <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-number">1</span>,
-    <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"Uploaded"</span>
+  ]
 }
 </div></code></pre>
-<p><strong>Upload UI States to Implement:</strong></p>
-<table>
-<thead>
-<tr>
-<th>State</th>
-<th>Progress Bar</th>
-<th>Actions</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Pending (not uploaded)</td>
-<td>0%</td>
-<td>[Upload] button</td>
-</tr>
-<tr>
-<td>Initializing (calling create-upload)</td>
-<td>Spinner</td>
-<td>—</td>
-</tr>
-<tr>
-<td>Uploading</td>
-<td>Animated bar showing % + MB/s + ETA</td>
-<td>[Cancel] button</td>
-</tr>
-<tr>
-<td>Upload complete</td>
-<td>100%</td>
-<td>Start polling</td>
-</tr>
-<tr>
-<td>Upload failed</td>
-<td>Stopped at X% + red</td>
-<td>[Retry] button</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h3 id="step-4-poll-for-encoding-status">Step 4: Poll for Encoding Status</h3>
-<p>After upload, poll <code>GET /courses/videos/&lt;id&gt;/</code> every 5 seconds until <code>bunny_status</code> reaches 4.</p>
-<p><strong>Polling logic:</strong></p>
-<pre class="hljs"><code><div>// Polling hook example (Next.js)
-
-const useVideoStatus = (videoId: number) =&gt; {
-  const [status, setStatus] = useState&lt;number | null&gt;(null);
-  const [display, setDisplay] = useState('Pending');
-
-  useEffect(() =&gt; {
-    if (!videoId) return;
-
-    const interval = setInterval(async () =&gt; {
-      try {
-        const res = await fetch(`/courses/videos/${videoId}/`, {
-          credentials: 'include',
-        });
-        const data = await res.json();
-
-        setStatus(data.bunny_status);
-        setDisplay(data.bunny_status_display);
-
-        if (data.bunny_status === 4 || data.bunny_status &gt;= 5) {
-          clearInterval(interval); // Stop polling
-        }
-      } catch {
-        // Network error — keep polling
-      }
-    }, 5000);
-
-    return () =&gt; clearInterval(interval);
-  }, [videoId]);
-
-  return { status, display };
-};
-</div></code></pre>
-<p><strong>Status values to display:</strong></p>
+<p><strong>Status reference:</strong></p>
 <table>
 <thead>
 <tr>
 <th style="text-align:center"><code>bunny_status</code></th>
-<th>Frontend Display</th>
+<th><code>bunny_status_display</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td style="text-align:center">null</td>
+<td>Pending</td>
+</tr>
+<tr>
 <td style="text-align:center">0</td>
-<td>⬜ Created — preparing upload</td>
+<td>Created</td>
 </tr>
 <tr>
 <td style="text-align:center">1</td>
-<td>⬜ Uploaded — encoding will start</td>
+<td>Uploaded</td>
 </tr>
 <tr>
 <td style="text-align:center">2</td>
-<td>🟡 Processing — analyzing file</td>
+<td>Processing</td>
 </tr>
 <tr>
 <td style="text-align:center">3</td>
-<td>🟡 Transcoding — encoding to resolutions</td>
+<td>Transcoding</td>
 </tr>
 <tr>
 <td style="text-align:center"><strong>4</strong></td>
-<td>🟢 <strong>Ready</strong> — video playable</td>
+<td><strong>Finished</strong></td>
 </tr>
 <tr>
 <td style="text-align:center">5</td>
-<td>🔴 Error — encoding failed</td>
-</tr>
-<tr>
-<td style="text-align:center">6</td>
-<td>🔴 Upload failed — try again</td>
+<td>Error</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h3 id="step-5-student-plays-the-video">Step 5: Student Plays the Video</h3>
-<pre class="hljs"><code><div>GET /courses/videos/42/play/
-</div></code></pre>
-<p><strong>Backend checks before returning URL:</strong></p>
-<ol>
-<li>Video exists and is active</li>
-<li>Student is authenticated</li>
-<li>Student purchased this lecture</li>
-<li>Purchase is not expired</li>
-<li>Watching limit not exhausted</li>
-<li>All prerequisites passed (if any)</li>
-</ol>
-<p><strong>Response — 200:</strong></p>
+<h4 id="get-coursesvideosid">GET /courses/videos/<id>/</h4>
+<p><strong>Description:</strong> Get a single video's details.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong> Same structure as list item.</p>
+<hr>
+<h4 id="putpatch-coursesvideosid">PUT/PATCH /courses/videos/<id>/</h4>
+<p><strong>Description:</strong> Update video metadata (name, order, is_active).</p>
+<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
+<p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-    <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"https://vz-964b4290-bbe.b-cdn.net/play/abc-456-def-789?token=abc123&amp;expires=1720000000"</span>,
-    <span class="hljs-attr">"expires_at"</span>: <span class="hljs-number">1720000000</span>
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - New title"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>
 }
 </div></code></pre>
-<h4 id="building-the-video-player-nextjs">Building the Video Player (Next.js)</h4>
-<p><strong>1. Install hls.js:</strong></p>
-<pre class="hljs"><code><div>npm install hls.js
-</div></code></pre>
-<p><strong>2. Create a VideoPlayer component:</strong></p>
-<pre class="hljs"><code><div>'use client';
-
-import { useEffect, useRef, useState } from 'react';
-import Hls from 'hls.js';
-
-interface VideoPlayerProps {
-  videoId: number;
-  studentName?: string;
-  studentCode?: string;
+<p><strong>Success Response — 200 OK:</strong> Updated video object.</p>
+<hr>
+<h4 id="delete-coursesvideosid">DELETE /courses/videos/<id>/</h4>
+<p><strong>Description:</strong> Delete a video and remove it from Bunny Stream.</p>
+<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
+<p><strong>Success Response — 204 No Content</strong></p>
+<hr>
+<h2 id="2-upload-flow">2. Upload Flow</h2>
+<hr>
+<h4 id="post-coursesvideosidcreate-upload">POST /courses/videos/<id>/create-upload/</h4>
+<p><strong>Description:</strong> Creates a video entry on Bunny Stream and returns the Bunny GUID. Must be called before uploading. The returned <code>upload_url</code> is for <strong>backend use only</strong> — the frontend should upload via the proxy endpoint instead.</p>
+<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
+<p><strong>Request Body:</strong> None</p>
+<p><strong>Success Response — 201 Created:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"integer - Local video ID"</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"string - Bunny Stream GUID"</span>,
+  <span class="hljs-attr">"upload_url"</span>: <span class="hljs-string">"string - Bunny CDN upload URL (backend use only)"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"integer - Bunny status (0 = Created)"</span>
 }
-
-export default function VideoPlayer({ videoId, studentName, studentCode }: VideoPlayerProps) {
-  const videoRef = useRef&lt;HTMLVideoElement&gt;(null);
-  const containerRef = useRef&lt;HTMLDivElement&gt;(null);
-  const [error, setError] = useState&lt;string | null&gt;(null);
-
-  useEffect(() =&gt; {
-    let hls: Hls | null = null;
-    let tokenTimer: NodeJS.Timeout;
-
-    const initPlayer = async () =&gt; {
-      try {
-        // 1. Fetch signed URL
-        const res = await fetch(`/courses/videos/${videoId}/play/`, {
-          credentials: 'include',
-        });
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || 'Access denied');
-        }
-        const { playback_url, expires_at } = await res.json();
-
-        if (!videoRef.current) return;
-
-        // 2. Initialize HLS.js
-        if (Hls.isSupported()) {
-          hls = new Hls();
-          hls.loadSource(playback_url);
-          hls.attachMedia(videoRef.current);
-        } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-          videoRef.current.src = playback_url;
-        } else {
-          throw new Error('HLS not supported in this browser');
-        }
-
-        // 3. Refresh token before expiry (at 90%)
-        const expiresIn = expires_at * 1000 - Date.now();
-        tokenTimer = setTimeout(refreshToken, expiresIn * 0.9);
-      } catch (err: any) {
-        setError(err.message);
-      }
-    };
-
-    const refreshToken = async () =&gt; {
-      try {
-        const res = await fetch(`/courses/videos/${videoId}/play/`, {
-          credentials: 'include',
-        });
-        const { playback_url, expires_at } = await res.json();
-
-        if (hls) hls.loadSource(playback_url);
-        else if (videoRef.current) videoRef.current.src = playback_url;
-
-        const expiresIn = expires_at * 1000 - Date.now();
-        tokenTimer = setTimeout(refreshToken, expiresIn * 0.9);
-      } catch {}
-    };
-
-    initPlayer();
-    return () =&gt; {
-      hls?.destroy();
-      clearTimeout(tokenTimer);
-    };
-  }, [videoId]);
-
-  return (
-    &lt;div ref={containerRef} className=&quot;relative w-full aspect-video bg-black overflow-hidden&quot;&gt;
-      &lt;video ref={videoRef} className=&quot;w-full h-full&quot; controls /&gt;
-
-      {/* Student ID overlay — anti-tampering measures applied via CSS */}
-      {studentName &amp;&amp; (
-        &lt;div className=&quot;student-overlay&quot;&gt;
-          {studentName} ({studentCode})
-        &lt;/div&gt;
-      )}
-
-      {error &amp;&amp; (
-        &lt;div className=&quot;absolute inset-0 flex items-center justify-center text-white text-center p-5&quot;&gt;
-          {error}
-        &lt;/div&gt;
-      )}
-    &lt;/div&gt;
-  );
-}
-</div></code></pre>
-<p><strong>3. CSS for the student overlay:</strong></p>
-<pre class="hljs"><code><div><span class="hljs-comment">/* In your global CSS or module */</span>
-<span class="hljs-selector-class">.student-overlay</span> {
-  <span class="hljs-attribute">position</span>: absolute;
-  <span class="hljs-attribute">color</span>: <span class="hljs-built_in">rgba</span>(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0.35</span>);
-  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">14px</span>;
-  <span class="hljs-attribute">font-family</span>: monospace;
-  <span class="hljs-attribute">pointer-events</span>: none;    <span class="hljs-comment">/* Cannot be clicked */</span>
-  <span class="hljs-attribute">user-select</span>: none;        <span class="hljs-comment">/* Cannot be selected/highlighted */</span>
-  <span class="hljs-attribute">-webkit-user-select</span>: none;
-  <span class="hljs-attribute">z-index</span>: <span class="hljs-number">10</span>;
-  <span class="hljs-attribute">text-shadow</span>: <span class="hljs-number">1px</span> <span class="hljs-number">1px</span> <span class="hljs-number">2px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0.8</span>);
-  <span class="hljs-attribute">animation</span>: moveOverlay <span class="hljs-number">30s</span> infinite alternate;
-}
-
-<span class="hljs-keyword">@keyframes</span> moveOverlay {
-  0%   { <span class="hljs-attribute">left</span>: <span class="hljs-number">5%</span>; <span class="hljs-attribute">top</span>: <span class="hljs-number">5%</span>; }
-  25%  { <span class="hljs-attribute">left</span>: <span class="hljs-number">60%</span>; <span class="hljs-attribute">top</span>: <span class="hljs-number">10%</span>; }
-  50%  { <span class="hljs-attribute">left</span>: <span class="hljs-number">30%</span>; <span class="hljs-attribute">top</span>: <span class="hljs-number">80%</span>; }
-  75%  { <span class="hljs-attribute">left</span>: <span class="hljs-number">70%</span>; <span class="hljs-attribute">top</span>: <span class="hljs-number">50%</span>; }
-  100% { <span class="hljs-attribute">left</span>: <span class="hljs-number">10%</span>; <span class="hljs-attribute">top</span>: <span class="hljs-number">90%</span>; }
-}
-</div></code></pre>
-<p><strong>4. Track watch progress:</strong></p>
-<p>Create a hook that sends progress updates while the video plays:</p>
-<pre class="hljs"><code><div>const useWatchProgress = (videoId: number, videoRef: React.RefObject&lt;HTMLVideoElement&gt;) =&gt; {
-  useEffect(() =&gt; {
-    if (!videoId || !videoRef.current) return;
-
-    let lastReported = 0;
-    const interval = setInterval(async () =&gt; {
-      const video = videoRef.current;
-      if (!video || video.paused || video.ended) return;
-
-      const currentTime = Math.floor(video.currentTime);
-      const duration = Math.floor(video.duration);
-
-      if (currentTime - lastReported &gt;= 15) {
-        lastReported = currentTime;
-        try {
-          await fetch('/courses/progress/update/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-              video: videoId,
-              progress_seconds: currentTime,
-              duration_seconds: duration || undefined,
-            }),
-          });
-        } catch {}
-      }
-    }, 5000);
-
-    return () =&gt; clearInterval(interval);
-  }, [videoId, videoRef]);
-};
 </div></code></pre>
 <hr>
-<h2 id="student-id-overlay--anti-tampering">Student ID Overlay — Anti-Tampering</h2>
-<p>The overlay displays the student's name and code on the video to deter sharing.</p>
-<h3 id="what-the-frontend-should-do">What the frontend should do:</h3>
-<ol>
-<li><strong>Use <code>pointer-events: none</code></strong> — overlay can't be clicked (can't right-click → inspect on it)</li>
-<li><strong>Use <code>user-select: none</code></strong> — text can't be selected or highlighted</li>
-<li><strong>Use CSS animation</strong> — overlay moves to random positions periodically, making it harder to block with a static CSS rule</li>
-<li><strong>Re-create periodically</strong> — the React component re-renders on state changes, so the overlay element is recreated</li>
-<li><strong>Position within the player container</strong> — overlay is inside the same <code>overflow: hidden</code> container as the video, so it can't be clipped out</li>
-</ol>
-<h3 id="what-the-student-cannot-do">What the student CANNOT do:</h3>
+<h4 id="post-coursesvideosidupload">POST /courses/videos/<id>/upload/</h4>
+<p><strong>Description:</strong> Upload a video file to Bunny Stream via the backend proxy. The file is streamed chunk-by-chunk to Bunny — never stored on disk. Must call <code>create-upload/</code> first.</p>
+<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
+<p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
+<p><strong>Request Body:</strong></p>
 <table>
 <thead>
 <tr>
-<th>Attempt</th>
-<th>Result</th>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Right-click → Inspect → Delete overlay</td>
-<td>Overlay reappears on re-render (React state cycle)</td>
-</tr>
-<tr>
-<td>Use DevTools to hide <code>.student-overlay</code></td>
-<td>CSS class can be randomized per session</td>
-</tr>
-<tr>
-<td>Ad-block to block the element</td>
-<td>Overlay is inside the video container, not an external element</td>
-</tr>
-<tr>
-<td>Download the video directly</td>
-<td>Bunny requires signed tokens — no permanent URL exists</td>
-</tr>
-<tr>
-<td>Share the playback URL</td>
-<td>URL expires in 2 hours. New one requires purchase + auth check</td>
-</tr>
-<tr>
-<td>Exceed watching limit</td>
-<td>Backend returns 403 after <code>max_watch_count</code> plays</td>
+<td><code>file</code></td>
+<td>File</td>
+<td>Video file (any format supported by Bunny Stream)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="the-real-security-is-not-the-overlay">The REAL security is NOT the overlay:</h3>
-<p>The overlay is a deterrent. The actual protection is:</p>
-<ol>
-<li><strong>HMAC-signed playback URLs</strong> — student cannot forge a valid Bunny Stream token</li>
-<li><strong>2-hour token expiry</strong> — shared URLs stop working quickly</li>
-<li><strong>Backend checks every play request</strong> — purchase, expiry, watch limit, prerequisites</li>
-<li><strong>Watching limit enforcement</strong> — after <code>max_watch_count</code> (default 4), backend blocks new playback URLs</li>
-<li><strong>No direct video URLs</strong> — every play requires <code>GET /courses/videos/&lt;id&gt;/play/</code> which runs all security checks</li>
-</ol>
-<hr>
-<h2 id="complete-error-reference">Complete Error Reference</h2>
-<h3 id="upload-endpoint-post-coursesvideosidupload">Upload Endpoint (<code>POST /courses/videos/&lt;id&gt;/upload/</code>)</h3>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"success"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"Uploaded"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
 <table>
 <thead>
 <tr>
-<th>HTTP</th>
+<th>Status</th>
 <th>Error</th>
-<th>Frontend Action</th>
+<th>Cause</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>400</td>
 <td><code>&quot;No Bunny video entry found&quot;</code></td>
-<td>Call <code>create-upload/</code> first</td>
+<td><code>create-upload/</code> was not called first</td>
 </tr>
 <tr>
 <td>400</td>
 <td><code>&quot;No file provided&quot;</code></td>
-<td>Ensure form field name is <code>&quot;file&quot;</code></td>
+<td>Missing <code>file</code> field in form data</td>
 </tr>
 <tr>
 <td>403</td>
 <td><code>&quot;You can only upload videos to your own courses&quot;</code></td>
-<td>Wrong teacher account</td>
+<td>Wrong teacher</td>
 </tr>
 <tr>
 <td>502</td>
 <td><code>&quot;Upload to Bunny Stream failed&quot;</code></td>
-<td>Show &quot;Upload failed&quot; + Retry button</td>
+<td>Bunny CDN rejected the upload</td>
 </tr>
 <tr>
 <td>500</td>
 <td><code>&quot;Upload failed due to an unexpected error&quot;</code></td>
-<td>Show generic error</td>
+<td>Internal error</td>
 </tr>
 </tbody>
 </table>
-<h3 id="playback-endpoint-get-coursesvideosidplay">Playback Endpoint (<code>GET /courses/videos/&lt;id&gt;/play/</code>)</h3>
+<hr>
+<h2 id="3-playback">3. Playback</h2>
+<hr>
+<h4 id="get-coursesvideosidplay">GET /courses/videos/<id>/play/</h4>
+<p><strong>Description:</strong> Get a signed HLS playback URL for a video. Multiple security checks are performed before the URL is returned.</p>
+<p><strong>Authentication:</strong> Student, Teacher, Assistant, SiteOwner</p>
+<p><strong>Access Checks (Student):</strong></p>
 <table>
 <thead>
 <tr>
-<th>HTTP</th>
+<th>Check</th>
+<th>Blocked?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Video not found or not active</td>
+<td>404</td>
+</tr>
+<tr>
+<td>Student not authenticated</td>
+<td>401</td>
+</tr>
+<tr>
+<td>Lecture not purchased</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Purchase expired</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Watching limit reached (default: 4)</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Prerequisite homework not passed</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Prerequisite quiz not passed</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Prerequisite exam not passed</td>
+<td>403</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Teacher/Assistant:</strong> Can preview any video in their own courses (skips purchase/prerequisite checks).</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"string - Signed HLS URL (expires in 2 hours)"</span>,
+  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"integer - Unix timestamp when the URL expires"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
 <th>Error</th>
-<th>Frontend Action</th>
+<th>Cause</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>404</td>
-<td><code>&quot;Video is not available&quot;</code></td>
-<td>Show &quot;Video not found&quot;</td>
+<td><code>&quot;Video is not available.&quot;</code></td>
+<td>Video not found or inactive</td>
 </tr>
 <tr>
 <td>401</td>
-<td><code>&quot;Authentication required&quot;</code></td>
-<td>Redirect to login</td>
+<td><code>&quot;Authentication credentials were not provided.&quot;</code></td>
+<td>Not logged in</td>
 </tr>
 <tr>
 <td>403</td>
-<td><code>&quot;You have not purchased this lecture&quot;</code></td>
-<td>Show &quot;Buy this lecture&quot; button</td>
+<td><code>&quot;You have not purchased this lecture.&quot;</code></td>
+<td>Student didn't buy</td>
 </tr>
 <tr>
 <td>403</td>
-<td><code>&quot;Your access to this lecture has expired&quot;</code></td>
-<td>Show &quot;Purchase expired — buy again&quot;</td>
+<td><code>&quot;Your access to this lecture has expired.&quot;</code></td>
+<td>Purchase expired</td>
 </tr>
 <tr>
 <td>403</td>
-<td><code>&quot;Maximum watching limit reached&quot;</code></td>
-<td>Show &quot;Contact teacher to reopen&quot;</td>
+<td><code>&quot;You have reached the maximum watching limit for this lecture.&quot;</code></td>
+<td>Watch count exhausted</td>
 </tr>
 <tr>
 <td>403</td>
-<td><code>&quot;You must pass the homework/quiz/exam&quot;</code></td>
-<td>Show &quot;Complete prerequisite first&quot;</td>
+<td><code>&quot;You must pass the homework (ID X) before accessing this video.&quot;</code></td>
+<td>Prerequisite not met</td>
 </tr>
-</tbody>
-</table>
-<h3 id="teacher-preview-get-coursesvideosidplay-as-teacher">Teacher Preview (<code>GET /courses/videos/&lt;id&gt;/play/</code> as teacher)</h3>
-<table>
-<thead>
-<tr>
-<th>HTTP</th>
-<th>Error</th>
-<th>Frontend Action</th>
-</tr>
-</thead>
-<tbody>
 <tr>
 <td>403</td>
-<td><code>&quot;You can only preview videos in your own courses&quot;</code></td>
-<td>Wrong teacher account</td>
+<td><code>&quot;You can only preview videos in your own courses.&quot;</code></td>
+<td>Teacher trying to preview another teacher's video</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h2 id="teacher-actions-reference-all-api-endpoints">Teacher Actions Reference (All API Endpoints)</h2>
+<h2 id="4-webhook">4. Webhook</h2>
+<hr>
+<h4 id="post-webhooksbunny-encoded">POST /webhooks/bunny-encoded/</h4>
+<p><strong>Description:</strong> Called by Bunny Stream when video encoding is complete. Updates the video's <code>bunny_status</code> to 4 (Finished).</p>
+<p><strong>Authentication:</strong> HMAC signature verification (backend validates request authenticity)</p>
+<p><strong>Request Body (Bunny sends this):</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"VideoLibraryId"</span>: <span class="hljs-number">698152</span>,
+  <span class="hljs-attr">"VideoGuid"</span>: <span class="hljs-string">"string - Bunny Stream video GUID"</span>,
+  <span class="hljs-attr">"Status"</span>: <span class="hljs-string">"integer - New status"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"updated"</span>
+}
+</div></code></pre>
+<hr>
+<h2 id="5-watching-times-limit">5. Watching Times Limit</h2>
+<p>Each lecture enforces a <strong>watching times limit</strong> (default: 4). Once a student has used all their watching times, the lecture's videos are locked.</p>
+<table>
+<thead>
+<tr>
+<th>Detail</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scope</td>
+<td>Per-student, per-lecture (watching any video counts)</td>
+</tr>
+<tr>
+<td>Default</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Max reopens</td>
+<td>2 (each grants 1 extra day, does NOT reset watch count)</td>
+</tr>
+<tr>
+<td>Locked access</td>
+<td>Homework, quizzes, materials still accessible</td>
+</tr>
+<tr>
+<td>Teacher view</td>
+<td><code>watch_count</code> and <code>max_watch_count</code> available in purchase details</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="endpoint-summary">Endpoint Summary</h2>
+<h3 id="teacher">Teacher</h3>
 <table>
 <thead>
 <tr>
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
-<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Create video</td>
+<td>Create video record</td>
 <td><code>POST</code></td>
 <td><code>/courses/videos/</code></td>
-<td>Creates metadata record</td>
 </tr>
 <tr>
-<td>Get upload URL</td>
-<td><code>POST</code></td>
-<td><code>/courses/videos/&lt;id&gt;/create-upload/</code></td>
-<td>Must call before uploading</td>
+<td>List videos</td>
+<td><code>GET</code></td>
+<td><code>/courses/videos/</code></td>
 </tr>
 <tr>
-<td>Upload file</td>
-<td><code>POST</code></td>
-<td><code>/courses/videos/&lt;id&gt;/upload/</code></td>
-<td>Multipart, field name: <code>&quot;file&quot;</code></td>
-</tr>
-<tr>
-<td>Poll status</td>
+<td>Get video detail</td>
 <td><code>GET</code></td>
 <td><code>/courses/videos/&lt;id&gt;/</code></td>
-<td>Poll every 5s until status=4</td>
 </tr>
 <tr>
-<td>Preview</td>
-<td><code>GET</code></td>
-<td><code>/courses/videos/&lt;id&gt;/play/</code></td>
-<td>Teacher preview</td>
-</tr>
-<tr>
-<td>Rename</td>
-<td><code>PATCH</code></td>
+<td>Update video</td>
+<td><code>PUT/PATCH</code></td>
 <td><code>/courses/videos/&lt;id&gt;/</code></td>
-<td><code>{ &quot;name&quot;: &quot;New Title&quot; }</code></td>
 </tr>
 <tr>
-<td>Delete</td>
+<td>Delete video</td>
 <td><code>DELETE</code></td>
 <td><code>/courses/videos/&lt;id&gt;/</code></td>
-<td>Also deletes from Bunny</td>
+</tr>
+<tr>
+<td>Create Bunny upload entry</td>
+<td><code>POST</code></td>
+<td><code>/courses/videos/&lt;id&gt;/create-upload/</code></td>
+</tr>
+<tr>
+<td>Upload video file</td>
+<td><code>POST</code></td>
+<td><code>/courses/videos/&lt;id&gt;/upload/</code></td>
+</tr>
+<tr>
+<td>Preview own video</td>
+<td><code>GET</code></td>
+<td><code>/courses/videos/&lt;id&gt;/play/</code></td>
 </tr>
 </tbody>
 </table>
-<hr>
-<h2 id="student-actions-reference">Student Actions Reference</h2>
+<h3 id="student">Student</h3>
 <table>
 <thead>
 <tr>
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
-<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Play video</td>
+<td>Play purchased video</td>
 <td><code>GET</code></td>
 <td><code>/courses/videos/&lt;id&gt;/play/</code></td>
-<td>Returns signed HLS URL</td>
 </tr>
 <tr>
-<td>Track progress</td>
+<td>Track watch progress</td>
 <td><code>POST</code></td>
 <td><code>/courses/progress/update/</code></td>
-<td>Send every 15s during playback</td>
 </tr>
 <tr>
-<td>Get progress</td>
+<td>Get watch progress</td>
 <td><code>GET</code></td>
 <td><code>/courses/progress/&lt;video_id&gt;/</code></td>
-<td>Get saved progress</td>
+</tr>
+<tr>
+<td>List progress</td>
+<td><code>GET</code></td>
+<td><code>/courses/progress/</code></td>
 </tr>
 </tbody>
 </table>
-<hr>
-<h2 id="what-the-frontend-team-needs-to-build">What the Frontend Team Needs to Build</h2>
+<h3 id="system">System</h3>
 <table>
 <thead>
 <tr>
-<th>#</th>
-<th>Component</th>
-<th>Built-in steps</th>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td><strong>Video List</strong> (teacher)</td>
-<td>Show videos with status badges (Pending/Uploading/Ready/Error). Upload + Delete buttons per video.</td>
-</tr>
-<tr>
-<td>2</td>
-<td><strong>Upload Flow</strong></td>
-<td>File picker → <code>create-upload/</code> → XHR upload with progress bar → poll for status</td>
-</tr>
-<tr>
-<td>3</td>
-<td><strong>Upload Progress</strong></td>
-<td>XHR with <code>onprogress</code>, show %, MB/s, ETA, Cancel button</td>
-</tr>
-<tr>
-<td>4</td>
-<td><strong>Video Player</strong> (student)</td>
-<td>HLS.js player, fetch signed URL, token refresh, watch progress tracking</td>
-</tr>
-<tr>
-<td>5</td>
-<td><strong>Student ID Overlay</strong></td>
-<td>Floating name+code, CSS animation, anti-tampering</td>
-</tr>
-<tr>
-<td>6</td>
-<td><strong>Error States</strong></td>
-<td>Handle all 20+ error cases from the table above</td>
+<td>Bunny encoding callback</td>
+<td><code>POST</code></td>
+<td><code>/webhooks/bunny-encoded/</code></td>
 </tr>
 </tbody>
 </table>
-<hr>
-<h2 id="full-flow-diagram">Full Flow Diagram</h2>
-<pre class="hljs"><code><div>Teacher Browser              Our Backend                    Bunny Stream
-     │                            │                              │
-     │  POST /courses/videos/     │                              │
-     │──────────────────────────► │                              │
-     │◄────────── 201 { id } ──── │                              │
-     │                            │                              │
-     │  POST /videos/42/create-upload/                          │
-     │──────────────────────────► │                              │
-     │                            │  POST /library/698152/videos │
-     │                            │─────────────────────────────►│
-     │                            │◄─── { guid, status: 0 } ────│
-     │◄──── { upload_url, guid } ─│                              │
-     │                            │                              │
-     │  POST /videos/42/upload/   │                              │
-     │  (multipart XHR)           │                              │
-     │──────────────────────────► │                              │
-     │                            │  PUT /library/698152/videos  │
-     │  (progress: 55%)           │  (streams chunks, API key)   │
-     │◄────── 200 { success } ─── │─────────────────────────────►│
-     │                            │                              │
-     │  GET /videos/42/ (poll)    │                              │
-     │──────────────────────────► │                              │
-     │◄── { status: 1 → 4 } ──── │                              │
-     │                            │                              │
-  Student Browser                 │                              │
-     │                            │                              │
-     │  GET /videos/42/play/      │                              │
-     │──────────────────────────► │                              │
-     │  (checks purchase/expiry)  │                              │
-     │◄──── { playback_url } ──── │                              │
-     │                            │                              │
-     │  HLS stream with overlay   │                              │
-     │─────────────────────────────────────────────────────────►│
-     │  (0 load on our server)    │                              │
-     │                            │                              │
-     │  POST /progress/update/    │                              │
-     │  (every 15 seconds)        │                              │
-     │──────────────────────────► │                              │
-</div></code></pre>
 
 </body>
 </html>
