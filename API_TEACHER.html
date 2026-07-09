@@ -1549,6 +1549,11 @@ code {
 <h4 id="post-learninghomeworks">POST /learning/homeworks/</h4>
 <p><strong>Description:</strong> Create a homework with inline bubble questions.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Access Control:</strong></p>
+<ul>
+<li>Teachers can only create homework for <strong>their own lectures</strong> (queryset restricted).</li>
+<li>Students are blocked with <code>403</code>.</li>
+</ul>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer - Lecture ID"</span>,

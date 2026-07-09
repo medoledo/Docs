@@ -1332,6 +1332,12 @@ code {
 <h3 id="get-learninghomeworksid">GET /learning/homeworks/<id>/</h3>
 <p><strong>Description:</strong> Get the homework detail (bubble questions with choices count). Student sees only question number and choices count — no correct answers.</p>
 <p><strong>Authentication:</strong> Student (must have purchased the lecture)</p>
+<p><strong>Access Control:</strong></p>
+<ul>
+<li>Only students who <strong>purchased the lecture</strong> can see the homework detail.</li>
+<li>Students who did NOT purchase get <code>404</code>.</li>
+<li>Unpublished homeworks are hidden from all students.</li>
+</ul>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
@@ -1454,7 +1460,30 @@ code {
 </div></code></pre>
 <hr>
 <h3 id="get-learningquizzesid">GET /learning/quizzes/<id>/</h3>
-<p><strong>Description:</strong> View quiz details. Students who have NOT started the quiz see only the title, description, and settings — questions are hidden until they start.</p>
+<p><strong>Description:</strong> View quiz details.</p>
+<p><strong>Access Control by Role:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>What they see</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Teacher/Assistant/SiteOwner</td>
+<td>Full quiz with questions, settings, correct answers</td>
+</tr>
+<tr>
+<td>Student who <strong>has started</strong> the quiz</td>
+<td>Questions + their saved answers</td>
+</tr>
+<tr>
+<td>Student who has <strong>NOT started</strong></td>
+<td>Title, description, passing score only — <strong>questions are hidden</strong></td>
+</tr>
+</tbody>
+</table>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <hr>
 <h3 id="post-learningquizzesidstart">POST /learning/quizzes/<id>/start/</h3>
