@@ -1565,8 +1565,8 @@ code {
 <p><strong>Notes:</strong></p>
 <ul>
 <li><code>bubble_questions</code> is optional — questions can be added/updated later via PUT/PATCH with the same body format.</li>
-<li><code>choices_count</code>: number of answer choices (4 = A/B/C/D, 5 = A/B/C/D/E, up to 8).</li>
-<li><code>correct_answer</code>: single answer <code>&quot;A&quot;</code> or multiple answers <code>&quot;A,C&quot;</code>.</li>
+<li><code>choices_count</code>: number of answer choices (4 = A/B/C/D, 5 = A/B/C/D/E, <strong>up to 8</strong>).</li>
+<li><code>correct_answer</code>: single answer <code>&quot;A&quot;</code> or multiple answers <code>&quot;A,C&quot;</code>. <strong>No partial credit</strong> — all must match.</li>
 <li><code>answer_explanation</code>: optional field shown to students after submission (only if <code>show_grades=true</code>).</li>
 <li>Bubble sheets are auto-graded on submission.</li>
 </ul>

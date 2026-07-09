@@ -1337,12 +1337,39 @@ code {
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title (required)"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"bubble_questions"</span>: [
     {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-string">"integer"</span>},
     {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"choices_count"</span>: <span class="hljs-string">"integer"</span>}
   ]
+}
+</div></code></pre>
+<hr>
+<h3 id="patch-learninghomeworksiddraft">PATCH /learning/homeworks/<id>/draft/</h3>
+<p><strong>Description:</strong> Auto-save homework answers as a draft. Students can close the page and come back — their choices are restored.</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"answers"</span>: {
+    <span class="hljs-attr">"1"</span>: <span class="hljs-string">"A"</span>,
+    <span class="hljs-attr">"2"</span>: <span class="hljs-string">"B"</span>,
+    <span class="hljs-attr">"3"</span>: <span class="hljs-string">"A,C"</span>
+  }
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"answers"</span>: {<span class="hljs-attr">"1"</span>: <span class="hljs-string">"A"</span>, <span class="hljs-attr">"2"</span>: <span class="hljs-string">"B"</span>, <span class="hljs-attr">"3"</span>: <span class="hljs-string">"A,C"</span>},
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
+}
+</div></code></pre>
+<hr>
+<h3 id="get-learninghomeworksiddraft">GET /learning/homeworks/<id>/draft/</h3>
+<p><strong>Description:</strong> Load the saved draft answers. Returns empty object if no draft exists.</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"answers"</span>: {<span class="hljs-attr">"1"</span>: <span class="hljs-string">"A"</span>, <span class="hljs-attr">"2"</span>: <span class="hljs-string">"B"</span>, <span class="hljs-attr">"3"</span>: <span class="hljs-string">"A,C"</span>},
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
 }
 </div></code></pre>
 <hr>
@@ -1426,8 +1453,12 @@ code {
 ]
 </div></code></pre>
 <hr>
+<h3 id="get-learningquizzesid">GET /learning/quizzes/<id>/</h3>
+<p><strong>Description:</strong> View quiz details. Students who have NOT started the quiz see only the title, description, and settings — questions are hidden until they start.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<hr>
 <h3 id="post-learningquizzesidstart">POST /learning/quizzes/<id>/start/</h3>
-<p><strong>Description:</strong> Start a quiz attempt. Creates a <code>QuizSubmission</code> and returns questions in the student's randomized order (if enabled).</p>
+<p><strong>Description:</strong> Start a quiz attempt. Creates a <code>QuizSubmission</code> and returns questions in the student's randomized order (if enabled). Timer starts counting.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Access Control:</strong></p>
 <ul>
@@ -1456,6 +1487,47 @@ code {
       ]
     }
   ]
+}
+</div></code></pre>
+<hr>
+<h3 id="get-learningquizzesidresume">GET /learning/quizzes/<id>/resume/</h3>
+<p><strong>Description:</strong> Resume an active quiz attempt. Returns remaining time, questions, and any previously saved draft answers.</p>
+<p><strong>Authentication:</strong> Student</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"timer_remaining"</span>: <span class="hljs-string">"number | null — Minutes remaining (null if no timer)"</span>,
+  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"question_image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"choices"</span>: [{<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}],
+      <span class="hljs-attr">"saved_choice_ids"</span>: <span class="hljs-string">"array[integer] — Previously saved choices"</span>,
+      <span class="hljs-attr">"saved_written_answer"</span>: <span class="hljs-string">"string — Previously saved written answer"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h3 id="patch-learningquiz-answersansweridsave-draft">PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</h3>
+<p><strong>Description:</strong> Save individual answer choices while the student is working (auto-save). These are restored on resume.</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] — Selected choice IDs (for MCQ)"</span>,
+  <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string — Written answer (for written questions)"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"saved"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer"</span>
 }
 </div></code></pre>
 <hr>
