@@ -367,8 +367,8 @@ code {
   </script>
 <h1 id="edutrack-online---teacher--assistant-api">EduTrack Online - Teacher &amp; Assistant API</h1>
 <blockquote>
-<p><strong>Version:</strong> 1.1
-<strong>Date:</strong> April 29, 2026
+<p><strong>Version:</strong> 1.2
+<strong>Date:</strong> July 10, 2026
 <strong>Target Audience:</strong> Next.js Frontend Developers (Teacher &amp; Assistant Views)
 <strong>Backend:</strong> Django REST Framework</p>
 <p><strong>Note:</strong> This API documentation applies to <strong>both Teacher and Assistant roles</strong> unless explicitly stated. Assistants have access to the same Course Dashboard, content management, enrollments, quizzes, homeworks, and materials as teachers. The only Assistant restriction is they <strong>cannot create or delete assistants</strong> (view-only).</p>
@@ -691,6 +691,11 @@ code {
 </div></code></pre>
 <hr>
 <h2 id="4-course-content-management">4. Course Content Management</h2>
+<hr>
+<h4 id="get-coursesidtopics">GET /courses/<id>/topics/</h4>
+<p><strong>Description:</strong> List topics for a specific course (convenience shortcut for <code>GET /courses/topics/?course=&lt;id&gt;</code>).</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
+<p><strong>Success Response — 200 OK:</strong> Same format as <code>GET /courses/topics/</code>.</p>
 <hr>
 <h4 id="get-coursestopics">GET /courses/topics/</h4>
 <p><strong>Description:</strong> List all topics.</p>
@@ -1260,7 +1265,7 @@ code {
 <h2 id="7-enrollments">7. Enrollments</h2>
 <hr>
 <h4 id="get-coursesenrollmentspending">GET /courses/enrollments/pending/</h4>
-<p><strong>Description:</strong> List pending enrollment requests for the teacher's courses.</p>
+<p><strong>Description:</strong> List pending enrollment requests across all of the teacher's courses.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong> Array of pending enrollments.</p>
 <pre class="hljs"><code><div>{

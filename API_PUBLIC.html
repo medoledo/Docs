@@ -367,8 +367,8 @@ code {
   </script>
 <h1 id="edutrack-online---public-api">EduTrack Online - Public API</h1>
 <blockquote>
-<p><strong>Version:</strong> 1.1<br>
-<strong>Date:</strong> April 29, 2026<br>
+<p><strong>Version:</strong> 1.2<br>
+<strong>Date:</strong> July 10, 2026<br>
 <strong>Target Audience:</strong> Next.js Frontend Developers<br>
 <strong>Backend:</strong> Django REST Framework</p>
 </blockquote>
@@ -384,8 +384,8 @@ code {
 <p><strong>Description:</strong> Authenticates a user with username and password. Returns user data in the JSON body and sets JWT tokens as HTTP-Only cookies.</p>
 <p><strong>Cookies set on success:</strong></p>
 <ul>
-<li><code>access_token</code> � JWT access token, 30 min expiry, httpOnly, Secure, SameSite=None, Path=/</li>
-<li><code>refresh_token</code> � JWT refresh token, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
+<li><code>access_token</code>  JWT access token, 30 min expiry, httpOnly, Secure, SameSite=None, Path=/</li>
+<li><code>refresh_token</code>  JWT refresh token, 7 days expiry, httpOnly, Secure, SameSite=None, Path=/</li>
 </ul>
 <blockquote>
 <p>Both tokens contain <code>role</code> in their JWT payload. The frontend can decode the access token to read <code>user_id</code> and <code>role</code> without additional API calls.</p>
@@ -403,7 +403,7 @@ code {
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"String (siteowner|teacher|assistant|student)"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String � Only for students: pending|verified|declined|suspended_temporary|suspended_permanent"</span>
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String  Only for students: pending|verified|declined|suspended_temporary|suspended_permanent"</span>
 }
 </div></code></pre>
 <blockquote>
@@ -548,7 +548,7 @@ code {
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response � 200 OK:</strong></p>
+<p><strong>Success Response  200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"String (siteowner|teacher|assistant|student)"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
@@ -557,7 +557,7 @@ code {
 </div></code></pre>
 <p><strong>Cookie set on success:</strong></p>
 <ul>
-<li><code>user-role</code> � Refreshed JWT containing <code>{user_id, role}</code>, 7 days expiry, Secure, SameSite=None, Path=/</li>
+<li><code>user-role</code>  Refreshed JWT containing <code>{user_id, role}</code>, 7 days expiry, Secure, SameSite=None, Path=/</li>
 </ul>
 <p><strong>Error Responses:</strong></p>
 <table>
@@ -631,7 +631,7 @@ code {
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"valid"</span>: <span class="hljs-string">"boolean - Whether the OTP is valid"</span>,
-  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String � 32-character hex token"</span>,
+  <span class="hljs-attr">"reset_token"</span>: <span class="hljs-string">"String  32-character hex token"</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"OTP verified successfully"</span>
 }
 </div></code></pre>
@@ -887,13 +887,13 @@ code {
 <p><strong>Prerequisite:</strong> Call <code>POST /verify-email/confirm/</code> first to obtain a <code>verification_token</code>. Include it in this request.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"verification_token"</span>: <span class="hljs-string">"String (Required) � Token from verify-email/confirm"</span>,
-  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String (Required) � Unique, case-insensitive"</span>,
-  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required) � Minimum 8 characters"</span>,
-  <span class="hljs-attr">"password_confirm"</span>: <span class="hljs-string">"String (Required) � Must match password"</span>,
-  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"String (Required) � Arabic name"</span>,
-  <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String (Required) � English name"</span>,
-  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String (Required) � Egyptian format"</span>,
+  <span class="hljs-attr">"verification_token"</span>: <span class="hljs-string">"String (Required)  Token from verify-email/confirm"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String (Required)  Unique, case-insensitive"</span>,
+  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required)  Minimum 8 characters"</span>,
+  <span class="hljs-attr">"password_confirm"</span>: <span class="hljs-string">"String (Required)  Must match password"</span>,
+  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"String (Required)  Arabic name"</span>,
+  <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String (Required)  English name"</span>,
+  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String (Required)  Egyptian format"</span>,
   <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"Integer (Required)"</span>,
@@ -902,13 +902,13 @@ code {
   <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"String (Required)"</span>,
 
   <span class="hljs-attr">"birth_date"</span>: <span class="hljs-string">"Date (YYYY-MM-DD) (Required)"</span>,
-  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Required) � male|female"</span>,
-  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) � Must be globally unique, must match verified email"</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Required)  male|female"</span>,
+  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required)  Must be globally unique, must match verified email"</span>,
   <span class="hljs-attr">"governorate"</span>: <span class="hljs-string">"Integer (Required)"</span>,
-  <span class="hljs-attr">"area"</span>: <span class="hljs-string">"Integer (Required) � Must belong to the selected governorate"</span>
+  <span class="hljs-attr">"area"</span>: <span class="hljs-string">"Integer (Required)  Must belong to the selected governorate"</span>
 }
 </div></code></pre>
-<p><strong>Success Response � 201 Created:</strong></p>
+<p><strong>Success Response  201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"String - Success message"</span>,
   <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String - Auto-generated 7-digit code"</span>,
@@ -1424,10 +1424,10 @@ code {
 <h3 id="get-accountspublic-key">GET /accounts/public-key/</h3>
 <p><strong>Description:</strong> Returns the RSA public key used for JWT verification (RS256 algorithm). Frontends can use this to verify token signatures locally.</p>
 <p><strong>Authentication:</strong> None (public)</p>
-<p><strong>Success Response � 200 OK:</strong></p>
+<p><strong>Success Response  200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"public_key"</span>: <span class="hljs-string">"String � PEM-formatted RSA public key"</span>,
-  <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"String � Always 'RS256'"</span>
+  <span class="hljs-attr">"public_key"</span>: <span class="hljs-string">"String  PEM-formatted RSA public key"</span>,
+  <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"String  Always 'RS256'"</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>
@@ -1475,7 +1475,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response � 200 OK:</strong></p>
+<p><strong>Success Response  200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"available"</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">""</span>
@@ -1508,9 +1508,9 @@ code {
 <h2 id="10-video-security-options">10. Video Security Options</h2>
 <hr>
 <h3 id="get-accountsvideo-security">GET /accounts/video-security/</h3>
-<p><strong>Description:</strong> List available video security/protection options (DRM, watermarking, etc.). Configured via Django Admin � read-only via API.</p>
+<p><strong>Description:</strong> List available video security/protection options (DRM, watermarking, etc.). Configured via Django Admin  read-only via API.</p>
 <p><strong>Authentication:</strong> None (public)</p>
-<p><strong>Success Response � 200 OK:</strong></p>
+<p><strong>Success Response  200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -1526,7 +1526,7 @@ code {
 <h3 id="get-accountsvideo-securityid">GET /accounts/video-security/<id>/</h3>
 <p><strong>Description:</strong> Retrieve a single video security option.</p>
 <p><strong>Authentication:</strong> None (public)</p>
-<p><strong>Success Response � 200 OK:</strong></p>
+<p><strong>Success Response  200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
