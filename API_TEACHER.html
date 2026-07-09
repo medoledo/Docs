@@ -998,75 +998,126 @@ code {
 <li>Students see only active videos.</li>
 </ul>
 <hr>
-<h3 id="lecture-purchase-tracking">Lecture Purchase Tracking</h3>
+<h3 id="lecture-student-report">Lecture Student Report</h3>
 <hr>
-<h4 id="get-courseslecturesidpurchases">GET /courses/lectures/<id>/purchases/</h4>
-<p><strong>Description:</strong> View all students who purchased this lecture, with purchase details, expiry status, and reopen history.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total_purchases"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"Decimal"</span>,
-      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
-      <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
-      <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"Integer - Number of times watched"</span>,
-      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"Integer - Maximum watching limit (default: 4)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
+<h4 id="get-courseslecturesidstudent-report">GET /courses/lectures/<id>/student-report/</h4>
+<p><strong>Description:</strong> <strong>Comprehensive</strong> per-lecture report for ALL enrolled students. Returns everything a teacher needs in a single response:</p>
 <table>
 <thead>
 <tr>
-<th>Status</th>
-<th>Condition</th>
-<th>Response Body</th>
+<th>You can see</th>
+<th>How</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>404</code></td>
-<td>Lecture not found</td>
-<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
+<td>Students who <strong>didn't buy</strong> the lecture</td>
+<td><code>purchased: false</code> on the student object</td>
+</tr>
+<tr>
+<td>Students who <strong>bought</strong> (with all purchase details)</td>
+<td><code>purchased: true</code>, <code>amount_paid</code>, <code>expires_at</code>, <code>is_expired</code>, <code>reopen_logs</code></td>
+</tr>
+<tr>
+<td>Students who bought but <strong>didn't submit a specific homework</strong></td>
+<td><code>submitted: false</code> on that homework entry</td>
+</tr>
+<tr>
+<td>Students who <strong>submitted</strong> homework (with scores)</td>
+<td><code>submitted: true</code>, <code>score</code>, <code>submitted_at</code>, <code>submission_id</code></td>
+</tr>
+<tr>
+<td>Students who <strong>submitted a quiz</strong> (with scores)</td>
+<td><code>submitted: true</code>, <code>score</code>, <code>passed</code>, <code>attempt_number</code></td>
+</tr>
+<tr>
+<td>Students who <strong>didn't submit a quiz</strong></td>
+<td><code>submitted: false</code> on that quiz entry</td>
+</tr>
+<tr>
+<td><strong>Video watch progress</strong> per video</td>
+<td><code>is_completed</code>, <code>progress_percentage</code>, <code>watch_count</code>, <code>last_watched_at</code></td>
+</tr>
+<tr>
+<td><strong>Reopen logs</strong> for each purchase</td>
+<td><code>reopen_logs[]</code> with <code>reopened_by</code> and <code>reopened_at</code></td>
 </tr>
 </tbody>
 </table>
-<hr>
-<h4 id="get-courseslecturesidstudents-progress">GET /courses/lectures/<id>/students-progress/</h4>
-<p><strong>Description:</strong> View video watch progress for all students who purchased this lecture. Shows per-video progress for each student.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
+  <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"course_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"total_enrolled"</span>: <span class="hljs-string">"integer — All approved students in the course"</span>,
+  <span class="hljs-attr">"total_purchased"</span>: <span class="hljs-string">"integer — Students who bought this lecture"</span>,
+  <span class="hljs-attr">"videos"</span>: [
+    {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}
+  ],
+  <span class="hljs-attr">"homeworks"</span>: [
+    {<span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>}
+  ],
+  <span class="hljs-attr">"quizzes"</span>: [
+    {<span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>}
+  ],
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"video"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"video_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"progress_seconds"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"duration_seconds"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"progress_percentage"</span>: <span class="hljs-string">"Float"</span>,
-      <span class="hljs-attr">"is_completed"</span>: <span class="hljs-string">"Boolean"</span>,
-      <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"last_watched_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+      <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"string | null"</span>,
+      <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"string | null"</span>,
+      <span class="hljs-attr">"purchased"</span>: <span class="hljs-string">"boolean — Whether this student bought the lecture"</span>,
+      <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+      <span class="hljs-attr">"reopen_logs"</span>: [
+        {<span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"string | null"</span>, <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>}
+      ],
+      <span class="hljs-attr">"total_watch_count"</span>: <span class="hljs-string">"integer — Sum of all video watches"</span>,
+      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"integer — Maximum watching limit (default: 4)"</span>,
+      <span class="hljs-attr">"homeworks"</span>: [
+        {
+          <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
+          <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
+          <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"boolean"</span>,
+          <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer | null"</span>,
+          <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+          <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string (submitted|graded) | null"</span>,
+          <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>
+        }
+      ],
+      <span class="hljs-attr">"quizzes"</span>: [
+        {
+          <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
+          <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
+          <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"boolean"</span>,
+          <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer | null"</span>,
+          <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+          <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
+          <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>
+        }
+      ],
+      <span class="hljs-attr">"videos"</span>: [
+        {
+          <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
+          <span class="hljs-attr">"is_completed"</span>: <span class="hljs-string">"boolean"</span>,
+          <span class="hljs-attr">"progress_percentage"</span>: <span class="hljs-string">"number"</span>,
+          <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"last_watched_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>
+        }
+      ]
     }
   ]
 }
@@ -1081,6 +1132,11 @@ code {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>403</code></td>
+<td>Not your lecture</td>
+<td><code>{&quot;error&quot;: &quot;You can only view reports for your own lectures.&quot;}</code></td>
+</tr>
 <tr>
 <td><code>404</code></td>
 <td>Lecture not found</td>
