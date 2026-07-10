@@ -1263,6 +1263,7 @@ code {
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
 <h4 id="delete-coursesvideosid"><code>DELETE /courses/videos/&lt;id&gt;/</code></h4>
+<p><strong>Description:</strong> Deletes the video from both the local database and Bunny Stream. If the Bunny deletion fails (network issue), the local record is still removed and the error is logged.</p>
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
 <h2 id="7-enrollments">7. Enrollments</h2>
@@ -1635,6 +1636,7 @@ code {
 <ul>
 <li><code>bubble_questions</code> is optional — questions can be added/updated later via PUT/PATCH with the same body format.</li>
 <li><code>choices_count</code>: number of answer choices (4 = A/B/C/D, 5 = A/B/C/D/E, <strong>up to 8</strong>).</li>
+<li><strong>Maximum 300 bubble questions</strong> per homework.</li>
 <li><code>correct_answer</code>: single answer <code>&quot;A&quot;</code> or multiple answers <code>&quot;A,C&quot;</code>. <strong>No partial credit</strong> — all must match.</li>
 <li><code>answer_explanation</code>: optional field shown to students after submission (only if <code>show_grades=true</code>).</li>
 <li>Bubble sheets are auto-graded on submission.</li>
@@ -2030,72 +2032,6 @@ code {
 <hr>
 <h2 id="13-balance">13. Balance</h2>
 <hr>
-<h4 id="post-paymentsbalanceadd">POST /payments/balance/add/</h4>
-<p><strong>Description:</strong> Teacher or Assistant directly adds balance to a student's course account. Creates a full audit trail.</p>
-<p><strong>Authentication:</strong> Teacher / Assistant</p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"String (Required) — StudentProfile PK or student_code"</span>,
-  <span class="hljs-attr">"course_id"</span>: <span class="hljs-string">"Integer (Required) — Course ID"</span>,
-  <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"String (Required) — Positive Decimal (e.g. '75.50')"</span>,
-  <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"String (Optional) — Note/reason for the addition"</span>
-}
-</div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"String - Success message"</span>,
-  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"String - Student name"</span>,
-  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"String - Course name"</span>,
-  <span class="hljs-attr">"amount_added"</span>: <span class="hljs-string">"String (Decimal) - Amount added"</span>,
-  <span class="hljs-attr">"new_balance"</span>: <span class="hljs-string">"String (Decimal) - New balance"</span>,
-  <span class="hljs-attr">"transaction_id"</span>: <span class="hljs-string">"Integer"</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-<th>Response Body</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>400</code></td>
-<td>Invalid amount</td>
-<td><code>{&quot;amount&quot;: [&quot;Ensure this value is greater than or equal to 0.01.&quot;]}</code></td>
-</tr>
-<tr>
-<td><code>403</code></td>
-<td>Not your course</td>
-<td><code>{&quot;error&quot;: &quot;You can only add balance for your own courses&quot;}</code></td>
-</tr>
-<tr>
-<td><code>403</code></td>
-<td>Student not enrolled</td>
-<td><code>{&quot;error&quot;: &quot;Student is not enrolled in this course&quot;}</code></td>
-</tr>
-<tr>
-<td><code>404</code></td>
-<td>Student not found</td>
-<td><code>{&quot;error&quot;: &quot;Student not found&quot;}</code></td>
-</tr>
-<tr>
-<td><code>404</code></td>
-<td>Course not found</td>
-<td><code>{&quot;error&quot;: &quot;Course not found&quot;}</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Business Rules:</strong></p>
-<ul>
-<li>Amount is parsed as <code>Decimal</code> — no float precision errors.</li>
-<li>Creates an immutable <code>BalanceTransaction</code> with <code>balance_before</code> and <code>balance_after</code>.</li>
-<li>Creates a <code>StudentActivity</code> log entry with type <code>BALANCE_ADDED</code>.</li>
-</ul>
-<hr>
 <h4 id="get-paymentsbalancestudents">GET /payments/balance/students/</h4>
 <p><strong>Description:</strong> Teacher/Assistant views balances of all students enrolled in their courses.</p>
 <p><strong>Authentication:</strong> Teacher / Assistant</p>
@@ -2133,6 +2069,53 @@ code {
     <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
   }
 ]
+</div></code></pre>
+<hr>
+<h3 id="student-activity-history">Student Activity History</h3>
+<hr>
+<h4 id="get-paymentshistory">GET /payments/history/</h4>
+<p><strong>Description:</strong> View the activity history of students enrolled in your courses. Shows code redemptions, lecture purchases, enrollments, and reopen actions.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student</code></td>
+<td>Integer</td>
+<td>Filter by student ID</td>
+</tr>
+<tr>
+<td><code>activity</code></td>
+<td>String</td>
+<td>Filter by activity type (<code>code_redeemed</code>, <code>lecture_purchased</code>, <code>enrolled</code>, <code>lecture_reopened</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"activity"</span>: <span class="hljs-string">"String (code_redeemed|lecture_purchased|enrolled|lecture_reopened)"</span>,
+      <span class="hljs-attr">"activity_display"</span>: <span class="hljs-string">"String — Human-readable name"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"metadata"</span>: <span class="hljs-string">"Object"</span>,
+      <span class="hljs-attr">"performed_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"performed_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"performed_by_name"</span>: <span class="hljs-string">"String | null"</span>
+    }
+  ]
+}
 </div></code></pre>
 <hr>
 <h2 id="14-dashboard">14. Dashboard</h2>

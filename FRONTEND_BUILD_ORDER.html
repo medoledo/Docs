@@ -1294,86 +1294,149 @@ Q2: Student answered B | Correct: B | ✅ Correct
 </div></code></pre>
 <hr>
 <h3 id="page-9-students-page-enrollments--purchases--balances">Page 9: Students Page (Enrollments + Purchases + Balances)</h3>
-<p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, add balance, reopen access.</p>
+<p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, purchases, attendance, homework/quiz/exam grades.</p>
+<p><strong>Flow Overview:</strong></p>
+<pre class="hljs"><code><div>1. Load page → GET /courses/&lt;id&gt;/students/ → list of approved students + balances
+2. Tabs: Pending | Approved | Rejected
+3. Click student → expanded row with per-lecture purchases + homework/quiz/video status
+4. Click [Full Report] → GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/
+</div></code></pre>
 <p><strong>Page layout:</strong></p>
 <pre class="hljs"><code><div>Course: Chemistry 3rd Secondary
 
 Pending (3) | Approved (24) | Rejected (2)
 
-── Pending Tab ──
+── Pending Tab ──────────────────────────────────────
+Gets data from: GET /courses/&lt;id&gt;/enrollments/pending/
+
 Student      │ Code    │ Requested    │ Actions
-─────────────┼─────────┼──────────────┼────────────────
-Ali Hassan   │ S-010   │ 2026-07-07   │ [Approve] [Reject] (reason required)
+─────────────┼─────────┼──────────────┼────────────────────────────
+Ali Hassan   │ S-010   │ 2026-07-07   │ [Approve] [Reject]
 Nora Ahmed   │ S-011   │ 2026-07-06   │ [Approve] [Reject]
 
-── Approved Tab (expandable rows) ──
-Student      │ Code    │ Balance │ Actions
-─────────────┼─────────┼─────────┼─────────────────────────────
-Ahmed Ali    │ S-001   │ 200 EGP │ [+Balance] [Report] [Reopen]
-  ▶ Expanded:
+── Approved Tab ──────────────────────────────────────
+Gets data from: GET /courses/&lt;id&gt;/students/
+(returns: student_id, student_name, student_code, balance, enrolled_at)
+
+Student      │ Code    │ Balance  │ Actions
+─────────────┼─────────┼──────────┼────────────────────────────
+Ahmed Ali    │ S-001   │ 200 EGP  │ [Report] [Reopen] [History]
+  ▶ Expanded (per-lecture data, fetched on expand):
+    Data source: GET /courses/lectures/&lt;pk&gt;/student-report/
     - Lecture 1: Intro → Bought Jul 1 → Expires Jul 31 → Watch 2/4 → [Reopen]
     - Lecture 2: Types → Bought Jul 3 → Expires Aug 2 → Watch 1/4 → [Reopen]
     - Quiz 1: 80% ✅
     - Homework 1: 2/3
+
+── Full Report (modal / new page) ───────────────────
+Data source: GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/
+(one API call returns everything: student info, enrollment, balance,
+ all purchases, homework submissions, quiz submissions, exam submissions)
+
+── Activity History (modal) ─────────────────────────
+Data source: GET /payments/history/?student=X
+Shows: code redemptions, enrollments, purchases, reopen logs
 </div></code></pre>
+<p><strong>Endpoint Reference Table:</strong></p>
 <table>
 <thead>
 <tr>
 <th>Action</th>
 <th>Endpoint</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>Enrolled students + balances</td>
+<td><code>GET /courses/&lt;id&gt;/students/</code></td>
+<td>Main list for the approved tab</td>
+</tr>
+<tr>
 <td>Pending enrollments</td>
 <td><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></td>
+<td>Pending tab data</td>
 </tr>
 <tr>
 <td>Approved enrollments</td>
 <td><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></td>
+<td>Same as students but with full enrollment details</td>
 </tr>
 <tr>
 <td>Rejected enrollments</td>
 <td><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></td>
+<td>Rejected tab data</td>
 </tr>
 <tr>
-<td>Enrolled + balances</td>
-<td><code>GET /courses/&lt;id&gt;/students/</code></td>
+<td>All pending (across courses)</td>
+<td><code>GET /courses/enrollments/pending/</code></td>
+<td>Dashboard badge showing total pending</td>
 </tr>
 <tr>
-<td>Approve</td>
+<td>Approve single</td>
 <td><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></td>
+<td>Body: <code>{ &quot;response_note&quot;: &quot;string&quot; }</code></td>
 </tr>
 <tr>
-<td>Reject</td>
-<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code> (reason required)</td>
+<td>Reject single</td>
+<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></td>
+<td>Body: <code>{ &quot;response_note&quot;: &quot;string&quot; }</code> (reason required)</td>
 </tr>
 <tr>
 <td>Bulk approve/reject</td>
 <td><code>POST /courses/enrollments/bulk-action/</code></td>
+<td>Body: <code>{ &quot;enrollment_ids&quot;: [...], &quot;action&quot;: &quot;approve\|reject&quot; }</code></td>
 </tr>
 <tr>
-<td>Add balance</td>
-<td><code>POST /payments/balance/add/</code> { student_id, course_id, amount, reason }</td>
-</tr>
-<tr>
-<td>Student report</td>
+<td>Per-lecture student report</td>
 <td><code>GET /courses/lectures/&lt;id&gt;/student-report/</code></td>
+<td>ALL students for ONE lecture: purchases, homework, quizzes, videos</td>
 </tr>
 <tr>
-<td>Reopen</td>
-<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> { extra_days }</td>
+<td>Per-student full report</td>
+<td><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
+<td>ONE student for ALL lectures: everything</td>
 </tr>
 <tr>
-<td>Quiz submissions</td>
-<td><code>GET /learning/quiz-submissions/&lt;id&gt;/</code></td>
+<td>Student activity history</td>
+<td><code>GET /payments/history/?student=X</code></td>
+<td>Code redemptions, purchases, reopen logs</td>
 </tr>
 <tr>
-<td>Homework submissions</td>
+<td>Reopen lecture access</td>
+<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></td>
+<td>No body — grants 1 extra day (max 2 reopens)</td>
+</tr>
+<tr>
+<td>Homework submission detail</td>
 <td><code>GET /learning/homework-submissions/&lt;id&gt;/</code></td>
+<td>Per-question bubble answers</td>
+</tr>
+<tr>
+<td>Quiz submission detail</td>
+<td><code>GET /learning/quiz-submissions/&lt;id&gt;/</code></td>
+<td>MCQ choices, written answers</td>
+</tr>
+<tr>
+<td>Exam submission detail</td>
+<td><code>GET /learning/exam-submissions/&lt;id&gt;/</code></td>
+<td>Same as quiz</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Expanded Row Data Flow:</strong></p>
+<ol>
+<li>Teacher clicks a student row → fetch <code>GET /courses/lectures/&lt;pk&gt;/student-report/</code> for a specific lecture</li>
+<li>The report returns per-student data structure: purchased (T/F), amount_paid, expires_at, is_expired, homeworks[], quizzes[], videos[]</li>
+<li>Render each lecture's data in the expanded row</li>
+<li>For the students who haven't purchased → <code>purchased: false</code> → show [Buy] prompt instead</li>
+</ol>
+<p><strong>Full Report Data Flow:</strong></p>
+<ol>
+<li>Teacher clicks [Report] → fetch <code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></li>
+<li>Returns everything: student profile, enrollment, balance, ALL purchases (all lectures), ALL homework submissions, ALL quiz submissions, ALL exam submissions</li>
+<li>This replaces the need for multiple individual API calls — one endpoint gives the complete picture</li>
+</ol>
 <hr>
 <h3 id="page-10-student-report">Page 10: Student Report</h3>
 <p><strong>Purpose:</strong> Full report of everything about a student within a course.</p>
@@ -1672,7 +1735,7 @@ Ahmed Ali    │ S-001   │ 200 EGP │ [+Balance] [Report] [Reopen]
 <p><strong>Types:</strong> <code>homework</code>, <code>quiz</code>, <code>exam</code></p>
 <hr>
 <h3 id="page-8-students-page-lecture-purchases--enrollments">Page 8: Students Page (Lecture Purchases &amp; Enrollments)</h3>
-<p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, purchases, progress.</p>
+<p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, lecture purchases, homework/quiz/video progress.</p>
 <table>
 <thead>
 <tr>
@@ -1718,19 +1781,19 @@ Ahmed Ali    │ S-001   │ 200 EGP │ [+Balance] [Report] [Reopen]
 <td>Approve/reject multiple at once</td>
 </tr>
 <tr>
-<td>Add balance</td>
-<td><code>POST /payments/balance/add/</code></td>
-<td>Add to student's course balance</td>
+<td>Per-lecture student report</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/student-report/</code></td>
+<td>ALL students for one lecture: purchases, homework, quizzes, videos</td>
 </tr>
 <tr>
-<td>Lecture purchases</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/purchases/</code></td>
-<td>Who bought this lecture, when, expiry</td>
+<td>Per-student full report</td>
+<td><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
+<td>ONE student across all lectures: everything</td>
 </tr>
 <tr>
-<td>Student progress</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></td>
-<td>Video watch progress per lecture</td>
+<td>Student activity</td>
+<td><code>GET /payments/history/?student=X</code></td>
+<td>Activity log: code redemptions, purchases</td>
 </tr>
 <tr>
 <td>Quiz submissions</td>
@@ -1749,13 +1812,14 @@ Ahmed Ali    │ S-001   │ 200 EGP │ [+Balance] [Report] [Reopen]
 </tr>
 </tbody>
 </table>
-<p><strong>Per-student expandable row shows:</strong></p>
+<p><strong>Per-student expandable row shows (via per-lecture report):</strong></p>
 <ul>
-<li>Current balance for this course</li>
+<li>Current balance for this course (from student list)</li>
 <li>Purchased lectures (with expiry dates, watch counts, reopen button)</li>
-<li>Quiz submissions (scores, passed/failed)</li>
-<li>Homework submissions (scores, graded/pending)</li>
-<li>Overall progress summary</li>
+<li>Quiz submissions per lecture (scores, passed/failed)</li>
+<li>Homework submissions per lecture (scores, submitted/graded)</li>
+<li>Video progress per lecture (completed, watch count)</li>
+<li>Full report button → one API call for everything</li>
 </ul>
 <hr>
 <h3 id="page-9-assistants-page-teachers-only">Page 9: Assistants Page (Teachers Only)</h3>
