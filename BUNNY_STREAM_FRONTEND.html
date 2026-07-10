@@ -375,10 +375,10 @@ code {
 <h2 id="overview">Overview</h2>
 <p>All videos on EduTrack are hosted on <strong>Bunny Stream</strong>. The backend never stores video files — it relays uploads to Bunny and generates signed playback URLs.</p>
 <h3 id="upload-flow">Upload Flow</h3>
-<pre class="hljs"><code><div>Teacher Browser → POST /courses/videos/&lt;id&gt;/upload/ → Backend streams to Bunny CDN
+<pre class="hljs"><code><div>Teacher Browser → `POST /courses/videos/&lt;id&gt;/upload/` → Backend streams to Bunny CDN
 </div></code></pre>
 <h3 id="playback-flow">Playback Flow</h3>
-<pre class="hljs"><code><div>Student Browser → GET /courses/videos/&lt;id&gt;/play/ → Backend checks permissions → Returns signed HLS URL
+<pre class="hljs"><code><div>Student Browser → `GET /courses/videos/&lt;id&gt;/play/` → Backend checks permissions → Returns signed HLS URL
                                             ↘ Student streams directly from Bunny CDN (0 server load)
 </div></code></pre>
 <hr>
@@ -509,12 +509,12 @@ code {
 </tbody>
 </table>
 <hr>
-<h4 id="get-coursesvideosid">GET /courses/videos/<id>/</h4>
+<h4 id="get-coursesvideosid"><code>GET /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Description:</strong> Get a single video's details.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong> Same structure as list item.</p>
 <hr>
-<h4 id="putpatch-coursesvideosid">PUT/PATCH /courses/videos/<id>/</h4>
+<h4 id="putpatch-coursesvideosid"><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Description:</strong> Update video metadata (name, order, is_active).</p>
 <p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
 <p><strong>Request Body:</strong></p>
@@ -526,14 +526,14 @@ code {
 </div></code></pre>
 <p><strong>Success Response — 200 OK:</strong> Updated video object.</p>
 <hr>
-<h4 id="delete-coursesvideosid">DELETE /courses/videos/<id>/</h4>
+<h4 id="delete-coursesvideosid"><code>DELETE /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Description:</strong> Delete a video and remove it from Bunny Stream.</p>
 <p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
 <h2 id="2-upload-flow">2. Upload Flow</h2>
 <hr>
-<h4 id="post-coursesvideosidcreate-upload">POST /courses/videos/<id>/create-upload/</h4>
+<h4 id="post-coursesvideosidcreate-upload"><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></h4>
 <p><strong>Description:</strong> Creates a video entry on Bunny Stream and returns the Bunny GUID. Must be called before uploading. The returned <code>upload_url</code> is for <strong>backend use only</strong> — the frontend should upload via the proxy endpoint instead.</p>
 <p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
 <p><strong>Request Body:</strong> None</p>
@@ -546,7 +546,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="post-coursesvideosidupload">POST /courses/videos/<id>/upload/</h4>
+<h4 id="post-coursesvideosidupload"><code>POST /courses/videos/&lt;id&gt;/upload/</code></h4>
 <p><strong>Description:</strong> Upload a video file to Bunny Stream via the backend proxy. The file is streamed chunk-by-chunk to Bunny — never stored on disk. Must call <code>create-upload/</code> first.</p>
 <p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
@@ -615,7 +615,7 @@ code {
 <hr>
 <h2 id="3-playback">3. Playback</h2>
 <hr>
-<h4 id="get-coursesvideosidplay">GET /courses/videos/<id>/play/</h4>
+<h4 id="get-coursesvideosidplay"><code>GET /courses/videos/&lt;id&gt;/play/</code></h4>
 <p><strong>Description:</strong> Get a signed HLS playback URL for a video. Multiple security checks are performed before the URL is returned.</p>
 <p><strong>Authentication:</strong> Student, Teacher, Assistant, SiteOwner</p>
 <p><strong>Access Checks (Student):</strong></p>

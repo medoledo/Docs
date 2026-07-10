@@ -388,8 +388,8 @@ code {
 </li>
 <li><a href="#3-course-discovery">Course Discovery</a>
 <ul>
-<li><a href="#get-coursesby-subjectsubject_id">GET /courses/by-subject/&lt;subject_id&gt;/</a></li>
-<li><a href="#get-coursesidpreview">GET /courses/<id>/preview/</a></li>
+<li>[<code>GET /courses/by-subject/&lt;subject_id&gt;/](#get-coursesby-subjectsubject_id)</code></li>
+<li>[<code>GET /courses/&lt;id&gt;/preview/](#get-coursesidpreview)</code></li>
 </ul>
 </li>
 <li><a href="#4-enrollments">Enrollments</a>
@@ -397,12 +397,12 @@ code {
 <li><a href="#post-coursesenrollmentsenroll">POST /courses/enrollments/enroll/</a></li>
 <li><a href="#get-coursesenrollmentsmy">GET /courses/enrollments/my/</a></li>
 <li><a href="#get-coursesenrolled">GET /courses/enrolled/</a></li>
-<li><a href="#post-coursesenrollmentsidcancel">POST /courses/enrollments/<id>/cancel/</a></li>
+<li>[<code>POST /courses/enrollments/&lt;id&gt;/cancel/](#post-coursesenrollmentsidcancel)</code></li>
 </ul>
 </li>
 <li><a href="#5-course-lectures">Course Lectures</a>
 <ul>
-<li><a href="#get-coursesidlectures">GET /courses/<id>/lectures/</a></li>
+<li>[<code>GET /courses/&lt;id&gt;/lectures/](#get-coursesidlectures)</code></li>
 </ul>
 </li>
 <li><a href="#6-purchases">Purchases</a>
@@ -413,14 +413,14 @@ code {
 </li>
 <li><a href="#7-video-playback">Video Playback</a>
 <ul>
-<li><a href="#get-coursesvideosidplay">GET /courses/videos/<id>/play/</a></li>
+<li>[<code>GET /courses/videos/&lt;id&gt;/play/](#get-coursesvideosidplay)</code></li>
 </ul>
 </li>
 <li><a href="#8-video-watch-progress">Video Watch Progress</a>
 <ul>
 <li><a href="#get-coursesprogress">GET /courses/progress/</a></li>
 <li><a href="#post-coursesprogressupdate">POST /courses/progress/update/</a></li>
-<li><a href="#get-coursesprogressvideo_id">GET /courses/progress/&lt;video_id&gt;/</a></li>
+<li>[<code>GET /courses/progress/&lt;video_id&gt;/](#get-coursesprogressvideo_id)</code></li>
 </ul>
 </li>
 <li><a href="#9-balance">Balance</a>
@@ -432,23 +432,23 @@ code {
 <li><a href="#10-homeworks">Homeworks</a>
 <ul>
 <li><a href="#get-learninghomeworksmy">GET /learning/homeworks/my/</a></li>
-<li><a href="#post-learninghomeworksidsubmit">POST /learning/homeworks/<id>/submit/</a></li>
+<li>[<code>POST /learning/homeworks/&lt;id&gt;/submit/](#post-learninghomeworksidsubmit)</code></li>
 </ul>
 </li>
 <li><a href="#11-quizzes">Quizzes</a>
 <ul>
 <li><a href="#get-learningquizzesmy">GET /learning/quizzes/my/</a></li>
-<li><a href="#post-learningquizzesidstart">POST /learning/quizzes/<id>/start/</a></li>
-<li><a href="#post-learningquizzesidsubmit">POST /learning/quizzes/<id>/submit/</a></li>
-<li><a href="#get-learningquizzesidresults">GET /learning/quizzes/<id>/results/</a></li>
+<li>[<code>POST /learning/quizzes/&lt;id&gt;/start/](#post-learningquizzesidstart)</code></li>
+<li>[<code>POST /learning/quizzes/&lt;id&gt;/submit/](#post-learningquizzesidsubmit)</code></li>
+<li>[<code>GET /learning/quizzes/&lt;id&gt;/results/](#get-learningquizzesidresults)</code></li>
 </ul>
 </li>
 <li><a href="#12-exams">Exams</a>
 <ul>
 <li><a href="#get-learningexamsmy">GET /learning/exams/my/</a></li>
-<li><a href="#post-learningexamsidstart">POST /learning/exams/<id>/start/</a></li>
-<li><a href="#post-learningexamsidsubmit">POST /learning/exams/<id>/submit/</a></li>
-<li><a href="#get-learningexam-submissionsid">GET /learning/exam-submissions/<id>/</a></li>
+<li>[<code>POST /learning/exams/&lt;id&gt;/start/](#post-learningexamsidstart)</code></li>
+<li>[<code>POST /learning/exams/&lt;id&gt;/submit/](#post-learningexamsidsubmit)</code></li>
+<li>[<code>GET /learning/exam-submissions/&lt;id&gt;/](#get-learningexam-submissionsid)</code></li>
 </ul>
 </li>
 <li><a href="#13-study-materials">Study Materials</a>
@@ -594,7 +594,7 @@ code {
 <hr>
 <h2 id="3-course-discovery">3. Course Discovery</h2>
 <hr>
-<h3 id="get-coursesby-subjectsubjectid">GET /courses/by-subject/&lt;subject_id&gt;/</h3>
+<h3 id="get-coursesby-subjectsubjectid"><code>GET /courses/by-subject/&lt;subject_id&gt;/</code></h3>
 <p><strong>Description:</strong> List courses for a specific subject. Auto-filtered by the authenticated student's grade, division, and school type. Only active courses are returned.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Query Parameters:</strong></p>
@@ -671,7 +671,7 @@ code {
 <li>Students see only courses with a grade assigned.</li>
 </ul>
 <hr>
-<h3 id="get-coursesidpreview">GET /courses/<id>/preview/</h3>
+<h3 id="get-coursesidpreview"><code>GET /courses/&lt;id&gt;/preview/</code></h3>
 <p><strong>Description:</strong> Preview a course before enrolling. Shows topics and lectures with prices, but NO video URLs. Available to any authenticated user.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -844,7 +844,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="post-coursesenrollmentsidcancel">POST /courses/enrollments/<id>/cancel/</h3>
+<h3 id="post-coursesenrollmentsidcancel"><code>POST /courses/enrollments/&lt;id&gt;/cancel/</code></h3>
 <p><strong>Description:</strong> Student cancels their own pending enrollment. The enrollment is deleted.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -882,7 +882,7 @@ code {
 <hr>
 <h2 id="5-course-lectures">5. Course Lectures</h2>
 <hr>
-<h3 id="get-coursesidlectures">GET /courses/<id>/lectures/</h3>
+<h3 id="get-coursesidlectures"><code>GET /courses/&lt;id&gt;/lectures/</code></h3>
 <p><strong>Description:</strong> Get lectures for a course the student is enrolled in. Shows purchase status for each lecture.</p>
 <p><strong>Authentication:</strong> Student (must be approved enrolled)</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -1037,7 +1037,7 @@ code {
 <hr>
 <h2 id="7-video-playback">7. Video Playback</h2>
 <hr>
-<h3 id="get-coursesvideosidplay">GET /courses/videos/<id>/play/</h3>
+<h3 id="get-coursesvideosidplay"><code>GET /courses/videos/&lt;id&gt;/play/</code></h3>
 <p><strong>Description:</strong> Get a signed playback URL for a video. Enforces purchase check, expiry, watching limits, and prerequisites before returning the URL.</p>
 <p><strong>Authentication:</strong> Student (must have purchased the lecture)</p>
 <p><strong>Request Body:</strong> None</p>
@@ -1205,7 +1205,7 @@ code {
 <li>Student must have purchased the lecture.</li>
 </ul>
 <hr>
-<h3 id="get-coursesprogressvideoid">GET /courses/progress/&lt;video_id&gt;/</h3>
+<h3 id="get-coursesprogressvideoid"><code>GET /courses/progress/&lt;video_id&gt;/</code></h3>
 <p><strong>Description:</strong> Get progress for a specific video.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong> Single progress object.</p>
@@ -1329,7 +1329,7 @@ code {
 ]
 </div></code></pre>
 <hr>
-<h3 id="get-learninghomeworksid">GET /learning/homeworks/<id>/</h3>
+<h3 id="get-learninghomeworksid"><code>GET /learning/homeworks/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> Get the homework detail (bubble questions with choices count). Student sees only question number and choices count — no correct answers.</p>
 <p><strong>Authentication:</strong> Student (must have purchased the lecture)</p>
 <p><strong>Access Control:</strong></p>
@@ -1352,7 +1352,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="patch-learninghomeworksiddraft">PATCH /learning/homeworks/<id>/draft/</h3>
+<h3 id="patch-learninghomeworksiddraft"><code>PATCH /learning/homeworks/&lt;id&gt;/draft/</code></h3>
 <p><strong>Description:</strong> Auto-save homework answers as a draft. Students can close the page and come back — their choices are restored.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1370,7 +1370,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="get-learninghomeworksiddraft">GET /learning/homeworks/<id>/draft/</h3>
+<h3 id="get-learninghomeworksiddraft"><code>GET /learning/homeworks/&lt;id&gt;/draft/</code></h3>
 <p><strong>Description:</strong> Load the saved draft answers. Returns empty object if no draft exists.</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1379,7 +1379,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="post-learninghomeworksidsubmit">POST /learning/homeworks/<id>/submit/</h3>
+<h3 id="post-learninghomeworksidsubmit"><code>POST /learning/homeworks/&lt;id&gt;/submit/</code></h3>
 <p><strong>Description:</strong> Submit bubble sheet answers. Auto-graded immediately.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Access Control:</strong></p>
@@ -1407,7 +1407,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="get-learninghomework-submissionsid">GET /learning/homework-submissions/<id>/</h3>
+<h3 id="get-learninghomework-submissionsid"><code>GET /learning/homework-submissions/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> View submission results with per-question details.</p>
 <p><strong>Access Control:</strong></p>
 <ul>
@@ -1459,7 +1459,7 @@ code {
 ]
 </div></code></pre>
 <hr>
-<h3 id="get-learningquizzesid">GET /learning/quizzes/<id>/</h3>
+<h3 id="get-learningquizzesid"><code>GET /learning/quizzes/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> View quiz details.</p>
 <p><strong>Access Control by Role:</strong></p>
 <table>
@@ -1486,7 +1486,7 @@ code {
 </table>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <hr>
-<h3 id="post-learningquizzesidstart">POST /learning/quizzes/<id>/start/</h3>
+<h3 id="post-learningquizzesidstart"><code>POST /learning/quizzes/&lt;id&gt;/start/</code></h3>
 <p><strong>Description:</strong> Start a quiz attempt. Creates a <code>QuizSubmission</code> and returns questions in the student's randomized order (if enabled). Timer starts counting.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Access Control:</strong></p>
@@ -1519,7 +1519,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="get-learningquizzesidresume">GET /learning/quizzes/<id>/resume/</h3>
+<h3 id="get-learningquizzesidresume"><code>GET /learning/quizzes/&lt;id&gt;/resume/</code></h3>
 <p><strong>Description:</strong> Resume an active quiz attempt. Returns remaining time, questions, and any previously saved draft answers.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -1545,7 +1545,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="patch-learningquiz-answersansweridsave-draft">PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</h3>
+<h3 id="patch-learningquiz-answersansweridsave-draft"><code>PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</code></h3>
 <p><strong>Description:</strong> Save individual answer choices while the student is working (auto-save). These are restored on resume.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1560,7 +1560,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="post-learningquizzesidsubmit">POST /learning/quizzes/<id>/submit/</h3>
+<h3 id="post-learningquizzesidsubmit"><code>POST /learning/quizzes/&lt;id&gt;/submit/</code></h3>
 <p><strong>Description:</strong> Submit quiz answers.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Request Body:</strong></p>
@@ -1598,7 +1598,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="get-learningquizzesidresults">GET /learning/quizzes/<id>/results/</h3>
+<h3 id="get-learningquizzesidresults"><code>GET /learning/quizzes/&lt;id&gt;/results/</code></h3>
 <p><strong>Description:</strong> List all student submissions for a quiz.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <hr>
@@ -1624,7 +1624,7 @@ code {
 ]
 </div></code></pre>
 <hr>
-<h3 id="post-learningexamsidstart">POST /learning/exams/<id>/start/</h3>
+<h3 id="post-learningexamsidstart"><code>POST /learning/exams/&lt;id&gt;/start/</code></h3>
 <p><strong>Description:</strong> Start an exam attempt. Works exactly like quiz start — returns questions with choices in student's order.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Access Control:</strong></p>
@@ -1634,11 +1634,11 @@ code {
 <li>Must not exceed max attempts</li>
 </ul>
 <hr>
-<h3 id="post-learningexamsidsubmit">POST /learning/exams/<id>/submit/</h3>
+<h3 id="post-learningexamsidsubmit"><code>POST /learning/exams/&lt;id&gt;/submit/</code></h3>
 <p><strong>Description:</strong> Submit exam answers. Auto-grades MCQ, stores written for manual grading.</p>
 <p><strong>Authentication:</strong> Student</p>
 <hr>
-<h3 id="get-learningexam-submissionsid">GET /learning/exam-submissions/<id>/</h3>
+<h3 id="get-learningexam-submissionsid"><code>GET /learning/exam-submissions/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> View a specific exam submission.</p>
 <p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
 <hr>

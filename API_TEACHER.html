@@ -519,13 +519,13 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="get-accountsteacherassistantid">GET /accounts/teacher/assistant/<id>/</h4>
+<h4 id="get-accountsteacherassistantid"><code>GET /accounts/teacher/assistant/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Teacher (must own the assistant)</p>
 <hr>
-<h4 id="putpatch-accountsteacherassistantid">PUT/PATCH /accounts/teacher/assistant/<id>/</h4>
+<h4 id="putpatch-accountsteacherassistantid"><code>PUT/</code>PATCH /accounts/teacher/assistant/<id><code>/</code></h4>
 <p><strong>Authentication:</strong> Teacher (must own the assistant)</p>
 <hr>
-<h4 id="delete-accountsteacherassistantid">DELETE /accounts/teacher/assistant/<id>/</h4>
+<h4 id="delete-accountsteacherassistantid"><code>DELETE /accounts/teacher/assistant/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Teacher (must own the assistant)</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
@@ -586,7 +586,7 @@ code {
 <hr>
 <h2 id="3-course-students">3. Course Students</h2>
 <hr>
-<h4 id="get-coursesidstudents">GET /courses/<id>/students/</h4>
+<h4 id="get-coursesidstudents"><code>GET /courses/&lt;id&gt;/students/</code></h4>
 <p><strong>Description:</strong> List all approved students enrolled in a specific course, with each student's balance for <strong>this course only</strong> (not their total across all courses).</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -621,7 +621,7 @@ code {
 </tbody>
 </table>
 <hr>
-<h4 id="get-coursesidenrollmentspending">GET /courses/<id>/enrollments/pending/</h4>
+<h4 id="get-coursesidenrollmentspending"><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></h4>
 <p><strong>Description:</strong> List pending enrollment requests for a specific course.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -642,7 +642,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="get-coursesidenrollmentsapproved">GET /courses/<id>/enrollments/approved/</h4>
+<h4 id="get-coursesidenrollmentsapproved"><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></h4>
 <p><strong>Description:</strong> List approved enrollments for a specific course.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -666,7 +666,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="get-coursesidenrollmentsrejected">GET /courses/<id>/enrollments/rejected/</h4>
+<h4 id="get-coursesidenrollmentsrejected"><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></h4>
 <p><strong>Description:</strong> List rejected enrollments for a specific course.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -692,7 +692,7 @@ code {
 <hr>
 <h2 id="4-course-content-management">4. Course Content Management</h2>
 <hr>
-<h4 id="get-coursesidtopics">GET /courses/<id>/topics/</h4>
+<h4 id="get-coursesidtopics"><code>GET /courses/&lt;id&gt;/topics/</code></h4>
 <p><strong>Description:</strong> List topics for a specific course (convenience shortcut for <code>GET /courses/topics/?course=&lt;id&gt;</code>).</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong> Same format as <code>GET /courses/topics/</code>.</p>
@@ -767,7 +767,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="get-coursestopicsid">GET /courses/topics/<id>/</h4>
+<h4 id="get-coursestopicsid"><code>GET /courses/topics/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
@@ -823,13 +823,13 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="putpatch-coursestopicsid">PUT/PATCH /courses/topics/<id>/</h4>
+<h4 id="putpatch-coursestopicsid"><code>PUT/</code>PATCH /courses/topics/<id><code>/</code></h4>
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
-<h4 id="delete-coursestopicsid">DELETE /courses/topics/<id>/</h4>
+<h4 id="delete-coursestopicsid"><code>DELETE /courses/topics/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
-<h4 id="get-coursestopicsidlectures">GET /courses/topics/<id>/lectures/</h4>
+<h4 id="get-coursestopicsidlectures"><code>GET /courses/topics/&lt;id&gt;/lectures/</code></h4>
 <p><strong>Description:</strong> Get all lectures for a specific topic.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong> Array of lectures.</p>
@@ -916,7 +916,7 @@ code {
 </div></code></pre>
 <p><strong>Success Response — 201 Created:</strong> Single lecture.</p>
 <hr>
-<h4 id="get-courseslecturesid">GET /courses/lectures/<id>/</h4>
+<h4 id="get-courseslecturesid"><code>GET /courses/lectures/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
@@ -972,13 +972,13 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="putpatch-courseslecturesid">PUT/PATCH /courses/lectures/<id>/</h4>
+<h4 id="putpatch-courseslecturesid"><code>PUT/</code>PATCH /courses/lectures/<id><code>/</code></h4>
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
-<h4 id="delete-courseslecturesid">DELETE /courses/lectures/<id>/</h4>
+<h4 id="delete-courseslecturesid"><code>DELETE /courses/lectures/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
-<h4 id="get-courseslecturesidvideos">GET /courses/lectures/<id>/videos/</h4>
+<h4 id="get-courseslecturesidvideos"><code>GET /courses/lectures/&lt;id&gt;/videos/</code></h4>
 <p><strong>Description:</strong> Get all videos for a specific lecture.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong> Array of videos.</p>
@@ -1005,7 +1005,7 @@ code {
 <hr>
 <h3 id="lecture-student-report">Lecture Student Report</h3>
 <hr>
-<h4 id="get-courseslecturesidstudent-report">GET /courses/lectures/<id>/student-report/</h4>
+<h4 id="get-courseslecturesidstudent-report"><code>GET /courses/lectures/&lt;id&gt;/student-report/</code></h4>
 <p><strong>Description:</strong> <strong>Comprehensive</strong> per-lecture report for ALL enrolled students. Returns everything a teacher needs in a single response:</p>
 <table>
 <thead>
@@ -1153,10 +1153,10 @@ code {
 <h2 id="6-videos">6. Videos</h2>
 <p>All videos are hosted on <strong>Bunny Stream</strong>. The upload flow is:</p>
 <pre class="hljs"><code><div>1. Teacher creates a video record → POST /courses/videos/
-2. Teacher generates the Bunny upload URL → POST /courses/videos/&lt;id&gt;/create-upload/
+2. Teacher generates the Bunny upload URL → `POST /courses/videos/&lt;id&gt;/create-upload/`
 3. Frontend uploads the file directly to Bunny's CDN (PUT to upload_url)
 4. Bunny processes the video and calls the webhook when done
-5. Frontend polls GET /courses/videos/&lt;id&gt;/ until status=4 (Finished)
+5. Frontend polls `GET /courses/videos/&lt;id&gt;/` until status=4 (Finished)
 </div></code></pre>
 <hr>
 <h4 id="get-coursesvideos">GET /courses/videos/</h4>
@@ -1231,11 +1231,11 @@ code {
 </div></code></pre>
 <p><strong>Success Response — 201 Created:</strong> Single video object (same structure as list item).</p>
 <hr>
-<h4 id="get-coursesvideosid">GET /courses/videos/<id>/</h4>
+<h4 id="get-coursesvideosid"><code>GET /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response — 200 OK:</strong> Single video object.</p>
 <hr>
-<h4 id="post-coursesvideosidcreate-upload">POST /courses/videos/<id>/create-upload/</h4>
+<h4 id="post-coursesvideosidcreate-upload"><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></h4>
 <p><strong>Description:</strong> Creates the video entry on Bunny Stream and returns a direct upload URL. The teacher's browser uploads the file directly to Bunny's CDN — <strong>no file passes through our backend</strong>.</p>
 <p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
 <p><strong>Request Body:</strong> None</p>
@@ -1256,10 +1256,10 @@ code {
 });
 </div></code></pre>
 <hr>
-<h4 id="putpatch-coursesvideosid">PUT/PATCH /courses/videos/<id>/</h4>
+<h4 id="putpatch-coursesvideosid"><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
-<h4 id="delete-coursesvideosid">DELETE /courses/videos/<id>/</h4>
+<h4 id="delete-coursesvideosid"><code>DELETE /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Teacher</p>
 <hr>
 <h2 id="7-enrollments">7. Enrollments</h2>
@@ -1294,7 +1294,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="post-coursesenrollmentsidapprove">POST /courses/enrollments/<id>/approve/</h4>
+<h4 id="post-coursesenrollmentsidapprove"><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></h4>
 <p><strong>Description:</strong> Approve a pending enrollment.</p>
 <p><strong>Authentication:</strong> Teacher (course owner), Assistant (teacher's assistant)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
@@ -1332,7 +1332,7 @@ code {
 </tbody>
 </table>
 <hr>
-<h4 id="post-coursesenrollmentsidreject">POST /courses/enrollments/<id>/reject/</h4>
+<h4 id="post-coursesenrollmentsidreject"><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></h4>
 <p><strong>Description:</strong> Reject a pending enrollment.</p>
 <p><strong>Authentication:</strong> Teacher (course owner), Assistant (teacher's assistant)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
@@ -1397,7 +1397,7 @@ code {
 <hr>
 <h2 id="8-purchases">8. Purchases</h2>
 <hr>
-<h4 id="patch-coursespurchasesidreopen">PATCH /courses/purchases/<id>/reopen/</h4>
+<h4 id="patch-coursespurchasesidreopen"><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></h4>
 <p><strong>Description:</strong> Teacher/Assistant extends a student's access to a lecture by adding extra days.</p>
 <p><strong>Authentication:</strong> Teacher (lecture course owner), Assistant</p>
 <p><strong>Request Body:</strong> None (always grants exactly 1 extra day).</p>
@@ -2197,7 +2197,7 @@ code {
 <hr>
 <h2 id="15-student-report">15. Student Report</h2>
 <hr>
-<h4 id="get-coursescoursepkstudent-reportstudentid">GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</h4>
+<h4 id="get-coursescoursepkstudent-reportstudentid"><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></h4>
 <p><strong>Description:</strong> Returns everything about a student within a specific course. Teacher/Assistant only.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -2277,7 +2277,7 @@ code {
 <hr>
 <h2 id="16-lecture-prerequisites">16. Lecture Prerequisites</h2>
 <hr>
-<h4 id="get-courseslecturesidprerequisites">GET /courses/lectures/<id>/prerequisites/</h4>
+<h4 id="get-courseslecturesidprerequisites"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
 <p><strong>Description:</strong> List all prerequisites for a lecture.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -2296,7 +2296,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="post-courseslecturesidprerequisites">POST /courses/lectures/<id>/prerequisites/</h4>
+<h4 id="post-courseslecturesidprerequisites"><code>POST /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
 <p><strong>Description:</strong> Add a prerequisite to a lecture. Student must pass this homework/quiz before accessing the lecture's videos.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Request Body:</strong></p>
@@ -2317,7 +2317,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="delete-courseslecturesidprerequisitesprereqid">DELETE /courses/lectures/<id>/prerequisites/&lt;prereq_id&gt;/</h4>
+<h4 id="delete-courseslecturesidprerequisitesprereqid"><code>DELETE /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
 <p><strong>Description:</strong> Remove a prerequisite from a lecture.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Success Response — 204 No Content</strong></p>

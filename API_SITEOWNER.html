@@ -448,7 +448,7 @@ code {
 <p><strong>List view is lightweight.</strong> To get full teacher details (phone, gmail, gender, profile_picture, biography, facebook, subject_detail with nested grades/divisions/school_types, video_security, bunny_collection_id), use <code>GET /accounts/teachers/&lt;id&gt;/</code>.</p>
 </blockquote>
 <hr>
-<h3 id="get-accountsteachersid">GET /accounts/teachers/<id>/</h3>
+<h3 id="get-accountsteachersid"><code>GET /accounts/teachers/&lt;id&gt;/</code></h3>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -552,7 +552,7 @@ code {
 <li><code>grades</code> must be a subset of <code>subject</code>'s available grades. For example, if a subject is only assigned to &quot;3rd Secondary&quot;, the teacher cannot be assigned &quot;1st Secondary&quot;.</li>
 </ul>
 <hr>
-<h3 id="patch-accountsteachersid">PATCH /accounts/teachers/<id>/</h3>
+<h3 id="patch-accountsteachersid"><code>PATCH /accounts/teachers/&lt;id&gt;/</code></h3>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong> Same as POST body (all fields optional for PATCH). Additionally, <code>bunny_collection_id</code> can be set directly here, or use the dedicated <code>assign-collection</code> endpoint below.</p>
@@ -593,7 +593,7 @@ code {
 <h3 id="teacher-collection-management">Teacher Collection Management</h3>
 <p>Teachers must have a <strong>Bunny Stream collection</strong> assigned before they can upload videos. Create a collection manually in your <a href="https://dash.bunny.net/stream">Bunny Stream dashboard</a> → Collections → Create Collection, then assign it via the API.</p>
 <p><strong>The response for teacher list/detail views now includes <code>bunny_collection_id</code>.</strong></p>
-<h4 id="patch-accountsteachersidassign-collection">PATCH /accounts/teachers/<id>/assign-collection/</h4>
+<h4 id="patch-accountsteachersidassign-collection"><code>PATCH /accounts/teachers/&lt;id&gt;/assign-collection/</code></h4>
 <p><strong>Description:</strong> Assign an existing Bunny Stream collection GUID to a teacher. The teacher's future video uploads will be placed in this collection.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
@@ -630,7 +630,7 @@ code {
 </tr>
 </tbody>
 </table>
-<h4 id="post-accountsteachersidcreate-collection">POST /accounts/teachers/<id>/create-collection/</h4>
+<h4 id="post-accountsteachersidcreate-collection"><code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></h4>
 <p><strong>Description:</strong> Automatically create a new Bunny Stream collection and assign it to a teacher. The collection name auto-generates from the teacher's name and subject.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
@@ -715,11 +715,11 @@ code {
 <p><strong>List view is lightweight.</strong> To get full student details (username, gmail, birth_date, gender, school_type, division, school_name, governorate, area, is_active, updated_at, status_history), use <code>GET /accounts/students/&lt;id&gt;/</code>.</p>
 </blockquote>
 <hr>
-<h3 id="get-accountsstudentsid">GET /accounts/students/<id>/</h3>
+<h3 id="get-accountsstudentsid"><code>GET /accounts/students/&lt;id&gt;/</code></h3>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong> Single student profile.</p>
 <hr>
-<h3 id="patch-accountsstudentsidstatus">PATCH /accounts/students/<id>/status/</h3>
+<h3 id="patch-accountsstudentsidstatus"><code>PATCH /accounts/students/&lt;id&gt;/status/</code></h3>
 <p><strong>Description:</strong> Update a student's status and active flag. All changes are logged with the acting user and reason.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
@@ -890,7 +890,7 @@ code {
 <li>Teacher, grade, and name cannot be changed after course creation.</li>
 </ul>
 <hr>
-<h3 id="patch-coursesid">PATCH /courses/<id>/</h3>
+<h3 id="patch-coursesid"><code>PATCH /courses/&lt;id&gt;/</code></h3>
 <p><strong>Authentication:</strong> SiteOwner only</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH).</p>
@@ -922,7 +922,7 @@ code {
 <li>Subject is derived from the teacher and updates automatically if the teacher's subject changes.</li>
 </ul>
 <hr>
-<h3 id="delete-coursesid">DELETE /courses/<id>/</h3>
+<h3 id="delete-coursesid"><code>DELETE /courses/&lt;id&gt;/</code></h3>
 <p><strong>Authentication:</strong> SiteOwner only</p>
 <p><strong>Error Responses:</strong></p>
 <table>
@@ -1135,7 +1135,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="get-paymentsrevenuecourseid">GET /payments/revenue/course/<id>/</h3>
+<h3 id="get-paymentsrevenuecourseid"><code>GET /payments/revenue/course/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> Deep revenue dive for a specific course. Includes per-topic and per-lecture breakdowns, plus student spending distribution.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -1177,7 +1177,7 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="get-paymentsrevenuelectureid">GET /payments/revenue/lecture/<id>/</h3>
+<h3 id="get-paymentsrevenuelectureid"><code>GET /payments/revenue/lecture/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> Revenue details for a specific lecture, including purchase timeline and average time-to-purchase.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong></p>
