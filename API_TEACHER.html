@@ -1809,7 +1809,7 @@ code {
 <li><code>passing_score</code> is optional (null = no passing threshold)</li>
 <li>Quiz questions are <strong>standalone only</strong> — create them with text, image, and choices directly via separate requests to the quiz questions endpoints.</li>
 <li><code>score_visibility</code> / <code>answers_visibility</code>: <code>immediate</code>, <code>after_close</code>, <code>manual</code></li>
-<li>Timer: <code>0</code> = no time limit.</li>
+<li>Timer: <code>0</code> = no time limit, <strong>max 1440 minutes (24 hours)</strong>.</li>
 </ul>
 <hr>
 <h4 id="get-learningquizzesid">GET /learning/quizzes/{id}/</h4>
