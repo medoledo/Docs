@@ -2073,6 +2073,73 @@ code {
 <hr>
 <h3 id="student-activity-history">Student Activity History</h3>
 <hr>
+<hr>
+<h4 id="get-paymentstransactions">GET /payments/transactions/</h4>
+<p><strong>Description:</strong> Full balance transaction ledger for students. Shows every balance change with <strong>before and after snapshots</strong>. Includes code redemptions (with code, value, balance_before, balance_after) and lecture purchases (with lecture name, amount, balance_before, balance_after). Transactions are immutable — never editable or deletable.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (sees students enrolled in their courses), Student (sees own), SiteOwner (sees all)</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student</code></td>
+<td>Integer</td>
+<td>Filter by student ID</td>
+</tr>
+<tr>
+<td><code>course</code></td>
+<td>Integer</td>
+<td>Filter by course ID</td>
+</tr>
+<tr>
+<td><code>transaction_type</code></td>
+<td>String</td>
+<td>Filter: <code>code_redeemed</code> or <code>lecture_purchase</code></td>
+</tr>
+<tr>
+<td><code>ordering</code></td>
+<td>String</td>
+<td><code>created_at</code> or <code>-created_at</code> (default: newest first)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String (name_en / name_ar)"</span>,
+      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"transaction_type"</span>: <span class="hljs-string">"String (code_redeemed|lecture_purchase)"</span>,
+      <span class="hljs-attr">"transaction_type_display"</span>: <span class="hljs-string">"String (Code Redeemed|Lecture Purchased)"</span>,
+      <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"String (Decimal)"</span>,
+      <span class="hljs-attr">"balance_before"</span>: <span class="hljs-string">"String (Decimal)"</span>,
+      <span class="hljs-attr">"balance_after"</span>: <span class="hljs-string">"String (Decimal)"</span>,
+      <span class="hljs-attr">"source_type"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"source_type_display"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"source_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"metadata"</span>: {
+        <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String — The code string (for code_redeemed)"</span>,
+        <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String — Lecture name (for lecture_purchase)"</span>
+      },
+      <span class="hljs-attr">"performed_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"performed_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
 <h4 id="get-paymentshistory">GET /payments/history/</h4>
 <p><strong>Description:</strong> View the activity history of students enrolled in your courses. Shows code redemptions, lecture purchases, enrollments, and reopen actions.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
@@ -2205,6 +2272,49 @@ code {
     <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
   },
   <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String (Decimal) - Current balance for this course"</span>,
+  <span class="hljs-attr">"lectures"</span>: [
+    {
+      <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-string">"Boolean — Whether this student bought this lecture"</span>,
+      <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
+      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"total_watch_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"videos"</span>: [
+        {
+          <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+          <span class="hljs-attr">"is_completed"</span>: <span class="hljs-string">"Boolean"</span>,
+          <span class="hljs-attr">"progress_percentage"</span>: <span class="hljs-string">"number"</span>,
+          <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"Integer"</span>
+        }
+      ],
+      <span class="hljs-attr">"homeworks"</span>: [
+        {
+          <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+          <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"Boolean"</span>,
+          <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
+          <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>
+        }
+      ],
+      <span class="hljs-attr">"quizzes"</span>: [
+        {
+          <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
+          <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"Boolean"</span>,
+          <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
+          <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"Boolean | null"</span>
+        }
+      ]
+    }
+  ],
   <span class="hljs-attr">"purchases"</span>: [
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -2243,6 +2353,13 @@ code {
   ]
 }
 </div></code></pre>
+<p><strong>Business Rules:</strong></p>
+<ul>
+<li>The <code>lectures</code> field includes <strong>all lectures</strong> in the course, both purchased and unpurchased.</li>
+<li>Unpurchased lectures show <code>is_purchased: false</code> with no progress details.</li>
+<li>Purchased lectures show full progress: videos watched, homework scores, quiz scores.</li>
+<li>Data source: <code>BalanceTransaction</code> model — fully immutable, never editable or deletable.</li>
+</ul>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>

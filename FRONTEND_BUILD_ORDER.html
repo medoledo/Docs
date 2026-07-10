@@ -1331,11 +1331,14 @@ Ahmed Ali    │ S-001   │ 200 EGP  │ [Report] [Reopen] [History]
 ── Full Report (modal / new page) ───────────────────
 Data source: GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/
 (one API call returns everything: student info, enrollment, balance,
- all purchases, homework submissions, quiz submissions, exam submissions)
+ ALL lectures (bought + not bought) with per-lecture progress:
+ videos watched, homework submitted, quiz taken, purchases, etc.)
 
-── Activity History (modal) ─────────────────────────
-Data source: GET /payments/history/?student=X
-Shows: code redemptions, enrollments, purchases, reopen logs
+── Balance History (modal) ─────────────────────────
+Data source: GET /payments/transactions/?student=X
+Shows every transaction with balance_before → balance_after:
+ code redemptions (shows code, amount, balance snapshots),
+ lecture purchases (shows lecture name, amount deducted, balance snapshots)
 </div></code></pre>
 <p><strong>Endpoint Reference Table:</strong></p>
 <table>
@@ -1398,9 +1401,14 @@ Shows: code redemptions, enrollments, purchases, reopen logs
 <td>ONE student for ALL lectures: everything</td>
 </tr>
 <tr>
+<td>Balance transaction history</td>
+<td><code>GET /payments/transactions/?student=X</code></td>
+<td>Full ledger: balance_before, balance_after, code details, purchase details</td>
+</tr>
+<tr>
 <td>Student activity history</td>
 <td><code>GET /payments/history/?student=X</code></td>
-<td>Code redemptions, purchases, reopen logs</td>
+<td>Lightweight activity log</td>
 </tr>
 <tr>
 <td>Reopen lecture access</td>
@@ -1434,8 +1442,9 @@ Shows: code redemptions, enrollments, purchases, reopen logs
 <p><strong>Full Report Data Flow:</strong></p>
 <ol>
 <li>Teacher clicks [Report] → fetch <code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></li>
-<li>Returns everything: student profile, enrollment, balance, ALL purchases (all lectures), ALL homework submissions, ALL quiz submissions, ALL exam submissions</li>
-<li>This replaces the need for multiple individual API calls — one endpoint gives the complete picture</li>
+<li>Returns everything: student profile, enrollment, balance, ALL lectures (bought + not bought), per-lecture homework/quiz/video progress, ALL purchases, ALL submissions</li>
+<li>One API call replaces the need for multiple individual calls — complete picture in a single response</li>
+<li>For balance history drill-down: <code>GET /payments/transactions/?student=X</code> (balance_before → balance_after per action)</li>
 </ol>
 <hr>
 <h3 id="page-10-student-report">Page 10: Student Report</h3>
@@ -1454,7 +1463,8 @@ Shows: code redemptions, enrollments, purchases, reopen logs
 </tr>
 </tbody>
 </table>
-<p><strong>Response includes:</strong> student info, enrollment status, balance, purchases (with watch counts/expiry), quiz submissions, exam submissions, homework submissions.</p>
+<p><strong>Response includes:</strong> student info, enrollment status, balance, ALL lectures (bought + not bought) with per-lecture homework/quiz/video progress, purchases (with watch counts/expiry), quiz submissions, exam submissions, homework submissions.</p>
+<p><strong>Balance history (separate):</strong> <code>GET /payments/transactions/?student=X</code> — full ledger with balance_before and balance_after for every code redemption and lecture purchase.</p>
 <hr>
 <h3 id="page-11-assistants-page-teachers-only">Page 11: Assistants Page (Teachers Only)</h3>
 <p><strong>Purpose:</strong> Manage assistants who share all course management capabilities.</p>
