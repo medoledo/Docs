@@ -368,7 +368,7 @@ code {
 <h1 id="edutrack-online---api-overview">EduTrack Online - API Overview</h1>
 <blockquote>
 <p><strong>Version:</strong> 1.2<br>
-<strong>Date:</strong> July 10, 2026<br>
+<strong>Date:</strong> July 12, 2026<br>
 <strong>Target Audience:</strong> Next.js Frontend Developers<br>
 <strong>Backend:</strong> Django REST Framework</p>
 </blockquote>
@@ -479,7 +479,7 @@ code {
   <span class="hljs-keyword">return</span> payload.role; <span class="hljs-comment">// "siteowner" | "teacher" | "assistant" | "student"</span>
 }
 </div></code></pre>
-<p>However, since <code>access_token</code> is httpOnly, JavaScript cannot read it via <code>document.cookie</code>. The role is always available from the login response (<code>POST /accounts/login/</code>) and from <code>GET /accounts/me/</code>. Use <code>GET /accounts/me/</code> for session restoration on page refresh — it returns <code>{role, name, is_active}</code>.</p>
+<p>However, since <code>access_token</code> is httpOnly, JavaScript cannot read it via <code>document.cookie</code>. The role is always available from the login response (<code>POST /accounts/login/</code>) and from <code>GET /accounts/me/</code>. Use <code>GET /accounts/me/</code> for session restoration on page refresh — it returns <code>{role, name, is_active}</code>. For students, <code>status</code> is also included (<code>pending</code>, <code>verified</code>, <code>declined</code>, <code>suspended_temporary</code>, <code>suspended_permanent</code>).</p>
 <p><strong>Production domain setup:</strong> Set the environment variable <code>JWT_AUTH_COOKIE_DOMAIN=.savekiteg.com</code> on the server so cookies are shared across all subdomains (e.g., <code>eduonline.savekiteg.com</code> frontend + <code>edutrackonline.savekiteg.com</code> backend). If unset, cookies are scoped to the exact host that set them.</p>
 <h3 id="common-errors">Common Errors</h3>
 <p>These error formats are shared across all endpoints:</p>

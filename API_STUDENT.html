@@ -368,7 +368,7 @@ code {
 <h1 id="edutrack-online---student-api">EduTrack Online - Student API</h1>
 <blockquote>
 <p><strong>Version:</strong> 1.2
-<strong>Date:</strong> July 10, 2026
+<strong>Date:</strong> July 12, 2026
 <strong>Target Audience:</strong> Next.js Frontend Developers (Student Features)
 <strong>Backend:</strong> Django REST Framework</p>
 </blockquote>
@@ -1439,95 +1439,215 @@ code {
 <hr>
 <h2 id="11-quizzes">11. Quizzes</h2>
 <hr>
-<h3 id="get-learningquizzesmy">GET /learning/quizzes/my/</h3>
-<p><strong>Description:</strong> Get all quiz submissions for the logged-in student.</p>
-<p><strong>Authentication:</strong> Student</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>[
-  {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - Unique identifier"</span>,
-    <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"integer - Quiz ID"</span>,
-    <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"String - Quiz title"</span>,
-    <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String - Lecture name"</span>,
-    <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer - Attempt number"</span>,
-    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) - Student score"</span>,
-    <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean - Whether the attempt passed"</span>,
-    <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-    <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean - Whether score is visible"</span>,
-    <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean - Whether answers are visible"</span>
-  }
-]
-</div></code></pre>
-<hr>
-<h3 id="get-learningquizzesid"><code>GET /learning/quizzes/&lt;id&gt;/</code></h3>
-<p><strong>Description:</strong> View quiz details.</p>
-<p><strong>Access Control by Role:</strong></p>
+<h3 id="index">Index</h3>
 <table>
 <thead>
 <tr>
-<th>Role</th>
-<th>What they see</th>
+<th>#</th>
+<th>Endpoint</th>
+<th>Method</th>
+<th>Who</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Teacher/Assistant/SiteOwner</td>
-<td>Full quiz with questions, settings, correct answers</td>
+<td>11.1</td>
+<td><code>/learning/quizzes/my/</code></td>
+<td>GET</td>
+<td>Student</td>
 </tr>
 <tr>
-<td>Student who <strong>has started</strong> the quiz</td>
-<td>Questions + their saved answers</td>
+<td>11.2</td>
+<td><code>/learning/quizzes/&lt;id&gt;/</code></td>
+<td>GET</td>
+<td>Any authenticated</td>
 </tr>
 <tr>
-<td>Student who has <strong>NOT started</strong></td>
-<td>Title, description, passing score only — <strong>questions are hidden</strong></td>
+<td>11.3</td>
+<td><code>/learning/quizzes/&lt;id&gt;/start/</code></td>
+<td>POST</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>11.4</td>
+<td><code>/learning/quizzes/&lt;id&gt;/resume/</code></td>
+<td>GET</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>11.5</td>
+<td><code>/learning/quiz-answers/&lt;id&gt;/save-draft/</code></td>
+<td>PATCH</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>11.6</td>
+<td><code>/learning/quizzes/&lt;id&gt;/submit/</code></td>
+<td>POST</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>11.7</td>
+<td><code>/learning/quiz-submissions/&lt;id&gt;/</code></td>
+<td>GET</td>
+<td>Student (own)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="111-get-learningquizzesmy">11.1 GET /learning/quizzes/my/</h4>
+<p><strong>Description:</strong> Get all quiz submissions for the logged-in student across all courses and lectures. Includes score visibility and answers visibility status.</p>
+<p><strong>Authentication:</strong> Student</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+    <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"integer"</span>,
+    <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"string"</span>,
+    <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
+    <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
+    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Null if score_visibility=manual and not released yet"</span>,
+    <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
+    <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null — Null if not yet submitted"</span>,
+    <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean — Whether the score is currently visible to you"</span>,
+    <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean — Whether correct answers are currently visible to you"</span>
+  }
+]
+</div></code></pre>
+<hr>
+<h4 id="112-get-learningquizzesid">11.2 GET /learning/quizzes/<id>/</h4>
+<p><strong>Description:</strong> View quiz details. What you see depends on whether you've started the quiz.</p>
+<p><strong>Access Control:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>What you see</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Not started</strong> (no purchase or no attempt)</td>
+<td>Only: <code>id</code>, <code>title</code>, <code>description</code>, <code>passing_score</code>, <code>total_points</code> — <strong>questions and settings are hidden</strong></td>
+</tr>
+<tr>
+<td><strong>Has started</strong> (active or submitted attempt)</td>
+<td>Full quiz with questions, choices, your saved/submitted answers</td>
+</tr>
+<tr>
+<td><strong>Not purchased the lecture</strong></td>
+<td>404 Not Found</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Authentication:</strong> Any authenticated user</p>
-<hr>
-<h3 id="post-learningquizzesidstart"><code>POST /learning/quizzes/&lt;id&gt;/start/</code></h3>
-<p><strong>Description:</strong> Start a quiz attempt. Creates a <code>QuizSubmission</code> and returns questions in the student's randomized order (if enabled). Timer starts counting.</p>
-<p><strong>Authentication:</strong> Student</p>
-<p><strong>Access Control:</strong></p>
+<p><strong>Notes:</strong></p>
 <ul>
-<li>Must have purchased the lecture</li>
-<li>Must be enrolled in the course</li>
-<li>Quiz must be published and within open/close dates</li>
-<li>Must not exceed max attempts</li>
+<li><code>correct_answer</code> (<code>is_correct</code>) on choices is NEVER shown to students. Teachers only.</li>
+<li>If you haven't started the quiz, the response uses <code>QuizStudentDetailSerializer</code> which omits <code>quiz_questions</code> and <code>settings</code>.</li>
 </ul>
+<hr>
+<h4 id="113-post-learningquizzesidstart">11.3 POST /learning/quizzes/<id>/start/</h4>
+<p><strong>Description:</strong> Start a quiz attempt. Timer starts counting from this moment. The returned <code>submission_id</code> is used for submitting answers and saving drafts.</p>
+<p><strong>Authentication:</strong> Student</p>
+<p><strong>Access Checks (all must pass):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Failure response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>You must have purchased the lecture</td>
+<td>403</td>
+</tr>
+<tr>
+<td>You must be enrolled and approved in the course</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Quiz must be published (<code>is_published=true</code>)</td>
+<td>404</td>
+</tr>
+<tr>
+<td>Quiz must be active (<code>is_active=true</code>)</td>
+<td>404</td>
+</tr>
+<tr>
+<td>You must not have already taken it (if multiple attempts disabled)</td>
+<td>400</td>
+</tr>
+<tr>
+<td>You must not exceed max attempts (if multiple attempts enabled)</td>
+<td>400</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer - Submission ID"</span>,
-  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer - Attempt number"</span>,
-  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer - Time limit in minutes"</span>,
-  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer — Save this! Required for submit and draft endpoints"</span>,
+  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer — Which attempt this is (1, 2, 3, ...)"</span>,
+  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer — Time limit. 0 means no time limit."</span>,
+  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601) — When this attempt began"</span>,
   <span class="hljs-attr">"questions"</span>: [
     {
-      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer - Answer ID"</span>,
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer - Quiz question ID"</span>,
-      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"String - Question text"</span>,
-      <span class="hljs-attr">"question_image"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"String (mcq_single|mcq_multiple|written)"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer - Point value"</span>,
+      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer — ID to use when saving drafts or submitting"</span>,
+      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"question_image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (mcq_single|mcq_multiple|written)"</span>,
+      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"choices"</span>: [
-        {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - ..."</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>},
-        {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer - ..."</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"String - Choice text"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"String (URL) | null"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer - Display order"</span>}
+        {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}
       ]
     }
   ]
 }
 </div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>403</td>
+<td><code>{&quot;detail&quot;: &quot;You must purchase this lecture to take the quiz.&quot;}</code></td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;detail&quot;: &quot;You must be enrolled in this course.&quot;}</code></td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>{&quot;detail&quot;: &quot;You have already taken this quiz. Multiple attempts are not allowed.&quot;}</code></td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>{&quot;detail&quot;: &quot;Maximum attempts (X) reached.&quot;}</code></td>
+</tr>
+<tr>
+<td>404</td>
+<td><code>{&quot;detail&quot;: &quot;Quiz not found or not available.&quot;}</code></td>
+</tr>
+</tbody>
+</table>
 <hr>
-<h3 id="get-learningquizzesidresume"><code>GET /learning/quizzes/&lt;id&gt;/resume/</code></h3>
-<p><strong>Description:</strong> Resume an active quiz attempt. Returns remaining time, questions, and any previously saved draft answers.</p>
+<h4 id="114-get-learningquizzesidresume">11.4 GET /learning/quizzes/<id>/resume/</h4>
+<p><strong>Description:</strong> Resume an active quiz attempt (one that hasn't been submitted yet). Returns remaining time, questions, and any previously saved draft answers. Use this when the page is reloaded or the student returns to the quiz.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"timer_remaining"</span>: <span class="hljs-string">"number | null — Minutes remaining (null if no timer)"</span>,
+  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer — Original time limit"</span>,
+  <span class="hljs-attr">"timer_remaining"</span>: <span class="hljs-string">"number | null — Minutes remaining. Null if no timer. Can be 0 if expired."</span>,
   <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
   <span class="hljs-attr">"questions"</span>: [
     {
@@ -1537,20 +1657,42 @@ code {
       <span class="hljs-attr">"question_image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
       <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"choices"</span>: [{<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}],
-      <span class="hljs-attr">"saved_choice_ids"</span>: <span class="hljs-string">"array[integer] — Previously saved choices"</span>,
-      <span class="hljs-attr">"saved_written_answer"</span>: <span class="hljs-string">"string — Previously saved written answer"</span>
+      <span class="hljs-attr">"choices"</span>: [
+        {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}
+      ],
+      <span class="hljs-attr">"saved_choice_ids"</span>: <span class="hljs-string">"array[integer] — Previously saved MCQ choices (empty array if none)"</span>,
+      <span class="hljs-attr">"saved_written_answer"</span>: <span class="hljs-string">"string — Previously saved written answer (empty string if none)"</span>
     }
   ]
 }
 </div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>No active attempt found — you must start the quiz first</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Quiz not found or not available</td>
+</tr>
+</tbody>
+</table>
 <hr>
-<h3 id="patch-learningquiz-answersansweridsave-draft"><code>PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</code></h3>
-<p><strong>Description:</strong> Save individual answer choices while the student is working (auto-save). These are restored on resume.</p>
+<h4 id="115-patch-learningquiz-answersansweridsave-draft">11.5 PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</h4>
+<p><strong>Description:</strong> Save individual answer choices while the student is working. This is the auto-save endpoint — call it periodically (every 5-10 seconds) to preserve progress. Saved answers are restored when you resume the quiz. This does NOT submit the quiz — you must call <code>/submit/</code> separately.</p>
+<p><strong>Authentication:</strong> Student</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] — Selected choice IDs (for MCQ)"</span>,
-  <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string — Written answer (for written questions)"</span>
+  <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] — Selected choice IDs (for mcq_single or mcq_multiple questions)"</span>,
+  <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string — Written answer text (for written questions)"</span>
 }
 </div></code></pre>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -1560,52 +1702,178 @@ code {
 }
 </div></code></pre>
 <hr>
-<h3 id="post-learningquizzesidsubmit"><code>POST /learning/quizzes/&lt;id&gt;/submit/</code></h3>
-<p><strong>Description:</strong> Submit quiz answers.</p>
+<h4 id="116-post-learningquizzesidsubmit">11.6 POST /learning/quizzes/<id>/submit/</h4>
+<p><strong>Description:</strong> Submit quiz answers for auto-grading. MCQ questions are graded immediately. Written questions receive 0 points until the teacher manually grades them.</p>
+<p><strong>Grading Rules:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Question Type</th>
+<th>Correct</th>
+<th>Points</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mcq_single</code></td>
+<td>Exactly the correct choice(s) selected</td>
+<td>Full points</td>
+</tr>
+<tr>
+<td><code>mcq_single</code></td>
+<td>Wrong choice(s) selected</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>mcq_multiple</code></td>
+<td>All correct choices selected AND no extras</td>
+<td>Full points</td>
+</tr>
+<tr>
+<td><code>mcq_multiple</code></td>
+<td>Subset of correct choices selected (no extras)</td>
+<td>Partial credit (proportional)</td>
+</tr>
+<tr>
+<td><code>mcq_multiple</code></td>
+<td>Any incorrect choice selected</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>written</code></td>
+<td>Auto-graded</td>
+<td>0 until teacher grades manually</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Timer Behavior:</strong> If the timer has expired (elapsed time &gt; <code>timer_minutes</code> + 1 minute grace), the submission is rejected and marked as <code>is_timed_out</code>. The student must submit BEFORE time runs out.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"answers"</span>: [
     {
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer - Quiz question ID"</span>,
-      <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"Array[Integer] - Selected choice IDs"</span>
-    },
-    {
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer - Quiz question ID"</span>,
-      <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"Array[Integer] - Selected choice IDs"</span>
-    },
-    {
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer - Quiz question ID"</span>,
-      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"String - Written answer"</span>
+      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer (required)"</span>,
+      <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] — Selected choice IDs (for mcq_single and mcq_multiple)"</span>,
+      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string — Written answer text (for written questions)"</span>
     }
   ]
 }
 </div></code></pre>
-<p><strong>Notes:</strong></p>
-<ul>
-<li><code>choice_ids</code> for MCQ types (array of choice IDs)</li>
-<li><code>written_answer</code> for <code>written</code> type questions</li>
-<li>Timer check: if time has expired, submission is rejected with score 0</li>
-</ul>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Quiz submitted successfully."</span>,
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer - Submission ID"</span>,
-  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) - Student score"</span>,
-  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean - Whether the attempt passed"</span>,
-  <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean - Whether score is visible"</span>,
-  <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean - Whether answers are visible"</span>
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Null if score_visibility=manual and not released"</span>,
+  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null — Null if passing_score is not set or score not visible"</span>,
+  <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>No active attempt found (start the quiz first)</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Quiz already submitted</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Time limit exceeded</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="117-get-learningquiz-submissionsid">11.7 GET /learning/quiz-submissions/<id>/</h4>
+<p><strong>Description:</strong> View a specific submission with per-answer results. Shows selected choices, whether correct, and points earned.</p>
+<p><strong>Authentication:</strong> Student (own submissions only)</p>
+<p><strong>Access Control:</strong></p>
+<ul>
+<li>Students can only view their own submissions.</li>
+<li><code>correct_answer</code> and <code>correct_standalone_choice_texts</code> are hidden unless <code>answers_visibility</code> allows them.</li>
+</ul>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"quiz"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
+  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+  <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+  <span class="hljs-attr">"is_timed_out"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"answers"</span>: [
+    {
+      <span class="hljs-attr">"quiz_question"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"selected_standalone_choice_texts"</span>: <span class="hljs-string">"array[string]"</span>,
+      <span class="hljs-attr">"correct_standalone_choice_texts"</span>: <span class="hljs-string">"array[string] — Only shown if answers_visible=true"</span>,
+      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"boolean | null"</span>,
+      <span class="hljs-attr">"points_earned"</span>: <span class="hljs-string">"string (decimal)"</span>,
+      <span class="hljs-attr">"display_order"</span>: <span class="hljs-string">"integer"</span>
+    }
+  ]
 }
 </div></code></pre>
 <hr>
-<h3 id="get-learningquizzesidresults"><code>GET /learning/quizzes/&lt;id&gt;/results/</code></h3>
-<p><strong>Description:</strong> List all student submissions for a quiz.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<hr>
 <h2 id="12-exams">12. Exams</h2>
 <hr>
-<h3 id="get-learningexamsmy">GET /learning/exams/my/</h3>
-<p><strong>Description:</strong> Get all exam submissions for the logged-in student.</p>
+<h3 id="index">Index</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Endpoint</th>
+<th>Method</th>
+<th>Who</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12.1</td>
+<td><code>/learning/exams/my/</code></td>
+<td>GET</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>12.2</td>
+<td><code>/learning/exams/&lt;id&gt;/start/</code></td>
+<td>POST</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>12.3</td>
+<td><code>/learning/exams/&lt;id&gt;/submit/</code></td>
+<td>POST</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>12.4</td>
+<td><code>/learning/exam-submissions/&lt;id&gt;/</code></td>
+<td>GET</td>
+<td>Student (own)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="121-get-learningexamsmy">12.1 GET /learning/exams/my/</h4>
+<p><strong>Description:</strong> Get all exam submissions for the logged-in student across all courses.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>[
@@ -1615,32 +1883,102 @@ code {
     <span class="hljs-attr">"exam_title"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
-    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Hidden if score_visibility=manual and not released"</span>,
     <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
-    <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+    <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
     <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
     <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
   }
 ]
 </div></code></pre>
 <hr>
-<h3 id="post-learningexamsidstart"><code>POST /learning/exams/&lt;id&gt;/start/</code></h3>
-<p><strong>Description:</strong> Start an exam attempt. Works exactly like quiz start — returns questions with choices in student's order.</p>
+<h4 id="122-post-learningexamsidstart">12.2 POST /learning/exams/<id>/start/</h4>
+<p><strong>Description:</strong> Start an exam attempt. Works identically to quiz start. Timer begins, questions are returned. The exam must be within <code>open_date</code> and <code>close_date</code> to start.</p>
 <p><strong>Authentication:</strong> Student</p>
+<p><strong>Access Checks:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Failure response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Must be enrolled and approved in the course</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Current time must be after <code>open_date</code> (if set)</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Current time must be before <code>close_date</code> (if set)</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Must not exceed max attempts</td>
+<td>400</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request Body:</strong> None</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"exam_question_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_text"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"question_image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (mcq_single|mcq_multiple|written)"</span>,
+      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"choices"</span>: [
+        {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}
+      ]
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h4 id="123-post-learningexamsidsubmit">12.3 POST /learning/exams/<id>/submit/</h4>
+<p><strong>Description:</strong> Submit exam answers. Same grading logic as quizzes. Auto-grades MCQ, stores written for manual grading. Timer rules apply — if time expires, submission is rejected.</p>
+<p><strong>Authentication:</strong> Student</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"answers"</span>: [
+    {
+      <span class="hljs-attr">"question_id"</span>: <span class="hljs-string">"integer (required)"</span>,
+      <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] — Selected choice IDs (for MCQ)"</span>,
+      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string — Written answer text (for written questions)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Exam submitted successfully."</span>,
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
+  <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
+  <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="124-get-learningexam-submissionsid">12.4 GET /learning/exam-submissions/<id>/</h4>
+<p><strong>Description:</strong> View a specific exam submission with per-answer results.</p>
+<p><strong>Authentication:</strong> Student (own submissions only)</p>
 <p><strong>Access Control:</strong></p>
 <ul>
-<li>Must be enrolled and approved in the course</li>
-<li>Must be within open/close dates</li>
-<li>Must not exceed max attempts</li>
+<li>Students can only view their own submissions.</li>
+<li>Score and correct answers hidden per <code>score_visibility</code> / <code>answers_visibility</code> settings.</li>
 </ul>
-<hr>
-<h3 id="post-learningexamsidsubmit"><code>POST /learning/exams/&lt;id&gt;/submit/</code></h3>
-<p><strong>Description:</strong> Submit exam answers. Auto-grades MCQ, stores written for manual grading.</p>
-<p><strong>Authentication:</strong> Student</p>
-<hr>
-<h3 id="get-learningexam-submissionsid"><code>GET /learning/exam-submissions/&lt;id&gt;/</code></h3>
-<p><strong>Description:</strong> View a specific exam submission.</p>
-<p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
+<p><strong>Success Response:</strong> Same structure as quiz submission detail (see 11.7).</p>
 <hr>
 <h2 id="13-study-materials">13. Study Materials</h2>
 <hr>
@@ -1663,7 +2001,7 @@ code {
 <hr>
 <p><em>Documentation generated by OpenCode AI Agent</em>
 <em>Project: EduTrack Online Backend</em>
-<em>Last Updated: July 10, 2026</em></p>
+<em>Last Updated: July 12, 2026</em></p>
 
 </body>
 </html>
