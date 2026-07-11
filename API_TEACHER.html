@@ -2326,7 +2326,7 @@ code {
 </div></code></pre>
 <hr>
 <h4 id="112-post-learningquizzes">11.2 POST /learning/quizzes/</h4>
-<p><strong>Description:</strong> Create a new quiz with settings. Questions are created separately — this only creates the quiz container and its settings.</p>
+<p><strong>Description:</strong> Create a new quiz with settings and optional inline questions. Questions can be created inline with choices during the same request.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Access Control:</strong></p>
 <ul>
@@ -2334,7 +2334,7 @@ code {
 <li>Assistants can only create quizzes for lectures in their teacher's courses.</li>
 <li>Students are blocked with 403.</li>
 </ul>
-<p><strong>Request Body:</strong></p>
+<p><strong>Request Body (with inline questions):</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer (required) — Lecture ID"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string (required) — Quiz title"</span>,
@@ -2349,12 +2349,102 @@ code {
     <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string (optional, default: 'fixed') — 'fixed' or 'random'."</span>,
     <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>,
     <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>,
-    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer (optional, default: 1) — Only used if allow_multiple_attempts is true."</span>,
+    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer (optional, default: 1)"</span>,
     <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"string (optional, default: 'best') — 'best', 'average', or 'last'."</span>,
     <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>
-  }
+  },
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is 2+2?"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">"points_override"</span>: <span class="hljs-number">2</span>,
+      <span class="hljs-attr">"choices"</span>: [
+        {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"4"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
+        {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"5"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
+      ]
+    },
+    {
+      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"Explain gravity."</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"written"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>,
+      <span class="hljs-attr">"points_override"</span>: <span class="hljs-number">5</span>,
+      <span class="hljs-attr">"choices"</span>: []
+    }
+  ]
 }
 </div></code></pre>
+<p><strong>Inline Question Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td>String</td>
+<td>Question text (required for each question)</td>
+</tr>
+<tr>
+<td><code>question_type</code></td>
+<td>String</td>
+<td><code>mcq_single</code>, <code>mcq_multiple</code>, or <code>written</code> (default: <code>mcq_single</code>)</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>Integer</td>
+<td>Display order (default: 0)</td>
+</tr>
+<tr>
+<td><code>points_override</code></td>
+<td>Integer</td>
+<td>Points for this question (null = 1)</td>
+</tr>
+<tr>
+<td><code>choices</code></td>
+<td>Array</td>
+<td>List of choice objects (required for MCQ types)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Each Choice:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td>String</td>
+<td>Choice text (required)</td>
+</tr>
+<tr>
+<td><code>is_correct</code></td>
+<td>Boolean</td>
+<td>Whether this is correct (default: false)</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>Integer</td>
+<td>Display order (default: 0)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>The <code>questions</code> field is optional. If omitted, the quiz is created with no questions.</li>
+<li>On update (PUT/PATCH), if <code>questions</code> is provided, <strong>all existing questions are replaced</strong>.</li>
+<li>At least one choice must have <code>is_correct: true</code> for MCQ questions.</li>
+<li>MCQ questions should have at least 2 choices.</li>
+</ul>
 <p><strong>Success Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
