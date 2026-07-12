@@ -1002,19 +1002,32 @@ Price: 50 EGP | Discount: 10 EGP | Available: 30 days
 </tbody>
 </table>
 <p><strong>Bunny Upload Flow in the UI:</strong></p>
+<p><strong>Option A — Full file upload (simple):</strong></p>
 <ol>
 <li>Teacher clicks &quot;Add Video&quot; → modal: name, order → Video record created (<code>bunny_video_id=null</code>, status=&quot;Pending&quot;)</li>
-<li>Teacher clicks &quot;Upload&quot; on the pending row → <code>POST .../create-upload/</code> → returns <code>upload_url</code></li>
-<li>Frontend starts PUT upload directly to Bunny CDN with progress bar (0% → 100%)</li>
+<li>Teacher clicks &quot;Upload&quot; on the pending row → <code>POST .../create-upload/</code> → Bunny entry created</li>
+<li>Frontend sends file to <code>POST .../upload/</code> (multipart, <code>file</code> field) → Backend streams to Bunny</li>
 <li>Frontend polls <code>GET /courses/videos/&lt;id&gt;/</code> every 5 seconds</li>
 <li>UI shows live status: Created → Uploaded → Processing → Transcoding → <strong>Ready ✅</strong></li>
 <li>When status=4, <code>is_active=true</code>, teacher sees &quot;Ready&quot; badge</li>
 </ol>
+<p><strong>Option B — Chunked upload (pause/resume for large files):</strong></p>
+<ol>
+<li>Same steps 1-2 as above</li>
+<li>Split file into 5 MB chunks. For each chunk:
+→ <code>POST .../upload/</code> with <code>file</code> + <code>offset</code> + <code>total_size</code></li>
+<li>Progress = <code>offset / total_size * 100</code></li>
+<li><strong>Pause:</strong> stop sending chunks; remember <code>offset</code></li>
+<li><strong>Resume:</strong> <code>GET .../upload-status/</code> → get <code>uploaded_bytes</code> → continue from there</li>
+<li>After last chunk, poll status same as Option A</li>
+</ol>
+<p><strong>Note:</strong> Upload goes through the backend proxy (not directly to Bunny). The file never touches
+disk on the backend; each chunk is streamed directly to Bunny CDN.</p>
 <pre class="hljs"><code><div>Video List UI Table:
 # │ Name          │ Status                            │ Actions
 ──┼───────────────┼───────────────────────────────────┼────────────
 1 │ Intro         │ ✅ Ready                         │ [Preview] [Delete]
-2 │ Types         │ ⬆️ ████████░░ 80% Uploading      │ [Cancel]
+2 │ Types         │ ⬆️ ████████░░ 80% Uploading      │ [Pause] [Cancel]
 3 │ Graphs        │ 📝 Pending (not uploaded yet)    │ [Upload] [Delete]
 4 │ Advanced      │ ❌ Error — encoding failed        │ [Retry] [Delete]
 </div></code></pre>

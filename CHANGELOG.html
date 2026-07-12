@@ -813,6 +813,14 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <td>Files are streamed from disk to Bunny via <code>urllib3</code>, never loaded into memory.</td>
 </tr>
 <tr>
+<td><strong>Chunked upload (pause/resume)</strong></td>
+<td><code>POST /courses/videos/&lt;id&gt;/upload/</code> now accepts <code>offset</code> + <code>total_size</code> for byte-range chunks. <code>GET /courses/videos/&lt;id&gt;/upload-status/</code> queries Bunny for <code>uploaded_bytes</code>. Frontend splits file, sends chunks, pauses by stopping, resumes from <code>uploaded_bytes</code> after internet recovery or user-initiated pause.</td>
+</tr>
+<tr>
+<td><strong>Rename syncs to Bunny</strong></td>
+<td><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code> now calls Bunny's update API when <code>name</code> changes.</td>
+</tr>
+<tr>
 <td><strong>OTP expiry increased</strong></td>
 <td>Changed from 10 to 30 minutes for student registration flow.</td>
 </tr>
@@ -831,6 +839,14 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <tr>
 <td><strong>Bunny upload to collection</strong></td>
 <td>When Bunny entry is re-created (404), <code>collection_id</code> is passed so the video goes to the teacher's collection.</td>
+</tr>
+<tr>
+<td><strong>Chunked upload (pause/resume)</strong></td>
+<td><code>POST /courses/videos/&lt;id&gt;/upload/</code> accepts <code>offset</code>+<code>total_size</code> for byte-range chunks. <code>GET /upload-status/</code> queries Bunny for <code>uploaded_bytes</code> to resume after interruption.</td>
+</tr>
+<tr>
+<td><strong>Rename syncs to Bunny Stream</strong></td>
+<td><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code> now calls Bunny's update API when <code>name</code> changes.</td>
 </tr>
 </tbody>
 </table>

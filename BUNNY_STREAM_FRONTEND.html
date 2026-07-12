@@ -374,9 +374,22 @@ code {
 <hr>
 <h2 id="overview">Overview</h2>
 <p>All videos on EduTrack are hosted on <strong>Bunny Stream</strong>. The backend never stores video files — it relays uploads to Bunny and generates signed playback URLs.</p>
-<h3 id="upload-flow">Upload Flow</h3>
-<pre class="hljs"><code><div>Teacher Browser → `POST /courses/videos/&lt;id&gt;/upload/` → Backend streams to Bunny CDN
+<h3 id="upload-flow--full-file">Upload Flow — Full File</h3>
+<pre class="hljs"><code><div>Teacher Browser → `POST /courses/videos/&lt;id&gt;/upload/` (file) → Backend streams to Bunny CDN
 </div></code></pre>
+<p>Best for small files (&lt;100 MB) on stable connections. Single PUT, no pause/resume.</p>
+<h3 id="upload-flow--chunked-pauseresume">Upload Flow — Chunked (Pause/Resume)</h3>
+<pre class="hljs"><code><div>Teacher Browser → chunk 0  → `POST /courses/videos/&lt;id&gt;/upload/` (file + offset + total_size)
+                → chunk 1  → `POST /courses/videos/&lt;id&gt;/upload/` ...
+                → chunk N  → Backend PUTs each chunk with Content-Range header → Bunny CDN
+                ↕ pause/resume
+                → `GET /courses/videos/&lt;id&gt;/upload-status/` → Backend queries Bunny → returns uploaded_bytes
+</div></code></pre>
+<p>Frontend splits the file into fixed-size chunks (recommended: 5 MB). Each chunk is sent via <code>POST /upload/</code>
+with an <code>offset</code> field. If the connection drops, the frontend checks how many bytes Bunny has received
+and resumes from that offset. When the user clicks <strong>Pause</strong>, the frontend simply stops sending chunks
+and remembers <code>offset</code>; later it can resume by querying <code>upload-status</code> and continuing.</p>
+<p>The file <strong>never sits on the backend disk</strong> — each chunk is read and streamed directly to Bunny.</p>
 <h3 id="playback-flow">Playback Flow</h3>
 <pre class="hljs"><code><div>Student Browser → `GET /courses/videos/&lt;id&gt;/play/` → Backend checks permissions → Returns signed HLS URL
                                             ↘ Student streams directly from Bunny CDN (0 server load)
@@ -517,7 +530,8 @@ code {
 <p><strong>Success Response — 200 OK:</strong> Same structure as list item.</p>
 <hr>
 <h4 id="putpatch-coursesvideosid"><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code></h4>
-<p><strong>Description:</strong> Update video metadata (name, order, is_active).</p>
+<p><strong>Description:</strong> Update video metadata (name, order, is_active). When <code>name</code> changes, the backend
+<strong>also updates the title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -527,6 +541,8 @@ code {
 }
 </div></code></pre>
 <p><strong>Success Response — 200 OK:</strong> Updated video object.</p>
+<p><strong>Note:</strong> Renaming is atomic — local DB and Bunny Stream are both updated in sequence. If the
+Bunny update fails, the local name is still saved and the error is logged (no rollback).</p>
 <hr>
 <h4 id="delete-coursesvideosid"><code>DELETE /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Description:</strong> Delete a video and remove it from Bunny Stream.</p>
@@ -549,15 +565,43 @@ code {
 </div></code></pre>
 <hr>
 <h4 id="post-coursesvideosidupload"><code>POST /courses/videos/&lt;id&gt;/upload/</code></h4>
-<p><strong>Description:</strong> Upload a video file to Bunny Stream via the backend proxy. The file is streamed chunk-by-chunk to Bunny — never stored on disk. Must call <code>create-upload/</code> first.</p>
+<p><strong>Description:</strong> Upload a video file (or chunk) to Bunny Stream via the backend proxy.</p>
+<p><strong>Two modes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th style="text-align:center"><code>offset</code> field</th>
+<th style="text-align:center">Supports pause/resume</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Full file</strong></td>
+<td style="text-align:center">absent ❌</td>
+<td style="text-align:center">❌</td>
+<td>Files &lt;100 MB on stable connections</td>
+</tr>
+<tr>
+<td><strong>Chunked</strong></td>
+<td style="text-align:center">present ✅</td>
+<td style="text-align:center">✅</td>
+<td>Large files, slow networks, pause/resume needed</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
-<p><strong>Request Body:</strong></p>
+<hr>
+<h3 id="mode-a--full-file-upload-backward-compatible">Mode A — Full file upload (backward-compatible)</h3>
+<p>Single request, entire file.</p>
 <table>
 <thead>
 <tr>
 <th>Field</th>
 <th>Type</th>
+<th>Required</th>
 <th>Description</th>
 </tr>
 </thead>
@@ -565,6 +609,7 @@ code {
 <tr>
 <td><code>file</code></td>
 <td>File</td>
+<td>✅</td>
 <td>Video file (any format supported by Bunny Stream)</td>
 </tr>
 </tbody>
@@ -573,10 +618,107 @@ code {
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"success"</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-number">1</span>,
   <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"Uploaded"</span>,
-  <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"https://vz-964b4290-bbe.b-cdn.net/{id}/thumbnail.jpg"</span>
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"File uploaded to Bunny Stream successfully. Encoding will begin shortly."</span>
 }
+</div></code></pre>
+<hr>
+<h3 id="mode-b--chunked-upload-pauseresume">Mode B — Chunked upload (pause/resume)</h3>
+<p>Frontend splits the file into fixed-size chunks (recommended: 5 MB / 5242880 bytes).
+Each chunk is sent in a separate request. The backend PUTs it to Bunny with a
+<code>Content-Range</code> header — Bunny stores the chunk at the correct byte position.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>file</code></td>
+<td>File</td>
+<td>✅</td>
+<td>The chunk binary data</td>
+</tr>
+<tr>
+<td><code>offset</code></td>
+<td>Integer</td>
+<td>✅</td>
+<td>Byte offset of this chunk (0-based)</td>
+</tr>
+<tr>
+<td><code>total_size</code></td>
+<td>Integer</td>
+<td>✅</td>
+<td>Total file size in bytes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"success"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"offset"</span>: <span class="hljs-string">"integer — byte offset of the chunk just uploaded"</span>,
+  <span class="hljs-attr">"chunk_size"</span>: <span class="hljs-string">"integer — bytes in this chunk"</span>,
+  <span class="hljs-attr">"total_size"</span>: <span class="hljs-string">"integer — total file size"</span>,
+  <span class="hljs-attr">"is_last"</span>: <span class="hljs-string">"boolean — true if this was the final chunk"</span>,
+  <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"integer (0 = still uploading, 1 = complete)"</span>,
+  <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"Created | Uploaded"</span>
+}
+</div></code></pre>
+<p><strong>How pause/resume works:</strong></p>
+<ol>
+<li>
+<p><strong>Pause</strong> — Frontend stops sending chunks. Bunny keeps the already-received bytes.
+No action needed on the backend.</p>
+</li>
+<li>
+<p><strong>Resume</strong> — Frontend calls <code>GET /courses/videos/&lt;id&gt;/upload-status/</code> to get
+<code>uploaded_bytes</code> (how many bytes Bunny has stored so far). Then it sends chunks
+starting at <code>offset = uploaded_bytes</code>.</p>
+</li>
+<li>
+<p><strong>Interruption</strong> — If the internet drops mid-upload, same as pause: check
+<code>upload-status</code> and resume from <code>uploaded_bytes</code>.</p>
+</li>
+</ol>
+<p><strong>Chunk upload example (frontend JavaScript):</strong></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">const</span> CHUNK_SIZE = <span class="hljs-number">5</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span>; <span class="hljs-comment">// 5 MB</span>
+<span class="hljs-keyword">const</span> file = selectedFile; <span class="hljs-comment">// File object</span>
+<span class="hljs-keyword">const</span> totalSize = file.size;
+
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> offset = <span class="hljs-number">0</span>; offset &lt; totalSize; offset += CHUNK_SIZE) {
+  <span class="hljs-comment">// Check if user paused</span>
+  <span class="hljs-keyword">if</span> (paused) <span class="hljs-keyword">break</span>;
+
+  <span class="hljs-keyword">const</span> chunk = file.slice(offset, offset + CHUNK_SIZE);
+  <span class="hljs-keyword">const</span> formData = <span class="hljs-keyword">new</span> FormData();
+  formData.append(<span class="hljs-string">'file'</span>, chunk);
+  formData.append(<span class="hljs-string">'offset'</span>, offset.toString());
+  formData.append(<span class="hljs-string">'total_size'</span>, totalSize.toString());
+
+  <span class="hljs-keyword">const</span> resp = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/upload/`</span>, {
+    <span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>,
+    <span class="hljs-attr">headers</span>: { <span class="hljs-comment">/* auth */</span> },
+    <span class="hljs-attr">body</span>: formData,
+  });
+
+  <span class="hljs-keyword">if</span> (!resp.ok) {
+    <span class="hljs-comment">// Retry the chunk or check upload-status and resume</span>
+    <span class="hljs-keyword">break</span>;
+  }
+}
+
+<span class="hljs-comment">// Resume after interruption:</span>
+<span class="hljs-keyword">const</span> statusResp = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/upload-status/`</span>);
+<span class="hljs-keyword">const</span> { uploaded_bytes } = <span class="hljs-keyword">await</span> statusResp.json();
+<span class="hljs-comment">// Continue loop from uploaded_bytes</span>
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
@@ -599,22 +741,46 @@ code {
 <td>Missing <code>file</code> field in form data</td>
 </tr>
 <tr>
+<td>400</td>
+<td><code>&quot;offset and total_size must be integers&quot;</code></td>
+<td>Chunked mode with bad offset/total_size values</td>
+</tr>
+<tr>
 <td>403</td>
 <td><code>&quot;You can only upload videos to your own courses&quot;</code></td>
 <td>Wrong teacher</td>
 </tr>
 <tr>
-<td>502</td>
-<td><code>&quot;Upload to Bunny Stream failed&quot;</code></td>
-<td>Bunny CDN rejected the upload</td>
+<td>410</td>
+<td><code>&quot;Bunny video entry no longer exists&quot;</code></td>
+<td>Bunny auto-deleted the entry; call <code>create-upload</code> again</td>
 </tr>
 <tr>
-<td>500</td>
-<td><code>&quot;Upload failed due to an unexpected error&quot;</code></td>
-<td>Internal error</td>
+<td>502</td>
+<td><code>&quot;Chunk upload to Bunny Stream failed&quot;</code></td>
+<td>Bunny CDN rejected the chunk (retry it)</td>
+</tr>
+<tr>
+<td>503</td>
+<td><code>&quot;Server is currently busy with other uploads&quot;</code></td>
+<td>Temp disk full</td>
 </tr>
 </tbody>
 </table>
+<hr>
+<h4 id="get-coursesvideosidupload-status"><code>GET /courses/videos/&lt;id&gt;/upload-status/</code></h4>
+<p><strong>Description:</strong> Query Bunny Stream for how many bytes have been successfully uploaded.
+Used to resume interrupted chunked uploads.</p>
+<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"uploaded_bytes"</span>: <span class="hljs-string">"integer — bytes Bunny has received so far"</span>
+}
+</div></code></pre>
+<p><strong>Usage:</strong> Frontend calls this before resuming a paused/failed upload, then starts
+sending chunks from <code>uploaded_bytes</code>.</p>
 <hr>
 <h2 id="3-playback">3. Playback</h2>
 <hr>
@@ -812,9 +978,14 @@ code {
 <td><code>/courses/videos/&lt;id&gt;/create-upload/</code></td>
 </tr>
 <tr>
-<td>Upload video file</td>
+<td>Upload video file (full or chunk)</td>
 <td><code>POST</code></td>
 <td><code>/courses/videos/&lt;id&gt;/upload/</code></td>
+</tr>
+<tr>
+<td>Check upload progress</td>
+<td><code>GET</code></td>
+<td><code>/courses/videos/&lt;id&gt;/upload-status/</code></td>
 </tr>
 <tr>
 <td>Preview own video</td>
