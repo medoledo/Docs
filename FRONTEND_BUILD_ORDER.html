@@ -1299,7 +1299,7 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <pre class="hljs"><code><div>1. Load page → GET /courses/&lt;id&gt;/students/ → list of approved students + balances
 2. Tabs: Pending | Approved | Rejected
 3. Click student → expanded row with per-lecture purchases + homework/quiz/video status
-4. Click [Full Report] → GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/
+4. Click student → see full details in expanded row (balance, purchases, activity from enrollment list + transactions)
 </div></code></pre>
 <p><strong>Page layout:</strong></p>
 <pre class="hljs"><code><div>Course: Chemistry 3rd Secondary
@@ -1307,7 +1307,7 @@ Q2: Student answered B | Correct: B | ✅ Correct
 Pending (3) | Approved (24) | Rejected (2)
 
 ── Pending Tab ──────────────────────────────────────
-Gets data from: GET /courses/&lt;id&gt;/enrollments/pending/
+Gets data from: GET /courses/enrollments/?course=X&amp;status=pending
 
 Student      │ Code    │ Requested    │ Actions
 ─────────────┼─────────┼──────────────┼────────────────────────────
@@ -1322,7 +1322,7 @@ Student      │ Code    │ Balance  │ Actions
 ─────────────┼─────────┼──────────┼────────────────────────────
 Ahmed Ali    │ S-001   │ 200 EGP  │ [Report] [Reopen] [History]
   ▶ Expanded (per-lecture data, fetched on expand):
-    Data source: GET /courses/lectures/&lt;pk&gt;/student-report/
+    Data source: GET /courses/enrollments/?course=X&amp;status=approved (enrollment list with balance)
     - Lecture 1: Intro → Bought Jul 1 → Expires Jul 31 → Watch 2/4 → [Reopen]
     - Lecture 2: Types → Bought Jul 3 → Expires Aug 2 → Watch 1/4 → [Reopen]
     - Quiz 1: 80% ✅
@@ -1357,47 +1357,47 @@ Shows every transaction with balance_before → balance_after:
 </tr>
 <tr>
 <td>Pending enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=pending</code></td>
 <td>Pending tab data</td>
 </tr>
 <tr>
 <td>Approved enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></td>
-<td>Same as students but with full enrollment details</td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code></td>
+<td>Full enrollment details</td>
 </tr>
 <tr>
 <td>Rejected enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=rejected</code></td>
 <td>Rejected tab data</td>
 </tr>
 <tr>
 <td>All pending (across courses)</td>
-<td><code>GET /courses/enrollments/pending/</code></td>
+<td><code>GET /courses/enrollments/?status=pending</code></td>
 <td>Dashboard badge showing total pending</td>
 </tr>
 <tr>
 <td>Approve single</td>
-<td><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></td>
+<td><code>POST /courses/enrollments/approve/</code></td>
 <td>Body: <code>{ &quot;response_note&quot;: &quot;string&quot; }</code></td>
 </tr>
 <tr>
 <td>Reject single</td>
-<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></td>
+<td><code>POST /courses/enrollments/reject/</code></td>
 <td>Body: <code>{ &quot;response_note&quot;: &quot;string&quot; }</code> (reason required)</td>
 </tr>
 <tr>
-<td>Bulk approve/reject</td>
-<td><code>POST /courses/enrollments/bulk-action/</code></td>
+<td>Approve bulk</td>
+<td><code>POST /courses/enrollments/approve/</code></td>
 <td>Body: <code>{ &quot;enrollment_ids&quot;: [...], &quot;action&quot;: &quot;approve\|reject&quot; }</code></td>
 </tr>
 <tr>
-<td>Per-lecture student report</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/student-report/</code></td>
+<td>Per-lecture student progress</td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code></td>
 <td>ALL students for ONE lecture: purchases, homework, quizzes, videos</td>
 </tr>
 <tr>
-<td>Per-student full report</td>
-<td><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
+<td>Student transactions</td>
+<td><code>GET /payments/transactions/?student=X</code></td>
 <td>ONE student for ALL lectures: everything</td>
 </tr>
 <tr>
@@ -1406,9 +1406,9 @@ Shows every transaction with balance_before → balance_after:
 <td>Full ledger: balance_before, balance_after, code details, purchase details</td>
 </tr>
 <tr>
-<td>Student activity history</td>
-<td><code>GET /payments/history/?student=X</code></td>
 <td>Lightweight activity log</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Reopen lecture access</td>
@@ -1458,8 +1458,8 @@ Shows every transaction with balance_before → balance_after:
 </thead>
 <tbody>
 <tr>
-<td>Full report</td>
-<td><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -1757,7 +1757,7 @@ Shows every transaction with balance_before → balance_after:
 <tbody>
 <tr>
 <td>Pending enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=pending</code></td>
 <td>Awaiting approval</td>
 </tr>
 <tr>
@@ -1767,43 +1767,43 @@ Shows every transaction with balance_before → balance_after:
 </tr>
 <tr>
 <td>Approved enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code></td>
 <td>Full enrollment details</td>
 </tr>
 <tr>
 <td>Rejected enrollments</td>
-<td><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=rejected</code></td>
 <td>Rejected list</td>
 </tr>
 <tr>
 <td>Approve</td>
-<td><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></td>
+<td><code>POST /courses/enrollments/approve/</code></td>
 <td>Approve + track who/when</td>
 </tr>
 <tr>
 <td>Reject</td>
-<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></td>
+<td><code>POST /courses/enrollments/reject/</code></td>
 <td>Reject + requires reason</td>
 </tr>
 <tr>
-<td>Bulk action</td>
-<td><code>POST /courses/enrollments/bulk-action/</code></td>
+<td>Approve bulk</td>
+<td><code>POST /courses/enrollments/approve/</code></td>
 <td>Approve/reject multiple at once</td>
 </tr>
 <tr>
-<td>Per-lecture student report</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/student-report/</code></td>
+<td>Per-lecture student progress</td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code></td>
 <td>ALL students for one lecture: purchases, homework, quizzes, videos</td>
 </tr>
 <tr>
-<td>Per-student full report</td>
-<td><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
+<td>Student transactions</td>
+<td><code>GET /payments/transactions/?student=X</code></td>
 <td>ONE student across all lectures: everything</td>
 </tr>
 <tr>
-<td>Student activity</td>
-<td><code>GET /payments/history/?student=X</code></td>
 <td>Activity log: code redemptions, purchases</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Quiz submissions</td>

@@ -736,7 +736,7 @@ code {
 <td>No</td>
 </tr>
 <tr>
-<td><code>GET /courses/enrollments/pending/</code></td>
+<td><code>POST /courses/enrollments/approve/</code></td>
 <td>No</td>
 <td>Yes</td>
 <td>Yes</td>
@@ -744,50 +744,10 @@ code {
 <td>No</td>
 </tr>
 <tr>
-<td><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></td>
+<td><code>POST /courses/enrollments/reject/</code></td>
 <td>No</td>
 <td>Yes</td>
 <td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></td>
-<td>No</td>
-<td>Yes**</td>
-<td>Yes**</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></td>
-<td>No</td>
-<td>Yes**</td>
-<td>Yes**</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /courses/enrollments/bulk-action/</code></td>
-<td>No</td>
-<td>Yes**</td>
-<td>Yes**</td>
 <td>No</td>
 <td>No</td>
 </tr>
@@ -809,14 +769,6 @@ code {
 </tr>
 <tr>
 <td><code>GET /courses/dashboard/teacher/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /courses/lectures/&lt;id&gt;/student-report/</code></td>
 <td>No</td>
 <td>Yes</td>
 <td>Yes</td>
@@ -1033,14 +985,6 @@ code {
 </tr>
 <tr>
 <td><code>GET /payments/transactions/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /payments/history/</code></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>

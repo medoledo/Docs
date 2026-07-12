@@ -555,7 +555,11 @@ code {
 <h3 id="patch-accountsteachersid"><code>PATCH /accounts/teachers/&lt;id&gt;/</code></h3>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
-<p><strong>Request Body:</strong> Same as POST body (all fields optional for PATCH). Additionally, <code>bunny_collection_id</code> can be set directly here, or use the dedicated <code>assign-collection</code> endpoint below.</p>
+<p><strong>Request Body:</strong> Same as POST body (all fields optional for PATCH). Additionally:</p>
+<ul>
+<li><code>bunny_collection_id</code> can be set directly here, or use the dedicated <code>assign-collection</code> endpoint below.</li>
+<li><code>password</code> can be set to reset the teacher's password directly (optional). The teacher can also use the forgot-password flow themselves.</li>
+</ul>
 <p><strong>Success Response — 200 OK:</strong> Returns the full teacher profile (same structure as GET detail above, including <code>bunny_collection_id</code>).</p>
 <p><strong>Error Responses:</strong></p>
 <table>

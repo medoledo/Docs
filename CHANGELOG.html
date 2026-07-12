@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CHANGELOG.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="edutrack-api-changelog">EduTrack API Changelog</h1>
+<blockquote>
+<p><strong>Last Updated:</strong> July 12, 2026</p>
+</blockquote>
+<p>This document lists every API endpoint that was <strong>removed</strong>, <strong>renamed</strong>, or <strong>changed</strong>, along with what replaced it and why.</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#removed-endpoints">Removed Endpoints (15 total)</a></li>
+<li><a href="#renamed-response-fields">Renamed Response Fields</a></li>
+<li><a href="#changed-endpoint-behavior">Changed Endpoint Behavior</a></li>
+<li><a href="#new-features-added">New Features Added</a></li>
+<li><a href="#bug-fixes--security">Bug Fixes &amp; Security</a></li>
+</ul>
+<hr>
+<h2 id="removed-endpoints">Removed Endpoints</h2>
+<h3 id="enrollment-management--8-endpoints-removed">Enrollment Management — 8 endpoints removed</h3>
+<table>
+<thead>
+<tr>
+<th>Old Endpoint</th>
+<th>Method</th>
+<th>What it did</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/courses/enrollments/pending/</code></td>
+<td>GET</td>
+<td>List pending enrollments for teacher's courses</td>
+<td><code>GET /courses/enrollments/?status=pending</code></td>
+</tr>
+<tr>
+<td><code>/courses/&lt;id&gt;/enrollments/pending/</code></td>
+<td>GET</td>
+<td>Pending enrollments for one course</td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=pending</code></td>
+</tr>
+<tr>
+<td><code>/courses/&lt;id&gt;/enrollments/approved/</code></td>
+<td>GET</td>
+<td>Approved enrollments for one course</td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code></td>
+</tr>
+<tr>
+<td><code>/courses/&lt;id&gt;/enrollments/rejected/</code></td>
+<td>GET</td>
+<td>Rejected enrollments for one course</td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=rejected</code></td>
+</tr>
+<tr>
+<td><code>/courses/&lt;id&gt;/students/</code></td>
+<td>GET</td>
+<td>Approved students with balance</td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code> (now includes <code>balance</code> field)</td>
+</tr>
+<tr>
+<td><code>/courses/enrollments/my/</code></td>
+<td>GET</td>
+<td>Student's own enrollments</td>
+<td><code>GET /courses/enrollments/</code> (already filters by student)</td>
+</tr>
+<tr>
+<td><code>/courses/enrollments/bulk-action/</code></td>
+<td>POST</td>
+<td>Bulk approve/reject enrollments</td>
+<td><code>POST /courses/enrollments/approve/</code> with <code>enrollment_ids: [...]</code></td>
+</tr>
+<tr>
+<td><code>/accounts/students/&lt;id&gt;/status/</code></td>
+<td>PATCH</td>
+<td>Update student status (separate endpoint)</td>
+<td><code>PATCH /accounts/students/&lt;id&gt;/</code> with <code>status</code>, <code>is_active</code>, <code>reason</code> fields</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why:</strong> All enrollment GET endpoints could be replaced by the general <code>GET /courses/enrollments/</code> which already supports <code>?status=</code> and <code>?course=</code> filters. The bulk-action was merged into the approve/reject endpoints by accepting an <code>enrollment_ids</code> array instead of requiring a dedicated endpoint. The status update was merged into the student detail update to consolidate all student modifications in one place.</p>
+<hr>
+<h3 id="course-content--3-endpoints-removed">Course Content — 3 endpoints removed</h3>
+<table>
+<thead>
+<tr>
+<th>Old Endpoint</th>
+<th>Method</th>
+<th>What it did</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/courses/&lt;pk&gt;/topics/</code></td>
+<td>GET</td>
+<td>List topics for a course</td>
+<td><code>GET /courses/topics/?course=X</code></td>
+</tr>
+<tr>
+<td><code>/courses/topics/&lt;pk&gt;/lectures/</code></td>
+<td>GET</td>
+<td>List lectures for a topic</td>
+<td><code>GET /courses/lectures/?topic=X</code></td>
+</tr>
+<tr>
+<td><code>/courses/lectures/&lt;pk&gt;/videos/</code></td>
+<td>GET</td>
+<td>List videos for a lecture</td>
+<td><code>GET /courses/videos/?lecture=X</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why:</strong> These were convenience shortcuts that duplicated the general list endpoints. The general list views (<code>TopicListCreateView</code>, <code>LectureListCreateView</code>, <code>VideoListCreateView</code>) already support <code>?course=</code>, <code>?topic=</code>, and <code>?lecture=</code> query parameters and return exactly the same data using the same serializers. One less URL to maintain, zero functional loss.</p>
+<hr>
+<h3 id="student-reports--2-endpoints-removed">Student Reports — 2 endpoints removed</h3>
+<table>
+<thead>
+<tr>
+<th>Old Endpoint</th>
+<th>Method</th>
+<th>What it did</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/courses/lectures/&lt;pk&gt;/student-report/</code></td>
+<td>GET</td>
+<td>Per-lecture student progress report</td>
+<td>Get data individually from enrollment list + homework submissions + quiz results + purchase list</td>
+</tr>
+<tr>
+<td><code>/courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
+<td>GET</td>
+<td>Per-student full course report</td>
+<td><code>GET /payments/transactions/?student=X</code> for balance history, enrollment list for purchases</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why:</strong> These were monolithic report endpoints that returned large amounts of data. The same information can be composed from simpler, reusable endpoints.</p>
+<hr>
+<h3 id="balances--history--3-endpoints-removed">Balances &amp; History — 3 endpoints removed</h3>
+<table>
+<thead>
+<tr>
+<th>Old Endpoint</th>
+<th>Method</th>
+<th>What it did</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/payments/balance/my/</code></td>
+<td>GET</td>
+<td>Student's own balances</td>
+<td><code>GET /payments/balance/</code> (already filters by student)</td>
+</tr>
+<tr>
+<td><code>/payments/balance/students/</code></td>
+<td>GET</td>
+<td>Teacher views student balances</td>
+<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code> (now includes <code>balance</code> field)</td>
+</tr>
+<tr>
+<td><code>/payments/history/</code></td>
+<td>GET</td>
+<td>Student activity log</td>
+<td><code>GET /payments/transactions/?student=X</code> (full ledger with balance snapshots)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why:</strong> The <code>/my/</code> suffix added only a 400 error for non-students. The general list already filters by student role. The <code>history/</code> endpoint was a lightweight view of the same data available in <code>transactions/</code> which has more detail (balance_before, balance_after).</p>
+<hr>
+<h3 id="materials--1-endpoint-removed">Materials — 1 endpoint removed</h3>
+<table>
+<thead>
+<tr>
+<th>Old Endpoint</th>
+<th>Method</th>
+<th>What it did</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/materials/my/</code></td>
+<td>GET</td>
+<td>Student's purchased lecture materials</td>
+<td><code>GET /materials/</code> (already filters by student's purchased lectures)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why:</strong> The general list endpoint <code>GET /materials/</code> already filters by purchased lectures for students. Same serializer, same data.</p>
+<hr>
+<h3 id="teacher-dashboard--1-endpoint-removed">Teacher Dashboard — 1 endpoint removed</h3>
+<table>
+<thead>
+<tr>
+<th>Old Endpoint</th>
+<th>Method</th>
+<th>What it did</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/courses/my_courses/</code></td>
+<td>GET</td>
+<td>Teacher's courses with enrolled/pending counts</td>
+<td><code>GET /courses/</code> (already filters by teacher, same annotations)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why:</strong> The <code>CourseListCreateView.get_queryset()</code> already filters by <code>teacher=user.teacher_profile</code> for teachers, using the same serializer with the same annotations.</p>
+<hr>
+<h2 id="renamed-response-fields">Renamed Response Fields</h2>
+<h3 id="enrollment-responses">Enrollment Responses</h3>
+<p>All enrollment list endpoints return these renamed fields:</p>
+<table>
+<thead>
+<tr>
+<th>Old Field Name</th>
+<th>New Field Name</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>course</code> (integer ID)</td>
+<td>Removed</td>
+<td>Redundant — <code>course_name</code> already provides context</td>
+</tr>
+<tr>
+<td><code>approved_by</code></td>
+<td><code>responded_by</code></td>
+<td>Makes sense for all statuses (approved, rejected, pending)</td>
+</tr>
+<tr>
+<td><code>approved_by_name</code></td>
+<td><code>responded_by_name</code></td>
+<td>Shows the teacher's actual <strong>name</strong> (not username)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="student-list-endpoints">Student List Endpoints</h3>
+<table>
+<thead>
+<tr>
+<th>Old Field Name</th>
+<th>New Field Name</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>balance</code> (was only in /students/)</td>
+<td>Now in ALL enrollment responses</td>
+<td>Added <code>balance</code> field to <code>EnrollmentSerializer</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="me-endpoint">Me Endpoint</h3>
+<table>
+<thead>
+<tr>
+<th>Old Response</th>
+<th>New Response</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{role, name, is_active}</code></td>
+<td><code>{role, name, is_active, status}</code></td>
+<td>Students now get their <code>status</code> field to differentiate pending/declined/suspended.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="changed-endpoint-behavior">Changed Endpoint Behavior</h2>
+<h3 id="post-coursesenrollmentsapprove"><code>POST /courses/enrollments/approve/</code></h3>
+<p><strong>Before:</strong> Only accepted a single enrollment via URL parameter:</p>
+<pre class="hljs"><code><div>POST /courses/enrollments/&lt;id&gt;/approve/
+Body: { &quot;response_note&quot;: &quot;...&quot; }
+</div></code></pre>
+<p><strong>After:</strong> Accepts both single and multiple enrollment IDs:</p>
+<pre class="hljs"><code><div>POST /courses/enrollments/approve/
+Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;...&quot; }
+</div></code></pre>
+<p>Response:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"processed"</span>: <span class="hljs-number">3</span>,
+  <span class="hljs-attr">"total_requested"</span>: <span class="hljs-number">3</span>,
+  <span class="hljs-attr">"action"</span>: <span class="hljs-string">"approved"</span>,
+  <span class="hljs-attr">"errors"</span>: []
+}
+</div></code></pre>
+<h3 id="post-coursesenrollmentsreject"><code>POST /courses/enrollments/reject/</code></h3>
+<p>Same change as approve — accepts <code>enrollment_ids</code> array instead of a single PK.</p>
+<hr>
+<h3 id="patch-accountsstudentsid"><code>PATCH /accounts/students/&lt;id&gt;/</code></h3>
+<p><strong>Before:</strong> Could only update profile fields (name, phone, grade, etc.). Status changes required a separate endpoint.</p>
+<p><strong>After:</strong> Now accepts <code>status</code>, <code>is_active</code>, and <code>reason</code> fields in addition to all profile fields. Includes full transition validation and audit log:</p>
+<table>
+<thead>
+<tr>
+<th>Allowed Transitions</th>
+<th>From</th>
+<th>To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><code>pending</code></td>
+<td><code>verified</code>, <code>declined</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>verified</code></td>
+<td><code>suspended_temporary</code>, <code>suspended_permanent</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>declined</code></td>
+<td><code>verified</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>suspended_temporary</code></td>
+<td><code>verified</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>suspended_permanent</code></td>
+<td><code>verified</code></td>
+</tr>
+</tbody>
+</table>
+<p>Reason is <strong>required</strong> for <code>declined</code>, <code>suspended_temporary</code>, and <code>suspended_permanent</code>. A <code>StudentStatusLog</code> entry is automatically created on every status change.</p>
+<hr>
+<h3 id="patch-accountsteachersid"><code>PATCH /accounts/teachers/&lt;id&gt;/</code></h3>
+<p><strong>Before:</strong> Could not change password.</p>
+<p><strong>After:</strong> Now accepts an optional <code>password</code> field (min 8 chars). When provided, the teacher's password is updated via <code>user.set_password()</code>. The teacher can also use the forgot-password flow themselves.</p>
+<hr>
+<h3 id="enrollments-now-validate-school-type-and-division">Enrollments now validate school type and division</h3>
+<p>Student enrollment now checks that the student's <code>school_type</code> is in the teacher's subject's <code>school_types</code> and the student's <code>division</code> is in the teacher's subject's <code>divisions</code> (only enforced if the subject has school_types/divisions assigned — if none, any school_type/division is accepted).</p>
+<hr>
+<h3 id="quiz-questions-can-be-created-inline">Quiz questions can be created inline</h3>
+<p><code>POST /learning/quizzes/</code> and <code>PUT/PATCH /learning/quizzes/&lt;id&gt;/</code> now accept an optional <code>questions</code> array with inline question text, type, order, points, and choices:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz Title"</span>,
+  <span class="hljs-attr">"settings"</span>: { ... },
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is 2+2?"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">"points_override"</span>: <span class="hljs-number">2</span>,
+      <span class="hljs-attr">"choices"</span>: [
+        {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"4"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
+        {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"5"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
+      ]
+    }
+  ]
+}
+</div></code></pre>
+<p>Sending <code>questions</code> on update <strong>replaces all existing questions</strong>.</p>
+<hr>
+<h3 id="assistant-list-now-auto-filters-by-teacher">Assistant list now auto-filters by teacher</h3>
+<p><code>GET /accounts/teacher/assistants/</code> — teachers now see ONLY their own assistants. SiteOwner sees all. Assistants see coworkers under the same teacher.</p>
+<hr>
+<h3 id="quizsettings--opendateclosedate-removed">QuizSettings — open_date/close_date removed</h3>
+<p>Quizzes no longer have open/close dates. Only Exams have <code>open_date</code> and <code>close_date</code> (directly on the <code>Exam</code> model). Timer <code>max</code> is now <strong>1440 minutes</strong> (24 hours).</p>
+<hr>
+<h2 id="new-features-added">New Features Added</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Endpoint</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Balance Transaction Ledger</strong></td>
+<td><code>GET /payments/transactions/</code></td>
+<td>Full ledger with <code>balance_before</code> and <code>balance_after</code> for every code redemption and lecture purchase. Filterable by <code>?student=X</code>, <code>?course=X</code>, <code>?transaction_type=code_redeemed</code>.</td>
+</tr>
+<tr>
+<td><strong>Thumbnail URL</strong></td>
+<td>In all video responses</td>
+<td><code>thumbnail_url</code> field automatically generates the Bunny Stream thumbnail URL from the video's GUID.</td>
+</tr>
+<tr>
+<td><strong>Bunny video deletion</strong></td>
+<td><code>DELETE /courses/videos/&lt;id&gt;/</code></td>
+<td>Now also deletes the video from Bunny Stream, not just the local database.</td>
+</tr>
+<tr>
+<td><strong>Auto-order</strong></td>
+<td>Topics, Lectures, Videos</td>
+<td>When creating without specifying <code>order</code>, automatically assigns <code>max_order + 1</code> among siblings.</td>
+</tr>
+<tr>
+<td><strong>Disk space check</strong></td>
+<td><code>POST /courses/videos/&lt;id&gt;/upload/</code></td>
+<td>Checks available temp disk space before accepting upload. Returns 503 if space is insufficient.</td>
+</tr>
+<tr>
+<td><strong>Password reset for teachers</strong></td>
+<td><code>PATCH /accounts/teachers/&lt;id&gt;/</code></td>
+<td>SiteOwner can reset a teacher's password directly.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="bug-fixes--security">Bug Fixes &amp; Security</h2>
+<table>
+<thead>
+<tr>
+<th>Fix</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Assistant isolation</strong></td>
+<td>Teachers could see ALL assistants in the system. Now filtered to their own.</td>
+</tr>
+<tr>
+<td><strong>Bunny upload SSL retry</strong></td>
+<td>Retries upload 3 times with exponential backoff on SSL errors.</td>
+</tr>
+<tr>
+<td><strong>Bunny auto-recreate on 404</strong></td>
+<td>If Bunny Stream auto-deleted the video entry, it's re-created automatically before upload.</td>
+</tr>
+<tr>
+<td><strong>Content-Length in upload</strong></td>
+<td>Bunny Stream doesn't support chunked transfer encoding. Now sends explicit <code>Content-Length</code> header.</td>
+</tr>
+<tr>
+<td><strong>Stream from disk (0 RAM)</strong></td>
+<td>Files are streamed from disk to Bunny via <code>urllib3</code>, never loaded into memory.</td>
+</tr>
+<tr>
+<td><strong>OTP expiry increased</strong></td>
+<td>Changed from 10 to 30 minutes for student registration flow.</td>
+</tr>
+<tr>
+<td><strong>Enrollment phone validation</strong></td>
+<td>Student phone number cannot be same as father's or mother's number.</td>
+</tr>
+<tr>
+<td><strong>Enrollment grade validation</strong></td>
+<td>Student's grade must match course's grade. School type and division also checked if subject has them.</td>
+</tr>
+<tr>
+<td><strong>Status in me endpoint</strong></td>
+<td>Students get <code>status</code> field to differentiate pending vs declined vs suspended.</td>
+</tr>
+<tr>
+<td><strong>Bunny upload to collection</strong></td>
+<td>When Bunny entry is re-created (404), <code>collection_id</code> is passed so the video goes to the teacher's collection.</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

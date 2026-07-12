@@ -624,84 +624,6 @@ code {
 </tbody>
 </table>
 <hr>
-<h4 id="get-coursesidenrollmentspending"><code>GET /courses/&lt;id&gt;/enrollments/pending/</code></h4>
-<p><strong>Description:</strong> List pending enrollment requests for a specific course.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String — Student phone"</span>,
-      <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String — Father phone"</span>,
-      <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String — Mother phone"</span>,
-      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String - Always 'pending'"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h4 id="get-coursesidenrollmentsapproved"><code>GET /courses/&lt;id&gt;/enrollments/approved/</code></h4>
-<p><strong>Description:</strong> List approved enrollments for a specific course.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String — Student phone"</span>,
-      <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String — Father phone"</span>,
-      <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String — Mother phone"</span>,
-      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String - Always 'approved'"</span>,
-      <span class="hljs-attr">"approved_by"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"approved_by_name"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h4 id="get-coursesidenrollmentsrejected"><code>GET /courses/&lt;id&gt;/enrollments/rejected/</code></h4>
-<p><strong>Description:</strong> List rejected enrollments for a specific course.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String — Student phone"</span>,
-      <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String — Father phone"</span>,
-      <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String — Mother phone"</span>,
-      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String - Always 'rejected'"</span>,
-      <span class="hljs-attr">"approved_by"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"approved_by_name"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
 <h2 id="4-course-content-management">4. Course Content Management</h2>
 <hr>
 <h4 id="get-coursesidtopics"><code>GET /courses/&lt;id&gt;/topics/</code></h4>
@@ -1019,151 +941,6 @@ code {
 <hr>
 <h3 id="lecture-student-report">Lecture Student Report</h3>
 <hr>
-<h4 id="get-courseslecturesidstudent-report"><code>GET /courses/lectures/&lt;id&gt;/student-report/</code></h4>
-<p><strong>Description:</strong> <strong>Comprehensive</strong> per-lecture report for ALL enrolled students. Returns everything a teacher needs in a single response:</p>
-<table>
-<thead>
-<tr>
-<th>You can see</th>
-<th>How</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Students who <strong>didn't buy</strong> the lecture</td>
-<td><code>purchased: false</code> on the student object</td>
-</tr>
-<tr>
-<td>Students who <strong>bought</strong> (with all purchase details)</td>
-<td><code>purchased: true</code>, <code>amount_paid</code>, <code>expires_at</code>, <code>is_expired</code>, <code>reopen_logs</code></td>
-</tr>
-<tr>
-<td>Students who bought but <strong>didn't submit a specific homework</strong></td>
-<td><code>submitted: false</code> on that homework entry</td>
-</tr>
-<tr>
-<td>Students who <strong>submitted</strong> homework (with scores)</td>
-<td><code>submitted: true</code>, <code>score</code>, <code>submitted_at</code>, <code>submission_id</code></td>
-</tr>
-<tr>
-<td>Students who <strong>submitted a quiz</strong> (with scores)</td>
-<td><code>submitted: true</code>, <code>score</code>, <code>passed</code>, <code>attempt_number</code></td>
-</tr>
-<tr>
-<td>Students who <strong>didn't submit a quiz</strong></td>
-<td><code>submitted: false</code> on that quiz entry</td>
-</tr>
-<tr>
-<td><strong>Video watch progress</strong> per video</td>
-<td><code>is_completed</code>, <code>progress_percentage</code>, <code>watch_count</code>, <code>last_watched_at</code></td>
-</tr>
-<tr>
-<td><strong>Reopen logs</strong> for each purchase</td>
-<td><code>reopen_logs[]</code> with <code>reopened_by</code> and <code>reopened_at</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"course_id"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"total_enrolled"</span>: <span class="hljs-string">"integer — All approved students in the course"</span>,
-  <span class="hljs-attr">"total_purchased"</span>: <span class="hljs-string">"integer — Students who bought this lecture"</span>,
-  <span class="hljs-attr">"videos"</span>: [
-    {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}
-  ],
-  <span class="hljs-attr">"homeworks"</span>: [
-    {<span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>}
-  ],
-  <span class="hljs-attr">"quizzes"</span>: [
-    {<span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>}
-  ],
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"string | null"</span>,
-      <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"string | null"</span>,
-      <span class="hljs-attr">"purchased"</span>: <span class="hljs-string">"boolean — Whether this student bought the lecture"</span>,
-      <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"boolean"</span>,
-      <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-      <span class="hljs-attr">"reopen_logs"</span>: [
-        {<span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"string | null"</span>, <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>}
-      ],
-      <span class="hljs-attr">"total_watch_count"</span>: <span class="hljs-string">"integer — Sum of all video watches"</span>,
-      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"integer — Maximum watching limit (default: 4)"</span>,
-      <span class="hljs-attr">"homeworks"</span>: [
-        {
-          <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
-          <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
-          <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"boolean"</span>,
-          <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer | null"</span>,
-          <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-          <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string (submitted|graded) | null"</span>,
-          <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>
-        }
-      ],
-      <span class="hljs-attr">"quizzes"</span>: [
-        {
-          <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
-          <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
-          <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"boolean"</span>,
-          <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer | null"</span>,
-          <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-          <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
-          <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>
-        }
-      ],
-      <span class="hljs-attr">"videos"</span>: [
-        {
-          <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
-          <span class="hljs-attr">"is_completed"</span>: <span class="hljs-string">"boolean"</span>,
-          <span class="hljs-attr">"progress_percentage"</span>: <span class="hljs-string">"number"</span>,
-          <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"last_watched_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>
-        }
-      ]
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-<th>Response Body</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>403</code></td>
-<td>Not your lecture</td>
-<td><code>{&quot;error&quot;: &quot;You can only view reports for your own lectures.&quot;}</code></td>
-</tr>
-<tr>
-<td><code>404</code></td>
-<td>Lecture not found</td>
-<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
-</tr>
-</tbody>
-</table>
-<hr>
 <h2 id="6-videos">6. Videos</h2>
 <p>All videos are hosted on <strong>Bunny Stream</strong>. The upload flow is:</p>
 <pre class="hljs"><code><div>1. Teacher creates a video record → POST /courses/videos/
@@ -1280,49 +1057,23 @@ code {
 <hr>
 <h2 id="7-enrollments">7. Enrollments</h2>
 <hr>
-<h4 id="get-coursesenrollmentspending">GET /courses/enrollments/pending/</h4>
-<p><strong>Description:</strong> List pending enrollment requests across all of the teacher's courses.</p>
+<h4 id="post-coursesenrollmentsapprove"><code>POST /courses/enrollments/approve/</code></h4>
+<p><strong>Description:</strong> Approve pending enrollments. Supports both single and bulk approval.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong> Array of pending enrollments.</p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String — Student phone"</span>,
-      <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String — Father phone"</span>,
-      <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String — Mother phone"</span>,
-      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String — pending"</span>,
-      <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"String — Pending"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"approved_by"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"approved_by_name"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
-      <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h4 id="post-coursesenrollmentsidapprove"><code>POST /courses/enrollments/&lt;id&gt;/approve/</code></h4>
-<p><strong>Description:</strong> Approve a pending enrollment.</p>
-<p><strong>Authentication:</strong> Teacher (course owner), Assistant (teacher's assistant)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (Optional) — Note for the student"</span>
+  <span class="hljs-attr">"enrollment_ids"</span>: <span class="hljs-string">"[Integer] (required) — IDs of pending enrollments to approve"</span>,
+  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (optional) — Note for the student"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong> Enrollment object with <code>status: approved</code>.</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"processed"</span>: <span class="hljs-string">"Integer — Number successfully approved"</span>,
+  <span class="hljs-attr">"total_requested"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"errors"</span>: <span class="hljs-string">"[{enrollment_id, error}]"</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -1351,68 +1102,24 @@ code {
 </tbody>
 </table>
 <hr>
-<h4 id="post-coursesenrollmentsidreject"><code>POST /courses/enrollments/&lt;id&gt;/reject/</code></h4>
-<p><strong>Description:</strong> Reject a pending enrollment.</p>
-<p><strong>Authentication:</strong> Teacher (course owner), Assistant (teacher's assistant)</p>
-<p><strong>Content-Type:</strong> <code>application/json</code></p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (Optional) — Note for the student"</span>
-}
-</div></code></pre>
-<p><strong>Success Response — 200 OK:</strong> Enrollment object with <code>status: rejected</code>.</p>
-<p><strong>Error Responses:</strong> Same as approve endpoint.</p>
-<hr>
-<h4 id="post-coursesenrollmentsbulk-action">POST /courses/enrollments/bulk-action/</h4>
-<p><strong>Description:</strong> Approve or reject multiple enrollments at once.</p>
+<h4 id="post-coursesenrollmentsreject"><code>POST /courses/enrollments/reject/</code></h4>
+<p><strong>Description:</strong> Reject pending enrollments. Supports both single and bulk rejection.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"enrollment_ids"</span>: <span class="hljs-string">"Array[Integer] (Required) — Minimum 1 ID"</span>,
-  <span class="hljs-attr">"action"</span>: <span class="hljs-string">"String (Required) — approve|reject"</span>
+  <span class="hljs-attr">"enrollment_ids"</span>: <span class="hljs-string">"[Integer] (required) — IDs of pending enrollments to reject"</span>,
+  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (optional) — Note for the student"</span>
 }
 </div></code></pre>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"processed"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"processed"</span>: <span class="hljs-string">"Integer — Number successfully rejected"</span>,
   <span class="hljs-attr">"total_requested"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"action"</span>: <span class="hljs-string">"String (approve|reject)"</span>,
-  <span class="hljs-attr">"errors"</span>: [
-    {
-      <span class="hljs-attr">"enrollment_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"error"</span>: <span class="hljs-string">"String"</span>
-    }
-  ]
+  <span class="hljs-attr">"errors"</span>: <span class="hljs-string">"[{enrollment_id, error}]"</span>
 }
 </div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-<th>Response Body</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>400</code></td>
-<td>Invalid action</td>
-<td><code>{&quot;action&quot;: [&quot;\&quot;X\&quot; is not a valid choice.&quot;]}</code></td>
-</tr>
-<tr>
-<td><code>400</code></td>
-<td>Empty IDs list</td>
-<td><code>{&quot;enrollment_ids&quot;: [&quot;Ensure this field has at least 1 elements.&quot;]}</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Business Rules:</strong></p>
-<ul>
-<li>Only enrollments for the teacher's courses are processed.</li>
-<li>Non-pending enrollments are skipped with an error entry.</li>
-</ul>
+<p><strong>Error Responses:</strong> Same as approve endpoint.</p>
 <hr>
 <h2 id="8-purchases">8. Purchases</h2>
 <hr>
@@ -3063,45 +2770,6 @@ code {
 <hr>
 <h2 id="13-balance">13. Balance</h2>
 <hr>
-<h4 id="get-paymentsbalancestudents">GET /payments/balance/students/</h4>
-<p><strong>Description:</strong> Teacher/Assistant views balances of all students enrolled in their courses.</p>
-<p><strong>Authentication:</strong> Teacher / Assistant</p>
-<p><strong>Query Parameters:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>course</code></td>
-<td>Integer</td>
-<td>Filter by course ID</td>
-</tr>
-<tr>
-<td><code>student</code></td>
-<td>String</td>
-<td>Filter by student ID or student_code</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>[
-  {
-    <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"course_id"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-    <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-  }
-]
-</div></code></pre>
-<hr>
 <h3 id="student-activity-history">Student Activity History</h3>
 <hr>
 <hr>
@@ -3171,51 +2839,6 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="get-paymentshistory">GET /payments/history/</h4>
-<p><strong>Description:</strong> View the activity history of students enrolled in your courses. Shows code redemptions, lecture purchases, enrollments, and reopen actions.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Query Parameters:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>student</code></td>
-<td>Integer</td>
-<td>Filter by student ID</td>
-</tr>
-<tr>
-<td><code>activity</code></td>
-<td>String</td>
-<td>Filter by activity type (<code>code_redeemed</code>, <code>lecture_purchased</code>, <code>enrolled</code>, <code>lecture_reopened</code>)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"activity"</span>: <span class="hljs-string">"String (code_redeemed|lecture_purchased|enrolled|lecture_reopened)"</span>,
-      <span class="hljs-attr">"activity_display"</span>: <span class="hljs-string">"String — Human-readable name"</span>,
-      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"metadata"</span>: <span class="hljs-string">"Object"</span>,
-      <span class="hljs-attr">"performed_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"performed_by"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"performed_by_name"</span>: <span class="hljs-string">"String | null"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
 <h2 id="14-dashboard">14. Dashboard</h2>
 <hr>
 <h4 id="get-coursesdashboardteacher">GET /courses/dashboard/teacher/</h4>
@@ -3280,134 +2903,6 @@ code {
 </ul>
 <hr>
 <h2 id="15-student-report">15. Student Report</h2>
-<hr>
-<h4 id="get-coursescoursepkstudent-reportstudentid"><code>GET /courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></h4>
-<p><strong>Description:</strong> Returns everything about a student within a specific course. Teacher/Assistant only.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"student"</span>: {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>
-  },
-  <span class="hljs-attr">"enrollment"</span>: {
-    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-    <span class="hljs-attr">"approved_by"</span>: <span class="hljs-string">"Integer | null"</span>,
-    <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
-    <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
-  },
-  <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String (Decimal) - Current balance for this course"</span>,
-  <span class="hljs-attr">"lectures"</span>: [
-    {
-      <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-string">"Boolean — Whether this student bought this lecture"</span>,
-      <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
-      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
-      <span class="hljs-attr">"total_watch_count"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"videos"</span>: [
-        {
-          <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"Integer"</span>,
-          <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-          <span class="hljs-attr">"is_completed"</span>: <span class="hljs-string">"Boolean"</span>,
-          <span class="hljs-attr">"progress_percentage"</span>: <span class="hljs-string">"number"</span>,
-          <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"Integer"</span>
-        }
-      ],
-      <span class="hljs-attr">"homeworks"</span>: [
-        {
-          <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"Integer"</span>,
-          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
-          <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"Boolean"</span>,
-          <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
-          <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>
-        }
-      ],
-      <span class="hljs-attr">"quizzes"</span>: [
-        {
-          <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"Integer"</span>,
-          <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>,
-          <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"Boolean"</span>,
-          <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
-          <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"Boolean | null"</span>
-        }
-      ]
-    }
-  ],
-  <span class="hljs-attr">"purchases"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"String (Decimal)"</span>,
-      <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
-      <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Integer | null"</span>,
-      <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
-      <span class="hljs-attr">"watch_count"</span>: <span class="hljs-string">"Integer - Number of times watched"</span>,
-      <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-string">"Integer - Maximum watching limit"</span>
-    }
-  ],
-  <span class="hljs-attr">"quiz_submissions"</span>: [
-    {
-      <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"attempt"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
-      <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"Boolean | null"</span>,
-      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ],
-  <span class="hljs-attr">"homework_submissions"</span>: [
-    {
-      <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"String (Decimal) | null"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (submitted|graded)"</span>,
-      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Business Rules:</strong></p>
-<ul>
-<li>The <code>lectures</code> field includes <strong>all lectures</strong> in the course, both purchased and unpurchased.</li>
-<li>Unpurchased lectures show <code>is_purchased: false</code> with no progress details.</li>
-<li>Purchased lectures show full progress: videos watched, homework scores, quiz scores.</li>
-<li>Data source: <code>BalanceTransaction</code> model — fully immutable, never editable or deletable.</li>
-</ul>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-<th>Response Body</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>404</code></td>
-<td>Course or student not found</td>
-<td><code>{&quot;error&quot;: &quot;...&quot;}</code></td>
-</tr>
-</tbody>
-</table>
 <hr>
 <h2 id="16-lecture-prerequisites">16. Lecture Prerequisites</h2>
 <hr>
