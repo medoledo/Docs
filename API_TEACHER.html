@@ -2099,7 +2099,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   ]
 }
 </div></code></pre>
-<p><strong>Inline Question Fields:</strong></p>
+<p><strong>Inline Question Fields (JSON — text only, no images):</strong></p>
 <table>
 <thead>
 <tr>
@@ -2136,7 +2136,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Each Choice:</strong></p>
+<p><strong>Each Choice (JSON — text only, no images):</strong></p>
 <table>
 <thead>
 <tr>
@@ -2169,7 +2169,40 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <li>On update (PUT/PATCH), if <code>questions</code> is provided, <strong>all existing questions are replaced</strong>.</li>
 <li>At least one choice must have <code>is_correct: true</code> for MCQ questions.</li>
 <li>MCQ questions should have at least 2 choices.</li>
+<li><strong>Images for questions/choices: NOT supported via inline JSON creation.</strong> The <code>questions</code> array accepts only text fields. To add images to individual questions, use the separate endpoint below after creation.</li>
 </ul>
+<p><strong>Uploading question/choice images (separate step):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Action</th>
+<th>Endpoint</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Create quiz with text-only inline questions</td>
+<td><code>POST /learning/quizzes/</code></td>
+<td>JSON</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Upload image to a question</td>
+<td><code>PATCH /learning/questions/&lt;id&gt;/</code></td>
+<td>multipart/form-data</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Read question with image URL</td>
+<td><code>GET /learning/quizzes/&lt;id&gt;/</code></td>
+<td>JSON (returns URL)</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>image</code> field on both questions and choices is returned as a <strong>full URL</strong> in all responses (e.g. <code>&quot;https://.../media/quiz_questions/photo.jpg&quot;</code>). Upload the file using <code>PATCH /learning/questions/&lt;id&gt;/</code> with content type <code>multipart/form-data</code> — the <code>image</code> field accepts a binary file, not a URL string.</p>
 <p><strong>Success Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
@@ -2331,10 +2364,63 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Access Control:</strong> Teachers can only delete quizzes in their own courses. Others get 404.</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
+<h4 id="1115-putpatch-learningquestionspk">11.15 PUT/PATCH /learning/questions/<pk>/</h4>
+<p><strong>Description:</strong> Update an individual quiz question — text, type, points, <strong>image</strong>, or choices. Supports both JSON for text fields and <code>multipart/form-data</code> for image upload.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Access Control:</strong> Teachers can only update questions in their own courses. Others get 404.</p>
+<p><strong>Request Body (JSON — text-only updates):</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string (optional) — Updated question text"</span>,
+  <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (optional) — mcq_single|mcq_multiple|written"</span>,
+  <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"string (optional) — easy|medium|hard"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer (optional)"</span>,
+  <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"integer (optional, nullable)"</span>
+}
+</div></code></pre>
+<p><strong>Request Body (multipart/form-data — image upload):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image</code></td>
+<td>File</td>
+<td>Image file (JPEG, PNG, etc.) for the question</td>
+</tr>
+<tr>
+<td>(any text fields above)</td>
+<td>String</td>
+<td>Can be combined in the same request</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong> Updated question object with image URL:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null — Full URL to uploaded image"</span>,
+  <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"integer | null"</span>,
+  <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"standalone_choices"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"boolean"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Choice images:</strong> Choice images are set during inline creation (<code>choices[].image</code> in multipart) or by deleting and recreating choices via a quiz update. The <code>image</code> field in choice response is always a full URL when present.</p>
 <hr>
 <h3 id="student-quiz-flow">Student Quiz Flow</h3>
 <hr>
-<h4 id="116-post-learningquizzesidstart">11.6 POST /learning/quizzes/<id>/start/</h4>
+<h4 id="1115-post-learningquizzesidstart">11.15 POST /learning/quizzes/<id>/start/</h4>
 <p><strong>Description:</strong> Start a quiz attempt. Returns questions in randomized order (if enabled). Timer starts counting from this moment. Each start creates a new <code>QuizSubmission</code> record.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Access Checks (all must pass):</strong></p>
@@ -2396,7 +2482,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 }
 </div></code></pre>
 <hr>
-<h4 id="117-get-learningquizzesidresume">11.7 GET /learning/quizzes/<id>/resume/</h4>
+<h4 id="1115-get-learningquizzesidresume">11.15 GET /learning/quizzes/<id>/resume/</h4>
 <p><strong>Description:</strong> Resume an active (not yet submitted) quiz attempt. Returns remaining time, all questions, and any previously saved draft answers. If the timer has expired, <code>timer_remaining</code> will be <code>0</code>.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -2443,7 +2529,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tbody>
 </table>
 <hr>
-<h4 id="118-post-learningquizzesidsubmit">11.8 POST /learning/quizzes/<id>/submit/</h4>
+<h4 id="1115-post-learningquizzesidsubmit">11.15 POST /learning/quizzes/<id>/submit/</h4>
 <p><strong>Description:</strong> Submit answers for an active quiz attempt. Auto-grades MCQ questions immediately (single and multiple choice). Written answers are stored for manual grading.</p>
 <p><strong>Timer Check:</strong> If the timer has expired (elapsed &gt; timer_minutes + 1 minute grace), the submission is marked as <code>is_timed_out</code> and rejected with 400. The student MUST submit before time runs out — there is no auto-submit.</p>
 <p><strong>Authentication:</strong> Student</p>
@@ -2515,7 +2601,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tbody>
 </table>
 <hr>
-<h4 id="119-patch-learningquiz-answersansweridsave-draft">11.9 PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</h4>
+<h4 id="1115-patch-learningquiz-answersansweridsave-draft">11.15 PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</h4>
 <p><strong>Description:</strong> Auto-save individual answer choices while the student is working. These saved answers are restored when the student resumes the quiz via <code>GET /resume/</code>. Does NOT submit the quiz — student must call <code>/submit/</code> separately.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Request Body:</strong></p>
@@ -2534,7 +2620,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h3 id="teacher-review--grading">Teacher Review &amp; Grading</h3>
 <hr>
-<h4 id="1110-get-learningquizzesidresults">11.10 GET /learning/quizzes/<id>/results/</h4>
+<h4 id="1115-get-learningquizzesidresults">11.15 GET /learning/quizzes/<id>/results/</h4>
 <p><strong>Description:</strong> List all student submissions for a specific quiz. Returns each submission with score, attempt number, and timed-out status. Teachers see submissions for their own courses only.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Query Parameters:</strong> (none — returns all submissions for this quiz)</p>
@@ -2580,7 +2666,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <li>For written questions: <code>is_correct</code> is null and <code>points_earned</code> is 0 until manually graded.</li>
 </ul>
 <hr>
-<h4 id="1111-get-learningquiz-submissionsid">11.11 GET /learning/quiz-submissions/<id>/</h4>
+<h4 id="1115-get-learningquiz-submissionsid">11.15 GET /learning/quiz-submissions/<id>/</h4>
 <p><strong>Description:</strong> View a single submission's details with per-answer results.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant, Student (own submissions only)</p>
 <p><strong>Access Control:</strong></p>
@@ -2590,7 +2676,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </ul>
 <p><strong>Success Response:</strong> Same structure as a single item in <code>GET /results/</code>.</p>
 <hr>
-<h4 id="1112-post-learningquiz-submissionsidgrade-written">11.12 POST /learning/quiz-submissions/<id>/grade-written/</h4>
+<h4 id="1115-post-learningquiz-submissionsidgrade-written">11.15 POST /learning/quiz-submissions/<id>/grade-written/</h4>
 <p><strong>Description:</strong> Manually grade a written answer for a quiz submission. Overrides the default 0 points. The submission's total score is recalculated automatically.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only grade quizzes in their own courses.</p>
@@ -2608,7 +2694,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 }
 </div></code></pre>
 <hr>
-<h4 id="1113-post-learningquizzesidrelease-scores">11.13 POST /learning/quizzes/<id>/release-scores/</h4>
+<h4 id="1115-post-learningquizzesidrelease-scores">11.15 POST /learning/quizzes/<id>/release-scores/</h4>
 <p><strong>Description:</strong> Release scores for all submissions of a quiz. Only affects quizzes with <code>score_visibility=manual</code>. After release, students can see their scores in the quiz results.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Request Body:</strong> None</p>
@@ -2618,7 +2704,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 }
 </div></code></pre>
 <hr>
-<h4 id="1114-post-learningquizzesidrelease-answers">11.14 POST /learning/quizzes/<id>/release-answers/</h4>
+<h4 id="1115-post-learningquizzesidrelease-answers">11.15 POST /learning/quizzes/<id>/release-answers/</h4>
 <p><strong>Description:</strong> Release correct answers for all submissions of a quiz. Only affects quizzes with <code>answers_visibility=manual</code>. After release, students can see which choices were correct.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
 <p><strong>Request Body:</strong> None</p>

@@ -577,7 +577,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Why:</strong> The <code>CourseListCreateView.get_queryset()</code> already filters by <code>teacher=user.teacher_profile</code> for teachers, using the same serializer with the same annotations.</p>
+<p><strong>Why:</strong> <code>GET /courses/</code> has the same data with the same serializer annotations. Teachers now see only their own courses (bug fixed: previously the filter was <code>Q(teacher=X) | Q(is_active=True)</code>, leaking other teachers' courses).</p>
 <hr>
 <h2 id="renamed-response-fields">Renamed Response Fields</h2>
 <h3 id="enrollment-responses">Enrollment Responses</h3>
@@ -847,6 +847,14 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <tr>
 <td><strong>Rename syncs to Bunny Stream</strong></td>
 <td><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code> now calls Bunny's update API when <code>name</code> changes.</td>
+</tr>
+<tr>
+<td><strong>Permission fix: Course/Topic/Lecture/Video lists</strong></td>
+<td><code>get_queryset</code> in all four base mixins used <code>Q(teacher=X) | Q(is_active=True)</code> instead of <code>Q(teacher=X)</code>, causing teachers to see every other teacher's content. Fixed to <code>filter(teacher=teacher)</code>.</td>
+</tr>
+<tr>
+<td><strong>Permission fix: RechargeCode list</strong></td>
+<td><code>RechargeCodeListCreateView</code> returned all codes for any teacher. Now filters by <code>course__teacher=teacher</code>.</td>
 </tr>
 </tbody>
 </table>

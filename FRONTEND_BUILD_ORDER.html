@@ -1173,6 +1173,10 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <td><code>DELETE /learning/quizzes/&lt;id&gt;/</code></td>
 </tr>
 <tr>
+<td>Update question image</td>
+<td><code>PATCH /learning/questions/&lt;id&gt;/</code> (multipart — <code>image</code> field)</td>
+</tr>
+<tr>
 <td>List submissions</td>
 <td><code>GET /learning/quizzes/&lt;id&gt;/results/</code></td>
 </tr>
@@ -1190,7 +1194,8 @@ Q2: Student answered B | Correct: B | ✅ Correct
 </tr>
 </tbody>
 </table>
-<p><strong>Questions:</strong> Standalone only (inline text + image + MCQ choices + written).</p>
+<p><strong>Questions:</strong> Standalone only (inline text + MCQ choices + written).<br>
+<strong>Images:</strong> NOT uploadable via JSON during inline creation. Upload question images separately via <code>PATCH /learning/questions/&lt;id&gt;/</code> with <code>multipart/form-data</code> (<code>image</code> field). The response always returns the image as a full URL.</p>
 <hr>
 <h3 id="page-6-exams-standalone-course-level">Page 6: Exams (Standalone Course-Level)</h3>
 <p><strong>Purpose:</strong> Create exams independent of lectures. Can be used as prerequisites.</p>
