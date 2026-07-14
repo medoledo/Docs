@@ -1531,6 +1531,130 @@ Shows every transaction with balance_before → balance_after:
 </table>
 <p><strong>Note:</strong> Assistant creation is <strong>teacher-only</strong>. Assistants can view other assistants but cannot create/delete.</p>
 <hr>
+<h3 id="page-12-codes-page-teacher--siteowner">Page 12: Codes Page (Teacher + SiteOwner)</h3>
+<p><strong>Purpose:</strong> Generate, track, and export recharge codes. Codes are money — every action is audited.</p>
+<p><strong>Roles:</strong> SiteOwner (all courses), Teacher (own courses only). Assistant can view their teacher's codes.</p>
+<p><strong>APIs:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List codes</td>
+<td>GET</td>
+<td><code>/payments/codes/</code></td>
+<td>Paginated list. Filters: <code>?course=X</code>, <code>?status=valid|used|blacklisted</code>, <code>?batch=&lt;uuid&gt;</code></td>
+</tr>
+<tr>
+<td>Generate codes</td>
+<td>POST</td>
+<td><code>/payments/codes/</code></td>
+<td>Bulk create (1-1000). Body: <code>{course, value, notes, count}</code></td>
+</tr>
+<tr>
+<td>Code summary</td>
+<td>GET</td>
+<td><code>/payments/codes/summary/?course=X</code></td>
+<td>Aggregate totals: generated, redeemed, blacklisted, values</td>
+</tr>
+<tr>
+<td>Export batch</td>
+<td>GET</td>
+<td><code>/payments/codes/export/?batch=&lt;uuid&gt;</code></td>
+<td>Download codes as Excel (.xlsx)</td>
+</tr>
+<tr>
+<td>Request blacklist OTP</td>
+<td>POST</td>
+<td><code>/payments/codes/&lt;pk&gt;/request-blacklist-otp/</code></td>
+<td>SiteOwner only. Sends OTP to gmail</td>
+</tr>
+<tr>
+<td>Blacklist code</td>
+<td>POST</td>
+<td><code>/payments/codes/&lt;pk&gt;/blacklist/</code></td>
+<td>SiteOwner only. One-way irreversible. Requires OTP</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Code Model Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>code</code></td>
+<td>Auto-generated 16-char random code (XXXX-XXXX-XXXX-XXXX)</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>1-1000 EGP. Set at creation, <strong>never editable</strong></td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>valid</code> → <code>used</code> or <code>blacklisted</code> (both terminal)</td>
+</tr>
+<tr>
+<td><code>batch_id</code></td>
+<td>UUID grouping codes from the same bulk generation</td>
+</tr>
+<tr>
+<td><code>expires_at</code></td>
+<td>Auto-set to 1 year from creation, <strong>not editable</strong></td>
+</tr>
+<tr>
+<td><code>notes</code></td>
+<td>Optional text (e.g. &quot;Batch for Center X&quot;)</td>
+</tr>
+<tr>
+<td><code>created_by</code></td>
+<td>SiteOwner or Teacher who generated it</td>
+</tr>
+<tr>
+<td><code>used_by</code></td>
+<td>Student who redeemed it (null if unused)</td>
+</tr>
+<tr>
+<td><code>used_at</code></td>
+<td>When it was redeemed</td>
+</tr>
+<tr>
+<td><code>blacklisted_by</code></td>
+<td>SiteOwner who blacklisted it</td>
+</tr>
+<tr>
+<td><code>blacklisted_at</code></td>
+<td>When it was blacklisted</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Code Statuses:</strong></p>
+<pre class="hljs"><code><div>Valid    → Redeemed (used)     — Student self-redeem or Teacher recharge
+Valid    → Blacklisted        — SiteOwner only, OTP required, irreversible
+</div></code></pre>
+<p><strong>Business Rules:</strong></p>
+<ul>
+<li>Codes are <strong>course-specific</strong> — can only be redeemed for the course they were generated for</li>
+<li>If the course is <strong>deleted</strong>, all its codes are <strong>permanently deleted</strong> (CASCADE)</li>
+<li>If the course is <strong>deactivated</strong>, codes remain valid but <strong>cannot be redeemed</strong></li>
+<li>Cannot delete a code (financial records)</li>
+<li>Cannot edit value or expiry after creation</li>
+<li>Expiry is 1 year from creation (not changeable)</li>
+<li>Race-condition-safe with <code>select_for_update()</code> — no double-redemption possible</li>
+<li>Every code action creates an immutable <code>BalanceTransaction</code> (source of truth for finances)</li>
+</ul>
+<p><strong>Excel Export Columns:</strong>
+Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted By | Blacklisted At | Created At | Expires At | Notes</p>
 <h3 id="page-12-course-dashboard-unified--built-last">Page 12: Course Dashboard (Unified — Built Last)</h3>
 <p>When all features exist, build a <strong>single page</strong> that unifies everything into 4 tabs:</p>
 <pre class="hljs"><code><div>┌────────────────────────────────────────────────────────────┐

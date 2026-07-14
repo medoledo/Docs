@@ -2874,6 +2874,9 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h3 id="student-activity-history">Student Activity History</h3>
 <hr>
 <hr>
+<p><strong>Codes list:</strong> <code>GET /payments/codes/</code> with filters <code>?course=X</code>, <code>?status=valid|used|blacklisted</code>, <code>?batch=&lt;uuid&gt;</code>.
+<strong>Codes summary:</strong> <code>GET /payments/codes/summary/?course=X</code> — aggregate stats (total generated, redeemed, blacklisted, values).
+<strong>Codes export:</strong> <code>GET /payments/codes/export/?batch=&lt;uuid&gt;</code> — download as Excel sheet.</p>
 <h4 id="post-paymentsrecharge">POST /payments/recharge/</h4>
 <p><strong>Description:</strong> Add balance to a student's account for a specific course. The student must be enrolled and approved in the course. Teacher/Assistant only.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>

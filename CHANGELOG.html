@@ -895,6 +895,9 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <p>| <strong>Student detail includes enrollments</strong> | <code>GET /accounts/students/&lt;id&gt;/</code> now returns <code>enrollments[]</code> array with course name, teacher, status, balance for each enrollment. |
 | <strong>Transaction date filters</strong> | <code>GET /payments/transactions/</code> now supports <code>?start_date=</code> and <code>?end_date=</code> (YYYY-MM-DD) for date range filtering. |
 | <strong>SiteOwner transaction restriction</strong> | SiteOwner must provide both <code>?student=X</code> and <code>?course=X</code> to view transactions. Prevents mixing up students across courses. |</p>
+<p>| <strong>Batch ID + Excel export</strong> | Codes now have a atch_id UUID for grouping bulk generations. GET /codes/export/?batch=<uuid> downloads an Excel sheet. GET /codes/summary/?course=X shows aggregate stats. |
+| <strong>Expiry auto-set to 1 year</strong> | expires_at no longer optional � defaults to created_at + 365 days. Not editable. |
+| <strong>Deactivated course check</strong> | Codes for deactivated courses cannot be redeemed. |</p>
 
 </body>
 </html>
