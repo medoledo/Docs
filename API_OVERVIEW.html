@@ -378,7 +378,7 @@ code {
 <h3 id="authentication">Authentication</h3>
 <p>The API uses <strong>JWT tokens stored in HTTP-Only cookies</strong>.</p>
 <ul>
-<li><strong>Login:</strong> Call <code>POST /api/accounts/login/</code>. The server sets two cookies:
+<li><strong>Login:</strong> Call <code>POST /accounts/login/</code>. The server sets two cookies:
 <ul>
 <li><code>access_token</code> — short-lived (30 minutes)</li>
 <li><code>refresh_token</code> — long-lived (7 days)</li>
@@ -386,8 +386,8 @@ code {
 </li>
 <li><strong>Subsequent Requests:</strong> The browser automatically sends cookies. No <code>Authorization</code> header needed.</li>
 <li><strong>API Clients (Postman):</strong> You can also send the access token in the <code>Authorization: Bearer &lt;token&gt;</code> header.</li>
-<li><strong>Token Refresh:</strong> When the access token expires, call <code>POST /api/accounts/token/refresh/</code>. The server reads the refresh token from the cookie, generates new tokens, and blacklists the old refresh token.</li>
-<li><strong>Logout:</strong> Call <code>POST /api/accounts/logout/</code>. The server blacklists the refresh token and clears both cookies.</li>
+<li><strong>Token Refresh:</strong> When the access token expires, call <code>POST /accounts/token/refresh/</code>. The server reads the refresh token from the cookie, generates new tokens, and blacklists the old refresh token.</li>
+<li><strong>Logout:</strong> Call <code>POST /accounts/logout/</code>. The server blacklists the refresh token and clears both cookies.</li>
 </ul>
 <p><strong>Inactive User Blocking:</strong></p>
 <ul>
@@ -677,7 +677,7 @@ code {
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
-<td>No</td>
+<td>Yes*</td>
 </tr>
 <tr>
 <td><code>POST /courses/</code></td>
@@ -708,7 +708,7 @@ code {
 | <code>GET /courses/dashboard/teacher/</code> | No | Yes | Yes | No | No |
 | <code>GET /learning/homeworks/</code> | Yes | Yes | Yes | Yes* | No |
 | <code>POST /learning/homeworks/</code> | Yes | Yes | Yes | No | No |
-| <code>GET /learning/homeworks/&lt;id&gt;/submissions/</code> | Yes | Yes | Yes | No | No |
+| <code>GET /learning/homeworks/&lt;id&gt;/submissions/</code> | No | Yes | Yes | No | No |
 | <code>POST /learning/homeworks/&lt;id&gt;/submit/</code> | No | No | No | Yes* | No |
 | <code>GET /learning/quizzes/</code> | Yes | Yes | Yes | Yes* | No |
 | <code>POST /learning/quizzes/</code> | Yes | Yes | Yes | No | No |
@@ -734,11 +734,11 @@ code {
 | <code>DELETE /materials/&lt;id&gt;/</code> | No | Yes | Yes | No | No |
 | <code>GET /payments/balance/</code> | Yes | Yes | Yes | Yes | No |
 | <code>GET /payments/transactions/</code> | Yes | Yes | Yes | Yes | No |
-| <code>POST /payments/codes/</code> | Yes | Yes | Yes | No | No |
+| <code>POST /payments/codes/</code> | Yes | Yes | No (List only) | No | No |
 | <code>POST /payments/codes/redeem/</code> | No | No | No | Yes | No |
 | <code>POST /payments/recharge/</code> | No | Yes | Yes | No | No |</p>
 <blockquote>
-<p>* Must be enrolled and approved in the relevant course<br>
+<p>* Must be enrolled and approved in the relevant course\n&gt; ** Public users see only active courses<br>
 ** Must own the course (or be the course teacher's assistant)</p>
 </blockquote>
 <hr>

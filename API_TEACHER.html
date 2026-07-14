@@ -479,7 +479,7 @@ code {
 <hr>
 <h4 id="get-accountsteacherassistants">GET /accounts/teacher/assistants/</h4>
 <p><strong>Description:</strong> List all assistants belonging to the authenticated teacher.</p>
-<p><strong>Authentication:</strong> Teacher</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
@@ -505,7 +505,7 @@ code {
 <hr>
 <h4 id="post-accountsteacherassistants">POST /accounts/teacher/assistants/</h4>
 <p><strong>Description:</strong> Create a new assistant for the authenticated teacher.</p>
-<p><strong>Authentication:</strong> Teacher</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -520,20 +520,20 @@ code {
 </div></code></pre>
 <hr>
 <h4 id="get-accountsteacherassistantid"><code>GET /accounts/teacher/assistant/&lt;id&gt;/</code></h4>
-<p><strong>Authentication:</strong> Teacher (must own the assistant)</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (must own the assistant)</p>
 <hr>
-<h4 id="putpatch-accountsteacherassistantid"><code>PUT/</code>PATCH /accounts/teacher/assistant/<id><code>/</code></h4>
-<p><strong>Authentication:</strong> Teacher (must own the assistant)</p>
+<h4 id="putpatch-accountsteacherassistantid"><code>PUT/PATCH /accounts/teacher/assistant/&lt;id&gt;</code>/`</h4>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (must own the assistant)</p>
 <hr>
 <h4 id="delete-accountsteacherassistantid"><code>DELETE /accounts/teacher/assistant/&lt;id&gt;/</code></h4>
-<p><strong>Authentication:</strong> Teacher (must own the assistant)</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (must own the assistant)</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
 <h2 id="2-my-courses">2. My Courses</h2>
 <hr>
 <h4 id="get-courses">GET /courses/</h4>
 <p><strong>Description:</strong> List courses taught by the authenticated teacher.</p>
-<p><strong>Authentication:</strong> Teacher</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <p><strong>Success Response — 200 OK:</strong> Array of courses.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
@@ -588,10 +588,10 @@ code {
 <hr>
 <h4 id="get-coursesenrollmentscoursexstatusapproved"><code>GET /courses/enrollments/?course=X&amp;status=approved</code></h4>
 <p><strong>Description:</strong> List all approved students enrolled in a specific course, with each student's balance for <strong>this course only</strong> (not their total across all courses).</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
     {
       <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -689,7 +689,7 @@ code {
 </div></code></pre>
 <hr>
 <h4 id="post-coursestopics">POST /courses/topics/</h4>
-<p><strong>Authentication:</strong> Teacher</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -757,42 +757,11 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="putpatch-coursestopicsid"><code>PUT/</code>PATCH /courses/topics/<id><code>/</code></h4>
-<p><strong>Authentication:</strong> Teacher</p>
+<h4 id="putpatch-coursestopicsid"><code>PUT/PATCH /courses/topics/&lt;id&gt;</code>/`</h4>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <hr>
 <h4 id="delete-coursestopicsid"><code>DELETE /courses/topics/&lt;id&gt;/</code></h4>
-<p><strong>Authentication:</strong> Teacher</p>
-<hr>
-<h4 id="get-coursestopicsidlectures"><code>GET /courses/topics/&lt;id&gt;/lectures/</code></h4>
-<p><strong>Description:</strong> Get all lectures for a specific topic.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Success Response — 200 OK:</strong> Array of lectures.</p>
-<pre class="hljs"><code><div>[
-  {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"topic"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
-    <span class="hljs-attr">"price"</span>: <span class="hljs-string">"Decimal"</span>,
-    <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal"</span>,
-    <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal"</span>,
-    <span class="hljs-attr">"formatted_price"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean"</span>,
-    <span class="hljs-attr">"picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-    <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"video_count"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-    <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-  }
-]
-</div></code></pre>
-<p><strong>Business Rules:</strong></p>
-<ul>
-<li>Teachers see all lectures for their own courses.</li>
-<li>Students see only visible lectures.</li>
-</ul>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <hr>
 <h2 id="5-lectures">5. Lectures</h2>
 <hr>
@@ -833,7 +802,7 @@ code {
 <p><strong>Success Response — 200 OK:</strong> Array of lectures.</p>
 <hr>
 <h4 id="post-courseslectures">POST /courses/lectures/</h4>
-<p><strong>Authentication:</strong> Teacher</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -907,37 +876,11 @@ code {
 }
 </div></code></pre>
 <hr>
-<h4 id="putpatch-courseslecturesid"><code>PUT/</code>PATCH /courses/lectures/<id><code>/</code></h4>
-<p><strong>Authentication:</strong> Teacher</p>
+<h4 id="putpatch-courseslecturesid"><code>PUT/PATCH /courses/lectures/&lt;id&gt;</code>/`</h4>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <hr>
 <h4 id="delete-courseslecturesid"><code>DELETE /courses/lectures/&lt;id&gt;/</code></h4>
-<p><strong>Authentication:</strong> Teacher</p>
-<hr>
-<h4 id="get-courseslecturesidvideos"><code>GET /courses/lectures/&lt;id&gt;/videos/</code></h4>
-<p><strong>Description:</strong> Get all videos for a specific lecture.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Success Response — 200 OK:</strong> Array of videos.</p>
-<pre class="hljs"><code><div>[
-  {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null — Bunny Stream GUID"</span>,
-    <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
-    <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
-      <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"String | null — Bunny auto-generated thumbnail URL (https://{cdn}/{id}/thumbnail.jpg)"</span>,
-      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
-    <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-    <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-  }
-]
-</div></code></pre>
-<p><strong>Business Rules:</strong></p>
-<ul>
-<li>Teachers see all videos for their own courses.</li>
-<li>Students see only active videos.</li>
-</ul>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <hr>
 <h2 id="6-videos">6. Videos</h2>
 <p>All videos are hosted on <strong>Bunny Stream</strong>. The upload uses <strong>TUS direct upload</strong> — the backend
@@ -1015,7 +958,7 @@ using <code>tus-js-client</code>. <strong>No video bytes ever pass through the b
 </div></code></pre>
 <hr>
 <h4 id="post-coursesvideos">POST /courses/videos/</h4>
-<p><strong>Authentication:</strong> Teacher</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1036,7 +979,7 @@ using <code>tus-js-client</code>. <strong>No video bytes ever pass through the b
 for direct browser-to-Bunny upload. The backend creates the Bunny entry (API key stays
 server-side) and generates a time-limited SHA256 signature. The frontend uses these
 credentials with <code>tus-js-client</code> to upload directly to Bunny — <strong>zero backend bandwidth</strong>.</p>
-<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (must own the lecture's course)</p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1053,7 +996,7 @@ Pass <code>expiration_time</code> directly to the <code>AuthorizationExpire</cod
 </blockquote>
 <hr>
 <h4 id="putpatch-coursesvideosid"><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code></h4>
-<p><strong>Authentication:</strong> Teacher</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <p><strong>Description:</strong> Update video metadata. When <code>name</code> is changed, the backend <strong>also updates the
 title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Request Body:</strong></p>
@@ -1068,13 +1011,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="delete-coursesvideosid"><code>DELETE /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Description:</strong> Deletes the video from both the local database and Bunny Stream. If the Bunny deletion fails (network issue), the local record is still removed and the error is logged.</p>
-<p><strong>Authentication:</strong> Teacher</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <hr>
 <h2 id="7-enrollments">7. Enrollments</h2>
 <hr>
 <h4 id="post-coursesenrollmentsapprove"><code>POST /courses/enrollments/approve/</code></h4>
 <p><strong>Description:</strong> Approve pending enrollments. Supports both single and bulk approval.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1119,7 +1062,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="post-coursesenrollmentsreject"><code>POST /courses/enrollments/reject/</code></h4>
 <p><strong>Description:</strong> Reject pending enrollments. Supports both single and bulk rejection.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1140,7 +1083,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="patch-coursespurchasesidreopen"><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></h4>
 <p><strong>Description:</strong> Teacher/Assistant extends a student's access to a lecture by adding extra days.</p>
-<p><strong>Authentication:</strong> Teacher (lecture course owner), Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (lecture course owner), Assistant</p>
 <p><strong>Request Body:</strong> None (always grants exactly 1 extra day).</p>
 <p><strong>Success Response — 200 OK:</strong> Updated purchased lecture.</p>
 <pre class="hljs"><code><div>{
@@ -1325,7 +1268,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="91-get-learningexams">9.1 GET /learning/exams/</h4>
 <p><strong>Description:</strong> List exams. Teachers see exams for their own courses. Assistants see exams for their teacher's courses.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -1378,7 +1321,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="92-post-learningexams">9.2 POST /learning/exams/</h4>
 <p><strong>Description:</strong> Create a new exam with settings.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong></p>
 <ul>
 <li>Teachers can only create exams for their own courses.</li>
@@ -1411,7 +1354,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="93-get-learningexamsid">9.3 GET /learning/exams/<id>/</h4>
 <p><strong>Description:</strong> Retrieve an exam with all questions, choices, and settings.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only view exams for their own courses. Others get 404.</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1465,14 +1408,14 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="94-putpatch-learningexamsid">9.4 PUT/PATCH /learning/exams/<id>/</h4>
 <p><strong>Description:</strong> Update exam metadata, open/close dates, and/or settings.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only update exams in their own courses. Others get 404.</p>
 <p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH).</p>
 <p><strong>Success Response — 200 OK:</strong> Updated exam object.</p>
 <hr>
 <h4 id="95-delete-learningexamsid">9.5 DELETE /learning/exams/<id>/</h4>
 <p><strong>Description:</strong> Delete an exam and all its submissions, answers, and grades.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only delete exams in their own courses. Others get 404.</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
@@ -1564,16 +1507,16 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="98-get-learningexamsidresults">9.8 GET /learning/exams/<id>/results/</h4>
 <p><strong>Description:</strong> List all submissions for an exam with per-answer details, scores, and grading status.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Success Response:</strong> Same structure as quiz results (see 11.10).</p>
 <hr>
 <h4 id="99-get-learningexam-submissionsid">9.9 GET /learning/exam-submissions/<id>/</h4>
 <p><strong>Description:</strong> View a single exam submission with per-answer results.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, Student (own submissions only)</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant, Student (own submissions only)</p>
 <hr>
 <h4 id="910-post-learningexam-submissionsidgrade-written">9.10 POST /learning/exam-submissions/<id>/grade-written/</h4>
 <p><strong>Description:</strong> Manually grade a written answer. Works identically to quiz written grading.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer (required)"</span>,
@@ -1590,7 +1533,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="911-post-learningexamsidrelease-scores">9.11 POST /learning/exams/<id>/release-scores/</h4>
 <p><strong>Description:</strong> Release scores for all submissions (for <code>manual</code> score_visibility).</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1600,7 +1543,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="912-post-learningexamsidrelease-answers">9.12 POST /learning/exams/<id>/release-answers/</h4>
 <p><strong>Description:</strong> Release correct answers for all submissions (for <code>manual</code> answers_visibility).</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1660,7 +1603,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="post-learninghomeworks">POST /learning/homeworks/</h4>
 <p><strong>Description:</strong> Create a homework with inline bubble questions.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong></p>
 <ul>
 <li>Teachers can only create homework for <strong>their own lectures</strong> (queryset restricted).</li>
@@ -1691,7 +1634,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="get-learninghomeworksid">GET /learning/homeworks/{id}/</h4>
 <p><strong>Description:</strong> Retrieve a homework with all bubble questions (teacher view).</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
@@ -1718,16 +1661,16 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="putpatch-learninghomeworksid">PUT/PATCH /learning/homeworks/{id}/</h4>
 <p><strong>Description:</strong> Update a homework. Send <code>bubble_questions</code> to replace all existing questions.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH). Send <code>bubble_questions: []</code> to remove all questions.</p>
 <hr>
 <h4 id="delete-learninghomeworksid">DELETE /learning/homeworks/{id}/</h4>
 <p><strong>Description:</strong> Delete a homework and all its submissions.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <hr>
 <h4 id="get-learninghomeworksidsubmissions">GET /learning/homeworks/{id}/submissions/</h4>
 <p><strong>Description:</strong> List all submissions for a homework.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
@@ -2049,7 +1992,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="112-post-learningquizzes">11.2 POST /learning/quizzes/</h4>
 <p><strong>Description:</strong> Create a new quiz with settings and optional inline questions. Questions can be created inline with choices during the same request.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong></p>
 <ul>
 <li>Teachers can only create quizzes for lectures in their own courses.</li>
@@ -2336,7 +2279,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="114-putpatch-learningquizzesid">11.4 PUT/PATCH /learning/quizzes/<id>/</h4>
 <p><strong>Description:</strong> Update quiz metadata and/or settings. Send <code>settings</code> object to update quiz settings. Leaves questions unchanged (modify questions separately).</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only update quizzes in their own courses. Others get 404.</p>
 <p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH).</p>
 <pre class="hljs"><code><div>{
@@ -2357,13 +2300,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="115-delete-learningquizzesid">11.5 DELETE /learning/quizzes/<id>/</h4>
 <p><strong>Description:</strong> Delete a quiz and all its submissions, answers, and grades. This is permanent and cannot be undone.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only delete quizzes in their own courses. Others get 404.</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
 <h4 id="1115-putpatch-learningquestionspk">11.15 PUT/PATCH /learning/questions/<pk>/</h4>
 <p><strong>Description:</strong> Update an individual quiz question — text, type, points, <strong>image</strong>, or choices. Supports both JSON for text fields and <code>multipart/form-data</code> for image upload.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only update questions in their own courses. Others get 404.</p>
 <p><strong>Request Body (JSON — text-only updates):</strong></p>
 <pre class="hljs"><code><div>{
@@ -2619,7 +2562,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="1115-get-learningquizzesidresults">11.15 GET /learning/quizzes/<id>/results/</h4>
 <p><strong>Description:</strong> List all student submissions for a specific quiz. Returns each submission with score, attempt number, and timed-out status. Teachers see submissions for their own courses only.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Query Parameters:</strong> (none — returns all submissions for this quiz)</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -2665,7 +2608,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="1115-get-learningquiz-submissionsid">11.15 GET /learning/quiz-submissions/<id>/</h4>
 <p><strong>Description:</strong> View a single submission's details with per-answer results.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant, Student (own submissions only)</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant, Student (own submissions only)</p>
 <p><strong>Access Control:</strong></p>
 <ul>
 <li><strong>Student:</strong> Only their own submissions.</li>
@@ -2675,7 +2618,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="1115-post-learningquiz-submissionsidgrade-written">11.15 POST /learning/quiz-submissions/<id>/grade-written/</h4>
 <p><strong>Description:</strong> Manually grade a written answer for a quiz submission. Overrides the default 0 points. The submission's total score is recalculated automatically.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only grade quizzes in their own courses.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -2693,7 +2636,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="1115-post-learningquizzesidrelease-scores">11.15 POST /learning/quizzes/<id>/release-scores/</h4>
 <p><strong>Description:</strong> Release scores for all submissions of a quiz. Only affects quizzes with <code>score_visibility=manual</code>. After release, students can see their scores in the quiz results.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -2703,7 +2646,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="1115-post-learningquizzesidrelease-answers">11.15 POST /learning/quizzes/<id>/release-answers/</h4>
 <p><strong>Description:</strong> Release correct answers for all submissions of a quiz. Only affects quizzes with <code>answers_visibility=manual</code>. After release, students can see which choices were correct.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -2735,7 +2678,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="post-learningquiz-submissionsidgrade-written">POST /learning/quiz-submissions/{id}/grade-written/</h4>
 <p><strong>Description:</strong> Manually grade a written answer.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"Integer - Answer ID"</span>,
@@ -2749,7 +2692,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="post-materials">POST /materials/</h4>
 <p><strong>Description:</strong> Upload a new PDF or image study material.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -2861,12 +2804,12 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="put-materialsid">PUT /materials/{id}/</h4>
 <p><strong>Description:</strong> Update a material (replace file, change title, etc.).</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Data isolation:</strong> Teachers can only update materials in their own courses. Assistants can only update their assigned teacher's materials. Others get <code>403</code> or <code>404</code>.</p>
 <hr>
 <h4 id="delete-materialsid">DELETE /materials/{id}/</h4>
 <p><strong>Description:</strong> Delete a material.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Data isolation:</strong> Teachers can only delete materials in their own courses. Assistants can only delete their assigned teacher's materials. Others get <code>403</code> or <code>404</code>.</p>
 <hr>
 <h2 id="13-balance">13. Balance</h2>
@@ -2879,7 +2822,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <strong>Codes export:</strong> <code>GET /payments/codes/export/?batch=&lt;uuid&gt;</code> — download as Excel sheet.</p>
 <h4 id="post-paymentsrecharge">POST /payments/recharge/</h4>
 <p><strong>Description:</strong> Add balance to a student's account for a specific course. The student must be enrolled and approved in the course. Teacher/Assistant only.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer — Student ID (required)"</span>,
@@ -2927,65 +2870,9 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tbody>
 </table>
 <hr>
-<h4 id="post-paymentsrecharge">POST /payments/recharge/</h4>
-<p><strong>Description:</strong> Add balance to a student using an existing RechargeCode. The teacher/assistant provides a valid, unused code and the student ID. The code is marked as used, the student's balance increases, and the ledger records who performed the recharge.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer — Student ID (required)"</span>,
-  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer — Course ID (required)"</span>,
-  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String — RechargeCode string (required)"</span>
-}
-</div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Code ABC123 redeemed for Ahmed. Added 50.00 EGP."</span>,
-  <span class="hljs-attr">"new_balance"</span>: <span class="hljs-string">"150.00"</span>,
-  <span class="hljs-attr">"transaction_id"</span>: <span class="hljs-number">42</span>,
-  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"ABC123"</span>,
-  <span class="hljs-attr">"value"</span>: <span class="hljs-string">"50.00"</span>,
-  <span class="hljs-attr">"recharged_by"</span>: <span class="hljs-string">"teacher_username"</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>400</td>
-<td>Missing student, course, or code</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Code already used or expired</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Student not enrolled/approved in the course</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Not the teacher/assistant of the course</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Code not found for this course</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Student or course not found</td>
-</tr>
-</tbody>
-</table>
-<hr>
 <h4 id="get-paymentstransactions">GET /payments/transactions/</h4>
 <p><strong>Description:</strong> Full balance transaction ledger for students. Shows every balance change with <strong>before and after snapshots</strong>. Includes code redemptions (with code, value, balance_before, balance_after) and lecture purchases (with lecture name, amount, balance_before, balance_after). Transactions are immutable — never editable or deletable.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant (sees students enrolled in their courses), Student (sees own), SiteOwner (sees all)</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant (sees students enrolled in their courses), Student (sees own), SiteOwner (sees all)</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -3020,6 +2907,11 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td><code>search</code></td>
 <td>String</td>
 <td>Search in description text</td>
+</tr>
+<tr>
+<td><code>source_type</code></td>
+<td>String</td>
+<td>Filter source: <code>recharge_code</code>, <code>purchased_lecture</code>, <code>teacher_add</code></td>
 </tr>
 <tr>
 <td><code>start_date</code></td>
@@ -3073,7 +2965,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="get-coursesdashboardteacher">GET /courses/dashboard/teacher/</h4>
 <p><strong>Description:</strong> Get aggregated stats for the teacher's dashboard.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"total_courses"</span>: <span class="hljs-string">"Integer"</span>,
@@ -3138,7 +3030,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="get-courseslecturesidprerequisites"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
 <p><strong>Description:</strong> List all prerequisites for a lecture.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
@@ -3157,7 +3049,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="post-courseslecturesidprerequisites"><code>POST /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
 <p><strong>Description:</strong> Add a prerequisite to a lecture. Student must pass this homework/quiz before accessing the lecture's videos.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) — homework|quiz|exam"</span>,
@@ -3178,7 +3070,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="delete-courseslecturesidprerequisitesprereqid"><code>DELETE /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
 <p><strong>Description:</strong> Remove a prerequisite from a lecture.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
 <h2 id="17-watching-times-limit">17. Watching Times Limit</h2>

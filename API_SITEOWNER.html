@@ -387,7 +387,7 @@ code {
 <h2 id="1-teacher-management">1. Teacher Management</h2>
 <h3 id="get-accountsteachers">GET /accounts/teachers/</h3>
 <p><strong>Description:</strong> List all teachers with full details.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -438,6 +438,7 @@ code {
       <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"grade_names"</span>: <span class="hljs-string">"Array[String]"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"courses_count"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"students_count"</span>: <span class="hljs-string">"Integer"</span>
     }
@@ -445,11 +446,11 @@ code {
 }
 </div></code></pre>
 <blockquote>
-<p><strong>List view is lightweight.</strong> To get full teacher details (phone, gmail, gender, profile_picture, biography, facebook, subject_detail with nested grades/divisions/school_types, video_security, bunny_collection_id), use <code>GET /accounts/teachers/&lt;id&gt;/</code>.</p>
+<p><strong>List view is lightweight.</strong> To get full teacher details (phone, gmail, gender, profile_picture, biography, facebook, subject_detail with nested grades/divisions/school_types, video_security, bunny_bunny_collection_id), use <code>GET /accounts/teachers/&lt;id&gt;/</code>.</p>
 </blockquote>
 <hr>
 <h3 id="get-accountsteachersid"><code>GET /accounts/teachers/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -475,8 +476,9 @@ code {
     <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
     <span class="hljs-attr">"price_per_student"</span>: <span class="hljs-string">"String (Decimal)"</span>
   },
-  <span class="hljs-attr">"bunny_collection_id"</span>: <span class="hljs-string">"String | null — Bunny Stream collection GUID assigned to this teacher"</span>,
+  <span class="hljs-attr">"bunny_bunny_collection_id"</span>: <span class="hljs-string">"String | null — Bunny Stream collection GUID assigned to this teacher"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-string">"Boolean"</span>,
   <span class="hljs-attr">"courses_count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"students_count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
@@ -485,7 +487,7 @@ code {
 <hr>
 <h3 id="post-accountsteachers">POST /accounts/teachers/</h3>
 <p><strong>Description:</strong> Create a new teacher user and profile atomically. Supports profile picture upload via multipart/form-data.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -505,7 +507,7 @@ code {
   <span class="hljs-attr">"video_security"</span>: <span class="hljs-string">"Integer (Optional) — VideoSecurity ID"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 201 Created:</strong> Returns the full teacher profile (same structure as GET detail above, including <code>bunny_collection_id</code> which will be null until assigned).</p>
+<p><strong>Success Response — 201 Created:</strong> Returns the full teacher profile (same structure as GET detail above, including <code>bunny_bunny_collection_id</code> which will be null until assigned).</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -553,14 +555,14 @@ code {
 </ul>
 <hr>
 <h3 id="patch-accountsteachersid"><code>PATCH /accounts/teachers/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong> Same as POST body (all fields optional for PATCH). Additionally:</p>
 <ul>
-<li><code>bunny_collection_id</code> can be set directly here, or use the dedicated <code>teacher update (set bunny_collection_id)</code> endpoint below.</li>
+<li><code>bunny_bunny_collection_id</code> can be set directly here, or use the dedicated <code>teacher update (set bunny_bunny_collection_id)</code> endpoint below.</li>
 <li><code>password</code> can be set to reset the teacher's password directly (optional). The teacher can also use the forgot-password flow themselves.</li>
 </ul>
-<p><strong>Success Response — 200 OK:</strong> Returns the full teacher profile (same structure as GET detail above, including <code>bunny_collection_id</code>).</p>
+<p><strong>Success Response — 200 OK:</strong> Returns the full teacher profile (same structure as GET detail above, including <code>bunny_bunny_collection_id</code>).</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -596,19 +598,19 @@ code {
 <hr>
 <h3 id="teacher-collection-management">Teacher Collection Management</h3>
 <p>Teachers must have a <strong>Bunny Stream collection</strong> assigned before they can upload videos. Create a collection manually in your <a href="https://dash.bunny.net/stream">Bunny Stream dashboard</a> → Collections → Create Collection, then assign it via the API.</p>
-<p><strong>The response for teacher list/detail views now includes <code>bunny_collection_id</code>.</strong></p>
-<h4 id="patch-accountsteachersid-set-bunnycollectionid-directly"><code>PATCH /accounts/teachers/&lt;id&gt;/ (set bunny_collection_id directly)</code></h4>
-<p><strong>Note:</strong> Collection assignment is done directly via <code>PATCH /accounts/teachers/&lt;id&gt;/</code> — set <code>bunny_collection_id</code> in the update body. The dedicated <code>teacher update (set bunny_collection_id)/</code> endpoint has been removed.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>The response for teacher list/detail views now includes <code>bunny_bunny_collection_id</code>.</strong></p>
+<h4 id="patch-accountsteachersid-set-bunnybunnycollectionid-directly"><code>PATCH /accounts/teachers/&lt;id&gt;/ (set bunny_bunny_collection_id directly)</code></h4>
+<p><strong>Note:</strong> Collection assignment is done directly via <code>PATCH /accounts/teachers/&lt;id&gt;/</code> — set <code>bunny_bunny_collection_id</code> in the update body. The dedicated <code>teacher update (set bunny_bunny_collection_id)/</code> endpoint has been removed.</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"collection_id"</span>: <span class="hljs-string">"String (Required) — Bunny Stream Collection GUID"</span>
+  <span class="hljs-attr">"bunny_collection_id"</span>: <span class="hljs-string">"String (Required) — Bunny Stream Collection GUID"</span>
 }
 </div></code></pre>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"bunny_collection_id"</span>: <span class="hljs-string">"String — The assigned collection GUID"</span>,
+  <span class="hljs-attr">"bunny_bunny_collection_id"</span>: <span class="hljs-string">"String — The assigned collection GUID"</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Collection assigned to teacher."</span>
 }
 </div></code></pre>
@@ -624,8 +626,8 @@ code {
 <tbody>
 <tr>
 <td><code>400</code></td>
-<td>Missing collection_id</td>
-<td><code>{&quot;error&quot;: &quot;collection_id is required.&quot;}</code></td>
+<td>Missing bunny_collection_id</td>
+<td><code>{&quot;error&quot;: &quot;bunny_collection_id is required.&quot;}</code></td>
 </tr>
 <tr>
 <td><code>404</code></td>
@@ -636,7 +638,7 @@ code {
 </table>
 <h4 id="post-accountsteachersidcreate-collection"><code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></h4>
 <p><strong>Description:</strong> Automatically create a new Bunny Stream collection and assign it to a teacher. The collection name auto-generates from the teacher's name and subject.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -645,17 +647,17 @@ code {
 </div></code></pre>
 <p><strong>Success Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"bunny_collection_id"</span>: <span class="hljs-string">"String — The newly created collection GUID"</span>,
+  <span class="hljs-attr">"bunny_bunny_collection_id"</span>: <span class="hljs-string">"String — The newly created collection GUID"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String — The collection name"</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Collection created and assigned to teacher."</span>
 }
 </div></code></pre>
-<p><strong>Note:</strong> To assign an existing collection GUID, use <code>PATCH /accounts/teachers/&lt;id&gt;/</code> with <code>bunny_collection_id</code> in the body. The dedicated <code>teacher update (set bunny_collection_id)/</code> endpoint has been removed.</p>
+<p><strong>Note:</strong> To assign an existing collection GUID, use <code>PATCH /accounts/teachers/&lt;id&gt;/</code> with <code>bunny_bunny_collection_id</code> in the body. The dedicated <code>teacher update (set bunny_bunny_collection_id)/</code> endpoint has been removed.</p>
 <hr>
 <h2 id="2-student-management">2. Student Management</h2>
 <h3 id="get-accountsstudents">GET /accounts/students/</h3>
 <p><strong>Description:</strong> List all students.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -680,6 +682,21 @@ code {
 <td><code>school_type</code></td>
 <td>Integer</td>
 <td>Filter by school type ID</td>
+</tr>
+<tr>
+<td><code>division</code></td>
+<td>Integer</td>
+<td>Filter by division ID</td>
+</tr>
+<tr>
+<td><code>governorate</code></td>
+<td>Integer</td>
+<td>Filter by governorate ID</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>Boolean</td>
+<td>Filter by active status</td>
 </tr>
 <tr>
 <td><code>search</code></td>
@@ -720,7 +737,7 @@ code {
 </blockquote>
 <hr>
 <h3 id="get-accountsstudentsid"><code>GET /accounts/students/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong> Full student profile with enrollments and per-course balances.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -750,6 +767,7 @@ code {
   <span class="hljs-attr">"area_name"</span>: <span class="hljs-string">"String | null"</span>,
   <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (pending|verified|declined|suspended_temporary|suspended_permanent)"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-string">"Boolean"</span>,
   <span class="hljs-attr">"status_history"</span>: <span class="hljs-string">"Array[Object]"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
@@ -772,7 +790,7 @@ code {
 <hr>
 <h3 id="patch-accountsstudentsid"><code>PATCH /accounts/students/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> Update a student's profile fields and/or status. Status changes are logged with the acting user and reason.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -860,7 +878,7 @@ code {
 <h2 id="3-course-management">3. Course Management</h2>
 <h3 id="post-courses">POST /courses/</h3>
 <p><strong>Description:</strong> Create a new course.</p>
-<p><strong>Authentication:</strong> SiteOwner only</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant only</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -885,6 +903,7 @@ code {
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
   <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-string">"Boolean"</span>,
   <span class="hljs-attr">"topics"</span>: <span class="hljs-string">"Array[Object]"</span>,
   <span class="hljs-attr">"topic_count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-string">"Integer"</span>,
@@ -937,7 +956,7 @@ code {
 </ul>
 <hr>
 <h3 id="patch-coursesid"><code>PATCH /courses/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner only</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant only</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH).</p>
 <p><strong>Error Responses:</strong></p>
@@ -969,7 +988,7 @@ code {
 </ul>
 <hr>
 <h3 id="delete-coursesid"><code>DELETE /courses/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner only</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant only</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -989,13 +1008,13 @@ code {
 </table>
 <p><strong>Business Rules:</strong></p>
 <ul>
-<li>Course can only be deleted if no students are enrolled (no approved enrollments exist).</li>
+<li>Course can only be deleted if no students are enrolled (no enrollments exist (pending, approved, or rejected)).</li>
 </ul>
 <hr>
 <h2 id="4-view-assistants-read-only">4. View Assistants (Read-Only)</h2>
 <h3 id="get-accountsteacherassistants">GET /accounts/teacher/assistants/</h3>
 <p><strong>Description:</strong> SiteOwner can view all assistants across all teachers.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -1033,6 +1052,7 @@ code {
       <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (male|female)"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
       <span class="hljs-attr">"teacher"</span>: <span class="hljs-string">"Integer — Teacher ID"</span>,
       <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String - Teacher's name"</span>
@@ -1044,13 +1064,14 @@ code {
 <h2 id="5-recharge-codes">5. Recharge Codes</h2>
 <h3 id="post-paymentscodes">POST /payments/codes/</h3>
 <p><strong>Description:</strong> Generate new recharge codes. Codes are course-specific and can only be redeemed for the course they are generated for.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant, Teacher</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer (Required) — Course ID"</span>,
   <span class="hljs-attr">"value"</span>: <span class="hljs-string">"Decimal (Required) — Amount in EGP (1.00 - 1000.00)"</span>,
-  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (Optional) — ISO 8601, code cannot be redeemed after this date"</span>
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer (Optional, default: 1) — Number of codes to generate (1-1000)"</span>,
+  <span class="hljs-attr">"notes"</span>: <span class="hljs-string">"String (Optional) — Notes for this batch (e.g. 'Batch for Center X')"</span>
 }
 </div></code></pre>
 <p><strong>Success Response — 201 Created:</strong></p>
@@ -1108,7 +1129,7 @@ code {
 <hr>
 <h3 id="post-paymentscodespkrequest-blacklist-otp">POST /payments/codes/<pk>/request-blacklist-otp/</h3>
 <p><strong>Description:</strong> Request an OTP to authorize blacklisting a recharge code. Sends a 6-digit OTP to the SiteOwner's registered gmail. The OTP expires in 30 minutes.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"OTP sent to your email."</span>,
@@ -1137,7 +1158,7 @@ code {
 <hr>
 <h3 id="post-paymentscodespkblacklist">POST /payments/codes/<pk>/blacklist/</h3>
 <p><strong>Description:</strong> Permanently blacklist a recharge code. This is a <strong>one-way irreversible action</strong> — once blacklisted, the code can never be used or un-blacklisted. Requires a valid OTP.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String — 6-digit OTP sent to your email (required)"</span>
@@ -1176,7 +1197,7 @@ code {
 <hr>
 <h3 id="get-paymentscodes">GET /payments/codes/</h3>
 <p><strong>Description:</strong> List all recharge codes. Supports filtering and ordering.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -1236,7 +1257,7 @@ Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
 <hr>
 <h3 id="get-paymentscodesanalytics">GET /payments/codes/analytics/</h3>
 <p><strong>Description:</strong> Aggregate analytics for the codes dashboard. Returns counts and financial breakdowns including Teacher's Cut and SiteOwner's Cut.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"total_batches"</span>: <span class="hljs-number">45</span>,
@@ -1254,7 +1275,7 @@ Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
 <hr>
 <h3 id="get-paymentscodesbatches">GET /payments/codes/batches/</h3>
 <p><strong>Description:</strong> List code batches grouped by <code>batch_id</code>. Paginated. Each row shows batch name, course, teacher, code counts per status, and code value.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -1313,7 +1334,7 @@ Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
 <hr>
 <h3 id="get-paymentscodesbatchesuuidbatchid">GET /payments/codes/batches/<a href="uuid:batch_id">uuid:batch_id</a>/</h3>
 <p><strong>Description:</strong> View individual codes within a batch. Paginated. Shows each code's value, status, who used it and when.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"batch_id"</span>: <span class="hljs-string">"UUID"</span>,
@@ -1340,7 +1361,7 @@ Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
 <h2 id="6-transactions">6. Transactions</h2>
 <h3 id="get-paymentstransactions">GET /payments/transactions/</h3>
 <p><strong>Description:</strong> Full balance transaction ledger. SiteOwner must select both a student and a course to view transactions (prevents mixing up students across courses).</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -1441,7 +1462,7 @@ Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
 
 **Description:** Returns comprehensive dashboard statistics for site owners. Aggregates system-wide metrics including user counts, time-based metrics, and detailed breakdowns.
 
-**Authentication:** SiteOwner
+**Authentication:** SiteOwner, Teacher, Assistant
 
 **Success Response — 200 OK:**
 
