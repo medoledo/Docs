@@ -531,7 +531,7 @@ code {
 <hr>
 <h2 id="2-my-courses">2. My Courses</h2>
 <hr>
-<h4 id="get-coursesmycourses">GET /courses/my_courses/</h4>
+<h4 id="get-courses">GET /courses/</h4>
 <p><strong>Description:</strong> List courses taught by the authenticated teacher.</p>
 <p><strong>Authentication:</strong> Teacher</p>
 <p><strong>Success Response — 200 OK:</strong> Array of courses.</p>
@@ -2916,6 +2916,62 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <tr>
 <td>403</td>
 <td>Not the teacher of the course</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Student or course not found</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="post-paymentsrecharge">POST /payments/recharge/</h4>
+<p><strong>Description:</strong> Add balance to a student using an existing RechargeCode. The teacher/assistant provides a valid, unused code and the student ID. The code is marked as used, the student's balance increases, and the ledger records who performed the recharge.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer — Student ID (required)"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer — Course ID (required)"</span>,
+  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String — RechargeCode string (required)"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Code ABC123 redeemed for Ahmed. Added 50.00 EGP."</span>,
+  <span class="hljs-attr">"new_balance"</span>: <span class="hljs-string">"150.00"</span>,
+  <span class="hljs-attr">"transaction_id"</span>: <span class="hljs-number">42</span>,
+  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"ABC123"</span>,
+  <span class="hljs-attr">"value"</span>: <span class="hljs-string">"50.00"</span>,
+  <span class="hljs-attr">"recharged_by"</span>: <span class="hljs-string">"teacher_username"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Missing student, course, or code</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Code already used or expired</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Student not enrolled/approved in the course</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Not the teacher/assistant of the course</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Code not found for this course</td>
 </tr>
 <tr>
 <td>404</td>

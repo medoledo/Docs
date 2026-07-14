@@ -1115,30 +1115,6 @@ code {
 </div></code></pre>
 <hr>
 <h2 id="6-revenue-analytics">6. Revenue Analytics</h2>
-<h3 id="get-paymentsrevenuesummary">GET /payments/revenue/summary/</h3>
-<p><strong>Description:</strong> SiteOwner revenue overview across all courses.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"summary"</span>: {
-    <span class="hljs-attr">"total_revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-    <span class="hljs-attr">"total_purchases"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"total_students"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"total_courses"</span>: <span class="hljs-string">"Integer"</span>
-  },
-  <span class="hljs-attr">"courses"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
-      <span class="hljs-attr">"enrolled_count"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"purchase_count"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
 <h3 id="get-paymentsrevenuecourseid"><code>GET /payments/revenue/course/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> Deep revenue dive for a specific course. Includes per-topic and per-lecture breakdowns, plus student spending distribution.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
@@ -1205,87 +1181,6 @@ code {
   ]
 }
 </div></code></pre>
-<hr>
-<h3 id="get-paymentsrevenuestudents">GET /payments/revenue/students/</h3>
-<p><strong>Description:</strong> Per-student revenue breakdown across all courses.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
-<p><strong>Query Parameters:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>course</code></td>
-<td>Integer</td>
-<td>Filter by course ID</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>[
-  {
-    <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-    <span class="hljs-attr">"courses_enrolled"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"total_spent"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-    <span class="hljs-attr">"lectures_purchased"</span>: <span class="hljs-string">"Integer"</span>,
-    <span class="hljs-attr">"last_purchase_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>
-  }
-]
-</div></code></pre>
-<hr>
-<h3 id="get-paymentsrevenuetrends">GET /payments/revenue/trends/</h3>
-<p><strong>Description:</strong> Revenue trends over time. Defaults to the past 30 days. Supports custom date ranges.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
-<p><strong>Query Parameters:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>start_date</code></td>
-<td>String (YYYY-MM-DD)</td>
-<td>Start of date range</td>
-</tr>
-<tr>
-<td><code>end_date</code></td>
-<td>String (YYYY-MM-DD)</td>
-<td>End of date range</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"start_date"</span>: <span class="hljs-string">"String (YYYY-MM-DD) - Start of date range"</span>,
-  <span class="hljs-attr">"end_date"</span>: <span class="hljs-string">"String (YYYY-MM-DD) - End of date range"</span>,
-  <span class="hljs-attr">"total_revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-  <span class="hljs-attr">"total_purchases"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"daily_trends"</span>: [
-    {
-      <span class="hljs-attr">"date"</span>: <span class="hljs-string">"String (YYYY-MM-DD)"</span>,
-      <span class="hljs-attr">"revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-      <span class="hljs-attr">"purchase_count"</span>: <span class="hljs-string">"Integer"</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Business Rules:</strong></p>
-<ul>
-<li>Default range: last 30 days if no dates provided.</li>
-<li>If only <code>end_date</code> provided, <code>start_date</code> = <code>end_date - 30 days</code>.</li>
-<li>If only <code>start_date</code> provided, <code>end_date</code> = today.</li>
-</ul>
 <hr>
 <h2 id="7-siteowner-dashboard">7. SiteOwner Dashboard</h2>
 <h3 id="get-dashboardssite-owner">GET /dashboards/site-owner/</h3>

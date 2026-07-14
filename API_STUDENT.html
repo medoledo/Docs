@@ -395,7 +395,7 @@ code {
 <li><a href="#4-enrollments">Enrollments</a>
 <ul>
 <li><a href="#post-coursesenrollmentsenroll">POST /courses/enrollments/enroll/</a></li>
-<li><a href="#get-coursesenrollmentsmy">GET /courses/enrollments/my/</a></li>
+<li><a href="#get-coursesenrollmentsmy">GET /courses/enrollments/</a></li>
 <li><a href="#get-coursesenrolled">GET /courses/enrolled/</a></li>
 <li>[<code>POST /courses/enrollments/&lt;id&gt;/cancel/](#post-coursesenrollmentsidcancel)</code></li>
 </ul>
@@ -425,7 +425,7 @@ code {
 </li>
 <li><a href="#9-balance">Balance</a>
 <ul>
-<li><a href="#get-paymentsbalancemy">GET /payments/balance/my/</a></li>
+<li><a href="#get-paymentsbalancemy">GET /payments/balance/</a></li>
 <li><a href="#post-paymentscodesredeem">POST /payments/codes/redeem/</a></li>
 </ul>
 </li>
@@ -806,7 +806,7 @@ code {
 <li>The student's grade must match the course's grade.</li>
 </ul>
 <hr>
-<h3 id="get-coursesenrollmentsmy">GET /courses/enrollments/my/</h3>
+<h3 id="get-coursesenrollments">GET /courses/enrollments/</h3>
 <p><strong>Description:</strong> Student views their own enrollments.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong> Array of enrollments.</p>
@@ -1229,7 +1229,7 @@ code {
 <hr>
 <h2 id="9-balance">9. Balance</h2>
 <hr>
-<h3 id="get-paymentsbalancemy">GET /payments/balance/my/</h3>
+<h3 id="get-paymentsbalance">GET /payments/balance/</h3>
 <p><strong>Description:</strong> Get all course balances for the authenticated student. Shows available balance per course.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong></p>

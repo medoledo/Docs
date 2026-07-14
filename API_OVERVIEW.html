@@ -640,14 +640,6 @@ code {
 <td>No</td>
 </tr>
 <tr>
-<td><code>POST /payments/recharge/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
 <td><code>GET /accounts/students/</code></td>
 <td>Yes</td>
 <td>No</td>
@@ -740,8 +732,11 @@ code {
 | <code>GET /materials/&lt;id&gt;/</code> | Yes | Yes | Yes | Yes* | No |
 | <code>PUT /materials/&lt;id&gt;/</code> | No | Yes | Yes | No | No |
 | <code>DELETE /materials/&lt;id&gt;/</code> | No | Yes | Yes | No | No |
+| <code>GET /payments/balance/</code> | Yes | Yes | Yes | Yes | No |
 | <code>GET /payments/transactions/</code> | Yes | Yes | Yes | Yes | No |
-| <code>GET /materials/my/</code> | No | No | No | Yes | No |</p>
+| <code>POST /payments/codes/</code> | Yes | Yes | Yes | No | No |
+| <code>POST /payments/codes/redeem/</code> | No | No | No | Yes | No |
+| <code>POST /payments/recharge/</code> | No | Yes | Yes | No | No |</p>
 <blockquote>
 <p>* Must be enrolled and approved in the relevant course<br>
 ** Must own the course (or be the course teacher's assistant)</p>
