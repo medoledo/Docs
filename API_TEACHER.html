@@ -939,28 +939,19 @@ code {
 <li>Students see only active videos.</li>
 </ul>
 <hr>
-<h3 id="lecture-student-report">Lecture Student Report</h3>
-<hr>
 <h2 id="6-videos">6. Videos</h2>
-<p>All videos are hosted on <strong>Bunny Stream</strong>. The upload flow always goes through the backend proxy
-(the file never goes directly from browser to Bunny — the backend relays it to keep the API key secret).</p>
-<p><strong>Full file upload</strong> (simple, no pause/resume):</p>
+<p>All videos are hosted on <strong>Bunny Stream</strong>. The upload uses <strong>TUS direct upload</strong> — the backend
+generates time-limited credentials server-side, and the frontend uploads directly to Bunny Stream
+using <code>tus-js-client</code>. <strong>No video bytes ever pass through the backend.</strong></p>
 <pre class="hljs"><code><div>1. Teacher creates a video record → POST /courses/videos/
-2. Teacher generates the Bunny upload entry → `POST /courses/videos/&lt;id&gt;/create-upload/`
-3. Frontend uploads the file → `POST /courses/videos/&lt;id&gt;/upload/` (file in multipart)
-   Backend streams it to Bunny CDN (0 RAM, Content-Length, auto-recreate on 404, SSL retry)
+2. Frontend calls `POST /courses/videos/&lt;id&gt;/create-upload/` → returns TUS credentials
+   (library_id, signature, expiration_time). API key stays server-side.
+3. Frontend uploads directly to Bunny using tus-js-client:
+   → endpoint: https://video.bunnycdn.com/tusupload
+   → headers: AuthorizationSignature, AuthorizationExpire, VideoId, LibraryId
+   → Zero backend CPU/RAM/bandwidth used
 4. Bunny processes the video and calls the webhook when done
 5. Frontend polls `GET /courses/videos/&lt;id&gt;/` until status=4 (Finished)
-</div></code></pre>
-<p><strong>Chunked upload</strong> (pause/resume for large files or unstable connections):</p>
-<pre class="hljs"><code><div>1. Create video record → POST /courses/videos/
-2. Create Bunny entry → `POST /courses/videos/&lt;id&gt;/create-upload/`
-3. Split file into chunks (e.g. 5 MB). Send each chunk:
-   → `POST /courses/videos/&lt;id&gt;/upload/` with `file` + `offset` + `total_size`
-   Backend PUTs each chunk with Content-Range header
-4. On interruption/pause: `GET /courses/videos/&lt;id&gt;/upload-status/` returns `uploaded_bytes`
-5. Resume by sending chunks from `uploaded_bytes` onward
-6. After last chunk: Bunny processes, webhook fires, poll until status=4
 </div></code></pre>
 <hr>
 <h4 id="get-coursesvideos">GET /courses/videos/</h4>
@@ -1041,19 +1032,25 @@ code {
 <p><strong>Success Response — 200 OK:</strong> Single video object.</p>
 <hr>
 <h4 id="post-coursesvideosidcreate-upload"><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></h4>
-<p><strong>Description:</strong> Creates the video entry on Bunny Stream and stores the Bunny GUID (<code>bunny_video_id</code>)
-on the local Video record. Must be called before any upload. The returned <code>upload_url</code> is informational
-only — the actual upload goes through the <strong>backend proxy</strong> (<code>POST /upload/</code>) to keep the API key secret.</p>
+<p><strong>Description:</strong> Creates the video entry on Bunny Stream and returns <strong>TUS credentials</strong>
+for direct browser-to-Bunny upload. The backend creates the Bunny entry (API key stays
+server-side) and generates a time-limited SHA256 signature. The frontend uses these
+credentials with <code>tus-js-client</code> to upload directly to Bunny — <strong>zero backend bandwidth</strong>.</p>
 <p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"Integer — Local video ID"</span>,
   <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String — Bunny Stream GUID"</span>,
-  <span class="hljs-attr">"upload_url"</span>: <span class="hljs-string">"String — Bunny CDN upload URL (for reference only)"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"Integer — Initial Bunny status (0=Created)"</span>
+  <span class="hljs-attr">"library_id"</span>: <span class="hljs-string">"Integer — Bunny Stream library ID (698152)"</span>,
+  <span class="hljs-attr">"expiration_time"</span>: <span class="hljs-string">"Integer — Unix timestamp (seconds) when credentials expire"</span>,
+  <span class="hljs-attr">"signature"</span>: <span class="hljs-string">"String — SHA256 hex signature for TUS AuthorizationSignature header"</span>
 }
 </div></code></pre>
+<blockquote>
+<p><strong>⚠️ <code>expiration_time</code> is in SECONDS</strong> — JavaScript's <code>Date.now()</code> returns milliseconds.
+Pass <code>expiration_time</code> directly to the <code>AuthorizationExpire</code> header without multiplying by 1000.</p>
+</blockquote>
 <hr>
 <h4 id="putpatch-coursesvideosid"><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Teacher</p>

@@ -1001,28 +1001,26 @@ Price: 50 EGP | Discount: 10 EGP | Available: 30 days
 </tr>
 </tbody>
 </table>
-<p><strong>Bunny Upload Flow in the UI:</strong></p>
-<p><strong>Option A — Full file upload (simple):</strong></p>
+<p><strong>Bunny Upload Flow (TUS Direct Upload):</strong></p>
 <ol>
 <li>Teacher clicks &quot;Add Video&quot; → modal: name, order → Video record created (<code>bunny_video_id=null</code>, status=&quot;Pending&quot;)</li>
-<li>Teacher clicks &quot;Upload&quot; on the pending row → <code>POST .../create-upload/</code> → Bunny entry created</li>
-<li>Frontend sends file to <code>POST .../upload/</code> (multipart, <code>file</code> field) → Backend streams to Bunny</li>
+<li>Teacher clicks &quot;Upload&quot; on the pending row → <code>POST .../create-upload/</code> → returns TUS credentials</li>
+<li>Frontend uploads directly to Bunny using <code>tus-js-client</code>:
+<ul>
+<li>endpoint: <code>https://video.bunnycdn.com/tusupload</code></li>
+<li>headers: <code>AuthorizationSignature</code>, <code>AuthorizationExpire</code>, <code>VideoId</code>, <code>LibraryId</code></li>
+<li><strong>Zero backend bandwidth/RAM used</strong></li>
+</ul>
+</li>
 <li>Frontend polls <code>GET /courses/videos/&lt;id&gt;/</code> every 5 seconds</li>
 <li>UI shows live status: Created → Uploaded → Processing → Transcoding → <strong>Ready ✅</strong></li>
 <li>When status=4, <code>is_active=true</code>, teacher sees &quot;Ready&quot; badge</li>
 </ol>
-<p><strong>Option B — Chunked upload (pause/resume for large files):</strong></p>
-<ol>
-<li>Same steps 1-2 as above</li>
-<li>Split file into 5 MB chunks. For each chunk:
-→ <code>POST .../upload/</code> with <code>file</code> + <code>offset</code> + <code>total_size</code></li>
-<li>Progress = <code>offset / total_size * 100</code></li>
-<li><strong>Pause:</strong> stop sending chunks; remember <code>offset</code></li>
-<li><strong>Resume:</strong> <code>GET .../upload-status/</code> → get <code>uploaded_bytes</code> → continue from there</li>
-<li>After last chunk, poll status same as Option A</li>
-</ol>
-<p><strong>Note:</strong> Upload goes through the backend proxy (not directly to Bunny). The file never touches
-disk on the backend; each chunk is streamed directly to Bunny CDN.</p>
+<p><strong>TUS handles pause/resume natively</strong> — <code>findPreviousUploads()</code> + <code>resumeFromPreviousUpload()</code>
+stores progress in localStorage and resumes at the exact byte.
+Use 5 MB chunks (<code>chunkSize: 5 * 1024 * 1024</code>) and add 300ms delay between chunks
+via <code>onChunkComplete</code> to prevent WiFi saturation.</p>
+<p><strong>Note:</strong> The old <code>POST /upload/</code> proxy endpoint has been removed (returns 410 Gone).</p>
 <pre class="hljs"><code><div>Video List UI Table:
 # │ Name          │ Status                            │ Actions
 ──┼───────────────┼───────────────────────────────────┼────────────

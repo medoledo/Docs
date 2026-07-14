@@ -849,6 +849,10 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <td><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code> now calls Bunny's update API when <code>name</code> changes.</td>
 </tr>
 <tr>
+<td><strong>TUS direct upload</strong></td>
+<td>Removed the backend proxy <code>POST /courses/videos/&lt;id&gt;/upload/</code> and <code>GET /upload-status/</code>. <code>create-upload/</code> now returns TUS credentials (<code>library_id</code>, <code>signature</code>, <code>expiration_time</code>). Frontend uploads directly to Bunny using <code>tus-js-client</code> — zero backend bandwidth/RAM.</td>
+</tr>
+<tr>
 <td><strong>Permission fix: Course/Topic/Lecture/Video lists</strong></td>
 <td><code>get_queryset</code> in all four base mixins used <code>Q(teacher=X) | Q(is_active=True)</code> instead of <code>Q(teacher=X)</code>, causing teachers to see every other teacher's content. Fixed to <code>filter(teacher=teacher)</code>.</td>
 </tr>
