@@ -1234,6 +1234,109 @@ Use `GET /codes/export/?batch=&lt;uuid&gt;` to download codes as an Excel sheet.
 Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
 </div></code></pre>
 <hr>
+<h3 id="get-paymentscodesanalytics">GET /payments/codes/analytics/</h3>
+<p><strong>Description:</strong> Aggregate analytics for the codes dashboard. Returns counts and financial breakdowns including Teacher's Cut and SiteOwner's Cut.</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"total_batches"</span>: <span class="hljs-number">45</span>,
+  <span class="hljs-attr">"total_codes"</span>: <span class="hljs-number">5000</span>,
+  <span class="hljs-attr">"total_value"</span>: <span class="hljs-string">"250000.00"</span>,
+  <span class="hljs-attr">"valid_count"</span>: <span class="hljs-number">3000</span>,
+  <span class="hljs-attr">"used_count"</span>: <span class="hljs-number">1800</span>,
+  <span class="hljs-attr">"used_value"</span>: <span class="hljs-string">"90000.00"</span>,
+  <span class="hljs-attr">"blacklisted_count"</span>: <span class="hljs-number">200</span>,
+  <span class="hljs-attr">"teachers_cut"</span>: <span class="hljs-string">"36000.00"</span>,
+  <span class="hljs-attr">"siteowner_cut"</span>: <span class="hljs-string">"54000.00"</span>
+}
+</div></code></pre>
+<p><strong>Teacher's Cut Calculation:</strong> Each redeemed code deducts the teacher's <code>video_security.price_per_student</code> from the code value. The remainder is the SiteOwner's cut. Default fee is 0 EGP when no video security is assigned.</p>
+<hr>
+<h3 id="get-paymentscodesbatches">GET /payments/codes/batches/</h3>
+<p><strong>Description:</strong> List code batches grouped by <code>batch_id</code>. Paginated. Each row shows batch name, course, teacher, code counts per status, and code value.</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>teacher</code></td>
+<td>Integer</td>
+<td>Filter by teacher ID</td>
+</tr>
+<tr>
+<td><code>course</code></td>
+<td>Integer</td>
+<td>Filter by course ID</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>Integer</td>
+<td>Page number (default: 1)</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>Integer</td>
+<td>Items per page (default: 20, max: 100)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">45</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"batch_id"</span>: <span class="hljs-string">"UUID"</span>,
+      <span class="hljs-attr">"batch_name"</span>: <span class="hljs-string">"Batch #1"</span>,
+      <span class="hljs-attr">"course"</span>: <span class="hljs-number">28</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany Hassanin"</span>,
+      <span class="hljs-attr">"notes"</span>: <span class="hljs-string">"Batch for Center X (1/100)"</span>,
+      <span class="hljs-attr">"total_codes"</span>: <span class="hljs-number">100</span>,
+      <span class="hljs-attr">"code_value"</span>: <span class="hljs-string">"50.00"</span>,
+      <span class="hljs-attr">"status_counts"</span>: {
+        <span class="hljs-attr">"valid"</span>: <span class="hljs-number">60</span>,
+        <span class="hljs-attr">"used"</span>: <span class="hljs-number">35</span>,
+        <span class="hljs-attr">"blacklisted"</span>: <span class="hljs-number">5</span>
+      },
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
+<h3 id="get-paymentscodesbatchesuuidbatchid">GET /payments/codes/batches/<a href="uuid:batch_id">uuid:batch_id</a>/</h3>
+<p><strong>Description:</strong> View individual codes within a batch. Paginated. Shows each code's value, status, who used it and when.</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"batch_id"</span>: <span class="hljs-string">"UUID"</span>,
+  <span class="hljs-attr">"batch_name"</span>: <span class="hljs-string">"Batch #1"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-number">28</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+  <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany Hassanin"</span>,
+  <span class="hljs-attr">"notes"</span>: <span class="hljs-string">"Batch for Center X (1/100)"</span>,
+  <span class="hljs-attr">"total_codes"</span>: <span class="hljs-number">100</span>,
+  <span class="hljs-attr">"codes"</span>: [
+    {
+      <span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>,
+      <span class="hljs-attr">"value"</span>: <span class="hljs-string">"50.00"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"used"</span>,
+      <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"Used"</span>,
+      <span class="hljs-attr">"used_by_name"</span>: <span class="hljs-string">"Ahmed / أحمد"</span>,
+      <span class="hljs-attr">"used_by_student_code"</span>: <span class="hljs-string">"S-001"</span>,
+      <span class="hljs-attr">"used_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>
+    }
+  ]
+}
+</div></code></pre>
+<hr>
 <h2 id="6-transactions">6. Transactions</h2>
 <h3 id="get-paymentstransactions">GET /payments/transactions/</h3>
 <p><strong>Description:</strong> Full balance transaction ledger. SiteOwner must select both a student and a course to view transactions (prevents mixing up students across courses).</p>

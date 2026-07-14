@@ -898,6 +898,7 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <p>| <strong>Batch ID + Excel export</strong> | Codes now have a atch_id UUID for grouping bulk generations. GET /codes/export/?batch=<uuid> downloads an Excel sheet. GET /codes/summary/?course=X shows aggregate stats. |
 | <strong>Expiry auto-set to 1 year</strong> | expires_at no longer optional � defaults to created_at + 365 days. Not editable. |
 | <strong>Deactivated course check</strong> | Codes for deactivated courses cannot be redeemed. |</p>
+<p>| <strong>Batch name + batch list API</strong> | RechargeCode now has atch_name (auto-generated, per-teacher counter). Added GET /codes/batches/ (paginated batch list), GET /codes/batches/<uuid>/ (batch detail with codes), GET /codes/analytics/ (analytics dashboard with Teacher's Cut / SiteOwner's Cut). |</p>
 
 </body>
 </html>

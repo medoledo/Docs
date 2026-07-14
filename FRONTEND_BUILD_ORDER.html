@@ -1534,55 +1534,170 @@ Shows every transaction with balance_before → balance_after:
 <h3 id="page-12-codes-page-teacher--siteowner">Page 12: Codes Page (Teacher + SiteOwner)</h3>
 <p><strong>Purpose:</strong> Generate, track, and export recharge codes. Codes are money — every action is audited.</p>
 <p><strong>Roles:</strong> SiteOwner (all courses), Teacher (own courses only). Assistant can view their teacher's codes.</p>
-<p><strong>APIs:</strong></p>
+<hr>
+<p><strong>Page Layout (3 views):</strong></p>
+<pre class="hljs"><code><div>┌──────────────────────────────────────────────────────────────────┐
+│  Analytics Cards: Total Batches | Codes | Valid | Used |        │
+│  Blacklisted | Revenue | Teacher Cut | SiteOwner Cut            │
+├──────────────────────────────────────────────────────────────────┤
+│  Filter Bar: [Teacher ▼] [Course ▼] [Clear]  Showing 12 batches │
+├──────────────────────────────────────────────────────────────────┤
+│  Batch List Table:                                               │
+│  Batch ID │ Course │ Teacher │ Codes │ Value │ Status │ Notes   │
+│  Batch #1 │ Chem   │ Dr Hany │ 100   │ 50    │ ████░░ │ Center  │
+│  Batch #2 │ Phys   │ Omar    │ 50    │ 100   │ ██░░░░ │ School  │
+├──────────────────────────────────────────────────────────────────┤
+│  Pagination                                                     │
+└──────────────────────────────────────────────────────────────────┘
+
+Click a batch row → View individual codes in that batch:
+
+┌──────────────────────────────────────────────────────────────────┐
+│  ← Back to Batches                                              │
+│  Batch #1 — Chemistry 3rd Secondary — Dr Hany Hassanin          │
+│  Codes: 100 | Value: 50 EGP | Redeemed: 17,500 EGP             │
+├──────────────────────────────────────────────────────────────────┤
+│  Code          │ Value │ Status   │ Used By       │ Used At     │
+│  X7K9-M2P4-…  │ 50    │ ✅ Used │ Ahmed / أحمد  │ 2026-07-14  │
+│  A1B2-C3D4-…  │ 50    │ 🟢 Valid │ —             │ —           │
+└──────────────────────────────────────────────────────────────────┘
+
+Click &quot;History&quot; → Full audit modal with date/type/code filters.
+Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
+</div></code></pre>
+<hr>
+<p><strong>APIs for the Page:</strong></p>
 <table>
 <thead>
 <tr>
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
+<th>Where to find</th>
 <th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>List codes</td>
+<td><strong>Analytics dashboard</strong></td>
 <td>GET</td>
-<td><code>/payments/codes/</code></td>
-<td>Paginated list. Filters: <code>?course=X</code>, <code>?status=valid|used|blacklisted</code>, <code>?batch=&lt;uuid&gt;</code></td>
+<td><code>/payments/codes/analytics/</code></td>
+<td>API_SITEOWNER.md §5</td>
+<td>Returns total_batches, total_codes, valid/used/blacklisted counts, Teachers Cut, SiteOwner Cut</td>
 </tr>
 <tr>
-<td>Generate codes</td>
+<td><strong>Batch list (paginated)</strong></td>
+<td>GET</td>
+<td><code>/payments/codes/batches/</code></td>
+<td>API_SITEOWNER.md §5</td>
+<td>Grouped by batch_id, filters: <code>?teacher=X</code>, <code>?course=X</code></td>
+</tr>
+<tr>
+<td><strong>Batch detail</strong></td>
+<td>GET</td>
+<td><code>/payments/codes/batches/&lt;uuid:batch_id&gt;/</code></td>
+<td>API_SITEOWNER.md §5</td>
+<td>Individual codes inside a batch with their status</td>
+</tr>
+<tr>
+<td><strong>Generate codes</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/</code></td>
+<td>API_SITEOWNER.md §5</td>
 <td>Bulk create (1-1000). Body: <code>{course, value, notes, count}</code></td>
 </tr>
 <tr>
-<td>Code summary</td>
+<td><strong>Code summary</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/summary/?course=X</code></td>
+<td>API_SITEOWNER.md §5</td>
 <td>Aggregate totals: generated, redeemed, blacklisted, values</td>
 </tr>
 <tr>
-<td>Export batch</td>
+<td><strong>Export batch to Excel</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/export/?batch=&lt;uuid&gt;</code></td>
-<td>Download codes as Excel (.xlsx)</td>
+<td>API_SITEOWNER.md §5</td>
+<td>Download .xlsx with full code details</td>
 </tr>
 <tr>
-<td>Request blacklist OTP</td>
+<td><strong>Request blacklist OTP</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/&lt;pk&gt;/request-blacklist-otp/</code></td>
-<td>SiteOwner only. Sends OTP to gmail</td>
+<td>API_SITEOWNER.md §5</td>
+<td>SiteOwner only. Sends OTP to their gmail</td>
 </tr>
 <tr>
-<td>Blacklist code</td>
+<td><strong>Blacklist code</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/&lt;pk&gt;/blacklist/</code></td>
-<td>SiteOwner only. One-way irreversible. Requires OTP</td>
+<td>API_SITEOWNER.md §5</td>
+<td>SiteOwner only. One-way irreversible. Requires 6-digit OTP</td>
+</tr>
+<tr>
+<td><strong>Transaction history</strong></td>
+<td>GET</td>
+<td><code>/payments/transactions/?transaction_type=code_redeemed</code></td>
+<td>API_SITEOWNER.md §6</td>
+<td>Full audit log with date filters. Filter by <code>?start_date=</code>, <code>?end_date=</code>, <code>?code=</code></td>
 </tr>
 </tbody>
 </table>
+<hr>
+<p><strong>Analytics Cards (from <code>GET /codes/analytics/</code>):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Card</th>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total Batches</td>
+<td><code>total_batches</code></td>
+<td>Number of distinct batch_id values</td>
+</tr>
+<tr>
+<td>Total Codes</td>
+<td><code>total_codes</code></td>
+<td>Total codes across all batches</td>
+</tr>
+<tr>
+<td>Valid</td>
+<td><code>valid_count</code></td>
+<td>Codes not yet redeemed or blacklisted</td>
+</tr>
+<tr>
+<td>Used</td>
+<td><code>used_count</code></td>
+<td>Successfully redeemed codes</td>
+</tr>
+<tr>
+<td>Blacklisted</td>
+<td><code>blacklisted_count</code></td>
+<td>Permanently deactivated by SiteOwner</td>
+</tr>
+<tr>
+<td>Revenue Collected</td>
+<td><code>used_value</code></td>
+<td>Total EGP of all redeemed codes</td>
+</tr>
+<tr>
+<td>Teacher's Cut</td>
+<td><code>teachers_cut</code></td>
+<td>SUM of <code>teacher.video_security.price_per_student</code> per redeemed code</td>
+</tr>
+<tr>
+<td>SiteOwner's Cut</td>
+<td><code>siteowner_cut</code></td>
+<td><code>used_value - teachers_cut</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Teacher's Cut Calculation:</strong> Each teacher has a <code>video_security</code> setting with a <code>price_per_student</code> (default: 0 EGP). Every time a code is redeemed, that fee is deducted from the code value for the teacher. The remainder is the platform's cut. Example: Code value = 100 EGP, Teacher fee = 20 EGP → Teacher cut = 20 EGP, SiteOwner cut = 80 EGP.</p>
+<hr>
 <p><strong>Code Model Fields:</strong></p>
 <table>
 <thead>
@@ -1594,11 +1709,11 @@ Shows every transaction with balance_before → balance_after:
 <tbody>
 <tr>
 <td><code>code</code></td>
-<td>Auto-generated 16-char random code (XXXX-XXXX-XXXX-XXXX)</td>
+<td>Auto-generated 16-char random code (<code>XXXX-XXXX-XXXX-XXXX</code>)</td>
 </tr>
 <tr>
 <td><code>value</code></td>
-<td>1-1000 EGP. Set at creation, <strong>never editable</strong></td>
+<td>1–1000 EGP. Set at creation, <strong>never editable</strong></td>
 </tr>
 <tr>
 <td><code>status</code></td>
@@ -1607,6 +1722,10 @@ Shows every transaction with balance_before → balance_after:
 <tr>
 <td><code>batch_id</code></td>
 <td>UUID grouping codes from the same bulk generation</td>
+</tr>
+<tr>
+<td><code>batch_name</code></td>
+<td>Human-readable name (<code>&quot;Batch #1&quot;</code>, <code>&quot;Batch #2&quot;</code>), per-teacher counter</td>
 </tr>
 <tr>
 <td><code>expires_at</code></td>
@@ -1638,10 +1757,12 @@ Shows every transaction with balance_before → balance_after:
 </tr>
 </tbody>
 </table>
-<p><strong>Code Statuses:</strong></p>
-<pre class="hljs"><code><div>Valid    → Redeemed (used)     — Student self-redeem or Teacher recharge
-Valid    → Blacklisted        — SiteOwner only, OTP required, irreversible
+<hr>
+<p><strong>Code Status Flow:</strong></p>
+<pre class="hljs"><code><div>Valid ──→ Redeemed (used)     — Student self-redeem or Teacher recharge
+Valid ──→ Blacklisted         — SiteOwner only, OTP required, irreversible
 </div></code></pre>
+<hr>
 <p><strong>Business Rules:</strong></p>
 <ul>
 <li>Codes are <strong>course-specific</strong> — can only be redeemed for the course they were generated for</li>
@@ -1652,9 +1773,31 @@ Valid    → Blacklisted        — SiteOwner only, OTP required, irreversible
 <li>Expiry is 1 year from creation (not changeable)</li>
 <li>Race-condition-safe with <code>select_for_update()</code> — no double-redemption possible</li>
 <li>Every code action creates an immutable <code>BalanceTransaction</code> (source of truth for finances)</li>
+<li>Batch name counter is <strong>per-teacher</strong> (Teacher A: Batch #1, #2; Teacher B: Batch #1, #2)</li>
 </ul>
-<p><strong>Excel Export Columns:</strong>
+<hr>
+<p><strong>Excel Export Columns (from <code>GET /codes/export/?batch=&lt;uuid&gt;</code>):</strong>
 Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted By | Blacklisted At | Created At | Expires At | Notes</p>
+<hr>
+<p><strong>Page Flow for SiteOwner:</strong></p>
+<pre class="hljs"><code><div>1. Page loads → GET /payments/codes/analytics/ → populate 8 analytics cards
+2. GET /payments/codes/batches/ → populate batch table (paginated, 20 per page)
+3. Teacher dropdown → GET /payments/codes/batches/?teacher=X → filter batches
+4. Course dropdown → GET /payments/codes/batches/?course=X → filter batches
+5. Click batch row → GET /payments/codes/batches/&lt;uuid&gt;/ → show individual codes
+6. Click &quot;Export&quot; on batch → GET /payments/codes/export/?batch=&lt;uuid&gt; → download .xlsx
+7. Click &quot;History&quot; → GET /payments/transactions/?transaction_type=code_redeemed → audit modal
+8. Click &quot;Generate Batch&quot; → POST /payments/codes/ → modal with course/count/value/notes
+9. Click &quot;Blacklist&quot; on a code → POST /codes/&lt;pk&gt;/request-blacklist-otp/ → OTP modal
+10. Enter OTP → POST /codes/&lt;pk&gt;/blacklist/ → code permanently blacklisted
+</div></code></pre>
+<p><strong>Page Flow for Teacher (same as above, but:</strong></p>
+<ul>
+<li>No teacher dropdown (auto-filtered to their own data)</li>
+<li>&quot;Generate Batch&quot; creates codes for their own courses only</li>
+<li>Analytics show only their own codes</li>
+<li>Batch list shows only their own batches</li>
+</ul>
 <h3 id="page-12-course-dashboard-unified--built-last">Page 12: Course Dashboard (Unified — Built Last)</h3>
 <p>When all features exist, build a <strong>single page</strong> that unifies everything into 4 tabs:</p>
 <pre class="hljs"><code><div>┌────────────────────────────────────────────────────────────┐
