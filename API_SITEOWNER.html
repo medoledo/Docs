@@ -557,7 +557,7 @@ code {
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong> Same as POST body (all fields optional for PATCH). Additionally:</p>
 <ul>
-<li><code>bunny_collection_id</code> can be set directly here, or use the dedicated <code>assign-collection</code> endpoint below.</li>
+<li><code>bunny_collection_id</code> can be set directly here, or use the dedicated <code>teacher update (set bunny_collection_id)</code> endpoint below.</li>
 <li><code>password</code> can be set to reset the teacher's password directly (optional). The teacher can also use the forgot-password flow themselves.</li>
 </ul>
 <p><strong>Success Response — 200 OK:</strong> Returns the full teacher profile (same structure as GET detail above, including <code>bunny_collection_id</code>).</p>
@@ -597,8 +597,8 @@ code {
 <h3 id="teacher-collection-management">Teacher Collection Management</h3>
 <p>Teachers must have a <strong>Bunny Stream collection</strong> assigned before they can upload videos. Create a collection manually in your <a href="https://dash.bunny.net/stream">Bunny Stream dashboard</a> → Collections → Create Collection, then assign it via the API.</p>
 <p><strong>The response for teacher list/detail views now includes <code>bunny_collection_id</code>.</strong></p>
-<h4 id="patch-accountsteachersidassign-collection"><code>PATCH /accounts/teachers/&lt;id&gt;/assign-collection/</code></h4>
-<p><strong>Note:</strong> Collection assignment is done directly via <code>PATCH /accounts/teachers/&lt;id&gt;/</code> — set <code>bunny_collection_id</code> in the update body. The dedicated <code>assign-collection/</code> endpoint has been removed.</p>
+<h4 id="patch-accountsteachersid-set-bunnycollectionid-directly"><code>PATCH /accounts/teachers/&lt;id&gt;/ (set bunny_collection_id directly)</code></h4>
+<p><strong>Note:</strong> Collection assignment is done directly via <code>PATCH /accounts/teachers/&lt;id&gt;/</code> — set <code>bunny_collection_id</code> in the update body. The dedicated <code>teacher update (set bunny_collection_id)/</code> endpoint has been removed.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
@@ -650,7 +650,7 @@ code {
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Collection created and assigned to teacher."</span>
 }
 </div></code></pre>
-<p><strong>Note:</strong> To assign an existing collection GUID, use <code>PATCH /accounts/teachers/&lt;id&gt;/</code> with <code>bunny_collection_id</code> in the body. The dedicated <code>assign-collection/</code> endpoint has been removed.</p>
+<p><strong>Note:</strong> To assign an existing collection GUID, use <code>PATCH /accounts/teachers/&lt;id&gt;/</code> with <code>bunny_collection_id</code> in the body. The dedicated <code>teacher update (set bunny_collection_id)/</code> endpoint has been removed.</p>
 <hr>
 <h2 id="2-student-management">2. Student Management</h2>
 <h3 id="get-accountsstudents">GET /accounts/students/</h3>
@@ -1002,7 +1002,7 @@ code {
 <h2 id="5-recharge-codes">5. Recharge Codes</h2>
 <h3 id="post-paymentscodes">POST /payments/codes/</h3>
 <p><strong>Description:</strong> Generate new recharge codes. Codes are course-specific and can only be redeemed for the course they are generated for.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1019,7 +1019,8 @@ code {
   <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String — Auto-generated (e.g. X7K9-M2P4-QR1W-L5D8)"</span>,
   <span class="hljs-attr">"value"</span>: <span class="hljs-string">"Decimal"</span>,
-  <span class="hljs-attr">"is_used"</span>: <span class="hljs-string">"boolean - Whether this code has been redeemed"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (valid)"</span>,
+  <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"String (Valid)"</span>,
   <span class="hljs-attr">"used_by"</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">"used_by_name"</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">"used_at"</span>: <span class="hljs-literal">null</span>,
@@ -1063,6 +1064,74 @@ code {
 <li>Codes are course-specific — a code generated for Course A cannot be used for Course B.</li>
 </ul>
 <hr>
+<h3 id="post-paymentscodespkrequest-blacklist-otp">POST /payments/codes/<pk>/request-blacklist-otp/</h3>
+<p><strong>Description:</strong> Request an OTP to authorize blacklisting a recharge code. Sends a 6-digit OTP to the SiteOwner's registered gmail. The OTP expires in 30 minutes.</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"OTP sent to your email."</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"siteowner@gmail.com"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Code is already used or already blacklisted</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Failed to send OTP email</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="post-paymentscodespkblacklist">POST /payments/codes/<pk>/blacklist/</h3>
+<p><strong>Description:</strong> Permanently blacklist a recharge code. This is a <strong>one-way irreversible action</strong> — once blacklisted, the code can never be used or un-blacklisted. Requires a valid OTP.</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"String — 6-digit OTP sent to your email (required)"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Code X7K9-M2P4-QR1W-L5D8 has been blacklisted."</span>,
+  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"blacklisted"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Code is already used or already blacklisted</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Missing OTP</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Invalid or expired OTP</td>
+</tr>
+</tbody>
+</table>
+<hr>
 <h3 id="get-paymentscodes">GET /payments/codes/</h3>
 <p><strong>Description:</strong> List all recharge codes. Supports filtering and ordering.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
@@ -1082,9 +1151,9 @@ code {
 <td>Filter by course ID</td>
 </tr>
 <tr>
-<td><code>is_used</code></td>
-<td>Boolean</td>
-<td>Filter by usage status</td>
+<td><code>status</code></td>
+<td>String</td>
+<td>Filter: <code>valid</code>, <code>used</code>, or <code>blacklisted</code></td>
 </tr>
 </tbody>
 </table>
@@ -1101,130 +1170,90 @@ code {
       <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"value"</span>: <span class="hljs-string">"Decimal"</span>,
-      <span class="hljs-attr">"is_used"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (valid|used|blacklisted)"</span>,
+      <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"String (Valid|Used|Blacklisted)"</span>,
       <span class="hljs-attr">"used_by"</span>: <span class="hljs-string">"Integer | null"</span>,
       <span class="hljs-attr">"used_by_name"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"used_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"blacklisted_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"blacklisted_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"blacklisted_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
       <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601) | null"</span>,
       <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"created_by_username"</span>: <span class="hljs-string">"String"</span>
+      <span class="hljs-attr">"created_by_username"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"created_by_role"</span>: <span class="hljs-string">"String"</span>
     }
   ]
 }
 </div></code></pre>
 <hr>
 <h2 id="6-revenue-analytics">6. Revenue Analytics</h2>
-<h3 id="get-paymentsrevenuecourseid"><code>GET /payments/revenue/course/&lt;id&gt;/</code></h3>
-<p><strong>Description:</strong> Deep revenue dive for a specific course. Includes per-topic and per-lecture breakdowns, plus student spending distribution.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"course_id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"total_revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-  <span class="hljs-attr">"total_purchases"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"topics"</span>: [
-    {
-      <span class="hljs-attr">"topic_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"lecture_count"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"purchase_count"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>
-    }
-  ],
-  <span class="hljs-attr">"lectures"</span>: [
-    {
-      <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"topic_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"price"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"purchase_count"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>
-    }
-  ],
-  <span class="hljs-attr">"student_spending"</span>: [
-    {
-      <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"total_spent"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-      <span class="hljs-attr">"lectures_purchased"</span>: <span class="hljs-string">"Integer"</span>
-    }
-  ]
+<blockquote>
+<p><strong>Removed.</strong> Revenue endpoints have been deleted. Use <code>GET /payments/transactions/</code> for financial data.
+&quot;average_days_to_purchase&quot;: &quot;Float&quot;,
+&quot;purchase_timeline&quot;: [
+{
+&quot;student_name&quot;: &quot;String&quot;,
+&quot;student_code&quot;: &quot;String&quot;,
+&quot;amount_paid&quot;: &quot;String — Decimal as string&quot;,
+&quot;purchased_at&quot;: &quot;DateTime (ISO 8601)&quot;
 }
-</div></code></pre>
-<hr>
-<h3 id="get-paymentsrevenuelectureid"><code>GET /payments/revenue/lecture/&lt;id&gt;/</code></h3>
-<p><strong>Description:</strong> Revenue details for a specific lecture, including purchase timeline and average time-to-purchase.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"price"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"total_revenue"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-  <span class="hljs-attr">"buyer_count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"purchase_count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"average_days_to_purchase"</span>: <span class="hljs-string">"Float"</span>,
-  <span class="hljs-attr">"purchase_timeline"</span>: [
-    {
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"String — Decimal as string"</span>,
-      <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h2 id="7-siteowner-dashboard">7. SiteOwner Dashboard</h2>
-<h3 id="get-dashboardssite-owner">GET /dashboards/site-owner/</h3>
-<p><strong>Description:</strong> Returns comprehensive dashboard statistics for site owners. Aggregates system-wide metrics including user counts, time-based metrics, and detailed breakdowns.</p>
-<p><strong>Authentication:</strong> SiteOwner</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"total_students"</span>: <span class="hljs-string">"integer - Total number of student accounts"</span>,
-  <span class="hljs-attr">"total_teachers"</span>: <span class="hljs-string">"integer - Total number of teacher accounts"</span>,
-  <span class="hljs-attr">"total_assistants"</span>: <span class="hljs-string">"integer - Total number of assistant accounts"</span>,
-  <span class="hljs-attr">"new_users_this_month"</span>: <span class="hljs-string">"integer - New users registered this month"</span>,
-  <span class="hljs-attr">"new_students_this_month"</span>: <span class="hljs-string">"integer - New students registered this month"</span>,
-  <span class="hljs-attr">"new_teachers_this_month"</span>: <span class="hljs-string">"integer - New teachers created this month"</span>,
-  <span class="hljs-attr">"students_by_status"</span>: {
-    <span class="hljs-attr">"verified"</span>: <span class="hljs-string">"integer - Count of verified students"</span>,
-    <span class="hljs-attr">"pending"</span>: <span class="hljs-string">"integer - Count of pending students"</span>,
-    <span class="hljs-attr">"declined"</span>: <span class="hljs-string">"integer - Count of declined students"</span>,
-    <span class="hljs-attr">"suspended_temporary"</span>: <span class="hljs-string">"integer - Count of temporarily suspended students"</span>,
-    <span class="hljs-attr">"suspended_permanent"</span>: <span class="hljs-string">"integer - Count of permanently suspended students"</span>
+]
+}</p>
+</blockquote>
+<pre class="hljs"><code><div>
+---
+
+## 7. SiteOwner Dashboard
+
+### GET /dashboards/site-owner/
+
+**Description:** Returns comprehensive dashboard statistics for site owners. Aggregates system-wide metrics including user counts, time-based metrics, and detailed breakdowns.
+
+**Authentication:** SiteOwner
+
+**Success Response — 200 OK:**
+
+```json
+{
+  &quot;total_students&quot;: &quot;integer - Total number of student accounts&quot;,
+  &quot;total_teachers&quot;: &quot;integer - Total number of teacher accounts&quot;,
+  &quot;total_assistants&quot;: &quot;integer - Total number of assistant accounts&quot;,
+  &quot;new_users_this_month&quot;: &quot;integer - New users registered this month&quot;,
+  &quot;new_students_this_month&quot;: &quot;integer - New students registered this month&quot;,
+  &quot;new_teachers_this_month&quot;: &quot;integer - New teachers created this month&quot;,
+  &quot;students_by_status&quot;: {
+    &quot;verified&quot;: &quot;integer - Count of verified students&quot;,
+    &quot;pending&quot;: &quot;integer - Count of pending students&quot;,
+    &quot;declined&quot;: &quot;integer - Count of declined students&quot;,
+    &quot;suspended_temporary&quot;: &quot;integer - Count of temporarily suspended students&quot;,
+    &quot;suspended_permanent&quot;: &quot;integer - Count of permanently suspended students&quot;
   },
-  <span class="hljs-attr">"students_by_grade_school_division"</span>: [
+  &quot;students_by_grade_school_division&quot;: [
     {
-      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"string - Grade name"</span>,
-      <span class="hljs-attr">"school_type"</span>: <span class="hljs-string">"string - School type name"</span>,
-      <span class="hljs-attr">"division"</span>: <span class="hljs-string">"string - Division name"</span>,
-      <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer - Number of students in this combination"</span>
+      &quot;grade&quot;: &quot;string - Grade name&quot;,
+      &quot;school_type&quot;: &quot;string - School type name&quot;,
+      &quot;division&quot;: &quot;string - Division name&quot;,
+      &quot;count&quot;: &quot;integer - Number of students in this combination&quot;
     }
   ],
-  <span class="hljs-attr">"teachers_active_count"</span>: <span class="hljs-string">"integer - Number of active teachers"</span>,
-  <span class="hljs-attr">"teachers_inactive_count"</span>: <span class="hljs-string">"integer - Number of inactive teachers"</span>,
-  <span class="hljs-attr">"teachers_by_grade_subject"</span>: [
+  &quot;teachers_active_count&quot;: &quot;integer - Number of active teachers&quot;,
+  &quot;teachers_inactive_count&quot;: &quot;integer - Number of inactive teachers&quot;,
+  &quot;teachers_by_grade_subject&quot;: [
     {
-      <span class="hljs-attr">"grade"</span>: <span class="hljs-string">"string - Grade name"</span>,
-      <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"string - Subject name"</span>,
-      <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer - Number of teachers for this grade/subject"</span>
+      &quot;grade&quot;: &quot;string - Grade name&quot;,
+      &quot;subject&quot;: &quot;string - Subject name&quot;,
+      &quot;count&quot;: &quot;integer - Number of teachers for this grade/subject&quot;
     }
   ],
-  <span class="hljs-attr">"total_subjects"</span>: <span class="hljs-string">"integer - Total number of subjects"</span>,
-  <span class="hljs-attr">"total_grades"</span>: <span class="hljs-string">"integer - Total number of grades"</span>,
-  <span class="hljs-attr">"total_school_types"</span>: <span class="hljs-string">"integer - Total number of school types"</span>,
-  <span class="hljs-attr">"total_divisions"</span>: <span class="hljs-string">"integer - Total number of divisions"</span>,
-  <span class="hljs-attr">"total_governorates"</span>: <span class="hljs-string">"integer - Total number of governorates"</span>,
-  <span class="hljs-attr">"total_areas"</span>: <span class="hljs-string">"integer - Total number of areas"</span>,
-  <span class="hljs-attr">"total_video_security_options"</span>: <span class="hljs-string">"integer - Total number of video security options"</span>
+  &quot;total_subjects&quot;: &quot;integer - Total number of subjects&quot;,
+  &quot;total_grades&quot;: &quot;integer - Total number of grades&quot;,
+  &quot;total_school_types&quot;: &quot;integer - Total number of school types&quot;,
+  &quot;total_divisions&quot;: &quot;integer - Total number of divisions&quot;,
+  &quot;total_governorates&quot;: &quot;integer - Total number of governorates&quot;,
+  &quot;total_areas&quot;: &quot;integer - Total number of areas&quot;,
+  &quot;total_video_security_options&quot;: &quot;integer - Total number of video security options&quot;
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>

@@ -891,6 +891,7 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 </tbody>
 </table>
 <p>| <strong>TeacherRechargeView redesigned</strong> | Now uses RechargeCode instead of free-form amount. performed_by is set on all transactions (student self-redeem + teacher recharge). |</p>
+<p>| <strong>Code blacklist system</strong> | RechargeCode.status (valid/used/blacklisted) replaces is_used. Added BlacklistOTP model. Two new endpoints: POST /codes/<pk>/request-blacklist-otp/ (SiteOwner, sends OTP to gmail) and POST /codes/<pk>/blacklist/ (SiteOwner, one-way irreversible). Generation restricted to SiteOwner + Teacher only. |</p>
 
 </body>
 </html>
