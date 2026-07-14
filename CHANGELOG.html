@@ -892,6 +892,9 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 </table>
 <p>| <strong>TeacherRechargeView redesigned</strong> | Now uses RechargeCode instead of free-form amount. performed_by is set on all transactions (student self-redeem + teacher recharge). |</p>
 <p>| <strong>Code blacklist system</strong> | RechargeCode.status (valid/used/blacklisted) replaces is_used. Added BlacklistOTP model. Two new endpoints: POST /codes/<pk>/request-blacklist-otp/ (SiteOwner, sends OTP to gmail) and POST /codes/<pk>/blacklist/ (SiteOwner, one-way irreversible). Generation restricted to SiteOwner + Teacher only. |</p>
+<p>| <strong>Student detail includes enrollments</strong> | <code>GET /accounts/students/&lt;id&gt;/</code> now returns <code>enrollments[]</code> array with course name, teacher, status, balance for each enrollment. |
+| <strong>Transaction date filters</strong> | <code>GET /payments/transactions/</code> now supports <code>?start_date=</code> and <code>?end_date=</code> (YYYY-MM-DD) for date range filtering. |
+| <strong>SiteOwner transaction restriction</strong> | SiteOwner must provide both <code>?student=X</code> and <code>?course=X</code> to view transactions. Prevents mixing up students across courses. |</p>
 
 </body>
 </html>

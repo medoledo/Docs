@@ -696,7 +696,7 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </ul>
 <hr>
 <h2 id="page-6-students-page-siteowner">Page 6: Students Page (SiteOwner)</h2>
-<p>Manage all student registrations. Approve/decline pending students.</p>
+<p>Manage all student registrations. Approve/decline/suspend students. View full profile with enrollments, per-course balances, and transaction history per course.</p>
 <p><strong>APIs to use:</strong></p>
 <table>
 <thead>
@@ -715,16 +715,22 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <td>Paginated list with search, sort, filters</td>
 </tr>
 <tr>
-<td>Get student</td>
+<td>Get student (with enrollments)</td>
 <td>GET</td>
 <td><code>/accounts/students/&lt;id&gt;/</code></td>
-<td>Full student detail</td>
+<td>Full student detail + <code>enrollments[]</code> array (course, teacher, status, balance)</td>
 </tr>
 <tr>
-<td>Change status</td>
+<td>Update student (status + profile)</td>
 <td>PATCH</td>
-<td><code>/accounts/students/&lt;id&gt;/status/</code></td>
-<td>Update status + is_active</td>
+<td><code>/accounts/students/&lt;id&gt;/</code></td>
+<td>Update status + profile fields in one call</td>
+</tr>
+<tr>
+<td>Transaction history</td>
+<td>GET</td>
+<td><code>/payments/transactions/?student=X&amp;course=Y</code></td>
+<td>Full ledger for a specific student + course (requires both params)</td>
 </tr>
 </tbody>
 </table>
@@ -740,11 +746,15 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <ul>
 <li>Student Code, Name (en), Grade, Phone, Gmail, Status badge, Created date, Actions</li>
 </ul>
-<p><strong>Student Detail view:</strong></p>
+<p><strong>Student Detail view (3 sections):</strong></p>
+<p><strong>Section 1 — Profile Info:</strong></p>
 <ul>
-<li>
-<p>Full profile info (name_ar, name_en, phone, father/mother numbers, school info, etc.)</p>
-</li>
+<li>Full profile info (name_ar, name_en, phone, father/mother numbers, school info, gmail, birth_date, gender, governorate, area, etc.)</li>
+<li><code>enrollments[]</code> array shows all courses the student is enrolled in with per-course balance, teacher name, status, enrollment date.</li>
+<li>Status history timeline from <code>status_history</code> field.</li>
+</ul>
+<p><strong>Section 2 — Status Management:</strong></p>
+<ul>
 <li>
 <p>Status change buttons (with <code>reason</code> field):</p>
 <ul>
@@ -755,7 +765,7 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </ul>
 </li>
 <li>
-<p><strong>Status transition rules</strong> (controlled by backend — frontend should hide invalid actions):</p>
+<p><strong>Status transition rules:</strong></p>
 <ul>
 <li><code>pending</code> → only &quot;Verify&quot; or &quot;Decline&quot;</li>
 <li><code>verified</code> → only &quot;Suspend&quot; (cannot decline or set to pending)</li>
@@ -764,28 +774,33 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </ul>
 </li>
 <li>
-<p><strong>Student profile edit rules:</strong></p>
+<p><strong>Profile edit rules</strong> (student self-service):</p>
 <ul>
-<li><code>verified</code> → <strong>Cannot edit</strong> — &quot;Contact an administrator&quot;</li>
-<li><code>pending</code> → <strong>Cannot edit</strong> — &quot;Account is pending approval&quot;</li>
-<li><code>declined</code> → <strong>Can edit</strong> — after saving, status resets to <code>pending</code> for re-evaluation</li>
+<li><code>verified</code> → <strong>Cannot edit</strong></li>
+<li><code>pending</code> → <strong>Cannot edit</strong></li>
+<li><code>declined</code> → <strong>Can edit</strong> — after saving, status resets to <code>pending</code></li>
 <li><code>suspended_temporary</code> → <strong>Cannot edit</strong></li>
-<li><code>suspended_permanent</code> → <strong>Blocked from login entirely</strong></li>
+<li><code>suspended_permanent</code> → <strong>Blocked from login</strong></li>
 </ul>
 </li>
 <li>
 <p><strong>Login behavior by status:</strong></p>
 <ul>
-<li><code>pending</code> → Logs in, receives <code>{status: &quot;pending&quot;}</code> — show &quot;pending approval&quot; page</li>
+<li><code>pending</code> → receives <code>{status: &quot;pending&quot;}</code> — show &quot;pending approval&quot; page</li>
 <li><code>verified</code> → Normal login</li>
-<li><code>declined</code> → Logs in, receives <code>{status: &quot;declined&quot;}</code> — show reason + prompt to edit profile</li>
-<li><code>suspended_temporary</code> → Logs in, receives <code>{status: &quot;suspended_temporary&quot;}</code> — show reason</li>
+<li><code>declined</code> → receives <code>{status: &quot;declined&quot;}</code> — show reason + prompt to edit profile</li>
+<li><code>suspended_temporary</code> → receives <code>{status: &quot;suspended_temporary&quot;}</code> — show reason</li>
 <li><code>suspended_permanent</code> → <strong>Blocked</strong> — 401 &quot;Your account has been permanently suspended.&quot;</li>
 </ul>
 </li>
-<li>
-<p><strong>Status history</strong> is visible in the student detail response under <code>status_history</code> — an array of all past changes with <code>changed_by</code>, <code>from_status</code>, <code>to_status</code>, <code>reason</code>, and <code>created_at</code>.</p>
-</li>
+</ul>
+<p><strong>Section 3 — Transaction History (per course):</strong></p>
+<ul>
+<li><strong>SiteOwner MUST select a course first</strong> (from the enrollments table) before viewing transactions</li>
+<li>Once a course is selected: <code>GET /payments/transactions/?student=&lt;id&gt;&amp;course=&lt;id&gt;</code></li>
+<li>Shows full ledger: Date &amp; Time | Type | Amount | Balance Before → After | Performed By | Code</li>
+<li>Filters: <code>?start_date=YYYY-MM-DD</code>, <code>?end_date=YYYY-MM-DD</code>, <code>?code=ABC123</code>, <code>?transaction_type=code_redeemed|lecture_purchase</code></li>
+<li>Pagination: 25 per page (<code>?page_size=25</code>)</li>
 </ul>
 <p><strong>Default view:</strong> Show pending students first (sort by most recent).</p>
 <hr>
