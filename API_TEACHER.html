@@ -1306,7 +1306,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
       <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
       <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
       <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
@@ -1332,7 +1331,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"course"</span>: <span class="hljs-string">"integer (required) — Course ID"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string (required) — Exam title"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string (optional)"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal, optional) — Minimum score to pass. Null = no passing threshold."</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean (optional, default: true)"</span>,
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>,
   <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"datetime (ISO 8601, optional) — Students cannot start before this date."</span>,
@@ -1363,7 +1361,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
   <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
@@ -1968,7 +1965,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
       <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
       <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
       <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
@@ -2004,7 +2000,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer (required) — Lecture ID"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string (required) — Quiz title"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string (optional) — Description"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal, optional) — Minimum score to pass. Null = no passing threshold."</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean (optional, default: true)"</span>,
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean (optional, default: false) — Must be true for students to see the quiz."</span>,
   <span class="hljs-attr">"settings"</span>: {
@@ -2149,7 +2144,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">"settings"</span>: { <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-number">30</span>, <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"immediate"</span>, ... },
@@ -2202,322 +2196,11 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td>Full quiz: questions, choices (without <code>is_correct</code>), saved answers</td>
 </tr>
 <tr>
-<td><strong>Student (not started)</strong></td>
-<td>Only: id, title, description, passing_score, total_points. <strong>Questions and settings are hidden.</strong></td>
+<td>Error Responses:**</td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK (Teacher view):</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
-  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
-  <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"settings"</span>: {
-    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer"</span>,
-    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string"</span>,
-    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string"</span>,
-    <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string"</span>,
-    <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"boolean"</span>,
-    <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"boolean"</span>,
-    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer"</span>,
-    <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"string"</span>,
-    <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"boolean"</span>
-  },
-  <span class="hljs-attr">"quiz_questions"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"integer | null"</span>,
-      <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string — Question text"</span>,
-      <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (mcq_single|mcq_multiple|written)"</span>,
-      <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"string (easy|medium|hard)"</span>,
-      <span class="hljs-attr">"standalone_choices"</span>: [
-        {
-          <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
-          <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
-          <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"boolean"</span>,
-          <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>
-        }
-      ]
-    }
-  ],
-  <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"created_by_name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
-  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>403</td>
-<td>Teacher trying to access another teacher's quiz</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Quiz not found, or student without purchase</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h4 id="114-putpatch-learningquizzesid">11.4 PUT/PATCH /learning/quizzes/<id>/</h4>
-<p><strong>Description:</strong> Update quiz metadata and/or settings. Send <code>settings</code> object to update quiz settings. Leaves questions unchanged (modify questions separately).</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Access Control:</strong> Teachers can only update quizzes in their own courses. Others get 404.</p>
-<p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH).</p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string (optional)"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string (optional)"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"string (decimal, optional)"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean (optional)"</span>,
-  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean (optional)"</span>,
-  <span class="hljs-attr">"settings"</span>: {
-    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer (optional)"</span>,
-    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (optional)"</span>,
-    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (optional)"</span>,
-    ...
-  }
-}
-</div></code></pre>
-<p><strong>Success Response — 200 OK:</strong> Updated quiz object (same structure as GET detail).</p>
-<hr>
-<h4 id="115-delete-learningquizzesid">11.5 DELETE /learning/quizzes/<id>/</h4>
-<p><strong>Description:</strong> Delete a quiz and all its submissions, answers, and grades. This is permanent and cannot be undone.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Access Control:</strong> Teachers can only delete quizzes in their own courses. Others get 404.</p>
-<p><strong>Success Response — 204 No Content</strong></p>
-<hr>
-<h4 id="1115-putpatch-learningquestionspk">11.15 PUT/PATCH /learning/questions/<pk>/</h4>
-<p><strong>Description:</strong> Update an individual quiz question — text, type, points, <strong>image</strong>, or choices. Supports both JSON for text fields and <code>multipart/form-data</code> for image upload.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Access Control:</strong> Teachers can only update questions in their own courses. Others get 404.</p>
-<p><strong>Request Body (JSON — text-only updates):</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string (optional) — Updated question text"</span>,
-  <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (optional) — mcq_single|mcq_multiple|written"</span>,
-  <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"string (optional) — easy|medium|hard"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer (optional)"</span>,
-  <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"integer (optional, nullable)"</span>
-}
-</div></code></pre>
-<p><strong>Request Body (multipart/form-data — image upload):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>image</code></td>
-<td>File</td>
-<td>Image file (JPEG, PNG, etc.) for the question</td>
-</tr>
-<tr>
-<td>(any text fields above)</td>
-<td>String</td>
-<td>Can be combined in the same request</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Success Response — 200 OK:</strong> Updated question object with image URL:</p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null — Full URL to uploaded image"</span>,
-  <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"integer | null"</span>,
-  <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"standalone_choices"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"boolean"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Choice images:</strong> Choice images are set during inline creation (<code>choices[].image</code> in multipart) or by deleting and recreating choices via a quiz update. The <code>image</code> field in choice response is always a full URL when present.</p>
-<hr>
-<h3 id="student-quiz-flow">Student Quiz Flow</h3>
-<hr>
-<h4 id="1115-post-learningquizzesidstart">11.15 POST /learning/quizzes/<id>/start/</h4>
-<p><strong>Description:</strong> Start a quiz attempt. Returns questions in randomized order (if enabled). Timer starts counting from this moment. Each start creates a new <code>QuizSubmission</code> record.</p>
-<p><strong>Authentication:</strong> Student</p>
-<p><strong>Access Checks (all must pass):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Check</th>
-<th>Blocked?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Quiz exists, is active, and is published</td>
-<td>404</td>
-</tr>
-<tr>
-<td>Student purchased the lecture</td>
-<td>403</td>
-</tr>
-<tr>
-<td>Student is enrolled and approved in the course</td>
-<td>403</td>
-</tr>
-<tr>
-<td>Quiz not already taken (if multiple attempts disabled)</td>
-<td>400</td>
-</tr>
-<tr>
-<td>Max attempts not exceeded (if multiple attempts enabled)</td>
-<td>400</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer — Time limit for this quiz (0 = unlimited)"</span>,
-  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
-  <span class="hljs-attr">"questions"</span>: [
-    {
-      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer — ID to use when submitting/saving draft"</span>,
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (mcq_single|mcq_multiple|written)"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"choices"</span>: [
-        {
-          <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
-          <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
-          <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>
-        }
-      ]
-    }
-  ]
-}
-</div></code></pre>
-<hr>
-<h4 id="1115-get-learningquizzesidresume">11.15 GET /learning/quizzes/<id>/resume/</h4>
-<p><strong>Description:</strong> Resume an active (not yet submitted) quiz attempt. Returns remaining time, all questions, and any previously saved draft answers. If the timer has expired, <code>timer_remaining</code> will be <code>0</code>.</p>
-<p><strong>Authentication:</strong> Student</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer — Original time limit"</span>,
-  <span class="hljs-attr">"timer_remaining"</span>: <span class="hljs-string">"number | null — Minutes remaining (null if no timer). Can be 0 if expired."</span>,
-  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
-  <span class="hljs-attr">"questions"</span>: [
-    {
-      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"choices"</span>: [
-        {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}
-      ],
-      <span class="hljs-attr">"saved_choice_ids"</span>: <span class="hljs-string">"array[integer] — Previously saved MCQ choices (empty if none)"</span>,
-      <span class="hljs-attr">"saved_written_answer"</span>: <span class="hljs-string">"string — Previously saved written answer (empty if none)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>400</td>
-<td>No active attempt found — student must start the quiz first</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Quiz not found or not available</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h4 id="1115-post-learningquizzesidsubmit">11.15 POST /learning/quizzes/<id>/submit/</h4>
-<p><strong>Description:</strong> Submit answers for an active quiz attempt. Auto-grades MCQ questions immediately (single and multiple choice). Written answers are stored for manual grading.</p>
-<p><strong>Timer Check:</strong> If the timer has expired (elapsed &gt; timer_minutes + 1 minute grace), the submission is marked as <code>is_timed_out</code> and rejected with 400. The student MUST submit before time runs out — there is no auto-submit.</p>
-<p><strong>Authentication:</strong> Student</p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"answers"</span>: [
-    {
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-string">"integer (required)"</span>,
-      <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] — Selected choice IDs (for mcq_single and mcq_multiple)"</span>,
-      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string — Written answer text (for written questions)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Grading Logic:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Question Type</th>
-<th>Grading</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>mcq_single</code></td>
-<td>Full points if exactly the correct choice(s) selected. 0 otherwise.</td>
-</tr>
-<tr>
-<td><code>mcq_multiple</code></td>
-<td>Full points if all correct choices selected and no extras. Partial credit for subset of correct choices. 0 if none correct.</td>
-</tr>
-<tr>
-<td><code>written</code></td>
-<td>0 points until teacher manually grades via <code>grade-written</code> endpoint.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Quiz submitted successfully."</span>,
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Null if score_visibility=manual and not released yet"</span>,
-  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null — Null if passing_score is not set or score not visible"</span>,
-  <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
-  <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
 <table>
 <thead>
 <tr>
@@ -3040,7 +2723,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
       <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (homework|quiz|exam)"</span>,
       <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer - ID of the homework or quiz"</span>,
-      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String (Decimal) - Minimum score required"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
     }
   ]
@@ -3054,7 +2736,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) — homework|quiz|exam"</span>,
   <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer (Required) — ID of the homework or quiz"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String (Optional) — Decimal, default: 50.0"</span>
 }
 </div></code></pre>
 <p><strong>Success Response — 201 Created:</strong></p>
@@ -3063,7 +2744,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"String (Decimal)"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
 }
 </div></code></pre>
