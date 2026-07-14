@@ -2874,6 +2874,56 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h3 id="student-activity-history">Student Activity History</h3>
 <hr>
 <hr>
+<h4 id="post-paymentsrecharge">POST /payments/recharge/</h4>
+<p><strong>Description:</strong> Add balance to a student's account for a specific course. The student must be enrolled and approved in the course. Teacher/Assistant only.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer — Student ID (required)"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer — Course ID (required)"</span>,
+  <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"String (Decimal) — Amount to add (required, must be positive)"</span>,
+  <span class="hljs-attr">"note"</span>: <span class="hljs-string">"String (Optional) — Note for the transaction"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Successfully added 50.00 EGP to student balance."</span>,
+  <span class="hljs-attr">"new_balance"</span>: <span class="hljs-string">"150.00"</span>,
+  <span class="hljs-attr">"transaction_id"</span>: <span class="hljs-number">42</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Missing required fields (student, course, amount)</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Invalid amount or non-positive amount</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Student not enrolled/approved in the course</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Not the teacher of the course</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Student or course not found</td>
+</tr>
+</tbody>
+</table>
+<hr>
 <h4 id="get-paymentstransactions">GET /payments/transactions/</h4>
 <p><strong>Description:</strong> Full balance transaction ledger for students. Shows every balance change with <strong>before and after snapshots</strong>. Includes code redemptions (with code, value, balance_before, balance_after) and lecture purchases (with lecture name, amount, balance_before, balance_after). Transactions are immutable — never editable or deletable.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant (sees students enrolled in their courses), Student (sees own), SiteOwner (sees all)</p>

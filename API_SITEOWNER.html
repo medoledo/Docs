@@ -598,7 +598,7 @@ code {
 <p>Teachers must have a <strong>Bunny Stream collection</strong> assigned before they can upload videos. Create a collection manually in your <a href="https://dash.bunny.net/stream">Bunny Stream dashboard</a> → Collections → Create Collection, then assign it via the API.</p>
 <p><strong>The response for teacher list/detail views now includes <code>bunny_collection_id</code>.</strong></p>
 <h4 id="patch-accountsteachersidassign-collection"><code>PATCH /accounts/teachers/&lt;id&gt;/assign-collection/</code></h4>
-<p><strong>Description:</strong> Assign an existing Bunny Stream collection GUID to a teacher. The teacher's future video uploads will be placed in this collection.</p>
+<p><strong>Note:</strong> Collection assignment is done directly via <code>PATCH /accounts/teachers/&lt;id&gt;/</code> — set <code>bunny_collection_id</code> in the update body. The dedicated <code>assign-collection/</code> endpoint has been removed.</p>
 <p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
@@ -650,7 +650,7 @@ code {
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Collection created and assigned to teacher."</span>
 }
 </div></code></pre>
-<p><strong>Tip:</strong> Option B (assign-collection) is recommended — create the collection manually in the Bunny dashboard, then assign its GUID here.</p>
+<p><strong>Note:</strong> To assign an existing collection GUID, use <code>PATCH /accounts/teachers/&lt;id&gt;/</code> with <code>bunny_collection_id</code> in the body. The dedicated <code>assign-collection/</code> endpoint has been removed.</p>
 <hr>
 <h2 id="2-student-management">2. Student Management</h2>
 <h3 id="get-accountsstudents">GET /accounts/students/</h3>

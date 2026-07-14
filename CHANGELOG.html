@@ -860,6 +860,34 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <td><strong>Permission fix: RechargeCode list</strong></td>
 <td><code>RechargeCodeListCreateView</code> returned all codes for any teacher. Now filters by <code>course__teacher=teacher</code>.</td>
 </tr>
+<tr>
+<td><strong>video-security → SiteOwner only</strong></td>
+<td><code>GET /accounts/video-security/</code> and <code>&lt;id&gt;/</code> changed from public to <code>IsSiteOwner</code>.</td>
+</tr>
+<tr>
+<td><strong>public/teachers student filter</strong></td>
+<td>When accessed by a student, only shows teachers whose subject matches the student's grade/school_type/division.</td>
+</tr>
+<tr>
+<td><strong>Deleted assign-collection</strong></td>
+<td><code>PATCH /accounts/teachers/&lt;id&gt;/assign-collection/</code> removed — use <code>PATCH /teachers/&lt;id&gt;/</code> directly.</td>
+</tr>
+<tr>
+<td><strong>Added TeacherRechargeView</strong></td>
+<td><code>POST /payments/recharge/</code> — teacher/assistant adds balance to an enrolled student. Requires student to be approved-enrolled in the course.</td>
+</tr>
+<tr>
+<td><strong>Deleted revenue APIs</strong></td>
+<td>5 revenue endpoints removed (summary, course/lecture detail, students, trends).</td>
+</tr>
+<tr>
+<td><strong>Lectures now require auth</strong></td>
+<td><code>GET /courses/lectures/</code> and <code>GET /courses/lectures/&lt;id&gt;/</code> now require authentication (not public).</td>
+</tr>
+<tr>
+<td><strong>Transactions siteowner filter</strong></td>
+<td><code>GET /payments/transactions/</code> — siteowner can optionally filter by <code>?teacher=</code> and <code>?course=</code>.</td>
+</tr>
 </tbody>
 </table>
 

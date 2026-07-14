@@ -1507,22 +1507,6 @@ code {
 <hr>
 <h2 id="10-video-security-options">10. Video Security Options</h2>
 <hr>
-<h3 id="get-accountsvideo-security">GET /accounts/video-security/</h3>
-<p><strong>Description:</strong> List available video security/protection options (DRM, watermarking, etc.). Configured via Django Admin  read-only via API.</p>
-<p><strong>Authentication:</strong> None (public)</p>
-<p><strong>Success Response  200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"price_per_student"</span>: <span class="hljs-string">"String (Decimal)"</span>
-    }
-  ]
-}
-</div></code></pre>
-<hr>
 <h3 id="get-accountsvideo-securityid"><code>GET /accounts/video-security/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> Retrieve a single video security option.</p>
 <p><strong>Authentication:</strong> None (public)</p>

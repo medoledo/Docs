@@ -624,7 +624,7 @@ code {
 <td>No</td>
 </tr>
 <tr>
-<td><code>PATCH /accounts/teachers/&lt;id&gt;/assign-collection/</code></td>
+<td><code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
@@ -632,10 +632,18 @@ code {
 <td>No</td>
 </tr>
 <tr>
-<td><code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></td>
+<td><code>GET /accounts/video-security/</code></td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST /payments/recharge/</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
@@ -695,312 +703,45 @@ code {
 <td>Yes</td>
 <td>No</td>
 </tr>
-<tr>
-<td><code>GET /courses/my_courses/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /courses/&lt;id&gt;/lectures/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /courses/videos/&lt;id&gt;/play/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /courses/enrollments/enroll/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /courses/enrollments/approve/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /courses/enrollments/reject/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /courses/purchases/buy/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></td>
-<td>No</td>
-<td>Yes**</td>
-<td>Yes**</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /courses/dashboard/teacher/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /learning/homeworks/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/homeworks/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /learning/homeworks/&lt;id&gt;/submissions/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/homeworks/&lt;id&gt;/submit/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /learning/quizzes/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/quizzes/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/quizzes/&lt;id&gt;/start/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/quizzes/&lt;id&gt;/submit/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/quizzes/&lt;id&gt;/release-scores/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/quizzes/&lt;id&gt;/release-answers/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/quiz-submissions/&lt;id&gt;/grade-written/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /learning/exams/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/exams/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /learning/exams/&lt;id&gt;/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/exams/&lt;id&gt;/start/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/exams/&lt;id&gt;/submit/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /learning/exams/&lt;id&gt;/results/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/exams/&lt;id&gt;/release-scores/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/exams/&lt;id&gt;/release-answers/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /learning/exams/my/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /learning/exam-submissions/&lt;id&gt;/grade-written/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /materials/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>POST /materials/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /materials/&lt;id&gt;/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes*</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>PUT /materials/&lt;id&gt;/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>DELETE /materials/&lt;id&gt;/</code></td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /payments/transactions/</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>GET /materials/my/</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
 </tbody>
 </table>
+<p>| <code>GET /courses/&lt;id&gt;/lectures/</code> | No | No | No | Yes* | No |
+| <code>GET /courses/videos/&lt;id&gt;/play/</code> | No | No | No | Yes* | No |
+| <code>POST /courses/videos/&lt;id&gt;/create-upload/</code> | No | Yes | Yes | No | No |
+| <code>POST /courses/enrollments/enroll/</code> | No | No | No | Yes | No |
+| <code>POST /courses/enrollments/approve/</code> | No | Yes | Yes | No | No |
+| <code>POST /courses/enrollments/reject/</code> | No | Yes | Yes | No | No |
+| <code>POST /courses/purchases/buy/</code> | No | No | No | Yes | No |
+| <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> | No | Yes** | Yes** | No | No |
+| <code>GET /courses/dashboard/teacher/</code> | No | Yes | Yes | No | No |
+| <code>GET /learning/homeworks/</code> | Yes | Yes | Yes | Yes* | No |
+| <code>POST /learning/homeworks/</code> | Yes | Yes | Yes | No | No |
+| <code>GET /learning/homeworks/&lt;id&gt;/submissions/</code> | Yes | Yes | Yes | No | No |
+| <code>POST /learning/homeworks/&lt;id&gt;/submit/</code> | No | No | No | Yes* | No |
+| <code>GET /learning/quizzes/</code> | Yes | Yes | Yes | Yes* | No |
+| <code>POST /learning/quizzes/</code> | Yes | Yes | Yes | No | No |
+| <code>POST /learning/quizzes/&lt;id&gt;/start/</code> | No | No | No | Yes* | No |
+| <code>POST /learning/quizzes/&lt;id&gt;/submit/</code> | No | No | No | Yes* | No |
+| <code>POST /learning/quizzes/&lt;id&gt;/release-scores/</code> | No | Yes | Yes | No | No |
+| <code>POST /learning/quizzes/&lt;id&gt;/release-answers/</code> | No | Yes | Yes | No | No |
+| <code>POST /learning/quiz-submissions/&lt;id&gt;/grade-written/</code> | No | Yes | Yes | No | No |
+| <code>GET /learning/exams/</code> | Yes | Yes | Yes | No | No |
+| <code>POST /learning/exams/</code> | Yes | Yes | Yes | No | No |
+| <code>GET /learning/exams/&lt;id&gt;/</code> | Yes | Yes | Yes | No | No |
+| <code>POST /learning/exams/&lt;id&gt;/start/</code> | No | No | No | Yes* | No |
+| <code>POST /learning/exams/&lt;id&gt;/submit/</code> | No | No | No | Yes* | No |
+| <code>GET /learning/exams/&lt;id&gt;/results/</code> | No | Yes | Yes | No | No |
+| <code>POST /learning/exams/&lt;id&gt;/release-scores/</code> | No | Yes | Yes | No | No |
+| <code>POST /learning/exams/&lt;id&gt;/release-answers/</code> | No | Yes | Yes | No | No |
+| <code>GET /learning/exams/my/</code> | No | No | No | Yes | No |
+| <code>POST /learning/exam-submissions/&lt;id&gt;/grade-written/</code> | No | Yes | Yes | No | No |
+| <code>GET /materials/</code> | Yes | Yes | Yes | Yes* | No |
+| <code>POST /materials/</code> | No | Yes | Yes | No | No |
+| <code>GET /materials/&lt;id&gt;/</code> | Yes | Yes | Yes | Yes* | No |
+| <code>PUT /materials/&lt;id&gt;/</code> | No | Yes | Yes | No | No |
+| <code>DELETE /materials/&lt;id&gt;/</code> | No | Yes | Yes | No | No |
+| <code>GET /payments/transactions/</code> | Yes | Yes | Yes | Yes | No |
+| <code>GET /materials/my/</code> | No | No | No | Yes | No |</p>
 <blockquote>
 <p>* Must be enrolled and approved in the relevant course<br>
 ** Must own the course (or be the course teacher's assistant)</p>
