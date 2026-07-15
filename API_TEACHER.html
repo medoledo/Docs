@@ -2138,6 +2138,15 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tbody>
 </table>
 <p>The <code>image</code> field on both questions and choices is returned as a <strong>full URL</strong> in all responses (e.g. <code>&quot;https://.../media/quiz_questions/photo.jpg&quot;</code>). Upload the file using <code>PATCH /learning/questions/&lt;id&gt;/</code> with content type <code>multipart/form-data</code> — the <code>image</code> field accepts a binary file, not a URL string.</p>
+<blockquote>
+<p><strong>⚠️ CRITICAL: Never send the image URL back as JSON.</strong> If you call <code>PATCH /learning/questions/&lt;id&gt;/</code> with <code>Content-Type: application/json</code> and include <code>&quot;image&quot;: &quot;https://...&quot;</code> in the body, the backend <strong>cannot parse a URL string as a file upload</strong> and will clear the existing image from storage.</p>
+<p><strong>How to avoid losing the image:</strong></p>
+<ul>
+<li><strong>To update text only (keep existing image):</strong> Send <code>PATCH /learning/questions/&lt;id&gt;/</code> with <code>Content-Type: application/json</code> and body <code>{&quot;text&quot;: &quot;New text&quot;}</code> — <strong>omit the <code>image</code> field entirely</strong>. The existing image is preserved automatically.</li>
+<li><strong>To update the image:</strong> Send <code>PATCH /learning/questions/&lt;id&gt;/</code> with <code>Content-Type: multipart/form-data</code> and include the file as the <code>image</code> field. Text fields can be included in the same request.</li>
+<li><strong>To remove the image:</strong> Send multipart with <code>image</code> set to an empty file or use a dedicated delete-image endpoint if available.</li>
+</ul>
+</blockquote>
 <p><strong>Success Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
