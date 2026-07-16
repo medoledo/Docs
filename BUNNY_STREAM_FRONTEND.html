@@ -606,7 +606,12 @@ JavaScript's <code>Date.now()</code> returns <strong>milliseconds</strong>. If y
 
     onSuccess() {
       onStatusChange(<span class="hljs-string">'uploaded'</span>);
-      <span class="hljs-comment">// Bunny is now encoding — start polling for status</span>
+      <span class="hljs-comment">// Tell the backend the upload is complete (updates bunny_status to 1)</span>
+      fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/upload-complete/`</span>, {
+        <span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>,
+        <span class="hljs-attr">headers</span>: { <span class="hljs-attr">Authorization</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${token}</span>`</span> },
+      }).catch(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Status update failed:'</span>, err));
+      <span class="hljs-comment">// Start polling for encoding status</span>
       startPolling(videoId);
     },
 
@@ -1118,6 +1123,12 @@ Content-Type: application/json
 <td>TUS</td>
 <td><code>https://video.bunnycdn.com/tusupload</code></td>
 <td>Use <code>tus-js-client</code> with credentials from above</td>
+</tr>
+<tr>
+<td>Mark upload complete</td>
+<td><code>POST</code></td>
+<td><code>/courses/videos/&lt;id&gt;/upload-complete/</code></td>
+<td>Call after TUS <code>onSuccess</code> — updates <code>bunny_status</code> to 1</td>
 </tr>
 <tr>
 <td>Preview video</td>

@@ -367,8 +367,8 @@ code {
   </script>
 <h1 id="edutrack-online---student-api">EduTrack Online - Student API</h1>
 <blockquote>
-<p><strong>Version:</strong> 1.2
-<strong>Date:</strong> July 12, 2026
+<p><strong>Version:</strong> 1.3
+<strong>Date:</strong> July 16, 2026
 <strong>Target Audience:</strong> Next.js Frontend Developers (Student Features)
 <strong>Backend:</strong> Django REST Framework</p>
 </blockquote>
@@ -457,6 +457,53 @@ code {
 </ul>
 </li>
 </ol>
+<h4 id="get-learningexamsidresume">GET /learning/exams/<id>/resume/</h4>
+<p><strong>Description:</strong> Resume an active (not yet submitted) exam attempt. Returns remaining time, questions, and saved draft answers.</p>
+<p><strong>Authentication:</strong> Student</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"timer_remaining"</span>: <span class="hljs-string">"number | null"</span>,
+  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"exam_question_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"points"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"choices"</span>: [
+        {<span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>}
+      ],
+      <span class="hljs-attr">"saved_choice_ids"</span>: <span class="hljs-string">"array[integer]"</span>,
+      <span class="hljs-attr">"saved_written_answer"</span>: <span class="hljs-string">"string"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>No active attempt found. Start the exam first.</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Exam not found or not available.</td>
+</tr>
+</tbody>
+</table>
+<hr>
 <hr>
 <h2 id="1-profile-management">1. Profile Management</h2>
 <hr>

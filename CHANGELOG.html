@@ -367,7 +367,7 @@ code {
   </script>
 <h1 id="edutrack-api-changelog">EduTrack API Changelog</h1>
 <blockquote>
-<p><strong>Last Updated:</strong> July 12, 2026</p>
+<p><strong>Last Updated:</strong> July 16, 2026</p>
 </blockquote>
 <p>This document lists every API endpoint that was <strong>removed</strong>, <strong>renamed</strong>, or <strong>changed</strong>, along with what replaced it and why.</p>
 <hr>
@@ -899,6 +899,7 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 | <strong>Expiry auto-set to 1 year</strong> | expires_at no longer optional � defaults to created_at + 365 days. Not editable. |
 | <strong>Deactivated course check</strong> | Codes for deactivated courses cannot be redeemed. |</p>
 <p>| <strong>Batch name + batch list API</strong> | RechargeCode now has atch_name (auto-generated, per-teacher counter). Added GET /codes/batches/ (paginated batch list), GET /codes/batches/<uuid>/ (batch detail with codes), GET /codes/analytics/ (analytics dashboard with Teacher's Cut / SiteOwner's Cut). |</p>
+<p>| <strong>Code masking + audit history</strong> | Codes now returned with <code>code_masked</code> field (<code>&quot;ABDC XXXX XXXX XXXX&quot;</code>) for secure display. Added <code>redeemed_value</code> to batch detail. Added <code>GET /codes/history/</code> — unified audit log combining redemptions + blacklists with filters (date range, type, code search, teacher, course), sorted newest-first, paginated. Export now supports <code>GET /codes/export/</code> without <code>?batch=</code> — exports all visible codes. Added Teacher Name and Student Code columns to Excel export. |</p>
 
 </body>
 </html>

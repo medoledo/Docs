@@ -367,8 +367,8 @@ code {
   </script>
 <h1 id="edutrack-online---siteowner-api">EduTrack Online - SiteOwner API</h1>
 <blockquote>
-<p><strong>Version:</strong> 1.2
-<strong>Date:</strong> July 12, 2026
+<p><strong>Version:</strong> 1.3
+<strong>Date:</strong> July 16, 2026
 <strong>Target Audience:</strong> SiteOwner Frontend
 <strong>Backend:</strong> Django REST Framework</p>
 </blockquote>
@@ -1064,7 +1064,7 @@ code {
 <h2 id="5-recharge-codes">5. Recharge Codes</h2>
 <h3 id="post-paymentscodes">POST /payments/codes/</h3>
 <p><strong>Description:</strong> Generate new recharge codes. Codes are course-specific and can only be redeemed for the course they are generated for.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant, Teacher</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -1081,6 +1081,7 @@ code {
   <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String — Auto-generated (e.g. X7K9-M2P4-QR1W-L5D8)"</span>,
+  <span class="hljs-attr">"code_masked"</span>: <span class="hljs-string">"String — Masked (e.g. X7K9 XXXX XXXX XXXX)"</span>,
   <span class="hljs-attr">"value"</span>: <span class="hljs-string">"Decimal"</span>,
   <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (valid)"</span>,
   <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"String (Valid)"</span>,
@@ -1252,7 +1253,9 @@ code {
 
 **New query param:** `?batch=&lt;uuid&gt;` to filter by batch ID.
 Use `GET /codes/export/?batch=&lt;uuid&gt;` to download codes as an Excel sheet.
+Use `GET /codes/export/` (no params) to export ALL visible codes as Excel.
 Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
+Use `GET /codes/history/` for a unified code audit log (redemptions + blacklists).
 </div></code></pre>
 <hr>
 <h3 id="get-paymentscodesanalytics">GET /payments/codes/analytics/</h3>
@@ -1344,9 +1347,11 @@ Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
   <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany Hassanin"</span>,
   <span class="hljs-attr">"notes"</span>: <span class="hljs-string">"Batch for Center X (1/100)"</span>,
   <span class="hljs-attr">"total_codes"</span>: <span class="hljs-number">100</span>,
+  <span class="hljs-attr">"redeemed_value"</span>: <span class="hljs-string">"1750.00"</span>,
   <span class="hljs-attr">"codes"</span>: [
     {
       <span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>,
+      <span class="hljs-attr">"code_masked"</span>: <span class="hljs-string">"X7K9 XXXX XXXX XXXX"</span>,
       <span class="hljs-attr">"value"</span>: <span class="hljs-string">"50.00"</span>,
       <span class="hljs-attr">"status"</span>: <span class="hljs-string">"used"</span>,
       <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"Used"</span>,
@@ -1357,6 +1362,113 @@ Use `GET /codes/summary/?course=X` to get aggregate stats for a course.
   ]
 }
 </div></code></pre>
+<p><strong><code>code_masked</code>:</strong> By default, the full <code>code</code> is returned alongside <code>code_masked</code> (<code>&quot;ABDC XXXX XXXX XXXX&quot;</code>). The frontend should display the masked version and provide a &quot;Reveal&quot; button to show the full code on demand. This prevents shoulder surfing / photo-taking of the screen.</p>
+<hr>
+<h3 id="get-paymentscodeshistory">GET /payments/codes/history/</h3>
+<p><strong>Description:</strong> Unified code audit log — redemption events + blacklist events combined into one paginated feed, newest first.</p>
+<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start_date</code></td>
+<td>String</td>
+<td>Start date (YYYY-MM-DD)</td>
+</tr>
+<tr>
+<td><code>end_date</code></td>
+<td>String</td>
+<td>End date (YYYY-MM-DD)</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>String</td>
+<td>Filter: <code>redeemed</code> or <code>blacklisted</code></td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Search by code text</td>
+</tr>
+<tr>
+<td><code>teacher</code></td>
+<td>Integer</td>
+<td>Filter by teacher ID</td>
+</tr>
+<tr>
+<td><code>course</code></td>
+<td>Integer</td>
+<td>Filter by course ID</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>Integer</td>
+<td>Page number (default: 1)</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>Integer</td>
+<td>Items per page (default: 20, max: 100)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">65</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">123</span>,
+      <span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>,
+      <span class="hljs-attr">"code_masked"</span>: <span class="hljs-string">"X7K9 XXXX XXXX XXXX"</span>,
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"redeemed"</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany Hassanin"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed / أحمد"</span>,
+      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"S-001"</span>,
+      <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"50.00"</span>,
+      <span class="hljs-attr">"balance_before"</span>: <span class="hljs-string">"200.00"</span>,
+      <span class="hljs-attr">"balance_after"</span>: <span class="hljs-string">"250.00"</span>,
+      <span class="hljs-attr">"performed_by"</span>: <span class="hljs-string">"Student"</span>,
+      <span class="hljs-attr">"performed_by_role"</span>: <span class="hljs-string">"student"</span>,
+      <span class="hljs-attr">"date"</span>: <span class="hljs-string">"2026-07-15T10:30:00Z"</span>,
+      <span class="hljs-attr">"reason"</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">"batch_id"</span>: <span class="hljs-literal">null</span>
+    },
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">456</span>,
+      <span class="hljs-attr">"code"</span>: <span class="hljs-string">"A3F8-G7H2-J4K9-M1N6"</span>,
+      <span class="hljs-attr">"code_masked"</span>: <span class="hljs-string">"A3F8 XXXX XXXX XXXX"</span>,
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"blacklisted"</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Math 1st Secondary"</span>,
+      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Sara Ali"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">"student_code"</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"75.00"</span>,
+      <span class="hljs-attr">"balance_before"</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">"balance_after"</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">"performed_by"</span>: <span class="hljs-string">"Admin"</span>,
+      <span class="hljs-attr">"performed_by_role"</span>: <span class="hljs-string">"siteowner"</span>,
+      <span class="hljs-attr">"date"</span>: <span class="hljs-string">"2026-07-14T14:22:00Z"</span>,
+      <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"Suspicious activity — reported by teacher"</span>,
+      <span class="hljs-attr">"batch_id"</span>: <span class="hljs-string">"c4375c67-..."</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Redemption events (<code>type: &quot;redeemed&quot;</code>) include <code>student_name</code>, <code>student_code</code>, <code>balance_before</code>, <code>balance_after</code>, and <code>amount</code>.</li>
+<li>Blacklist events (<code>type: &quot;blacklisted&quot;</code>) include a <code>reason</code> (from code notes) and <code>batch_id</code>.</li>
+<li>Results are sorted by <code>date</code> descending (newest first).</li>
+<li>SiteOwner must provide both <code>?teacher=X</code> and <code>?course=X</code> to filter; otherwise sees everything.</li>
+</ul>
 <hr>
 <h2 id="6-transactions">6. Transactions</h2>
 <h3 id="get-paymentstransactions">GET /payments/transactions/</h3>

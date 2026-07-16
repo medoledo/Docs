@@ -1614,11 +1614,25 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 <td>Aggregate totals: generated, redeemed, blacklisted, values</td>
 </tr>
 <tr>
-<td><strong>Export batch to Excel</strong></td>
+<td><strong>Code audit history</strong></td>
+<td>GET</td>
+<td><code>/payments/codes/history/</code></td>
+<td>API_SITEOWNER.md §5</td>
+<td>Unified feed of redemptions + blacklists. Filters: <code>?start_date=</code>, <code>?end_date=</code>, <code>?type=redeemed|blacklisted</code>, <code>?search=X7K9</code>, <code>?teacher=X</code>, <code>?course=X</code>. Paginated (20/page). Newest first.</td>
+</tr>
+<tr>
+<td><strong>Export all codes</strong></td>
+<td>GET</td>
+<td><code>/payments/codes/export/</code></td>
+<td>API_SITEOWNER.md §5</td>
+<td>Download ALL visible codes as Excel (no <code>?batch=</code> needed). Supports <code>?teacher=X</code>, <code>?course=X</code>. Columns: Code, Value, Status, Course, Teacher, Student, Redemption Date, Blacklist Date, etc.</td>
+</tr>
+<tr>
+<td><strong>Batch detail export</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/export/?batch=&lt;uuid&gt;</code></td>
 <td>API_SITEOWNER.md §5</td>
-<td>Download .xlsx with full code details</td>
+<td>Download .xlsx with full code details for a specific batch</td>
 </tr>
 <tr>
 <td><strong>Request blacklist OTP</strong></td>
@@ -1780,14 +1794,16 @@ Valid ──→ Blacklisted         — SiteOwner only, OTP required, irreversib
 Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted By | Blacklisted At | Created At | Expires At | Notes</p>
 <hr>
 <p><strong>Page Flow for SiteOwner:</strong></p>
-<pre class="hljs"><code><div>1. Page loads → GET /payments/codes/analytics/ → populate 8 analytics cards
+<pre class="hljs"><code><div>1. Page loads → GET /payments/codes/analytics/ → populate analytics cards (Total Batches, Codes, Valid, Used, Blacklisted, Revenue, Teacher Cut, SiteOwner Cut)
 2. GET /payments/codes/batches/ → populate batch table (paginated, 20 per page)
 3. Teacher dropdown → GET /payments/codes/batches/?teacher=X → filter batches
-4. Course dropdown → GET /payments/codes/batches/?course=X → filter batches
-5. Click batch row → GET /payments/codes/batches/&lt;uuid&gt;/ → show individual codes
+4. Course dropdown (dependent on teacher) → GET /payments/codes/batches/?course=X → filter batches
+5. Click batch row → GET /payments/codes/batches/&lt;uuid&gt;/ → show individual codes with `code_masked` (&quot;ABDC XXXX XXXX XXXX&quot;) by default, &quot;Reveal&quot; button to show full code
 6. Click &quot;Export&quot; on batch → GET /payments/codes/export/?batch=&lt;uuid&gt; → download .xlsx
-7. Click &quot;History&quot; → GET /payments/transactions/?transaction_type=code_redeemed → audit modal
-8. Click &quot;Generate Batch&quot; → POST /payments/codes/ → modal with course/count/value/notes
+7. Click &quot;Export All&quot; → GET /payments/codes/export/ → download all codes .xlsx
+8. Click &quot;History&quot; → open modal → GET /payments/codes/history/ with default date range (last 30 days) → populate history table with filters
+9. In History modal: filter by type, code search, date range → refetch or client-filter
+10. Click &quot;Generate Batch&quot; → POST /payments/codes/ → modal with course/count/value/notes
 9. Click &quot;Blacklist&quot; on a code → POST /codes/&lt;pk&gt;/request-blacklist-otp/ → OTP modal
 10. Enter OTP → POST /codes/&lt;pk&gt;/blacklist/ → code permanently blacklisted
 </div></code></pre>
