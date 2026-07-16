@@ -365,70 +365,538 @@ code {
           : 'default'
     });
   </script>
-<h1 id="edutrack-online---bunny-stream-api">EduTrack Online - Bunny Stream API</h1>
+<h1 id="edutrack-online--bunny-stream-integration">EduTrack Online — Bunny Stream Integration</h1>
 <blockquote>
 <p><strong>Target Audience:</strong> Next.js Frontend Developers
 <strong>Library ID:</strong> 698152
-<strong>CDN Hostname:</strong> <code>vz-964b4290-bbe.b-cdn.net</code></p>
+<strong>CDN Hostname:</strong> <code>vz-964b4290-bbe.b-cdn.net</code>
+<strong>TUS Upload Endpoint:</strong> <code>https://video.bunnycdn.com/tusupload</code></p>
 </blockquote>
 <hr>
 <h2 id="overview">Overview</h2>
-<p>All videos on EduTrack are hosted on <strong>Bunny Stream</strong>. The backend <strong>never receives video file bytes</strong> — it generates TUS credentials server-side, and the frontend uploads directly to Bunny using the <a href="https://github.com/tus/tus-js-client">tus-js-client</a> library.</p>
-<h3 id="upload-flow-tus-direct-upload">Upload Flow (TUS Direct Upload)</h3>
-<pre class="hljs"><code><div>Teacher Browser:
-1. POST /courses/videos/&lt;id&gt;/create-upload/   →  Backend creates Bunny entry
-                                                  (API key stays on server)
-                                                  Returns TUS credentials
-2. tus-js-client uploads directly to           →  Bunny CDN (no proxy)
-   https://video.bunnycdn.com/tusupload           Zero backend bandwidth/RAM
-3. Bunny encodes &amp; fires webhook when done
-</div></code></pre>
-<p><strong>Advantages over the old proxy approach:</strong></p>
-<ul>
-<li><strong>Zero VPS bandwidth</strong> — video bytes go directly from browser to Bunny</li>
-<li><strong>Zero VPS RAM</strong> — no chunk buffering</li>
-<li><strong>Built-in resume</strong> — TUS protocol handles interruption natively via <code>findPreviousUploads()</code> + <code>resumeFromPreviousUpload()</code></li>
-<li><strong>No timeout risk</strong> — 2.5 GB uploads work without a proxy timeout</li>
-<li><strong>API key never exposed</strong> — the key stays server-side; only a time-limited TUS signature reaches the frontend</li>
-</ul>
-<h3 id="playback-flow">Playback Flow</h3>
-<pre class="hljs"><code><div>Student Browser → `GET /courses/videos/&lt;id&gt;/play/` → Backend checks permissions → Returns signed HLS URL
-                                            ↘ Student streams directly from Bunny CDN (0 server load)
+<p>All videos on EduTrack are hosted on <strong>Bunny Stream</strong>. The flow is:</p>
+<pre class="hljs"><code><div>Teacher Browser                Backend (Django)                Bunny Stream
+      │                              │                             │
+      │ 1. POST /courses/videos/      │                             │
+      │    {lecture, name, order}     │                             │
+      │ ─────────────────────────►   │                             │
+      │ ◄── {id, bunny_video_id:null}│                             │
+      │                              │                             │
+      │ 2. POST /videos/&lt;id&gt;/        │                             │
+      │    create-upload/             │                             │
+      │ ─────────────────────────►   │── POST /library/{id}/videos─►│
+      │                              │◄── {guid, status} ──────────│
+      │ ◄── TUS credentials ─────────│                             │
+      │    {library_id, signature,   │                             │
+      │     expiration_time}         │                             │
+      │                              │                             │
+      │ 3. tus-js-client uploads     │                             │
+      │    to Bunny CDN              │                             │
+      │ ──────────────────────────────────────────────────────►   │
+      │                              │                             │
+      │ 4. Poll GET /videos/&lt;id&gt;/    │                             │
+      │    until status=4            │                             │
+      │ ─────────────────────────►   │                             │
+      │ ◄── {bunny_status: 4,        │                             │
+      │      is_active: true}        │                             │
 </div></code></pre>
 <hr>
-<h2 id="1-video-crud">1. Video CRUD</h2>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-create-video-record">Create Video Record</a></li>
+<li><a href="#2-get-upload-credentials">Get Upload Credentials</a></li>
+<li><a href="#3-tus-direct-upload">TUS Direct Upload</a></li>
+<li><a href="#4-poll-encoding-status">Poll Encoding Status</a></li>
+<li><a href="#5-play-a-video">Play a Video</a></li>
+<li><a href="#6-updaterename-a-video">Update/Rename a Video</a></li>
+<li><a href="#7-delete-a-video">Delete a Video</a></li>
+<li><a href="#8-list-videos">List Videos</a></li>
+<li><a href="#9-thumbnail-url">Thumbnail URL</a></li>
+<li><a href="#10-error-handling-reference">Error Handling Reference</a></li>
+<li><a href="#11-full-lifecycle-summary">Full Lifecycle Summary</a></li>
+</ol>
 <hr>
-<h4 id="post-coursesvideos">POST /courses/videos/</h4>
-<p><strong>Description:</strong> Create a video metadata record. <code>bunny_video_id</code> is null until the upload flow is completed.</p>
-<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
-<p><strong>Request Body:</strong></p>
+<h2 id="1-create-video-record">1. Create Video Record</h2>
+<p>Create a metadata record in EduTrack before uploading. This gives you a local ID to reference.</p>
+<p><strong>Request:</strong></p>
+<pre class="hljs"><code><div>POST /courses/videos/
+Content-Type: application/json
+</div></code></pre>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer - Lecture ID"</span>,
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - Video title"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer - Display order (optional, default: 0)"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean (optional, default: true)"</span>
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Introduction to Chemical Reactions"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 201 Created:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lecture</code></td>
+<td>Integer</td>
+<td>✅</td>
+<td>ID of the lecture this video belongs to</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>String</td>
+<td>✅</td>
+<td>Video title (max 200 chars)</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>Integer</td>
+<td>❌</td>
+<td>Display order within the lecture (default: auto-assigned)</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>Boolean</td>
+<td>❌</td>
+<td>Whether the video is active (default: <code>true</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"id"</span>: <span class="hljs-number">42</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Introduction to Chemical Reactions"</span>,
   <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"Pending"</span>,
   <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-literal">null</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
-  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
+  <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-16T10:00:00.000000+03:00"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-07-16T10:00:00.000000+03:00"</span>
 }
 </div></code></pre>
+<blockquote>
+<p><strong>Note:</strong> <code>bunny_video_id</code> is <code>null</code> until you call <code>create-upload/</code>. The video is just a metadata placeholder at this point.</p>
+</blockquote>
 <hr>
-<h4 id="get-coursesvideos">GET /courses/videos/</h4>
-<p><strong>Description:</strong> List videos. Supports filtering and ordering.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Query Parameters:</strong></p>
+<h2 id="2-get-upload-credentials">2. Get Upload Credentials</h2>
+<p>Generates a Bunny Stream video entry and returns TUS credentials. The API key stays on the server — only a time-limited signature reaches the frontend.</p>
+<p><strong>Request:</strong></p>
+<pre class="hljs"><code><div>POST /courses/videos/&lt;id&gt;/create-upload/
+No request body
+</div></code></pre>
+<p><strong>Response — 201 Created (first time):</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"video_id"</span>: <span class="hljs-number">42</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"a1b2c3d4-e5f6-7890-abcd-ef1234567890"</span>,
+  <span class="hljs-attr">"library_id"</span>: <span class="hljs-number">698152</span>,
+  <span class="hljs-attr">"expiration_time"</span>: <span class="hljs-number">1721400000</span>,
+  <span class="hljs-attr">"signature"</span>: <span class="hljs-string">"7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8"</span>
+}
+</div></code></pre>
+<p><strong>Response — 200 OK (already created, returns fresh credentials):</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"video_id"</span>: <span class="hljs-number">42</span>,
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Upload entry already exists. Use these TUS credentials to upload or re-create the video entry."</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"a1b2c3d4-e5f6-7890-abcd-ef1234567890"</span>,
+  <span class="hljs-attr">"library_id"</span>: <span class="hljs-number">698152</span>,
+  <span class="hljs-attr">"expiration_time"</span>: <span class="hljs-number">1721400000</span>,
+  <span class="hljs-attr">"signature"</span>: <span class="hljs-string">"7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Error</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td><code>&quot;This teacher does not have a Bunny Stream collection assigned.&quot;</code></td>
+<td>SiteOwner must assign a collection first via <code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>&quot;You can only upload videos to your own courses.&quot;</code></td>
+<td>Wrong teacher</td>
+</tr>
+<tr>
+<td>404</td>
+<td><code>&quot;No Video matches the given query.&quot;</code></td>
+<td>Video ID doesn't exist</td>
+</tr>
+<tr>
+<td>502</td>
+<td><code>&quot;Failed to create video on Bunny Stream.&quot;</code></td>
+<td>Bunny API error (retry)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>⚠️ CRITICAL: <code>expiration_time</code> is a Unix timestamp in SECONDS, not milliseconds.</strong>
+JavaScript's <code>Date.now()</code> returns <strong>milliseconds</strong>. If you multiply <code>expiration_time</code> by 1000 or pass <code>Date.now()</code> directly to the <code>AuthorizationExpire</code> header, Bunny will reject every upload with 401.</p>
+<p>✅ Correct: <code>headers: { AuthorizationExpire: expiration_time }</code> (pass as-is, it's already seconds)
+❌ Wrong: <code>headers: { AuthorizationExpire: expiration_time * 1000 }</code> (would be 1000× expired)
+❌ Wrong: <code>headers: { AuthorizationExpire: Date.now() }</code> (would be in milliseconds)</p>
+</blockquote>
+<hr>
+<h2 id="3-tus-direct-upload">3. TUS Direct Upload</h2>
+<p>Upload the video file directly from the browser to Bunny Stream using <code>tus-js-client</code>. <strong>Zero bytes pass through your backend.</strong></p>
+<h3 id="installation">Installation</h3>
+<pre class="hljs"><code><div>npm install tus-js-client
+</div></code></pre>
+<h3 id="full-upload-function">Full Upload Function</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> tus <span class="hljs-keyword">from</span> <span class="hljs-string">'tus-js-client'</span>;
+
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">uploadVideo</span>(<span class="hljs-params">file, videoId, onProgress, onStatusChange</span>) </span>{
+  <span class="hljs-comment">// Step 1: Get TUS credentials</span>
+  <span class="hljs-keyword">const</span> { bunny_video_id, library_id, expiration_time, signature } =
+    <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/create-upload/`</span>, {
+      <span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>,
+      <span class="hljs-attr">headers</span>: { <span class="hljs-attr">Authorization</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${token}</span>`</span> },
+    }).then(<span class="hljs-function"><span class="hljs-params">r</span> =&gt;</span> {
+      <span class="hljs-keyword">if</span> (!r.ok) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`create-upload failed: <span class="hljs-subst">${r.status}</span>`</span>);
+      <span class="hljs-keyword">return</span> r.json();
+    });
+
+  onStatusChange(<span class="hljs-string">'uploading'</span>);
+
+  <span class="hljs-comment">// Step 2: Create TUS upload</span>
+  <span class="hljs-keyword">const</span> upload = <span class="hljs-keyword">new</span> tus.Upload(file, {
+    <span class="hljs-attr">endpoint</span>: <span class="hljs-string">'https://video.bunnycdn.com/tusupload'</span>,
+
+    <span class="hljs-comment">// 5 MB chunks — balances speed vs WiFi usability</span>
+    <span class="hljs-attr">chunkSize</span>: <span class="hljs-number">5</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span>,
+
+    <span class="hljs-comment">// Auto-retry with exponential backoff</span>
+    <span class="hljs-attr">retryDelays</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">3000</span>, <span class="hljs-number">5000</span>, <span class="hljs-number">10000</span>, <span class="hljs-number">20000</span>, <span class="hljs-number">60000</span>],
+
+    <span class="hljs-comment">// TUS auth headers (provided by our backend)</span>
+    <span class="hljs-attr">headers</span>: {
+      <span class="hljs-attr">AuthorizationSignature</span>: signature,
+      <span class="hljs-attr">AuthorizationExpire</span>: expiration_time,    <span class="hljs-comment">// ← SECONDS, do NOT multiply by 1000</span>
+      <span class="hljs-attr">VideoId</span>: bunny_video_id,
+      <span class="hljs-attr">LibraryId</span>: library_id,
+    },
+
+    <span class="hljs-attr">metadata</span>: {
+      <span class="hljs-attr">filetype</span>: file.type,
+      <span class="hljs-attr">title</span>: file.name,
+    },
+
+    <span class="hljs-comment">// Upload progress</span>
+    onProgress(bytesUploaded, bytesTotal) {
+      <span class="hljs-keyword">const</span> pct = <span class="hljs-built_in">Math</span>.round((bytesUploaded / bytesTotal) * <span class="hljs-number">100</span>);
+      onProgress(pct);
+    },
+
+    <span class="hljs-comment">// 300ms delay between chunks — prevents WiFi saturation</span>
+    onChunkComplete(chunkSize, bytesAccepted, bytesTotal) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> setTimeout(resolve, <span class="hljs-number">300</span>));
+    },
+
+    onSuccess() {
+      onStatusChange(<span class="hljs-string">'uploaded'</span>);
+      <span class="hljs-comment">// Bunny is now encoding — start polling for status</span>
+      startPolling(videoId);
+    },
+
+    onError(error) {
+      <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'TUS upload error:'</span>, error);
+      onStatusChange(<span class="hljs-string">'error'</span>);
+    },
+  });
+
+  <span class="hljs-comment">// Auto-resume if previous upload was interrupted</span>
+  <span class="hljs-keyword">const</span> previousUploads = <span class="hljs-keyword">await</span> upload.findPreviousUploads();
+  <span class="hljs-keyword">if</span> (previousUploads.length) {
+    upload.resumeFromPreviousUpload(previousUploads[<span class="hljs-number">0</span>]);
+  }
+
+  upload.start();
+}
+</div></code></pre>
+<h3 id="how-pauseresume-works">How Pause/Resume Works</h3>
+<p>TUS stores upload progress in the browser's <strong>localStorage</strong>. If the upload is interrupted:</p>
+<ol>
+<li><strong>Manual pause:</strong> Call <code>upload.abort()</code> → progress saved to localStorage</li>
+<li><strong>Browser crash / internet drop:</strong> On next page load, <code>findPreviousUploads()</code> returns the saved progress</li>
+<li><strong>Resume:</strong> <code>resumeFromPreviousUpload(previousUploads[0])</code> continues from the exact byte where it stopped</li>
+</ol>
+<p>No backend endpoint needed for pause/resume — it's built into the TUS protocol.</p>
+<h3 id="how-cancellation-works">How Cancellation Works</h3>
+<p>To cancel an upload:</p>
+<pre class="hljs"><code><div>upload.abort(<span class="hljs-literal">true</span>); <span class="hljs-comment">// true = remove stored progress too</span>
+</div></code></pre>
+<p>This stops the upload and clears the TUS localStorage entry. The Bunny video entry remains in the database with <code>bunny_status=0</code> (Created, never uploaded). To retry, just start a new upload — the existing <code>create-upload/</code> credentials still work.</p>
+<h3 id="re-uploading-starting-over">Re-uploading (Starting Over)</h3>
+<p>If a previous upload failed or was cancelled:</p>
+<ol>
+<li>Call <code>POST /courses/videos/&lt;id&gt;/create-upload/</code> again — it returns <strong>new</strong> TUS credentials for the same <code>bunny_video_id</code></li>
+<li>Start a new <code>tus.Upload</code> — Bunny replaces the video content</li>
+</ol>
+<hr>
+<h2 id="4-poll-encoding-status">4. Poll Encoding Status</h2>
+<p>After the upload completes, Bunny processes the video. Poll the video detail endpoint to know when it's ready.</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">startPolling</span>(<span class="hljs-params">videoId</span>) </span>{
+  <span class="hljs-keyword">const</span> poll = <span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> resp = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/`</span>, {
+      <span class="hljs-attr">headers</span>: { <span class="hljs-attr">Authorization</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${token}</span>`</span> },
+    });
+    <span class="hljs-keyword">const</span> video = <span class="hljs-keyword">await</span> resp.json();
+
+    <span class="hljs-keyword">switch</span> (video.bunny_status) {
+      <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>:
+        setStatus(<span class="hljs-string">'Created (waiting for upload)'</span>);
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+        setStatus(<span class="hljs-string">'Uploaded (encoding pending)'</span>);
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
+        setStatus(<span class="hljs-string">'Processing...'</span>);
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:
+        setStatus(<span class="hljs-string">'Transcoding...'</span>);
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:
+        setStatus(<span class="hljs-string">'Ready ✅'</span>);
+        clearInterval(interval);
+        setIsReady(<span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:
+        setStatus(<span class="hljs-string">'Error ❌'</span>);
+        clearInterval(interval);
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">6</span>:
+        setStatus(<span class="hljs-string">'Upload Failed ❌'</span>);
+        clearInterval(interval);
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        setStatus(<span class="hljs-string">'Unknown'</span>);
+    }
+  };
+
+  <span class="hljs-keyword">const</span> interval = setInterval(poll, <span class="hljs-number">5000</span>); <span class="hljs-comment">// Poll every 5 seconds</span>
+}
+</div></code></pre>
+<p><strong>Status Reference:</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><code>bunny_status</code></th>
+<th><code>bunny_status_display</code></th>
+<th>Meaning</th>
+<th style="text-align:center"><code>is_active</code> set?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>null</code></td>
+<td>Pending</td>
+<td>Video record created, no Bunny entry yet</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>0</code></td>
+<td>Created</td>
+<td>Bunny entry created, upload pending</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>1</code></td>
+<td>Uploaded</td>
+<td>TUS upload complete, encoding queued</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>2</code></td>
+<td>Processing</td>
+<td>Bunny is processing the video</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>3</code></td>
+<td>Transcoding</td>
+<td>Bunny is transcoding to HLS</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong><code>4</code></strong></td>
+<td><strong>Finished</strong></td>
+<td><strong>Ready for playback</strong></td>
+<td style="text-align:center"><strong>✅</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>5</code></td>
+<td>Error</td>
+<td>Encoding failed (delete and re-upload)</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>6</code></td>
+<td>Upload Failed</td>
+<td>TUS upload didn't complete properly</td>
+<td style="text-align:center">❌</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>When status becomes <code>4</code> (Finished), the backend automatically sets <code>is_active = true</code> and the <code>thumbnail_url</code> becomes available.</p>
+</blockquote>
+<hr>
+<h2 id="5-play-a-video">5. Play a Video</h2>
+<p>Returns a signed HLS playback URL (valid for 2 hours).</p>
+<p><strong>Request:</strong></p>
+<pre class="hljs"><code><div>GET /courses/videos/&lt;id&gt;/play/
+</div></code></pre>
+<p><strong>Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"https://vz-964b4290-bbe.b-cdn.net/a1b2c3d4-e5f6-7890-abcd-ef1234567890/play_720p.m3u8?token=...&amp;expires=..."</span>,
+  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-number">1721407200</span>
+}
+</div></code></pre>
+<h3 id="access-rules-by-role">Access Rules by Role</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Can play?</th>
+<th>Requirements</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Student</strong></td>
+<td>✅</td>
+<td>Must have <strong>purchased</strong> the lecture (not expired, within watch limit, prerequisites passed)</td>
+</tr>
+<tr>
+<td><strong>Teacher</strong></td>
+<td>✅</td>
+<td>Must own the course (preview — no purchase needed)</td>
+</tr>
+<tr>
+<td><strong>Assistant</strong></td>
+<td>✅</td>
+<td>Must belong to the course teacher</td>
+</tr>
+<tr>
+<td><strong>SiteOwner</strong></td>
+<td>✅</td>
+<td>Any video</td>
+</tr>
+<tr>
+<td><strong>Unauthenticated</strong></td>
+<td>❌</td>
+<td>401</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-responses">Error Responses</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Error</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>404</td>
+<td><code>&quot;Video is not available.&quot;</code></td>
+<td>Video not found, inactive, or not yet encoded</td>
+</tr>
+<tr>
+<td>401</td>
+<td><code>&quot;Authentication credentials were not provided.&quot;</code></td>
+<td>Not logged in</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>&quot;You have not purchased this lecture.&quot;</code></td>
+<td>Student didn't buy</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>&quot;Your access to this lecture has expired.&quot;</code></td>
+<td>Purchase expired (teacher can reopen)</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>&quot;You have reached the maximum watching limit for this lecture.&quot;</code></td>
+<td>Watch count exhausted (default: 4)</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>&quot;You must pass the homework (ID X) before accessing this video.&quot;</code></td>
+<td>Prerequisite not met</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>&quot;You can only preview videos in your own courses.&quot;</code></td>
+<td>Wrong teacher</td>
+</tr>
+<tr>
+<td>502</td>
+<td><code>&quot;Failed to generate playback URL.&quot;</code></td>
+<td>Bunny Stream error</td>
+</tr>
+</tbody>
+</table>
+<h3 id="watching-times">Watching Times</h3>
+<p>Each purchase has a <strong>max watching count</strong> (default: 4 per lecture). The count increments:</p>
+<ul>
+<li>Once per <strong>session</strong> — if the student stops watching for &gt;5 minutes, the next play counts as a new session</li>
+<li>Across ALL videos in the same lecture (not per-video)</li>
+</ul>
+<p>Teacher can <strong>reopen</strong> access (grants 1 extra day, max 2 reopens). Reopening does NOT reset the watch count — it only extends the expiry.</p>
+<hr>
+<h2 id="6-updaterename-a-video">6. Update/Rename a Video</h2>
+<p><strong>Request:</strong></p>
+<pre class="hljs"><code><div>PATCH /courses/videos/&lt;id&gt;/
+Content-Type: application/json
+</div></code></pre>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Updated Video Title"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>
+}
+</div></code></pre>
+<p><strong>What happens when you change the name:</strong></p>
+<ol>
+<li>Local DB is updated immediately</li>
+<li>Backend also calls Bunny Stream's API to update the title in their system (Bunny dashboard stays in sync)</li>
+<li>If the Bunny update fails, the local name is still saved and the error is logged</li>
+</ol>
+<p><strong>To update the image:</strong> Upload via multipart/form-data (see question images docs). Video <code>thumbnail_url</code> is auto-generated by Bunny from the video file — you cannot set it manually.</p>
+<hr>
+<h2 id="7-delete-a-video">7. Delete a Video</h2>
+<p><strong>Request:</strong></p>
+<pre class="hljs"><code><div>DELETE /courses/videos/&lt;id&gt;/
+</div></code></pre>
+<p><strong>What happens:</strong></p>
+<ol>
+<li>Backend calls Bunny Stream's API to delete the video from their CDN</li>
+<li>Backend deletes the local database record</li>
+<li>If Bunny deletion fails (network error), the local record is still deleted and the error is logged</li>
+<li>The Bunny video becomes orphaned — no automatic cleanup retry</li>
+</ol>
+<p><strong>Cannot delete:</strong> Videos can always be deleted (no enrollment/purchase check on video level — the lecture-level checks handle that).</p>
+<hr>
+<h2 id="8-list-videos">8. List Videos</h2>
+<p><strong>Request:</strong></p>
+<pre class="hljs"><code><div>GET /courses/videos/?lecture=5
+</div></code></pre>
 <table>
 <thead>
 <tr>
@@ -446,7 +914,7 @@ code {
 <tr>
 <td><code>bunny_status</code></td>
 <td>Integer</td>
-<td>Filter by encoding status</td>
+<td>Filter by encoding status (0-6)</td>
 </tr>
 <tr>
 <td><code>is_active</code></td>
@@ -461,354 +929,141 @@ code {
 <tr>
 <td><code>ordering</code></td>
 <td>String</td>
-<td><code>order</code>, <code>created_at</code></td>
+<td><code>order</code> or <code>created_at</code></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">3</span>,
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"string | null"</span>,
-      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"integer | null"</span>,
-      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"string | null — Bunny auto-generated thumbnail URL"</span>,
-      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>,
-      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
-      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">42</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Introduction"</span>,
+      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"a1b2c3d4-..."</span>,
+      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-number">4</span>,
+      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"Finished"</span>,
+      <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"https://vz-964b4290-bbe.b-cdn.net/a1b2c3d4-.../thumbnail.jpg"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-16T10:00:00.000000+03:00"</span>,
+      <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-07-16T10:00:00.000000+03:00"</span>
     }
   ]
 }
 </div></code></pre>
-<p><strong>Status reference:</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center"><code>bunny_status</code></th>
-<th><code>bunny_status_display</code></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">null</td>
-<td>Pending</td>
-</tr>
-<tr>
-<td style="text-align:center">0</td>
-<td>Created</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td>Uploaded</td>
-</tr>
-<tr>
-<td style="text-align:center">2</td>
-<td>Processing</td>
-</tr>
-<tr>
-<td style="text-align:center">3</td>
-<td>Transcoding</td>
-</tr>
-<tr>
-<td style="text-align:center"><strong>4</strong></td>
-<td><strong>Finished</strong></td>
-</tr>
-<tr>
-<td style="text-align:center">5</td>
-<td>Error</td>
-</tr>
-<tr>
-<td style="text-align:center">6</td>
-<td>Upload Failed</td>
-</tr>
-</tbody>
-</table>
 <hr>
-<h4 id="get-coursesvideosid"><code>GET /courses/videos/&lt;id&gt;/</code></h4>
-<p><strong>Description:</strong> Get a single video's details.</p>
-<p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Success Response — 200 OK:</strong> Same structure as list item.</p>
-<hr>
-<h4 id="putpatch-coursesvideosid"><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code></h4>
-<p><strong>Description:</strong> Update video metadata (name, order, is_active). When <code>name</code> changes, the backend
-<strong>also updates the title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
-<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string - New title"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean"</span>
-}
+<h2 id="9-thumbnail-url">9. Thumbnail URL</h2>
+<p>The <code>thumbnail_url</code> is <strong>auto-generated</strong> by Bunny Stream based on the video's GUID:</p>
+<pre class="hljs"><code><div>https://{cdn_hostname}/{bunny_video_id}/thumbnail.jpg
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong> Updated video object.</p>
-<p><strong>Note:</strong> Renaming is atomic — local DB and Bunny Stream are both updated in sequence. If the
-Bunny update fails, the local name is still saved and the error is logged (no rollback).</p>
-<hr>
-<h4 id="delete-coursesvideosid"><code>DELETE /courses/videos/&lt;id&gt;/</code></h4>
-<p><strong>Description:</strong> Delete a video and remove it from Bunny Stream.</p>
-<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
-<p><strong>Success Response — 204 No Content</strong></p>
-<hr>
-<h2 id="2-upload-flow">2. Upload Flow</h2>
-<hr>
-<h4 id="post-coursesvideosidcreate-upload"><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></h4>
-<p><strong>Description:</strong> Creates a video entry on Bunny Stream and returns <strong>TUS credentials</strong>
-for direct browser-to-Bunny upload. Must be called before uploading. The backend
-creates the Bunny entry (API key stays server-side) and generates a time-limited
-SHA256 signature — the frontend uses these credentials with <code>tus-js-client</code> to upload
-directly to Bunny Stream.</p>
-<p><strong>Authentication:</strong> Teacher (must own the lecture's course)</p>
-<p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 201 Created:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"integer - Local video ID"</span>,
-  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"string - Bunny Stream GUID"</span>,
-  <span class="hljs-attr">"library_id"</span>: <span class="hljs-string">"integer - Bunny Stream library ID (698152)"</span>,
-  <span class="hljs-attr">"expiration_time"</span>: <span class="hljs-string">"integer - Unix timestamp (seconds) when the TUS credentials expire"</span>,
-  <span class="hljs-attr">"signature"</span>: <span class="hljs-string">"string - SHA256 hex signature for TUS auth"</span>
-}
+<p>Example:</p>
+<pre class="hljs"><code><div>https://vz-964b4290-bbe.b-cdn.net/a1b2c3d4-e5f6-7890-abcd-ef1234567890/thumbnail.jpg
 </div></code></pre>
-<p><strong>If <code>create-upload/</code> was already called (200 OK):</strong> Same structure — credentials are regenerated each time.</p>
-<blockquote>
-<p><strong>⚠️ IMPORTANT: <code>expiration_time</code> is a Unix timestamp in SECONDS, not milliseconds.</strong>
-JavaScript's <code>Date.now()</code> returns milliseconds — if you pass that directly to the
-<code>AuthorizationExpire</code> header, Bunny will reject every request with 401 because the
-signature will always appear expired. Use <code>Math.floor(Date.now() / 1000)</code> for
-comparisons, and pass <code>expiration_time</code> directly to the header without multiplying.</p>
-</blockquote>
-<hr>
-<h4 id="tus-direct-upload-via-tus-js-client--removed-returns-410-gone"><code>TUS direct upload (via tus-js-client)</code> — <strong>REMOVED</strong> (returns 410 Gone)</h4>
-<p>The old proxy endpoint has been removed. Use TUS direct upload instead (see below).</p>
-<hr>
-<h3 id="tus-upload-flow-frontend-implementation">TUS Upload Flow (Frontend Implementation)</h3>
-<p><strong>Install:</strong></p>
-<pre class="hljs"><code><div>npm install tus-js-client
-</div></code></pre>
-<p><strong>Upload function:</strong></p>
-<pre class="hljs"><code><div><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> tus <span class="hljs-keyword">from</span> <span class="hljs-string">'tus-js-client'</span>;
-
-<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">uploadVideo</span>(<span class="hljs-params">file, videoId</span>) </span>{
-  <span class="hljs-comment">// Step 1: Get TUS credentials from your backend</span>
-  <span class="hljs-keyword">const</span> { bunny_video_id, library_id, expiration_time, signature } =
-    <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/create-upload/`</span>, {
-      <span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>,
-      <span class="hljs-attr">headers</span>: { <span class="hljs-attr">Authorization</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${token}</span>`</span> }
-    }).then(<span class="hljs-function"><span class="hljs-params">r</span> =&gt;</span> r.json());
-
-  <span class="hljs-comment">// Step 2: Upload directly to Bunny — your VPS never sees a byte</span>
-  <span class="hljs-keyword">const</span> upload = <span class="hljs-keyword">new</span> tus.Upload(file, {
-    <span class="hljs-attr">endpoint</span>: <span class="hljs-string">'https://video.bunnycdn.com/tusupload'</span>,
-    <span class="hljs-attr">chunkSize</span>: <span class="hljs-number">5</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span>, <span class="hljs-comment">// 5 MB chunks</span>
-
-    <span class="hljs-attr">retryDelays</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">3000</span>, <span class="hljs-number">5000</span>, <span class="hljs-number">10000</span>, <span class="hljs-number">20000</span>, <span class="hljs-number">60000</span>],
-
-    <span class="hljs-attr">headers</span>: {
-      <span class="hljs-attr">AuthorizationSignature</span>: signature,
-      <span class="hljs-attr">AuthorizationExpire</span>: expiration_time,    <span class="hljs-comment">// ← seconds, NOT milliseconds</span>
-      <span class="hljs-attr">VideoId</span>: bunny_video_id,
-      <span class="hljs-attr">LibraryId</span>: library_id,
-    },
-
-    <span class="hljs-attr">metadata</span>: {
-      <span class="hljs-attr">filetype</span>: file.type,
-      <span class="hljs-attr">title</span>: file.name,
-    },
-
-    onProgress(bytesUploaded, bytesTotal) {
-      <span class="hljs-keyword">const</span> pct = <span class="hljs-built_in">Math</span>.round((bytesUploaded / bytesTotal) * <span class="hljs-number">100</span>);
-      setProgress(pct);
-    },
-
-    onChunkComplete(chunkSize, bytesAccepted, bytesTotal) {
-      <span class="hljs-comment">// 300ms delay between chunks — prevents WiFi saturation</span>
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> setTimeout(resolve, <span class="hljs-number">300</span>));
-    },
-
-    onSuccess() {
-      <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Upload complete — Bunny is encoding'</span>);
-    },
-
-    onError(error) {
-      <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Upload error:'</span>, error);
-    },
-  });
-
-  <span class="hljs-comment">// Auto-resume if previous upload was interrupted</span>
-  <span class="hljs-keyword">const</span> previousUploads = <span class="hljs-keyword">await</span> upload.findPreviousUploads();
-  <span class="hljs-keyword">if</span> (previousUploads.length) {
-    upload.resumeFromPreviousUpload(previousUploads[<span class="hljs-number">0</span>]);
-  }
-
-  upload.start();
-}
-</div></code></pre>
-<p><strong>Key points:</strong></p>
 <ul>
-<li><code>chunkSize: 5 * 1024 * 1024</code> — 5 MB chunks</li>
-<li><code>AuthorizationExpire</code> — pass <code>expiration_time</code> directly (it's already in seconds)</li>
-<li><code>retryDelays</code> — auto-retry with backoff on failure</li>
-<li><code>findPreviousUploads()</code> + <code>resumeFromPreviousUpload()</code> — TUS stores progress in localStorage; resume at the exact byte even after browser restart</li>
-<li><code>onChunkComplete</code> with a 300ms delay — prevents WiFi saturation during large uploads</li>
+<li>Available when <code>bunny_status &gt;= 4</code> (Finished)</li>
+<li>Returns <code>null</code> before encoding completes</li>
+<li>Cannot be set manually — Bunny generates it from the video</li>
 </ul>
 <hr>
-<h2 id="3-playback">3. Playback</h2>
-<hr>
-<h4 id="get-coursesvideosidplay"><code>GET /courses/videos/&lt;id&gt;/play/</code></h4>
-<p><strong>Description:</strong> Get a signed HLS playback URL for a video. Multiple security checks are performed before the URL is returned.</p>
-<p><strong>Authentication:</strong> Student, Teacher, Assistant, SiteOwner</p>
-<p><strong>Access Checks (Student):</strong></p>
+<h2 id="10-error-handling-reference">10. Error Handling Reference</h2>
 <table>
 <thead>
 <tr>
-<th>Check</th>
-<th>Blocked?</th>
+<th>Scenario</th>
+<th>What happens</th>
+<th>Recovery</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Video not found or not active</td>
-<td>404</td>
+<td><strong>Network drops mid-upload</strong></td>
+<td>TUS saves progress to localStorage</td>
+<td>On retry, <code>findPreviousUploads()</code> finds saved progress → resume</td>
 </tr>
 <tr>
-<td>Student not authenticated</td>
-<td>401</td>
+<td><strong>Browser tab closed</strong></td>
+<td>Same as network drop</td>
+<td>Same resume behavior</td>
 </tr>
 <tr>
-<td>Lecture not purchased</td>
-<td>403</td>
+<td><strong>User clicks Cancel</strong></td>
+<td>Call <code>upload.abort(true)</code></td>
+<td>Start fresh upload — <code>create-upload/</code> still works</td>
 </tr>
 <tr>
-<td>Purchase expired</td>
-<td>403</td>
+<td><strong>Upload reaches 100% but never finishes</strong></td>
+<td>Bunny received all chunks but may need finalization</td>
+<td>Check <code>GET /videos/&lt;id&gt;/</code> → if status=0/1, try re-upload. TUS may auto-resume</td>
 </tr>
 <tr>
-<td>Watching limit reached (default: 4)</td>
-<td>403</td>
+<td><strong>create-upload returns 502</strong></td>
+<td>Bunny API is down</td>
+<td>Retry with exponential backoff (3 retries, 1s/2s/4s delays)</td>
 </tr>
 <tr>
-<td>Prerequisite homework not passed</td>
-<td>403</td>
+<td><strong>create-upload returns 400 &quot;no collection&quot;</strong></td>
+<td>Teacher has no Bunny collection</td>
+<td>SiteOwner must create one via <code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></td>
 </tr>
 <tr>
-<td>Prerequisite quiz not passed</td>
-<td>403</td>
+<td><strong>play returns 502</strong></td>
+<td>Bunny playback URL generation failed</td>
+<td>Retry — temporary Bunny issue</td>
 </tr>
 <tr>
-<td>Prerequisite exam not passed</td>
-<td>403</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Teacher/Assistant:</strong> Can preview any video in their own courses (skips purchase/prerequisite checks).</p>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"string - Signed HLS URL (expires in 2 hours)"</span>,
-  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"integer - Unix timestamp when the URL expires"</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Error</th>
-<th>Cause</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>404</td>
-<td><code>&quot;Video is not available.&quot;</code></td>
-<td>Video not found or inactive</td>
+<td><strong>play returns 404</strong></td>
+<td>Video not active or not yet encoded</td>
+<td>Wait for status=4, then retry</td>
 </tr>
 <tr>
-<td>401</td>
-<td><code>&quot;Authentication credentials were not provided.&quot;</code></td>
-<td>Not logged in</td>
+<td><strong>Webhook never fires</strong></td>
+<td>Bunny failed to call back</td>
+<td>Poll <code>GET /videos/&lt;id&gt;/</code> every 5s — eventually status=4</td>
 </tr>
 <tr>
-<td>403</td>
-<td><code>&quot;You have not purchased this lecture.&quot;</code></td>
-<td>Student didn't buy</td>
+<td><strong>Encoding fails (status=5)</strong></td>
+<td>Bunny couldn't encode the video</td>
+<td>Delete and re-upload. Ensure video is in a supported format (MP4, MOV, AVI, MKV)</td>
 </tr>
 <tr>
-<td>403</td>
-<td><code>&quot;Your access to this lecture has expired.&quot;</code></td>
-<td>Purchase expired</td>
-</tr>
-<tr>
-<td>403</td>
-<td><code>&quot;You have reached the maximum watching limit for this lecture.&quot;</code></td>
-<td>Watch count exhausted</td>
-</tr>
-<tr>
-<td>403</td>
-<td><code>&quot;You must pass the homework (ID X) before accessing this video.&quot;</code></td>
-<td>Prerequisite not met</td>
-</tr>
-<tr>
-<td>403</td>
-<td><code>&quot;You can only preview videos in your own courses.&quot;</code></td>
-<td>Teacher trying to preview another teacher's video</td>
+<td><strong>TUS upload gets 401</strong></td>
+<td><code>expiration_time</code> passed as milliseconds</td>
+<td><strong>Fix:</strong> Pass <code>expiration_time</code> directly without multiplying by 1000. See ⚠️ note in Step 2</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h2 id="4-webhook">4. Webhook</h2>
-<hr>
-<h4 id="post-webhooksbunny-encoded">POST /webhooks/bunny-encoded/</h4>
-<p><strong>Description:</strong> Called by Bunny Stream when video encoding is complete. Updates the video's <code>bunny_status</code> to 4 (Finished).</p>
-<p><strong>Authentication:</strong> HMAC signature verification (backend validates request authenticity)</p>
-<p><strong>Request Body (Bunny sends this):</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"VideoLibraryId"</span>: <span class="hljs-number">698152</span>,
-  <span class="hljs-attr">"VideoGuid"</span>: <span class="hljs-string">"string - Bunny Stream video GUID"</span>,
-  <span class="hljs-attr">"Status"</span>: <span class="hljs-string">"integer - New status"</span>
-}
+<h2 id="11-full-lifecycle-summary">11. Full Lifecycle Summary</h2>
+<pre class="hljs"><code><div>1. CREATE video record     → POST /courses/videos/                   → {id, bunny_video_id: null}
+2. GET upload credentials  → POST /courses/videos/&lt;id&gt;/create-upload/ → {bunny_video_id, signature, expiration_time}
+3. UPLOAD file             → tus-js-client → https://video.bunnycdn.com/tusupload
+4. POLL for encoding       → GET /courses/videos/&lt;id&gt;/ (every 5s)    → {bunny_status: 0→1→2→3→4, is_active: true}
+5. PLAY video              → GET /courses/videos/&lt;id&gt;/play/           → {playback_url, expires_at}
+6. RENAME video (optional) → PATCH /courses/videos/&lt;id&gt;/              → updated video object
+7. DELETE video (optional) → DELETE /courses/videos/&lt;id&gt;/             → 204 No Content
+
+                    ↓                              ↓                              ↓
+              Frontend does                Backend does                  Bunny does
+              ┌─────────────────┐    ┌─────────────────────┐    ┌────────────────────────┐
+              │ POST /videos/   │───►│ Creates Video row   │    │                        │
+              │                 │    │                     │    │                        │
+              │ POST create-    │───►│ POST /library/...   │───►│ Creates video entry    │
+              │   upload/       │    │ Returns TUS creds   │    │ Returns GUID           │
+              │                 │    │                     │    │                        │
+              │ tus-js-client   │────────────────────────────────►│ Receives file chunks   │
+              │ uploads chunks  │    │                     │    │ Auto-assembles file    │
+              │                 │    │                     │    │ Starts encoding        │
+              │                 │    │                     │    │                        │
+              │                 │    │◄── POST /webhooks/ ──────│ Sends status updates   │
+              │                 │    │ Updates bunny_status│    │                        │
+              │ GET /videos/id/ │───►│ Returns status=4    │    │                        │
+              │                 │    │ is_active=true      │    │                        │
+              │ GET /videos/id/ │───►│ Checks permissions  │    │                        │
+              │   /play/        │    │ Signs playback URL  │    │                        │
+              └─────────────────┘    └─────────────────────┘    └────────────────────────┘
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>
-}
-</div></code></pre>
-<hr>
-<h2 id="5-watching-times-limit">5. Watching Times Limit</h2>
-<p>Each lecture enforces a <strong>watching times limit</strong> (default: 4). Once a student has used all their watching times, the lecture's videos are locked.</p>
-<table>
-<thead>
-<tr>
-<th>Detail</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Scope</td>
-<td>Per-student, per-lecture (watching any video counts)</td>
-</tr>
-<tr>
-<td>Default</td>
-<td>4</td>
-</tr>
-<tr>
-<td>Max reopens</td>
-<td>2 (each grants 1 extra day, does NOT reset watch count)</td>
-</tr>
-<tr>
-<td>Locked access</td>
-<td>Homework, quizzes, materials still accessible</td>
-</tr>
-<tr>
-<td>Teacher view</td>
-<td><code>watch_count</code> and <code>max_watch_count</code> available in purchase details</td>
-</tr>
-</tbody>
-</table>
 <hr>
 <h2 id="endpoint-summary">Endpoint Summary</h2>
 <h3 id="teacher">Teacher</h3>
@@ -818,6 +1073,7 @@ comparisons, and pass <code>expiration_time</code> directly to the header withou
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -825,41 +1081,49 @@ comparisons, and pass <code>expiration_time</code> directly to the header withou
 <td>Create video record</td>
 <td><code>POST</code></td>
 <td><code>/courses/videos/</code></td>
+<td>Creates local DB row only</td>
 </tr>
 <tr>
 <td>List videos</td>
 <td><code>GET</code></td>
 <td><code>/courses/videos/</code></td>
+<td>Filter by <code>?lecture=</code>, <code>?bunny_status=</code>, <code>?search=</code></td>
 </tr>
 <tr>
 <td>Get video detail</td>
 <td><code>GET</code></td>
 <td><code>/courses/videos/&lt;id&gt;/</code></td>
+<td>Includes <code>thumbnail_url</code>, <code>bunny_status_display</code></td>
 </tr>
 <tr>
 <td>Update video</td>
 <td><code>PUT/PATCH</code></td>
 <td><code>/courses/videos/&lt;id&gt;/</code></td>
+<td>Rename syncs to Bunny Stream</td>
 </tr>
 <tr>
 <td>Delete video</td>
 <td><code>DELETE</code></td>
 <td><code>/courses/videos/&lt;id&gt;/</code></td>
+<td>Removes from Bunny + local DB</td>
 </tr>
 <tr>
-<td>Create Bunny upload entry (returns TUS credentials)</td>
+<td>Get upload credentials</td>
 <td><code>POST</code></td>
 <td><code>/courses/videos/&lt;id&gt;/create-upload/</code></td>
+<td>Returns TUS credentials (no file upload here)</td>
 </tr>
 <tr>
-<td>Upload video file (direct to Bunny)</td>
-<td>via TUS</td>
-<td><code>tus-js-client</code> → <code>https://video.bunnycdn.com/tusupload</code></td>
+<td>Upload file</td>
+<td>TUS</td>
+<td><code>https://video.bunnycdn.com/tusupload</code></td>
+<td>Use <code>tus-js-client</code> with credentials from above</td>
 </tr>
 <tr>
-<td>Preview own video</td>
+<td>Preview video</td>
 <td><code>GET</code></td>
 <td><code>/courses/videos/&lt;id&gt;/play/</code></td>
+<td>Skips purchase checks for own courses</td>
 </tr>
 </tbody>
 </table>
@@ -870,6 +1134,7 @@ comparisons, and pass <code>expiration_time</code> directly to the header withou
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -877,21 +1142,25 @@ comparisons, and pass <code>expiration_time</code> directly to the header withou
 <td>Play purchased video</td>
 <td><code>GET</code></td>
 <td><code>/courses/videos/&lt;id&gt;/play/</code></td>
+<td>Checks purchase, expiry, watch limit, prerequisites</td>
 </tr>
 <tr>
 <td>Track watch progress</td>
 <td><code>POST</code></td>
 <td><code>/courses/progress/update/</code></td>
+<td>Body: <code>{video, progress_seconds, duration_seconds}</code></td>
 </tr>
 <tr>
 <td>Get watch progress</td>
 <td><code>GET</code></td>
 <td><code>/courses/progress/&lt;video_id&gt;/</code></td>
+<td>Own progress only</td>
 </tr>
 <tr>
 <td>List progress</td>
 <td><code>GET</code></td>
 <td><code>/courses/progress/</code></td>
+<td>Filter by <code>?video=</code>, <code>?is_completed=</code></td>
 </tr>
 </tbody>
 </table>
@@ -902,6 +1171,7 @@ comparisons, and pass <code>expiration_time</code> directly to the header withou
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -909,6 +1179,32 @@ comparisons, and pass <code>expiration_time</code> directly to the header withou
 <td>Bunny encoding callback</td>
 <td><code>POST</code></td>
 <td><code>/webhooks/bunny-encoded/</code></td>
+<td>Bunny calls this. HMAC-SHA256 verified.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deprecated">Deprecated</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Upload via proxy</td>
+<td><s><code>POST</code></s></td>
+<td><s><code>/courses/videos/&lt;id&gt;/upload/</code></s></td>
+<td>Returns <strong>410 Gone</strong>. Replaced by TUS direct upload</td>
+</tr>
+<tr>
+<td>Check upload status</td>
+<td><s><code>GET</code></s></td>
+<td><s><code>/courses/videos/&lt;id&gt;/upload-status/</code></s></td>
+<td>Returns <strong>410 Gone</strong>. TUS handles resume natively</td>
 </tr>
 </tbody>
 </table>
