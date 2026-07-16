@@ -1554,7 +1554,6 @@ code {
     <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
     <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Null if score_visibility=manual and not released yet"</span>,
-    <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
     <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null — Null if not yet submitted"</span>,
     <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean — Whether the score is currently visible to you"</span>,
     <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean — Whether correct answers are currently visible to you"</span>
@@ -1811,7 +1810,6 @@ code {
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Quiz submitted successfully."</span>,
   <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Null if score_visibility=manual and not released"</span>,
-  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null — Null (passing threshold is set via prerequisites, not on the quiz)"</span>,
   <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
   <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
 }
@@ -1858,7 +1856,6 @@ code {
   <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
   <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
   <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
   <span class="hljs-attr">"is_timed_out"</span>: <span class="hljs-string">"boolean"</span>,
@@ -1931,7 +1928,6 @@ code {
     <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
     <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Hidden if score_visibility=manual and not released"</span>,
-    <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
     <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
     <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
     <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
@@ -2011,7 +2007,6 @@ code {
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Exam submitted successfully."</span>,
   <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
   <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
   <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
 }

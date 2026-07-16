@@ -1337,14 +1337,10 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"datetime (ISO 8601, optional) — Students cannot start after this date."</span>,
   <span class="hljs-attr">"settings"</span>: {
     <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer (optional, default: 0) — 0 = unlimited, max 1440."</span>,
-    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate')"</span>,
-    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate')"</span>,
+    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') — 'immediate' or 'manual'"</span>,
+    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') — 'immediate' or 'manual'"</span>,
     <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string (optional, default: 'fixed')"</span>,
-    <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>,
-    <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>,
-    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer (optional, default: 1)"</span>,
-    <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"string (optional, default: 'best')"</span>,
-    <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>
+    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer (optional, default: 1)"</span>
   },
   <span class="hljs-attr">"questions"</span>: [
     {
@@ -1461,22 +1457,17 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
     <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string"</span>,
-    <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"boolean"</span>,
-    <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"boolean"</span>,
-    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer"</span>,
-    <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"string"</span>,
-    <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"boolean"</span>
+    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer"</span>
   },
-  <span class="hljs-attr">"questions"</span>: [
+  <span class="hljs-attr">"quiz_questions"</span>: [
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"order"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"points_override"</span>: <span class="hljs-string">"integer | null"</span>,
       <span class="hljs-attr">"effective_points"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (mcq_single|mcq_multiple|written)"</span>,
       <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"image"</span>: <span class="hljs-string">"string (URL) | null"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"string (mcq_single|mcq_multiple|written)"</span>,
-      <span class="hljs-attr">"difficulty"</span>: <span class="hljs-string">"string (easy|medium|hard)"</span>,
       <span class="hljs-attr">"standalone_choices"</span>: [
         {
           <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
@@ -1632,7 +1623,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Exam submitted successfully."</span>,
   <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-  <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
   <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
   <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
 }
@@ -1698,7 +1688,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
     <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
     <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-    <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
     <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
     <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
     <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
@@ -2003,34 +1992,10 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td><code>fixed</code> = questions appear in their <code>order</code> field. <code>random</code> = shuffled for each student.</td>
 </tr>
 <tr>
-<td><code>shuffle_choices</code></td>
-<td>Boolean</td>
-<td>false</td>
-<td>If true, choice options within each question are randomly ordered for each student.</td>
-</tr>
-<tr>
-<td><code>allow_multiple_attempts</code></td>
-<td>Boolean</td>
-<td>false</td>
-<td>If false, student gets exactly one attempt. If true, up to <code>max_attempts</code>.</td>
-</tr>
-<tr>
 <td><code>max_attempts</code></td>
 <td>Integer</td>
 <td>1</td>
-<td>Maximum number of attempts allowed (only if <code>allow_multiple_attempts</code> is true).</td>
-</tr>
-<tr>
-<td><code>attempt_scoring</code></td>
-<td>String</td>
-<td><code>best</code></td>
-<td>When multiple attempts: <code>best</code> = highest score counts, <code>average</code> = average of all, <code>last</code> = most recent.</td>
-</tr>
-<tr>
-<td><code>show_correct_after_submission</code></td>
-<td>Boolean</td>
-<td>false</td>
-<td>If true, shows which answers were correct immediately after each submission.</td>
+<td>Maximum number of attempts allowed. <code>1</code> = single attempt only.</td>
 </tr>
 </tbody>
 </table>
@@ -2112,11 +2077,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
         <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (immediate|manual)"</span>,
         <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (immediate|manual)"</span>,
         <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string (fixed|random)"</span>,
-        <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"boolean"</span>,
-        <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"boolean"</span>,
-        <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer"</span>,
-        <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"string (best|average|last)"</span>,
-        <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"boolean"</span>
+        <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer"</span>
       },
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
     }
@@ -2145,11 +2106,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
     <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') — 'immediate' or 'manual'."</span>,
     <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') — 'immediate' or 'manual'."</span>,
     <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string (optional, default: 'fixed') — 'fixed' or 'random'."</span>,
-    <span class="hljs-attr">"shuffle_choices"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>,
-    <span class="hljs-attr">"allow_multiple_attempts"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>,
-    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer (optional, default: 1)"</span>,
-    <span class="hljs-attr">"attempt_scoring"</span>: <span class="hljs-string">"string (optional, default: 'best') — 'best', 'average', or 'last'."</span>,
-    <span class="hljs-attr">"show_correct_after_submission"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>
+    <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer (optional, default: 1)"</span>
   },
   <span class="hljs-attr">"questions"</span>: [
     {
@@ -2407,7 +2364,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
       <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-      <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
       <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
       <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
       <span class="hljs-attr">"is_timed_out"</span>: <span class="hljs-string">"boolean"</span>,
@@ -2432,7 +2388,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </div></code></pre>
 <p><strong>Notes:</strong></p>
 <ul>
-<li><code>score</code> and <code>passed</code> are null if <code>score_visibility=manual</code> and scores haven't been released.</li>
+<li><code>score</code> is null if <code>score_visibility=manual</code> and scores haven't been released.</li>
 <li>For written questions: <code>is_correct</code> is null and <code>points_earned</code> is 0 until manually graded.</li>
 </ul>
 <hr>
@@ -2496,7 +2452,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
     <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
     <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Hidden if score_visibility=manual and not released"</span>,
-    <span class="hljs-attr">"passed"</span>: <span class="hljs-string">"boolean | null"</span>,
     <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
     <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
     <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>

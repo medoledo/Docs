@@ -395,8 +395,10 @@ code {
       │ ──────────────────────────────────────────────────────►   │
       │                              │                             │
       │ 4. Poll GET /videos/&lt;id&gt;/    │                             │
-      │    until status=4            │                             │
-      │ ─────────────────────────►   │                             │
+      │    (self-healing — syncs     │                             │
+      │     status from Bunny API)   │                             │
+      │ ─────────────────────────►   │── GET /library/{id}/videos ─►│
+      │                              │◄── {status: 4} ────────────│
       │ ◄── {bunny_status: 4,        │                             │
       │      is_active: true}        │                             │
 </div></code></pre>
@@ -606,11 +608,12 @@ JavaScript's <code>Date.now()</code> returns <strong>milliseconds</strong>. If y
 
     onSuccess() {
       onStatusChange(<span class="hljs-string">'uploaded'</span>);
-      <span class="hljs-comment">// Tell the backend the upload is complete (updates bunny_status to 1)</span>
+      <span class="hljs-comment">// OPTIONAL: Tell the backend the upload is complete (faster status detection)</span>
+      <span class="hljs-comment">// Not required — the polling in step 4 will auto-detect status anyway.</span>
       fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/upload-complete/`</span>, {
         <span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>,
         <span class="hljs-attr">headers</span>: { <span class="hljs-attr">Authorization</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${token}</span>`</span> },
-      }).catch(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Status update failed:'</span>, err));
+      }).catch(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {});
       <span class="hljs-comment">// Start polling for encoding status</span>
       startPolling(videoId);
     },
@@ -651,7 +654,7 @@ JavaScript's <code>Date.now()</code> returns <strong>milliseconds</strong>. If y
 </ol>
 <hr>
 <h2 id="4-poll-encoding-status">4. Poll Encoding Status</h2>
-<p>After the upload completes, Bunny processes the video. Poll the video detail endpoint to know when it's ready.</p>
+<p>After the upload completes, Bunny processes the video. <strong>Poll the video detail endpoint</strong> — it automatically syncs the current status from Bunny's API on each request, so you always get the latest status.</p>
 <pre class="hljs"><code><div><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">startPolling</span>(<span class="hljs-params">videoId</span>) </span>{
   <span class="hljs-keyword">const</span> poll = <span class="hljs-keyword">async</span> () =&gt; {
     <span class="hljs-keyword">const</span> resp = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/courses/videos/<span class="hljs-subst">${videoId}</span>/`</span>, {
@@ -693,6 +696,14 @@ JavaScript's <code>Date.now()</code> returns <strong>milliseconds</strong>. If y
   <span class="hljs-keyword">const</span> interval = setInterval(poll, <span class="hljs-number">5000</span>); <span class="hljs-comment">// Poll every 5 seconds</span>
 }
 </div></code></pre>
+<p><strong>How it works:</strong> Each call to <code>GET /courses/videos/&lt;id&gt;/</code> checks:</p>
+<ol>
+<li>Does the video have a <code>bunny_video_id</code>?</li>
+<li>Is the current status &lt; 4 (not finished)?</li>
+<li>Was the video created less than 24 hours ago (not a stale video)?</li>
+<li>If all yes → backend calls Bunny's API to get the real status → updates the DB if changed</li>
+</ol>
+<p>This makes the polling <strong>self-healing</strong> — you don't need <code>POST /courses/videos/&lt;id&gt;/upload-complete/</code> or the webhook. The polling loop discovers status changes automatically.</p>
 <p><strong>Status Reference:</strong></p>
 <table>
 <thead>
@@ -998,9 +1009,9 @@ Content-Type: application/json
 <td>Start fresh upload — <code>create-upload/</code> still works</td>
 </tr>
 <tr>
-<td><strong>Upload reaches 100% but never finishes</strong></td>
-<td>Bunny received all chunks but may need finalization</td>
-<td>Check <code>GET /videos/&lt;id&gt;/</code> → if status=0/1, try re-upload. TUS may auto-resume</td>
+<td><strong>Upload reaches 100% but status never changes</strong></td>
+<td><code>upload-complete/</code> not called or webhook failed</td>
+<td><strong>No action needed</strong> — polling <code>GET /videos/&lt;id&gt;/</code> auto-syncs status from Bunny API on each request. The status will update within 5 seconds of the next poll cycle.</td>
 </tr>
 <tr>
 <td><strong>create-upload returns 502</strong></td>
@@ -1020,12 +1031,12 @@ Content-Type: application/json
 <tr>
 <td><strong>play returns 404</strong></td>
 <td>Video not active or not yet encoded</td>
-<td>Wait for status=4, then retry</td>
+<td>Wait for status=4 (polling auto-detects it), then retry</td>
 </tr>
 <tr>
 <td><strong>Webhook never fires</strong></td>
 <td>Bunny failed to call back</td>
-<td>Poll <code>GET /videos/&lt;id&gt;/</code> every 5s — eventually status=4</td>
+<td><strong>No problem</strong> — polling <code>GET /videos/&lt;id&gt;/</code> syncs status from Bunny API directly. The webhook is just a faster real-time notification.</td>
 </tr>
 <tr>
 <td><strong>Encoding fails (status=5)</strong></td>
@@ -1044,7 +1055,7 @@ Content-Type: application/json
 <pre class="hljs"><code><div>1. CREATE video record     → POST /courses/videos/                   → {id, bunny_video_id: null}
 2. GET upload credentials  → POST /courses/videos/&lt;id&gt;/create-upload/ → {bunny_video_id, signature, expiration_time}
 3. UPLOAD file             → tus-js-client → https://video.bunnycdn.com/tusupload
-4. POLL for encoding       → GET /courses/videos/&lt;id&gt;/ (every 5s)    → {bunny_status: 0→1→2→3→4, is_active: true}
+4. POLL for encoding (self-healing) → GET /courses/videos/&lt;id&gt;/ (every 5s) → {bunny_status: 0→1→2→3→4, is_active: true}
 5. PLAY video              → GET /courses/videos/&lt;id&gt;/play/           → {playback_url, expires_at}
 6. RENAME video (optional) → PATCH /courses/videos/&lt;id&gt;/              → updated video object
 7. DELETE video (optional) → DELETE /courses/videos/&lt;id&gt;/             → 204 No Content
@@ -1061,12 +1072,11 @@ Content-Type: application/json
               │ uploads chunks  │    │                     │    │ Auto-assembles file    │
               │                 │    │                     │    │ Starts encoding        │
               │                 │    │                     │    │                        │
-              │                 │    │◄── POST /webhooks/ ──────│ Sends status updates   │
-              │                 │    │ Updates bunny_status│    │                        │
-              │ GET /videos/id/ │───►│ Returns status=4    │    │                        │
-              │                 │    │ is_active=true      │    │                        │
-              │ GET /videos/id/ │───►│ Checks permissions  │    │                        │
-              │   /play/        │    │ Signs playback URL  │    │                        │
+              │ GET /videos/id/ │───►│ GET /library/...   │───►│ Returns real status    │
+              │   (or webhook)  │    │ Updates DB if      │    │                        │
+              │                 │    │   status changed   │    │                        │
+              │ GET /videos/id/ │───►│ Checks permissions │    │                        │
+              │   /play/        │    │ Signs playback URL │    │                        │
               └─────────────────┘    └─────────────────────┘    └────────────────────────┘
 </div></code></pre>
 <hr>
@@ -1098,7 +1108,7 @@ Content-Type: application/json
 <td>Get video detail</td>
 <td><code>GET</code></td>
 <td><code>/courses/videos/&lt;id&gt;/</code></td>
-<td>Includes <code>thumbnail_url</code>, <code>bunny_status_display</code></td>
+<td>Includes <code>thumbnail_url</code>, <code>bunny_status_display</code>. <strong>Self-healing</strong> — syncs status from Bunny API on each poll</td>
 </tr>
 <tr>
 <td>Update video</td>
@@ -1128,7 +1138,7 @@ Content-Type: application/json
 <td>Mark upload complete</td>
 <td><code>POST</code></td>
 <td><code>/courses/videos/&lt;id&gt;/upload-complete/</code></td>
-<td>Call after TUS <code>onSuccess</code> — updates <code>bunny_status</code> to 1</td>
+<td><strong>Optional.</strong> Call after TUS <code>onSuccess</code> for faster status detection (faster than waiting for next poll cycle)</td>
 </tr>
 <tr>
 <td>Preview video</td>
