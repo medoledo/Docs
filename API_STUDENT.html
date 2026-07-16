@@ -1618,15 +1618,11 @@ code {
 <td>404</td>
 </tr>
 <tr>
-<td>Quiz must be active (<code>is_active=true</code>)</td>
-<td>404</td>
-</tr>
-<tr>
-<td>You must not have already taken it (if multiple attempts disabled)</td>
+<td>You must not have already taken it (if <code>max_attempts=1</code>)</td>
 <td>400</td>
 </tr>
 <tr>
-<td>You must not exceed max attempts (if multiple attempts enabled)</td>
+<td>You must not exceed <code>max_attempts</code></td>
 <td>400</td>
 </tr>
 </tbody>

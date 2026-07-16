@@ -527,6 +527,11 @@ No request body
 <td>SiteOwner must assign a collection first via <code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></td>
 </tr>
 <tr>
+<td>400</td>
+<td><code>&quot;This video has already been finalized.&quot;</code></td>
+<td>Video is already encoded (status=4). Delete and re-create to upload a new file.</td>
+</tr>
+<tr>
 <td>403</td>
 <td><code>&quot;You can only upload videos to your own courses.&quot;</code></td>
 <td>Wrong teacher</td>
@@ -537,12 +542,20 @@ No request body
 <td>Video ID doesn't exist</td>
 </tr>
 <tr>
+<td><strong>409</strong></td>
+<td><code>&quot;Another upload is already in progress for this video.&quot;</code></td>
+<td>Someone else is uploading. Wait for encoding to finish. Uses <code>select_for_update()</code> to prevent race conditions.</td>
+</tr>
+<tr>
 <td>502</td>
 <td><code>&quot;Failed to create video on Bunny Stream.&quot;</code></td>
 <td>Bunny API error (retry)</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p><strong>⚠️ Concurrent upload protection:</strong> The <code>create-upload/</code> endpoint uses <code>select_for_update()</code> to serialize concurrent requests. If user A starts an upload (calls <code>create-upload/</code>) and user B tries to upload to the same video while status is 0-3 (Created/Uploaded/Processing/Transcoding), user B gets <strong>409 Conflict</strong>. This prevents invisible overwrites. Re-upload is only allowed when status is 5 (Error) or null.</p>
+</blockquote>
 <blockquote>
 <p><strong>⚠️ CRITICAL: <code>expiration_time</code> is a Unix timestamp in SECONDS, not milliseconds.</strong>
 JavaScript's <code>Date.now()</code> returns <strong>milliseconds</strong>. If you multiply <code>expiration_time</code> by 1000 or pass <code>Date.now()</code> directly to the <code>AuthorizationExpire</code> header, Bunny will reject every upload with 401.</p>
@@ -1017,6 +1030,16 @@ Content-Type: application/json
 <td><strong>create-upload returns 502</strong></td>
 <td>Bunny API is down</td>
 <td>Retry with exponential backoff (3 retries, 1s/2s/4s delays)</td>
+</tr>
+<tr>
+<td><strong>create-upload returns 409</strong></td>
+<td>Another user is already uploading to the same video</td>
+<td>Wait for the upload to finish. The second user will see the first user's upload when the video reaches status=4.</td>
+</tr>
+<tr>
+<td><strong>create-upload returns 400 &quot;finalized&quot;</strong></td>
+<td>Video is already encoded (status=4)</td>
+<td>Delete the video record and create a new one to upload a replacement.</td>
 </tr>
 <tr>
 <td><strong>create-upload returns 400 &quot;no collection&quot;</strong></td>

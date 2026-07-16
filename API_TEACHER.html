@@ -2817,6 +2817,35 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h2 id="15-student-report">15. Student Report</h2>
 <hr>
 <h2 id="16-lecture-prerequisites">16. Lecture Prerequisites</h2>
+<p>Lecture prerequisites gate video access behind assessment scores. A student cannot play a lecture's videos until they achieve the <code>passing_score</code> on the specified homework, quiz, or exam.</p>
+<p>When the teacher is setting prerequisites for a lecture, they need to know what assessments exist for that lecture. This single endpoint returns all available homeworks, quizzes, and exams in one call — so the frontend doesn't need three separate API calls.</p>
+<blockquote>
+<p><strong>Why this endpoint exists:</strong> Without it, the frontend would have to call <code>GET /learning/homeworks/?lecture=X</code>, <code>GET /learning/quizzes/?lecture=X</code>, and <code>GET /learning/exams/?course=X</code> separately and merge the results. This endpoint exists specifically for the prerequisite picker UI and should not be deleted.</p>
+</blockquote>
+<hr>
+<h4 id="get-courseslecturesidavailable-assessments"><code>GET /courses/lectures/&lt;id&gt;/available-assessments/</code></h4>
+<p><strong>Description:</strong> Returns all homeworks, quizzes, and exams available for a lecture, grouped by type. Teachers/assistants can only see assessments for their own courses.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"homeworks"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Bubble Sheet 1"</span> }
+  ],
+  <span class="hljs-attr">"quizzes"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span> }
+  ],
+  <span class="hljs-attr">"exams"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Midterm Exam"</span> }
+  ]
+}
+</div></code></pre>
+<p><strong>Notes:</strong></p>
+<ul>
+<li><code>homeworks</code> and <code>quizzes</code> are filtered by <code>lecture=&lt;id&gt;</code> (the given lecture)</li>
+<li><code>exams</code> are filtered by the <strong>course</strong> the lecture belongs to (exams are course-level)</li>
+<li>Each item includes only <code>id</code> and <code>title</code> — lightweight for dropdown population</li>
+<li>Results are empty arrays rather than omitted if no assessments exist</li>
+</ul>
 <hr>
 <h4 id="get-courseslecturesidprerequisites"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
 <p><strong>Description:</strong> List all prerequisites for a lecture.</p>

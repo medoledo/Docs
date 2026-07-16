@@ -1739,7 +1739,7 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 </tr>
 <tr>
 <td><code>batch_name</code></td>
-<td>Human-readable name (<code>&quot;Batch #1&quot;</code>, <code>&quot;Batch #2&quot;</code>), per-teacher counter</td>
+<td>Human-readable name (<code>&quot;Dr Hany Hassanin Batch #1&quot;</code>), per-teacher sequential counter</td>
 </tr>
 <tr>
 <td><code>expires_at</code></td>
@@ -1787,7 +1787,7 @@ Valid ──→ Blacklisted         — SiteOwner only, OTP required, irreversib
 <li>Expiry is 1 year from creation (not changeable)</li>
 <li>Race-condition-safe with <code>select_for_update()</code> — no double-redemption possible</li>
 <li>Every code action creates an immutable <code>BalanceTransaction</code> (source of truth for finances)</li>
-<li>Batch name counter is <strong>per-teacher</strong> (Teacher A: Batch #1, #2; Teacher B: Batch #1, #2)</li>
+<li>Batch name format is <code>&quot;{TeacherName} Batch #{n}&quot;</code> where n is a <strong>per-teacher</strong> sequential counter</li>
 </ul>
 <hr>
 <p><strong>Excel Export Columns (from <code>GET /codes/export/?batch=&lt;uuid&gt;</code>):</strong>
