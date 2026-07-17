@@ -1295,6 +1295,37 @@ code {
 ]
 </div></code></pre>
 <hr>
+<h3 id="get-coursesidbalance"><code>GET /courses/&lt;id&gt;/balance/</code></h3>
+<p><strong>Description:</strong> Get a student's balance for a specific course. Returns a single balance value for the given course.</p>
+<p><strong>Authentication:</strong> Student (must be enrolled in the course)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String — e.g. '150.00'"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>401</code></td>
+<td>Not authenticated</td>
+<td><code>{&quot;detail&quot;: &quot;Authentication credentials were not provided.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Course not found</td>
+<td><code>{&quot;error&quot;: &quot;Course not found&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
 <h3 id="post-paymentscodesredeem">POST /payments/codes/redeem/</h3>
 <p><strong>Description:</strong> Student redeems a physical voucher code to add balance to a specific course. Codes are course-specific and can only be used once.</p>
 <p><strong>Authentication:</strong> Student (must be approved enrolled in the course)</p>
@@ -1899,12 +1930,18 @@ code {
 </tr>
 <tr>
 <td>12.3</td>
+<td><code>/learning/exams/&lt;id&gt;/resume/</code></td>
+<td>GET</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>12.4</td>
 <td><code>/learning/exams/&lt;id&gt;/submit/</code></td>
 <td>POST</td>
 <td>Student</td>
 </tr>
 <tr>
-<td>12.4</td>
+<td>12.5</td>
 <td><code>/learning/exam-submissions/&lt;id&gt;/</code></td>
 <td>GET</td>
 <td>Student (own)</td>

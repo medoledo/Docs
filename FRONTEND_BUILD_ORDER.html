@@ -1019,7 +1019,12 @@ Price: 50 EGP | Discount: 10 EGP | Available: 30 days
 <p><strong>Bunny Upload Flow (TUS Direct Upload):</strong></p>
 <ol>
 <li>Teacher clicks &quot;Add Video&quot; → modal: name, order → Video record created (<code>bunny_video_id=null</code>, status=&quot;Pending&quot;)</li>
-<li>Teacher clicks &quot;Upload&quot; on the pending row → <code>POST .../create-upload/</code> → returns TUS credentials</li>
+<li>Teacher clicks &quot;Upload&quot; on the pending row → <code>POST .../create-upload/</code> → returns TUS credentials
+<ul>
+<li>⚠️ <strong>409 Conflict</strong>: If another user is already uploading to the same video, <code>create-upload/</code> rejects with 409. Wait for their upload to finish.</li>
+<li>⚠️ <strong>400 Already Finalized</strong>: If the video is already encoded (status=4), delete and re-create to upload a replacement.</li>
+</ul>
+</li>
 <li>Frontend uploads directly to Bunny using <code>tus-js-client</code>:
 <ul>
 <li>endpoint: <code>https://video.bunnycdn.com/tusupload</code></li>
@@ -1027,7 +1032,8 @@ Price: 50 EGP | Discount: 10 EGP | Available: 30 days
 <li><strong>Zero backend bandwidth/RAM used</strong></li>
 </ul>
 </li>
-<li>Frontend polls <code>GET /courses/videos/&lt;id&gt;/</code> every 5 seconds</li>
+<li>(Optional) Call <code>POST /courses/videos/&lt;id&gt;/upload-complete/</code> after TUS <code>onSuccess</code> — faster status detection, but not required</li>
+<li>Frontend polls <code>GET /courses/videos/&lt;id&gt;/</code> every 5 seconds — <strong>self-healing sync</strong> (backend checks Bunny API on each poll)</li>
 <li>UI shows live status: Created → Uploaded → Processing → Transcoding → <strong>Ready ✅</strong></li>
 <li>When status=4, <code>is_active=true</code>, teacher sees &quot;Ready&quot; badge</li>
 </ol>
@@ -1186,8 +1192,12 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <td><code>DELETE /learning/quizzes/&lt;id&gt;/</code></td>
 </tr>
 <tr>
-<td>Update question image</td>
+<td><strong>Update question image</strong></td>
 <td><code>PATCH /learning/questions/&lt;id&gt;/</code> (multipart — <code>image</code> field)</td>
+</tr>
+<tr>
+<td><strong>Update question text</strong></td>
+<td><code>PATCH /learning/questions/&lt;id&gt;/</code> (JSON — <code>text</code>, <code>question_type</code>, <code>points_override</code>)</td>
 </tr>
 <tr>
 <td>List submissions</td>
@@ -1205,10 +1215,102 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <td>Release answers</td>
 <td><code>POST /learning/quizzes/&lt;id&gt;/release-answers/</code></td>
 </tr>
+<tr>
+<td>Start quiz</td>
+<td><code>POST /learning/quizzes/&lt;id&gt;/start/</code></td>
+</tr>
+<tr>
+<td>Resume quiz</td>
+<td><code>GET /learning/quizzes/&lt;id&gt;/resume/</code></td>
+</tr>
+<tr>
+<td>Submit quiz</td>
+<td><code>POST /learning/quizzes/&lt;id&gt;/submit/</code></td>
+</tr>
+<tr>
+<td><strong>Save draft answer</strong></td>
+<td><code>PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</code></td>
+</tr>
+<tr>
+<td><strong>Student quiz history</strong></td>
+<td><code>GET /learning/quizzes/my/</code></td>
+</tr>
 </tbody>
 </table>
+<p><strong>Settings form (5 fields only):</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-number">30</span>,
+  <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"immediate"</span>,
+  <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"immediate"</span>,
+  <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"fixed"</span>,
+  <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-number">1</span>
+}
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timer_minutes</code></td>
+<td>0–1440</td>
+<td>0</td>
+<td>0 = no limit. Max 1440 (24h).</td>
+</tr>
+<tr>
+<td><code>score_visibility</code></td>
+<td><code>immediate</code>, <code>manual</code></td>
+<td><code>immediate</code></td>
+<td><code>manual</code> = teacher must release scores</td>
+</tr>
+<tr>
+<td><code>answers_visibility</code></td>
+<td><code>immediate</code>, <code>manual</code></td>
+<td><code>immediate</code></td>
+<td><code>manual</code> = teacher must release correct answers</td>
+</tr>
+<tr>
+<td><code>question_order</code></td>
+<td><code>fixed</code>, <code>random</code></td>
+<td><code>fixed</code></td>
+<td>Shuffle question order per student</td>
+</tr>
+<tr>
+<td><code>max_attempts</code></td>
+<td>1+</td>
+<td>1</td>
+<td><code>1</code> = single attempt. <code>3</code> = up to 3 attempts.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note on <code>is_active</code>:</strong> This field exists on the model for frontend hide/show toggling but is <strong>not enforced by the backend</strong>. Only <code>is_published</code> gates student access. Set <code>is_published=true</code> when the quiz is ready for students.</p>
 <p><strong>Questions:</strong> Standalone only (inline text + MCQ choices + written).<br>
 <strong>Images:</strong> NOT uploadable via JSON during inline creation. Upload question images separately via <code>PATCH /learning/questions/&lt;id&gt;/</code> with <code>multipart/form-data</code> (<code>image</code> field). The response always returns the image as a full URL.</p>
+<p><strong>Sending questions inline during create/update:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz Title"</span>,
+  <span class="hljs-attr">"settings"</span>: { ... },
+  <span class="hljs-attr">"questions"</span>: [
+    {
+      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is 2+2?"</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">"points_override"</span>: <span class="hljs-number">2</span>,
+      <span class="hljs-attr">"choices"</span>: [
+        {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"4"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
+        {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"5"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
+      ]
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>CAUTION:</strong> Sending <code>questions</code> on update (<code>PUT/PATCH /quizzes/&lt;id&gt;/</code>) <strong>replaces ALL existing questions</strong>. For auto-save, use individual <code>PATCH /questions/&lt;id&gt;/</code> instead.</p>
 <hr>
 <h3 id="page-6-exams-standalone-course-level">Page 6: Exams (Standalone Course-Level)</h3>
 <p><strong>Purpose:</strong> Create exams independent of lectures. Can be used as prerequisites.</p>
@@ -1241,8 +1343,24 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <td><code>DELETE /learning/exams/&lt;id&gt;/</code></td>
 </tr>
 <tr>
+<td>Start exam</td>
+<td><code>POST /learning/exams/&lt;id&gt;/start/</code></td>
+</tr>
+<tr>
+<td>Resume exam</td>
+<td><code>GET /learning/exams/&lt;id&gt;/resume/</code></td>
+</tr>
+<tr>
+<td>Submit exam</td>
+<td><code>POST /learning/exams/&lt;id&gt;/submit/</code></td>
+</tr>
+<tr>
 <td>List submissions</td>
 <td><code>GET /learning/exams/&lt;id&gt;/results/</code></td>
+</tr>
+<tr>
+<td><strong>Grade written</strong></td>
+<td><code>POST /learning/exam-submissions/&lt;id&gt;/grade-written/</code></td>
 </tr>
 <tr>
 <td>Release scores</td>
@@ -1252,8 +1370,13 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <td>Release answers</td>
 <td><code>POST /learning/exams/&lt;id&gt;/release-answers/</code></td>
 </tr>
+<tr>
+<td><strong>Student exam history</strong></td>
+<td><code>GET /learning/exams/my/</code></td>
+</tr>
 </tbody>
 </table>
+<p><strong>Settings:</strong> Same as quizzes (5 fields) plus <code>AFTER_CLOSE</code> visibility option (exams have <code>open_date</code>/<code>close_date</code>).</p>
 <p><strong>Note:</strong> Created at <strong>course level</strong>, not lecture level. Appears in student's Exams page and can gate lecture access via prerequisites.</p>
 <hr>
 <h3 id="page-7-study-materials-lecture-detail-%E2%86%92-materials-tab">Page 7: Study Materials (Lecture Detail → Materials Tab)</h3>
@@ -1302,6 +1425,10 @@ Q2: Student answered B | Correct: B | ✅ Correct
 </thead>
 <tbody>
 <tr>
+<td><strong>Get available assessments (for dropdown)</strong></td>
+<td><code>GET /courses/lectures/&lt;id&gt;/available-assessments/</code></td>
+</tr>
+<tr>
 <td>List</td>
 <td><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></td>
 </tr>
@@ -1316,6 +1443,14 @@ Q2: Student answered B | Correct: B | ✅ Correct
 </tbody>
 </table>
 <p><strong>Valid types:</strong> <code>homework</code>, <code>quiz</code>, <code>exam</code></p>
+<p><strong>The &quot;available assessments&quot; endpoint</strong> returns all homeworks, quizzes, and exams for a lecture in one call — so the prerequisite picker dropdown can be populated with a single request instead of three:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"homeworks"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Bubble Sheet 1"</span> }],
+  <span class="hljs-attr">"quizzes"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span> }],
+  <span class="hljs-attr">"exams"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Midterm Exam"</span> }]
+}
+</div></code></pre>
+<p><strong>Prerequisite picker UI:</strong></p>
 <pre class="hljs"><code><div>Current prerequisites for &quot;Intro to Reactions&quot;:
   - Homework #5 (must score &gt;= 50%)  [Remove]
   - Quiz #2 (must score &gt;= 70%)      [Remove]
@@ -1555,11 +1690,11 @@ Click a batch row → View individual codes in that batch:
 ┌──────────────────────────────────────────────────────────────────┐
 │  ← Back to Batches                                              │
 │  Batch #1 — Chemistry 3rd Secondary — Dr Hany Hassanin          │
-│  Codes: 100 | Value: 50 EGP | Redeemed: 17,500 EGP             │
+│  Codes: 100 | Value: 50 EGP | Redeemed Value: 17,500 EGP       │
 ├──────────────────────────────────────────────────────────────────┤
-│  Code          │ Value │ Status   │ Used By       │ Used At     │
-│  X7K9-M2P4-…  │ 50    │ ✅ Used │ Ahmed / أحمد  │ 2026-07-14  │
-│  A1B2-C3D4-…  │ 50    │ 🟢 Valid │ —             │ —           │
+│  Code (masked)  │ Value │ Status   │ Used By       │ Used At     │
+│  X7K9 XXXX…    │ 50    │ ✅ Used │ Ahmed / أحمد  │ 2026-07-14  │
+│  A1B2 XXXX…    │ 50    │ 🟢 Valid │ —             │ —           │
 └──────────────────────────────────────────────────────────────────┘
 
 Click &quot;History&quot; → Full audit modal with date/type/code filters.
@@ -1618,7 +1753,7 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 <td>GET</td>
 <td><code>/payments/codes/history/</code></td>
 <td>API_SITEOWNER.md §5</td>
-<td>Unified feed of redemptions + blacklists. Filters: <code>?start_date=</code>, <code>?end_date=</code>, <code>?type=redeemed|blacklisted</code>, <code>?search=X7K9</code>, <code>?teacher=X</code>, <code>?course=X</code>. Paginated (20/page). Newest first.</td>
+<td>Unified feed of redemptions + blacklists. Response also includes <code>analytics</code> block with <code>total</code>, <code>redeemed</code>, <code>blacklisted</code>, and <code>revenue</code> counts computed from the <strong>full filtered dataset</strong> (respects all query parameters). Filters: <code>?start_date=</code>, <code>?end_date=</code>, <code>?type=redeemed|blacklisted</code>, <code>?search=X7K9</code>, <code>?teacher=X</code>, <code>?course=X</code>. Paginated (20/page). Newest first.</td>
 </tr>
 <tr>
 <td><strong>Export all codes</strong></td>
@@ -1635,11 +1770,25 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 <td>Download .xlsx with full code details for a specific batch</td>
 </tr>
 <tr>
+<td><strong>Batch blacklist codes</strong></td>
+<td>POST</td>
+<td><code>/payments/codes/batch-blacklist/</code></td>
+<td>API_SITEOWNER.md §5</td>
+<td>Body: <code>{ code_ids: [...], otp: &quot;...&quot; }</code>. Blacklists multiple codes with one OTP. Only <code>valid</code> codes affected — used/blacklisted skipped.</td>
+</tr>
+<tr>
 <td><strong>Request blacklist OTP</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/&lt;pk&gt;/request-blacklist-otp/</code></td>
 <td>API_SITEOWNER.md §5</td>
 <td>SiteOwner only. Sends OTP to their gmail</td>
+</tr>
+<tr>
+<td><strong>Request batch blacklist OTP</strong></td>
+<td>POST</td>
+<td><code>/payments/codes/request-blacklist-otp/</code></td>
+<td>API_SITEOWNER.md §5</td>
+<td>SiteOwner only. Same OTP works for single and batch blacklist.</td>
 </tr>
 <tr>
 <td><strong>Blacklist code</strong></td>
@@ -1804,8 +1953,8 @@ Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted B
 8. Click &quot;History&quot; → open modal → GET /payments/codes/history/ with default date range (last 30 days) → populate history table with filters
 9. In History modal: filter by type, code search, date range → refetch or client-filter
 10. Click &quot;Generate Batch&quot; → POST /payments/codes/ → modal with course/count/value/notes
-9. Click &quot;Blacklist&quot; on a code → POST /codes/&lt;pk&gt;/request-blacklist-otp/ → OTP modal
-10. Enter OTP → POST /codes/&lt;pk&gt;/blacklist/ → code permanently blacklisted
+11. Select one or more codes via checkboxes → Click &quot;Blacklist Selected&quot; → POST /codes/request-blacklist-otp/ → OTP modal
+12. Enter OTP → POST /codes/batch-blacklist/ with { code_ids: [...] } → codes permanently blacklisted
 </div></code></pre>
 <p><strong>Page Flow for Teacher (same as above, but:</strong></p>
 <ul>
@@ -1828,7 +1977,8 @@ Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted B
 │  └──────────┴─────────────────────┴──────────┴───────────┘ │
 └────────────────────────────────────────────────────────────┘
 </div></code></pre>
-<p><strong>Tab 1 — Overview:</strong> <code>GET /courses/&lt;id&gt;/</code> — enrolled/pending/rejected counts, topic/lecture/video counts.</p>
+<p><strong>Tab 1 — Overview:</strong> <code>GET /courses/&lt;id&gt;/</code> — enrolled/pending/rejected counts, topic/lecture/video counts.<br>
+For deeper analytics: <code>GET /courses/&lt;id&gt;/analytics/</code> — per-topic and per-lecture purchase breakdowns with revenue.</p>
 <hr>
 <h3 id="page-13-teacher-dashboard-last--standalone">Page 13: Teacher Dashboard (Last — Standalone)</h3>
 <p><strong>Purpose:</strong> Aggregated stats across all courses. <code>GET /courses/dashboard/teacher/</code> — total courses, students, revenue, recent enrollments, recent purchases, per-course breakdown.</p>
@@ -1876,7 +2026,7 @@ Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted B
 <tr>
 <td>7</td>
 <td><strong>Recharge Codes</strong> (Enter code → add balance)</td>
-<td><code>POST /payments/codes/redeem/</code>, <code>GET /payments/balance/</code></td>
+<td><code>POST /payments/codes/redeem/</code>, <code>GET /payments/balance/</code>, <code>GET /courses/&lt;id&gt;/balance/</code></td>
 </tr>
 <tr>
 <td>8</td>
@@ -1891,12 +2041,12 @@ Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted B
 <tr>
 <td>10</td>
 <td><strong>Quiz Taking</strong> (Start → answer → submit)</td>
-<td><code>POST /learning/quizzes/&lt;id&gt;/start/</code>, <code>POST .../submit/</code></td>
+<td><code>POST /learning/quizzes/&lt;id&gt;/start/</code>, <code>GET /learning/quizzes/&lt;id&gt;/resume/</code>, <code>PATCH /learning/quiz-answers/&lt;id&gt;/save-draft/</code>, <code>POST /learning/quizzes/&lt;id&gt;/submit/</code>, <code>GET /learning/quizzes/my/</code></td>
 </tr>
 <tr>
 <td>11</td>
 <td><strong>Exam Taking</strong> (Start → answer → submit)</td>
-<td><code>POST /learning/exams/&lt;id&gt;/start/</code>, <code>POST .../submit/</code></td>
+<td><code>POST /learning/exams/&lt;id&gt;/start/</code>, <code>GET /learning/exams/&lt;id&gt;/resume/</code>, <code>POST /learning/exams/&lt;id&gt;/submit/</code>, <code>GET /learning/exams/my/</code></td>
 </tr>
 <tr>
 <td>12</td>

@@ -584,6 +584,63 @@ code {
 </tbody>
 </table>
 <hr>
+<h4 id="get-coursesidanalytics"><code>GET /courses/&lt;id&gt;/analytics/</code></h4>
+<p><strong>Description:</strong> Returns enrollment and purchase analytics for a specific course. Teachers/assistants can only view their own courses.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (must own the course)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"enrollments"</span>: {
+    <span class="hljs-attr">"approved"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"pending"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"rejected"</span>: <span class="hljs-string">"Integer"</span>
+  },
+  <span class="hljs-attr">"purchases"</span>: {
+    <span class="hljs-attr">"total_purchases"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"total_revenue"</span>: <span class="hljs-string">"String (Decimal)"</span>
+  },
+  <span class="hljs-attr">"topics"</span>: [
+    {
+      <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"lectures"</span>: [
+        {
+          <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+          <span class="hljs-attr">"purchase_count"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"revenue"</span>: <span class="hljs-string">"String (Decimal)"</span>
+        }
+      ]
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>401</code></td>
+<td>Not authenticated</td>
+<td><code>{&quot;detail&quot;: &quot;Authentication credentials were not provided.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Not the course owner</td>
+<td><code>{&quot;error&quot;: &quot;You can only view analytics for your own courses.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Course not found</td>
+<td><code>{&quot;detail&quot;: &quot;Not found.&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
 <h2 id="3-course-students">3. Course Students</h2>
 <hr>
 <h4 id="get-coursesenrollmentscoursexstatusapproved"><code>GET /courses/enrollments/?course=X&amp;status=approved</code></h4>
@@ -1205,36 +1262,42 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 <tr>
 <td>9.8</td>
+<td><code>/learning/exams/&lt;id&gt;/resume/</code></td>
+<td>GET</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>9.9</td>
 <td><code>/learning/exams/&lt;id&gt;/results/</code></td>
 <td>GET</td>
 <td>Teacher, Assistant</td>
 </tr>
 <tr>
-<td>9.9</td>
+<td>9.10</td>
 <td><code>/learning/exam-submissions/&lt;id&gt;/</code></td>
 <td>GET</td>
 <td>Student (own), Teacher, Assistant</td>
 </tr>
 <tr>
-<td>9.10</td>
+<td>9.11</td>
 <td><code>/learning/exam-submissions/&lt;id&gt;/grade-written/</code></td>
 <td>POST</td>
 <td>Teacher, Assistant</td>
 </tr>
 <tr>
-<td>9.11</td>
+<td>9.12</td>
 <td><code>/learning/exams/&lt;id&gt;/release-scores/</code></td>
 <td>POST</td>
 <td>Teacher, Assistant</td>
 </tr>
 <tr>
-<td>9.12</td>
+<td>9.13</td>
 <td><code>/learning/exams/&lt;id&gt;/release-answers/</code></td>
 <td>POST</td>
 <td>Teacher, Assistant</td>
 </tr>
 <tr>
-<td>9.13</td>
+<td>9.14</td>
 <td><code>/learning/exams/my/</code></td>
 <td>GET</td>
 <td>Student</td>
@@ -1243,7 +1306,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </table>
 <hr>
 <h3 id="settings-reference">Settings Reference</h3>
-<p>Same settings as quizzes (see 11.1 reference). Key difference: Exams have <code>open_date</code> and <code>close_date</code> directly on the <code>Exam</code> model, NOT in settings.</p>
+<p>Same settings as quizzes (see 11.1 reference) with one addition: exams have an <strong><code>after_close</code></strong> option for both <code>score_visibility</code> and <code>answers_visibility</code> (values: <code>immediate</code>, <code>after_close</code>, <code>manual</code>). When set to <code>after_close</code>, scores/answers become visible automatically after the exam's <code>close_date</code> passes. Key difference: Exams have <code>open_date</code> and <code>close_date</code> directly on the <code>Exam</code> model, NOT in settings.</p>
 <table>
 <thead>
 <tr>
@@ -1630,7 +1693,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h3 id="teacher-review--grading">Teacher Review &amp; Grading</h3>
 <hr>
-<h4 id="98-get-learningexamsidresults">9.8 GET /learning/exams/<id>/results/</h4>
+<h4 id="99-get-learningexamsidresults">9.9 GET /learning/exams/<id>/results/</h4>
 <p><strong>Description:</strong> List all submissions for an exam with per-answer details, scores, and grading status.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Success Response:</strong> Same structure as quiz results (see 11.10).</p>
@@ -2328,7 +2391,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tbody>
 </table>
 <hr>
-<h4 id="1115-patch-learningquiz-answersansweridsave-draft">11.15 PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</h4>
+<h4 id="119-patch-learningquiz-answersansweridsave-draft">11.9 PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</h4>
 <p><strong>Description:</strong> Auto-save individual answer choices while the student is working. These saved answers are restored when the student resumes the quiz via <code>GET /resume/</code>. Does NOT submit the quiz — student must call <code>/submit/</code> separately.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Request Body:</strong></p>
@@ -2347,7 +2410,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h3 id="teacher-review--grading">Teacher Review &amp; Grading</h3>
 <hr>
-<h4 id="1115-get-learningquizzesidresults">11.15 GET /learning/quizzes/<id>/results/</h4>
+<h4 id="1110-get-learningquizzesidresults">11.10 GET /learning/quizzes/<id>/results/</h4>
 <p><strong>Description:</strong> List all student submissions for a specific quiz. Returns each submission with score, attempt number, and timed-out status. Teachers see submissions for their own courses only.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Query Parameters:</strong> (none — returns all submissions for this quiz)</p>
@@ -2392,7 +2455,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <li>For written questions: <code>is_correct</code> is null and <code>points_earned</code> is 0 until manually graded.</li>
 </ul>
 <hr>
-<h4 id="1115-get-learningquiz-submissionsid">11.15 GET /learning/quiz-submissions/<id>/</h4>
+<h4 id="1111-get-learningquiz-submissionsid">11.11 GET /learning/quiz-submissions/<id>/</h4>
 <p><strong>Description:</strong> View a single submission's details with per-answer results.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant, Student (own submissions only)</p>
 <p><strong>Access Control:</strong></p>
@@ -2402,7 +2465,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </ul>
 <p><strong>Success Response:</strong> Same structure as a single item in <code>GET /results/</code>.</p>
 <hr>
-<h4 id="1115-post-learningquiz-submissionsidgrade-written">11.15 POST /learning/quiz-submissions/<id>/grade-written/</h4>
+<h4 id="1112-post-learningquiz-submissionsidgrade-written">11.12 POST /learning/quiz-submissions/<id>/grade-written/</h4>
 <p><strong>Description:</strong> Manually grade a written answer for a quiz submission. Overrides the default 0 points. The submission's total score is recalculated automatically.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only grade quizzes in their own courses.</p>
@@ -2420,7 +2483,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 }
 </div></code></pre>
 <hr>
-<h4 id="1115-post-learningquizzesidrelease-scores">11.15 POST /learning/quizzes/<id>/release-scores/</h4>
+<h4 id="1113-post-learningquizzesidrelease-scores">11.13 POST /learning/quizzes/<id>/release-scores/</h4>
 <p><strong>Description:</strong> Release scores for all submissions of a quiz. Only affects quizzes with <code>score_visibility=manual</code>. After release, students can see their scores in the quiz results.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
@@ -2430,7 +2493,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 }
 </div></code></pre>
 <hr>
-<h4 id="1115-post-learningquizzesidrelease-answers">11.15 POST /learning/quizzes/<id>/release-answers/</h4>
+<h4 id="1114-post-learningquizzesidrelease-answers">11.14 POST /learning/quizzes/<id>/release-answers/</h4>
 <p><strong>Description:</strong> Release correct answers for all submissions of a quiz. Only affects quizzes with <code>answers_visibility=manual</code>. After release, students can see which choices were correct.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
@@ -2489,6 +2552,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Validation:</strong></p>
 <ul>
 <li>Accepted formats: PDF, JPG, JPEG, PNG</li>
+<li><strong>Content validation:</strong> Files are validated by their <strong>magic bytes</strong> (file header), not just the file extension. A renamed <code>.exe</code> with a <code>.pdf</code> extension is rejected. Allowed: <code>%PDF</code>, JPEG (<code>FFD8</code>), PNG (<code>89504E47</code>), WEBP (<code>RIFF...WEBP</code>).</li>
 <li>Maximum file size: 20 MB</li>
 <li>Each upload gets a <strong>unique filename</strong> (UUID-based) — files with identical names never overwrite each other</li>
 </ul>
@@ -2872,6 +2936,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) — homework|quiz|exam"</span>,
   <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer (Required) — ID of the homework or quiz"</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"Decimal (Optional, default: 50.0) — Minimum score required to pass"</span>
 }
 </div></code></pre>
 <p><strong>Success Response — 201 Created:</strong></p>

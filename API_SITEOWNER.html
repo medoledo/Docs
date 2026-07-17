@@ -387,7 +387,7 @@ code {
 <h2 id="1-teacher-management">1. Teacher Management</h2>
 <h3 id="get-accountsteachers">GET /accounts/teachers/</h3>
 <p><strong>Description:</strong> List all teachers with full details.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -450,7 +450,7 @@ code {
 </blockquote>
 <hr>
 <h3 id="get-accountsteachersid"><code>GET /accounts/teachers/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -487,7 +487,7 @@ code {
 <hr>
 <h3 id="post-accountsteachers">POST /accounts/teachers/</h3>
 <p><strong>Description:</strong> Create a new teacher user and profile atomically. Supports profile picture upload via multipart/form-data.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -555,7 +555,7 @@ code {
 </ul>
 <hr>
 <h3 id="patch-accountsteachersid"><code>PATCH /accounts/teachers/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong> Same as POST body (all fields optional for PATCH). Additionally:</p>
 <ul>
@@ -638,7 +638,7 @@ code {
 </table>
 <h4 id="post-accountsteachersidcreate-collection"><code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code></h4>
 <p><strong>Description:</strong> Automatically create a new Bunny Stream collection and assign it to a teacher. The collection name auto-generates from the teacher's name and subject.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -657,7 +657,7 @@ code {
 <h2 id="2-student-management">2. Student Management</h2>
 <h3 id="get-accountsstudents">GET /accounts/students/</h3>
 <p><strong>Description:</strong> List all students.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -737,7 +737,7 @@ code {
 </blockquote>
 <hr>
 <h3 id="get-accountsstudentsid"><code>GET /accounts/students/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong> Full student profile with enrollments and per-course balances.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -790,7 +790,7 @@ code {
 <hr>
 <h3 id="patch-accountsstudentsid"><code>PATCH /accounts/students/&lt;id&gt;/</code></h3>
 <p><strong>Description:</strong> Update a student's profile fields and/or status. Status changes are logged with the acting user and reason.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -850,7 +850,8 @@ code {
 <li>Changing to <code>declined</code> or <code>suspended</code> automatically sets <code>is_active = false</code>.</li>
 <li>Changing to <code>verified</code> automatically sets <code>is_active = true</code>.</li>
 <li><strong>Cannot</strong> bring a student back to <code>pending</code> once they've been processed (only declined students can edit their own profile to reset to pending).</li>
-<li>Every status change is recorded in <code>status_history</code> array on the student detail response.</li>
+<li>Every status change is recorded in <code>status_history</code> array on the student detail response. The history is stored in the <code>StudentStatusLog</code> model — an immutable audit trail that records who changed the status, from what, to what, why, and when.</li>
+<li>Student detail also returns <code>enrollments[]</code> array with course name, teacher, status, and balance for each enrollment.</li>
 </ul>
 <p><strong>Error Responses:</strong></p>
 <table>
@@ -878,7 +879,7 @@ code {
 <h2 id="3-course-management">3. Course Management</h2>
 <h3 id="post-courses">POST /courses/</h3>
 <p><strong>Description:</strong> Create a new course.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant only</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
@@ -956,7 +957,7 @@ code {
 </ul>
 <hr>
 <h3 id="patch-coursesid"><code>PATCH /courses/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant only</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH).</p>
 <p><strong>Error Responses:</strong></p>
@@ -988,7 +989,7 @@ code {
 </ul>
 <hr>
 <h3 id="delete-coursesid"><code>DELETE /courses/&lt;id&gt;/</code></h3>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant only</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -1129,12 +1130,11 @@ code {
 </ul>
 <hr>
 <h3 id="post-paymentscodespkrequest-blacklist-otp">POST /payments/codes/<pk>/request-blacklist-otp/</h3>
-<p><strong>Description:</strong> Request an OTP to authorize blacklisting a recharge code. Sends a 6-digit OTP to the SiteOwner's registered gmail. The OTP expires in 30 minutes.</p>
-<p><strong>Authentication:</strong> SiteOwner, Teacher, Assistant</p>
+<p><strong>Description:</strong> Request an OTP to authorize blacklisting a single recharge code. Sends a 6-digit OTP to the SiteOwner's registered gmail. The OTP expires in 30 minutes.</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"OTP sent to your email."</span>,
-  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"siteowner@gmail.com"</span>
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"OTP sent to your email."</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>
@@ -1153,6 +1153,63 @@ code {
 <tr>
 <td>500</td>
 <td>Failed to send OTP email</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="post-paymentscodesrequest-blacklist-otp">POST /payments/codes/request-blacklist-otp/</h3>
+<p><strong>Description:</strong> Request an OTP to authorize batch blacklisting (same OTP powers a single or batch blacklist call). Sends a 6-digit OTP to the SiteOwner's registered gmail.</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Request Body:</strong> None</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"OTP sent to your email."</span>
+}
+</div></code></pre>
+<hr>
+<h3 id="post-paymentscodesbatch-blacklist">POST /payments/codes/batch-blacklist/</h3>
+<p><strong>Description:</strong> Permanently blacklist <strong>multiple</strong> recharge codes in one request. Uses the same OTP flow as single blacklist. Only codes with <code>status='valid'</code> are blacklisted. Already used or blacklisted codes are skipped with a warning.</p>
+<p><strong>Authentication:</strong> SiteOwner</p>
+<p><strong>Request Body:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"code_ids"</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>],
+  <span class="hljs-attr">"otp"</span>: <span class="hljs-string">"123456"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"3 code(s) blacklisted, 1 skipped."</span>,
+  <span class="hljs-attr">"blacklisted"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span> },
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"code"</span>: <span class="hljs-string">"A3F8-G7H2-J4K9-M1N6"</span> },
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"code"</span>: <span class="hljs-string">"B4X8-N7M2-Q9W5-K3R6"</span> }
+  ],
+  <span class="hljs-attr">"skipped"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">"code"</span>: <span class="hljs-string">"C5Y9-P8M3-R2W6-L4T7"</span>, <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"Status is Used"</span> }
+  ],
+  <span class="hljs-attr">"not_found"</span>: [<span class="hljs-number">99</span>]
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Missing or invalid <code>code_ids</code></td>
+</tr>
+<tr>
+<td>400</td>
+<td>Missing <code>otp</code></td>
+</tr>
+<tr>
+<td>400</td>
+<td>Invalid or expired OTP</td>
 </tr>
 </tbody>
 </table>
@@ -1422,6 +1479,12 @@ Use `GET /codes/history/` for a unified code audit log (redemptions + blacklists
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-number">65</span>,
+  <span class="hljs-attr">"analytics"</span>: {
+    <span class="hljs-attr">"total"</span>: <span class="hljs-number">32</span>,
+    <span class="hljs-attr">"redeemed"</span>: <span class="hljs-number">24</span>,
+    <span class="hljs-attr">"blacklisted"</span>: <span class="hljs-number">8</span>,
+    <span class="hljs-attr">"revenue"</span>: <span class="hljs-string">"1739.52"</span>
+  },
   <span class="hljs-attr">"results"</span>: [
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-number">123</span>,
@@ -1464,6 +1527,7 @@ Use `GET /codes/history/` for a unified code audit log (redemptions + blacklists
 </div></code></pre>
 <p><strong>Notes:</strong></p>
 <ul>
+<li><code>analytics</code> contains aggregate counts computed from the <strong>full filtered dataset</strong> (respects all query parameters). Values change when you filter by date, type, or code search.</li>
 <li>Redemption events (<code>type: &quot;redeemed&quot;</code>) include <code>student_name</code>, <code>student_code</code>, <code>balance_before</code>, <code>balance_after</code>, and <code>amount</code>.</li>
 <li>Blacklist events (<code>type: &quot;blacklisted&quot;</code>) include a <code>reason</code> (from code notes) and <code>batch_id</code>.</li>
 <li>Results are sorted by <code>date</code> descending (newest first).</li>
@@ -1593,14 +1657,6 @@ Use `GET /codes/history/` for a unified code audit log (redemptions + blacklists
     &quot;suspended_temporary&quot;: &quot;integer - Count of temporarily suspended students&quot;,
     &quot;suspended_permanent&quot;: &quot;integer - Count of permanently suspended students&quot;
   },
-  &quot;students_by_grade_school_division&quot;: [
-    {
-      &quot;grade&quot;: &quot;string - Grade name&quot;,
-      &quot;school_type&quot;: &quot;string - School type name&quot;,
-      &quot;division&quot;: &quot;string - Division name&quot;,
-      &quot;count&quot;: &quot;integer - Number of students in this combination&quot;
-    }
-  ],
   &quot;teachers_active_count&quot;: &quot;integer - Number of active teachers&quot;,
   &quot;teachers_inactive_count&quot;: &quot;integer - Number of inactive teachers&quot;,
   &quot;teachers_by_grade_subject&quot;: [

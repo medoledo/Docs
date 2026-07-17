@@ -738,7 +738,17 @@ code {
 | <code>POST /payments/codes/redeem/</code> | No | No | No | Yes | No |
 | <code>POST /payments/recharge/</code> | No | Yes | Yes | No | No |
 | <code>GET /payments/codes/history/</code> | Yes | Yes | Yes | No | No |
-| <code>GET /payments/codes/export/</code> | Yes | Yes | Yes | No | No |</p>
+| <code>GET /payments/codes/export/</code> | Yes | Yes | Yes | No | No |
+| <code>POST /payments/codes/request-blacklist-otp/</code> | Yes | No | No | No | No |
+| <code>POST /payments/codes/batch-blacklist/</code> | Yes | No | No | No | No |
+| <code>GET /courses/&lt;id&gt;/analytics/</code> | No | Yes | Yes | No | No |
+| <code>GET /courses/&lt;id&gt;/balance/</code> | No | No | No | Yes | No |
+| <code>GET /courses/lectures/&lt;pk&gt;/available-assessments/</code> | No | Yes | Yes | No | No |
+| <code>GET /learning/quizzes/&lt;id&gt;/resume/</code> | No | No | No | Yes | No |
+| <code>PATCH /learning/quiz-answers/&lt;id&gt;/save-draft/</code> | No | No | No | Yes | No |
+| <code>GET /learning/quizzes/my/</code> | No | No | No | Yes | No |
+| <code>GET /learning/exams/&lt;id&gt;/resume/</code> | No | No | No | Yes | No |
+| <code>GET /learning/exams/my/</code> | No | No | No | Yes | No |</p>
 <blockquote>
 <p>* Must be enrolled and approved in the relevant course\n&gt; ** Public users see only active courses<br>
 ** Must own the course (or be the course teacher's assistant)</p>
