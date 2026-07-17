@@ -2912,26 +2912,81 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </ul>
 <hr>
 <h4 id="get-courseslecturesidprerequisites"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
-<p><strong>Description:</strong> List all prerequisites for a lecture.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
+<p><strong>Description:</strong> List all prerequisites for a lecture. Includes the lecture name and the resolved content name for display.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped), SiteOwner (all)</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (homework|quiz|exam)"</span>,
-      <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer - ID of the homework or quiz"</span>,
-      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 — Introduction"</span>,
+      <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"homework"</span>,
+      <span class="hljs-attr">"content_id"</span>: <span class="hljs-number">12</span>,
+      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"50.00"</span>,
+      <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 — Chapter 1"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-17T23:00:00Z"</span>
     }
   ]
 }
 </div></code></pre>
+<p><strong>Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>Integer</td>
+<td>Prerequisite ID</td>
+</tr>
+<tr>
+<td><code>lecture</code></td>
+<td>Integer</td>
+<td>Lecture ID</td>
+</tr>
+<tr>
+<td><code>lecture_name</code></td>
+<td>String</td>
+<td>Lecture name (resolved from lecture FK)</td>
+</tr>
+<tr>
+<td><code>content_type</code></td>
+<td>String</td>
+<td><code>homework</code>, <code>quiz</code>, or <code>exam</code></td>
+</tr>
+<tr>
+<td><code>content_id</code></td>
+<td>Integer</td>
+<td>ID of the homework, quiz, or exam</td>
+</tr>
+<tr>
+<td><code>passing_score</code></td>
+<td>Decimal</td>
+<td>Minimum score required to pass (default 50.00)</td>
+</tr>
+<tr>
+<td><code>content_name</code></td>
+<td>String</td>
+<td>Title of the homework/quiz/exam (resolved from content_type + content_id)</td>
+</tr>
+<tr>
+<td><code>created_at</code></td>
+<td>DateTime</td>
+<td>ISO 8601 timestamp</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h4 id="post-courseslecturesidprerequisites"><code>POST /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
-<p><strong>Description:</strong> Add a prerequisite to a lecture. Student must pass this homework/quiz before accessing the lecture's videos.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
+<p><strong>Description:</strong> Add a prerequisite to a lecture. Student must pass this homework/quiz/exam before accessing the lecture's videos.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) — homework|quiz|exam"</span>,
@@ -2941,19 +2996,78 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </div></code></pre>
 <p><strong>Success Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 — Introduction"</span>,
+  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"homework"</span>,
+  <span class="hljs-attr">"content_id"</span>: <span class="hljs-number">12</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"50.00"</span>,
+  <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 — Chapter 1"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-17T23:00:00Z"</span>
+}
+</div></code></pre>
+<hr>
+<h4 id="get-courseslecturesidprerequisitesprereqid"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
+<p><strong>Description:</strong> Get a single prerequisite by ID.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<p>Same response shape as the list endpoint.</p>
+<hr>
+<h4 id="putpatch-courseslecturesidprerequisitesprereqid"><code>PUT|PATCH /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
+<p><strong>Description:</strong> Update a prerequisite (change <code>content_type</code>, <code>content_id</code>, or <code>passing_score</code>).</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
+<p><strong>Request Body (partial update allowed):</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"75.00"</span>
+}
+</div></code></pre>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 — Introduction"</span>,
+  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"homework"</span>,
+  <span class="hljs-attr">"content_id"</span>: <span class="hljs-number">12</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"75.00"</span>,
+  <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 — Chapter 1"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-17T23:00:00Z"</span>
 }
 </div></code></pre>
 <hr>
 <h4 id="delete-courseslecturesidprerequisitesprereqid"><code>DELETE /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
 <p><strong>Description:</strong> Remove a prerequisite from a lecture.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
 <p><strong>Success Response — 204 No Content</strong></p>
 <hr>
+<h3 id="data-integrity--orphan-cleanup">Data Integrity — Orphan Cleanup</h3>
+<p>When a homework, quiz, or exam is <strong>deleted</strong>, all <code>LecturePrerequisite</code> records that reference it are <strong>automatically deleted</strong> via database signals. This prevents dangling prerequisites that could never be passed.</p>
+<p><strong>What happens when content changes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Effect on prerequisites</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Homework/Quiz/Exam deleted</strong></td>
+<td>Prerequisite is auto-deleted (signal)</td>
+</tr>
+<tr>
+<td><strong>Title changed</strong></td>
+<td><code>content_name</code> in response updates automatically (resolved live)</td>
+</tr>
+<tr>
+<td><strong>Scoring changed</strong></td>
+<td>No effect — each prerequisite has its own <code>passing_score</code> independent of the assessment</td>
+</tr>
+<tr>
+<td><strong>Lecture deleted</strong></td>
+<td>Prerequisites cascade-deleted (<code>on_delete=CASCADE</code>)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="17-watching-times-limit">17. Watching Times Limit</h2>
 <p>Each lecture enforces a <strong>watching times limit</strong> (default: 4). Once a student has used all their watching times, the lecture's videos are locked.</p>
 <ul>
