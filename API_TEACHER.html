@@ -1193,11 +1193,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"total_videos"</span>: <span class="hljs-number">3</span>,
   <span class="hljs-attr">"total_students"</span>: <span class="hljs-number">25</span>,
   <span class="hljs-attr">"purchased_count"</span>: <span class="hljs-number">20</span>,
-  <span class="hljs-attr">"has_homework"</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">"homework_total"</span>: <span class="hljs-number">3</span>,
-  <span class="hljs-attr">"has_quiz"</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">"quiz_total"</span>: <span class="hljs-number">10</span>,
-  <span class="hljs-attr">"quiz_max_attempts"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"homeworks"</span>: [
+    {<span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Week 1 HW"</span>, <span class="hljs-attr">"total"</span>: <span class="hljs-number">3</span>},
+    {<span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Week 2 HW"</span>, <span class="hljs-attr">"total"</span>: <span class="hljs-number">5</span>}
+  ],
+  <span class="hljs-attr">"quizzes"</span>: [
+    {<span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span>, <span class="hljs-attr">"total"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-number">1</span>}
+  ],
   <span class="hljs-attr">"count"</span>: <span class="hljs-number">25</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"https://.../students-progress/?page=2&amp;page_size=50"</span>,
   <span class="hljs-attr">"previous"</span>: <span class="hljs-literal">null</span>,
@@ -1224,16 +1226,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
         <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-number">4</span>,
         <span class="hljs-attr">"can_reopen"</span>: <span class="hljs-literal">false</span>
       },
-      <span class="hljs-attr">"homework"</span>: {
-        <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">true</span>,
-        <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>,
-        <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">10</span>
-      },
-      <span class="hljs-attr">"quiz"</span>: {
-        <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">false</span>,
-        <span class="hljs-attr">"score"</span>: <span class="hljs-literal">null</span>,
-        <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-literal">null</span>
-      },
+      <span class="hljs-attr">"homeworks"</span>: [
+        {<span class="hljs-attr">"homework_id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Week 1 HW"</span>, <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>, <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">10</span>},
+        {<span class="hljs-attr">"homework_id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Week 2 HW"</span>, <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"submission_id"</span>: <span class="hljs-literal">null</span>}
+      ],
+      <span class="hljs-attr">"quizzes"</span>: [
+        {<span class="hljs-attr">"quiz_id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span>, <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-literal">null</span>}
+      ],
       <span class="hljs-attr">"watch"</span>: {
         <span class="hljs-attr">"watched_count"</span>: <span class="hljs-number">2</span>,
         <span class="hljs-attr">"total_videos"</span>: <span class="hljs-number">3</span>,
@@ -1274,24 +1273,12 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td>How many of those students bought this lecture</td>
 </tr>
 <tr>
-<td><code>has_homework</code></td>
-<td>Whether this lecture has a homework</td>
+<td><code>homeworks</code></td>
+<td>Array of all homeworks for this lecture: <code>{id, title, total}</code></td>
 </tr>
 <tr>
-<td><code>homework_total</code></td>
-<td>Total points possible for the homework (null if no homework)</td>
-</tr>
-<tr>
-<td><code>has_quiz</code></td>
-<td>Whether this lecture has a quiz</td>
-</tr>
-<tr>
-<td><code>quiz_total</code></td>
-<td>Total points possible for the quiz (null if no quiz)</td>
-</tr>
-<tr>
-<td><code>quiz_max_attempts</code></td>
-<td>Max quiz attempts (default: 1)</td>
+<td><code>quizzes</code></td>
+<td>Array of all quizzes for this lecture: <code>{id, title, total, max_attempts}</code></td>
 </tr>
 <tr>
 <td><code>count</code></td>
@@ -1303,7 +1290,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Per-student fields:</strong></p>
+<p><strong>Per-student fields (<code>results[]</code>):</strong></p>
 <table>
 <thead>
 <tr>
@@ -1329,20 +1316,12 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td><code>true</code> if the purchase is expired AND has fewer than 2 reopens</td>
 </tr>
 <tr>
-<td><code>homework.submitted</code></td>
-<td>Whether this student submitted the homework</td>
+<td><code>homeworks[]</code></td>
+<td>Per-student array matching <code>homeworks</code> meta: each has <code>homework_id</code>, <code>title</code>, <code>submitted</code>, <code>score</code>, <code>submission_id</code></td>
 </tr>
 <tr>
-<td><code>homework.score</code></td>
-<td>Score earned (null if not submitted)</td>
-</tr>
-<tr>
-<td><code>quiz.submitted</code></td>
-<td>Whether this student submitted the quiz</td>
-</tr>
-<tr>
-<td><code>quiz.score</code></td>
-<td>Score earned (null if not submitted or score hidden)</td>
+<td><code>quizzes[]</code></td>
+<td>Per-student array matching <code>quizzes</code> meta: each has <code>quiz_id</code>, <code>title</code>, <code>submitted</code>, <code>score</code>, <code>attempt_number</code></td>
 </tr>
 <tr>
 <td><code>watch.watched_count</code></td>
@@ -1366,7 +1345,8 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <ul>
 <li><code>can_reopen</code> is <strong>only true</strong> when <code>is_expired=true</code> AND <code>reopen_logs.count &lt; 2</code>. Non-expired purchases always get <code>can_reopen: false</code>.</li>
 <li><code>amount_paid</code> is a snapshot from the time of purchase — never changes, even if the lecture price changes later.</li>
-<li><code>has_homework</code> / <code>has_quiz</code> are lecture-level constants — use these to know if the lecture has assessments, rather than checking per-student.</li>
+<li><code>homeworks[]</code> and <code>quizzes[]</code> at the top level define what assessments exist for this lecture. The per-student arrays always match the same length and order — iterate over them together.</li>
+<li>If a lecture has <strong>no homeworks</strong>, <code>homeworks</code> is <code>[]</code>. Same for quizzes.</li>
 </ul>
 <hr>
 <h4 id="patch-coursespurchasesidreopen"><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></h4>
