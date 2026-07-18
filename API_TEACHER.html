@@ -1298,6 +1298,12 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 <tr>
 <td>9.14</td>
+<td><code>/learning/exam-choices/&lt;id&gt;/</code></td>
+<td>PATCH/PUT</td>
+<td>Teacher, Assistant</td>
+</tr>
+<tr>
+<td>9.15</td>
 <td><code>/learning/exams/my/</code></td>
 <td>GET</td>
 <td>Student</td>
@@ -1749,7 +1755,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 }
 </div></code></pre>
 <hr>
-<h4 id="912-post-learningexamsidrelease-answers">9.12 POST /learning/exams/<id>/release-answers/</h4>
+<h4 id="913-post-learningexamsidrelease-answers">9.13 POST /learning/exams/<id>/release-answers/</h4>
 <p><strong>Description:</strong> Release correct answers for all submissions (for <code>manual</code> answers_visibility).</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
@@ -1759,7 +1765,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 }
 </div></code></pre>
 <hr>
-<h4 id="913-get-learningexamsmy">9.13 GET /learning/exams/my/</h4>
+<h4 id="915-get-learningexamsmy">9.15 GET /learning/exams/my/</h4>
 <p><strong>Description:</strong> (Student-only) Get all exam submissions for the logged-in student across all courses.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -1777,6 +1783,63 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   }
 ]
 </div></code></pre>
+<hr>
+<h4 id="914-patchput-learningexam-choicesid">9.14 PATCH/PUT /learning/exam-choices/<id>/</h4>
+<p><strong>Description:</strong> Update an individual exam choice (upload/delete image, update text/order/correctness). Same pattern as quiz choices.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Content-Type:</strong> <code>multipart/form-data</code> (for image upload) or <code>application/json</code> (for text-only updates)</p>
+<p><strong>Request Body (multipart):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td>String</td>
+<td>Choice text</td>
+</tr>
+<tr>
+<td><code>is_correct</code></td>
+<td>Boolean</td>
+<td>Whether this is the correct choice</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>Integer</td>
+<td>Display order</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>File</td>
+<td>Image file to upload (omit to keep existing, empty file to delete)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong> Updated choice object.</p>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>403</td>
+<td>Not the course owner</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Choice not found</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h2 id="10-homeworks">10. Homeworks</h2>
 <p>Homework uses the <strong>Bubble Sheet</strong> model. Teachers create questions with a correct answer and optional explanation. Students see question numbers with A/B/C/D choices, submit their answers, and get auto-graded immediately.</p>
@@ -2031,6 +2094,12 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 <tr>
 <td>11.15</td>
+<td><code>/learning/quiz-choices/&lt;id&gt;/</code></td>
+<td>PATCH/PUT</td>
+<td>Teacher, Assistant</td>
+</tr>
+<tr>
+<td>11.16</td>
 <td><code>/learning/quizzes/my/</code></td>
 <td>GET</td>
 <td>Student</td>
@@ -2299,12 +2368,56 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Notes:</strong></p>
 <ul>
 <li>The <code>questions</code> field is optional. If omitted, the quiz is created with no questions.</li>
-<li>On update (PUT/PATCH), if <code>questions</code> is provided, <strong>existing questions are matched by <code>id</code> and updated in-place</strong>. New questions (no <code>id</code>) are created. Questions present in the DB but absent from the payload are deleted. Blocked if submissions exist to prevent data loss.</li>
+<li>On update (PUT/PATCH), if <code>questions</code> is provided, <strong>existing questions and choices are matched by <code>id</code> and updated in-place</strong>. New items (no <code>id</code>) are created. Items present in the DB but absent from the payload are deleted. Blocked if submissions exist to prevent data loss.</li>
+<li><strong>Fields omitted from an existing choice are preserved</strong> (e.g., if <code>image</code> is not in the payload, the existing image stays). This applies to both quiz and exam choices.</li>
 <li>At least one choice must have <code>is_correct: true</code> for MCQ questions.</li>
 <li>MCQ questions should have at least 2 choices.</li>
-<li><strong>Images:</strong> Can be uploaded inline via <code>multipart/form-data</code> using the <code>image</code> field on questions and choices. When using JSON content-type, omit the <code>image</code> field (the existing image is preserved on update).</li>
 </ul>
-<p><strong>Uploading question/choice images (separate step):</strong></p>
+<p><strong>Multipart form data with JSON string fields:</strong></p>
+<p>When including images in the same request, use <code>Content-Type: multipart/form-data</code> and send <code>settings</code> and <code>questions</code> as JSON strings:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Format</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lecture</code></td>
+<td>Plain value</td>
+<td><code>17</code></td>
+</tr>
+<tr>
+<td><code>title</code></td>
+<td>Plain value</td>
+<td><code>&quot;My Quiz&quot;</code></td>
+</tr>
+<tr>
+<td><code>settings</code></td>
+<td><code>JSON.stringify(...)</code></td>
+<td><code>{&quot;timer_minutes&quot;:30,&quot;score_visibility&quot;:&quot;immediate&quot;,...}</code></td>
+</tr>
+<tr>
+<td><code>questions</code></td>
+<td><code>JSON.stringify([...])</code></td>
+<td><code>[{&quot;text&quot;:&quot;Q1&quot;,&quot;choices&quot;:[...]}]</code></td>
+</tr>
+<tr>
+<td><code>questions[0].image</code></td>
+<td>Binary file</td>
+<td>Uploaded file</td>
+</tr>
+<tr>
+<td><code>questions[0].choices[0].image</code></td>
+<td>Binary file</td>
+<td>Uploaded file</td>
+</tr>
+</tbody>
+</table>
+<p>Both <code>settings</code> and <code>questions</code> are parsed from JSON string automatically by the backend.</p>
+<p><strong>Uploading question/choice images:</strong></p>
 <table>
 <thead>
 <tr>
@@ -2319,7 +2432,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td>1</td>
 <td>Create quiz with text-only inline questions</td>
 <td><code>POST /learning/quizzes/</code></td>
-<td>JSON</td>
+<td>JSON or multipart</td>
 </tr>
 <tr>
 <td>2</td>
@@ -2329,20 +2442,26 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 <tr>
 <td>3</td>
+<td>Upload/delete image on a choice</td>
+<td><code>PATCH /learning/quiz-choices/&lt;id&gt;/</code></td>
+<td>multipart/form-data</td>
+</tr>
+<tr>
+<td>4</td>
 <td>Read question with image URL</td>
 <td><code>GET /learning/quizzes/&lt;id&gt;/</code></td>
 <td>JSON (returns URL)</td>
 </tr>
 </tbody>
 </table>
-<p>The <code>image</code> field on both questions and choices is returned as a <strong>full URL</strong> in all responses (e.g. <code>&quot;https://.../media/quiz_questions/photo.jpg&quot;</code>). Upload the file using <code>PATCH /learning/questions/&lt;id&gt;/</code> with content type <code>multipart/form-data</code> — the <code>image</code> field accepts a binary file, not a URL string.</p>
+<p>The <code>image</code> field on both questions and choices is returned as a <strong>full URL</strong> in all responses (e.g. <code>&quot;https://.../media/quiz_questions/photo.jpg&quot;</code>). Upload the file using the dedicated PATCH endpoint with content type <code>multipart/form-data</code> — the <code>image</code> field accepts a binary file, not a URL string.</p>
 <blockquote>
-<p><strong>⚠️ CRITICAL: Never send the image URL back as JSON.</strong> If you call <code>PATCH /learning/questions/&lt;id&gt;/</code> with <code>Content-Type: application/json</code> and include <code>&quot;image&quot;: &quot;https://...&quot;</code> in the body, the backend <strong>cannot parse a URL string as a file upload</strong> and will clear the existing image from storage.</p>
+<p><strong>⚠️ CRITICAL: Never send the image URL back as JSON.</strong> If you call <code>PATCH /learning/questions/&lt;id&gt;/</code> or <code>PATCH /learning/quiz-choices/&lt;id&gt;/</code> with <code>Content-Type: application/json</code> and include <code>&quot;image&quot;: &quot;https://...&quot;</code> in the body, the backend <strong>cannot parse a URL string as a file upload</strong> and will clear the existing image from storage.</p>
 <p><strong>How to avoid losing the image:</strong></p>
 <ul>
-<li><strong>To update text only (keep existing image):</strong> Send <code>PATCH /learning/questions/&lt;id&gt;/</code> with <code>Content-Type: application/json</code> and body <code>{&quot;text&quot;: &quot;New text&quot;}</code> — <strong>omit the <code>image</code> field entirely</strong>. The existing image is preserved automatically.</li>
-<li><strong>To update the image:</strong> Send <code>PATCH /learning/questions/&lt;id&gt;/</code> with <code>Content-Type: multipart/form-data</code> and include the file as the <code>image</code> field. Text fields can be included in the same request.</li>
-<li><strong>To remove the image:</strong> Send multipart with <code>image</code> set to an empty file or use a dedicated delete-image endpoint if available.</li>
+<li><strong>To update text only (keep existing image):</strong> Send <code>PATCH</code> with <code>Content-Type: application/json</code> and body <code>{&quot;text&quot;: &quot;New text&quot;}</code> — <strong>omit the <code>image</code> field entirely</strong>. The existing image is preserved automatically.</li>
+<li><strong>To update the image:</strong> Send <code>PATCH</code> with <code>Content-Type: multipart/form-data</code> and include the file as the <code>image</code> field. Text fields can be included in the same request.</li>
+<li><strong>To remove the image:</strong> Send multipart with <code>image</code> set to an empty file.</li>
 </ul>
 </blockquote>
 <p><strong>Success Response — 201 Created:</strong></p>
@@ -2543,7 +2662,64 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 }
 </div></code></pre>
 <hr>
-<h4 id="1115-get-learningquizzesmy">11.15 GET /learning/quizzes/my/</h4>
+<h4 id="1115-patchput-learningquiz-choicesid">11.15 PATCH/PUT /learning/quiz-choices/<id>/</h4>
+<p><strong>Description:</strong> Update an individual quiz choice (upload/delete image, update text/order/correctness). Same pattern as question image updates. Send image as a file via <code>multipart/form-data</code> to upload; send empty file to delete the image. When sending JSON, the <code>image</code> field is ignored (preserves existing image).</p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Content-Type:</strong> <code>multipart/form-data</code> (for image upload) or <code>application/json</code> (for text-only updates)</p>
+<p><strong>Request Body (multipart):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td>String</td>
+<td>Choice text</td>
+</tr>
+<tr>
+<td><code>is_correct</code></td>
+<td>Boolean</td>
+<td>Whether this is the correct choice</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>Integer</td>
+<td>Display order</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>File</td>
+<td>Image file to upload (omit to keep existing, empty file to delete)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong> Updated choice object.</p>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>403</td>
+<td>Not the course owner</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Choice not found</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="1116-get-learningquizzesmy">11.16 GET /learning/quizzes/my/</h4>
 <p><strong>Description:</strong> (Student-only) Get all quiz submissions for the logged-in student across all courses.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Success Response — 200 OK:</strong></p>
@@ -2563,17 +2739,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </div></code></pre>
 <hr>
 <hr>
-<hr>
-<h4 id="post-learningquiz-submissionsidgrade-written">POST /learning/quiz-submissions/{id}/grade-written/</h4>
-<p><strong>Description:</strong> Manually grade a written answer.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Request Body:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"Integer - Answer ID"</span>,
-  <span class="hljs-attr">"score_override"</span>: <span class="hljs-string">"Decimal - Manual score override"</span>,
-  <span class="hljs-attr">"feedback"</span>: <span class="hljs-string">"String - Feedback text"</span>
-}
-</div></code></pre>
 <hr>
 <h2 id="12-study-materials">12. Study Materials</h2>
 <p>Study materials are PDF or image files attached to lectures. Only <strong>teachers and assistants</strong> can create, update, or delete them. Students and siteowners are <strong>read-only</strong>.</p>
