@@ -1136,10 +1136,241 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </div></code></pre>
 <p><strong>Error Responses:</strong> Same as approve endpoint.</p>
 <hr>
-<h2 id="8-purchases">8. Purchases</h2>
+<h2 id="8-lecture-students-progress-single-endpoint">8. Lecture Students Progress (Single Endpoint)</h2>
+<hr>
+<h4 id="get-courseslecturesidstudents-progress"><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></h4>
+<p><strong>Description:</strong> Returns ALL enrolled students for a lecture's course in a single response. For each student: purchase status, homework score, quiz score, and watch progress. Non-buyers are included (shows <code>is_purchased: false</code>). This replaces the need for 4+ separate API calls.</p>
+<p><strong>One response = everything you need for the Purchases tab.</strong></p>
+<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>403</code></td>
+<td>Not course owner</td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Lecture not found</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>page</code></td>
+<td>Integer</td>
+<td>Page number (default: 1)</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>Integer</td>
+<td>Items per page (default: 50, max: 200)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">10</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
+  <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"Unit 1: Chemical Reactions"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+  <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
+  <span class="hljs-attr">"total_videos"</span>: <span class="hljs-number">3</span>,
+  <span class="hljs-attr">"total_students"</span>: <span class="hljs-number">25</span>,
+  <span class="hljs-attr">"purchased_count"</span>: <span class="hljs-number">20</span>,
+  <span class="hljs-attr">"has_homework"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"homework_total"</span>: <span class="hljs-number">3</span>,
+  <span class="hljs-attr">"has_quiz"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"quiz_total"</span>: <span class="hljs-number">10</span>,
+  <span class="hljs-attr">"quiz_max_attempts"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">25</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"https://.../students-progress/?page=2&amp;page_size=50"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-literal">null</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"student_id"</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed Ali"</span>,
+      <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"1234567"</span>,
+      <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">"purchase"</span>: {
+        <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>,
+        <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"40.00"</span>,
+        <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
+        <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"2026-07-31T10:00:00Z"</span>,
+        <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"2026-08-02T10:00:00Z"</span>,
+        <span class="hljs-attr">"extra_days"</span>: <span class="hljs-number">2</span>,
+        <span class="hljs-attr">"is_expired"</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-attr">"reopened_by_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
+        <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"2026-07-28T10:00:00Z"</span>,
+        <span class="hljs-attr">"reopen_logs"</span>: [
+          {<span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Dr Hany"</span>, <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"2026-07-28T10:00:00Z"</span>},
+          {<span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Dr Hany"</span>, <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-string">"2026-08-01T10:00:00Z"</span>}
+        ],
+        <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-number">4</span>,
+        <span class="hljs-attr">"can_reopen"</span>: <span class="hljs-literal">false</span>
+      },
+      <span class="hljs-attr">"homework"</span>: {
+        <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>,
+        <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">10</span>
+      },
+      <span class="hljs-attr">"quiz"</span>: {
+        <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-attr">"score"</span>: <span class="hljs-literal">null</span>,
+        <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-literal">null</span>
+      },
+      <span class="hljs-attr">"watch"</span>: {
+        <span class="hljs-attr">"watched_count"</span>: <span class="hljs-number">2</span>,
+        <span class="hljs-attr">"total_videos"</span>: <span class="hljs-number">3</span>,
+        <span class="hljs-attr">"completed_count"</span>: <span class="hljs-number">1</span>,
+        <span class="hljs-attr">"percentage"</span>: <span class="hljs-number">67</span>
+      }
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Field Reference — Top Level:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lecture_id</code> / <code>lecture_name</code></td>
+<td>The lecture this data belongs to (once, not per-row)</td>
+</tr>
+<tr>
+<td><code>topic_name</code> / <code>course_name</code> / <code>teacher_name</code></td>
+<td>Context info</td>
+</tr>
+<tr>
+<td><code>total_videos</code></td>
+<td>Number of videos in this lecture</td>
+</tr>
+<tr>
+<td><code>total_students</code></td>
+<td>Number of approved-enrolled students</td>
+</tr>
+<tr>
+<td><code>purchased_count</code></td>
+<td>How many of those students bought this lecture</td>
+</tr>
+<tr>
+<td><code>has_homework</code></td>
+<td>Whether this lecture has a homework</td>
+</tr>
+<tr>
+<td><code>homework_total</code></td>
+<td>Total points possible for the homework (null if no homework)</td>
+</tr>
+<tr>
+<td><code>has_quiz</code></td>
+<td>Whether this lecture has a quiz</td>
+</tr>
+<tr>
+<td><code>quiz_total</code></td>
+<td>Total points possible for the quiz (null if no quiz)</td>
+</tr>
+<tr>
+<td><code>quiz_max_attempts</code></td>
+<td>Max quiz attempts (default: 1)</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td>Total number of students (for pagination)</td>
+</tr>
+<tr>
+<td><code>next</code> / <code>previous</code></td>
+<td>Pagination links</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Per-student fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student_id</code> / <code>student_name</code> / <code>student_code</code></td>
+<td>Student identity</td>
+</tr>
+<tr>
+<td><code>is_purchased</code></td>
+<td>Whether this student bought the lecture</td>
+</tr>
+<tr>
+<td><code>purchase</code></td>
+<td>Full purchase object (<code>null</code> if not purchased)</td>
+</tr>
+<tr>
+<td><code>purchase.can_reopen</code></td>
+<td><code>true</code> if the purchase is expired AND has fewer than 2 reopens</td>
+</tr>
+<tr>
+<td><code>homework.submitted</code></td>
+<td>Whether this student submitted the homework</td>
+</tr>
+<tr>
+<td><code>homework.score</code></td>
+<td>Score earned (null if not submitted)</td>
+</tr>
+<tr>
+<td><code>quiz.submitted</code></td>
+<td>Whether this student submitted the quiz</td>
+</tr>
+<tr>
+<td><code>quiz.score</code></td>
+<td>Score earned (null if not submitted or score hidden)</td>
+</tr>
+<tr>
+<td><code>watch.watched_count</code></td>
+<td>Sum of watch counts across all videos in this lecture</td>
+</tr>
+<tr>
+<td><code>watch.total_videos</code></td>
+<td>How many videos are in the lecture</td>
+</tr>
+<tr>
+<td><code>watch.completed_count</code></td>
+<td>How many videos are completed (&gt;= 90% watched)</td>
+</tr>
+<tr>
+<td><code>watch.percentage</code></td>
+<td><code>watched_count / total_videos * 100</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Business Rules:</strong></p>
+<ul>
+<li><code>can_reopen</code> is <strong>only true</strong> when <code>is_expired=true</code> AND <code>reopen_logs.count &lt; 2</code>. Non-expired purchases always get <code>can_reopen: false</code>.</li>
+<li><code>amount_paid</code> is a snapshot from the time of purchase — never changes, even if the lecture price changes later.</li>
+<li><code>has_homework</code> / <code>has_quiz</code> are lecture-level constants — use these to know if the lecture has assessments, rather than checking per-student.</li>
+</ul>
 <hr>
 <h4 id="patch-coursespurchasesidreopen"><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></h4>
-<p><strong>Description:</strong> Teacher/Assistant extends a student's access to a lecture by adding extra days.</p>
+<p><strong>Description:</strong> Teacher/Assistant extends a student's access to an <strong>expired</strong> lecture by adding 1 extra day. Reopen is only available when the purchase is expired and hasn't reached the max reopen limit.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (lecture course owner), Assistant</p>
 <p><strong>Request Body:</strong> None (always grants exactly 1 extra day).</p>
 <p><strong>Success Response — 200 OK:</strong> Updated purchased lecture.</p>
@@ -1200,9 +1431,11 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <ul>
 <li>Each reopen grants exactly <strong>1 extra day</strong>.</li>
 <li>Maximum <strong>2 reopens</strong> per purchase.</li>
+<li>Reopen is intended for <strong>expired</strong> purchases — the frontend should only show the reopen button when <code>can_reopen</code> is <code>true</code> (from <code>students-progress/</code> response).</li>
 <li>Teachers can only reopen lectures in their own courses.</li>
 <li>Assistants can only reopen lectures for their teacher's courses.</li>
 <li><code>effective_expiry</code> is recalculated as <code>expires_at + extra_days</code>.</li>
+<li>Does NOT reset watch count.</li>
 </ul>
 <hr>
 <h2 id="9-exams">9. Exams</h2>

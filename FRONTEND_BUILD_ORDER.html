@@ -1053,37 +1053,152 @@ via <code>onChunkComplete</code> to prevent WiFi saturation.</p>
 <p><strong>Playback Preview (teacher):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns signed URL. Teacher can preview own videos.</p>
 <p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to see exactly what students see (only active topics, visible lectures, active videos).</p>
 <hr>
-<h3 id="page-3-lecture-detail--purchases-tab">Page 3: Lecture Detail — Purchases Tab</h3>
-<p><strong>Purpose:</strong> See who bought this lecture, how much they paid, when it expires, and reopen access.</p>
+<h3 id="page-3-lecture-detail--students-progress-tab">Page 3: Lecture Detail — Students Progress Tab</h3>
+<p><strong>Purpose:</strong> See ALL enrolled students for this lecture — who bought it, who didn't, their homework/quiz scores, watch progress, and reopen expired purchases.</p>
+<p><strong>Single API call:</strong> <code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></p>
+<p><strong>Reopen purchase:</strong> <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body, 1 day, max 2)</p>
+<p><strong>The <code>students-progress/</code> endpoint returns everything in one response (see API_TEACHER.md §8 for full response).</strong></p>
+<p><strong>Pagination:</strong> Supports <code>?page=</code> and <code>?page_size=</code> (default 50, max 200). Response includes <code>count</code>, <code>next</code>, <code>previous</code>, <code>results</code>. Add &quot;Load More&quot; / page navigation when <code>next</code> is not null.</p>
+<p><strong>Top-level lecture constants (use these instead of per-row checks):</strong></p>
 <table>
 <thead>
 <tr>
-<th>Action</th>
-<th>Endpoint</th>
+<th>Field</th>
+<th>Use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>List purchases</td>
-<td><code>GET /courses/purchases/?lecture=X</code></td>
+<td><code>has_homework</code> / <code>homework_total</code></td>
+<td>Does this lecture have a homework? What's the max score?</td>
 </tr>
 <tr>
-<td>List student progress</td>
-<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></td>
-</tr>
-<tr>
-<td>Reopen lecture</td>
-<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body — always 1 day, max 2)</td>
+<td><code>has_quiz</code> / <code>quiz_total</code> / <code>quiz_max_attempts</code></td>
+<td>Does this lecture have a quiz? What's the max score?</td>
 </tr>
 </tbody>
 </table>
-<p><strong>UI Table:</strong></p>
-<pre class="hljs"><code><div>Student      │ Code    │ Paid   │ Expires    │ Watched │ Actions
-─────────────┼─────────┼────────┼────────────┼─────────┼─────────────
-Ahmed Ali    │ S-001   │ 45 EGP │ 2026-08-07│ 2/4     │ [Reopen]
-Sara Ahmed   │ S-002   │ 45 EGP │ 2026-08-05│ 4/4 🔒  │ [Reopen]
+<p><strong>UI Layout:</strong></p>
+<pre class="hljs"><code><div>← Back to Lecture Detail
+
+Lecture: Intro to Reactions
+Course: Chemistry 3rd Secondary — Teacher: Dr Hany
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total enrolled: 25 students | Purchased: 20 | Not purchased: 5
+
+[Search by student name or code...]  (client-side)
+
+Student       │ Code    │ Bought   │ Paid     │ Watch      │ Homework    │ Quiz         │ Actions
+──────────────┼─────────┼──────────┼──────────┼────────────┼─────────────┼──────────────┼─────────────
+Ahmed Ali     │ 1234567 │ ✅ Yes   │ 40 EGP   │ 2/3 (67%)  │ 2/3 ✅      │ Not done     │ ✅ Active
+Sara Ahmed    │ 7654321 │ ❌ No    │ —        │ —          │ —           │ —            │ —
+Mohamed Omar  │ 1122334 │ ✅ Yes   │ 40 EGP   │ 3/3 (100%) │ 3/3 ✅      │ 8/10 (80%)   │ ✅ Active
+Nora Hassan   │ 9988776 │ ✅ Yes   │ 40 EGP   │ 0/3 (0%)   │ 1/3 ✅      │ Not done     │ ✅ Active
+Khaled Ali    │ 5544332 │ ✅ Yes   │ 40 EGP   │ 1/3 (33%)  │ Not done    │ No Quiz      │ 🔴 Expired [Reopen]
+
+Page 1 of 2 — [Next ►]
 </div></code></pre>
-<p>Click &quot;Reopen&quot; → modal: extra days + optional note → access extended + audit logged.</p>
+<p><strong>Each column explained:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Student</strong></td>
+<td><code>student_name</code></td>
+</tr>
+<tr>
+<td><strong>Code</strong></td>
+<td><code>student_code</code> (7-digit code)</td>
+</tr>
+<tr>
+<td><strong>Bought</strong></td>
+<td><code>is_purchased</code></td>
+</tr>
+<tr>
+<td><strong>Paid</strong></td>
+<td><code>purchase.amount_paid</code> (frozen snapshot)</td>
+</tr>
+<tr>
+<td><strong>Watch</strong></td>
+<td><code>watch.watched_count / watch.total_videos (watch.percentage%)</code></td>
+</tr>
+<tr>
+<td><strong>Homework</strong></td>
+<td>If <code>has_homework=false</code>: &quot;No Homework&quot;. Else: <code>homework.submitted</code> → &quot;X/homework_total ✅&quot; / &quot;Not done&quot;</td>
+</tr>
+<tr>
+<td><strong>Quiz</strong></td>
+<td>If <code>has_quiz=false</code>: &quot;No Quiz&quot;. Else: <code>quiz.submitted</code> → &quot;X/quiz_total (Z%)&quot; / &quot;Not done&quot;</td>
+</tr>
+<tr>
+<td><strong>Actions</strong></td>
+<td>Based on <code>purchase.can_reopen</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Render logic:</strong></p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Display</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Not purchased</strong></td>
+<td>Gray row, &quot;Not purchased&quot; badge, no action</td>
+</tr>
+<tr>
+<td><strong>Purchased + Active</strong> (<code>is_expired=false</code>)</td>
+<td>Green badge, no reopen button</td>
+</tr>
+<tr>
+<td><strong>Purchased + Expired + can reopen</strong> (<code>is_expired=true</code>, <code>can_reopen=true</code>)</td>
+<td>Red badge, &quot;Expired&quot; + <strong>[Reopen]</strong></td>
+</tr>
+<tr>
+<td><strong>Purchased + Expired + max reopens</strong> (<code>can_reopen=false</code>)</td>
+<td>Red badge, &quot;Expired (max reopens)&quot;</td>
+</tr>
+<tr>
+<td><strong>Homework not submitted</strong></td>
+<td>&quot;Not done&quot;</td>
+</tr>
+<tr>
+<td><strong>No homework</strong> (<code>has_homework=false</code>)</td>
+<td>&quot;No Homework&quot; (entire column)</td>
+</tr>
+<tr>
+<td><strong>Quiz not submitted</strong></td>
+<td>&quot;Not done&quot;</td>
+</tr>
+<tr>
+<td><strong>No quiz</strong> (<code>has_quiz=false</code>)</td>
+<td>&quot;No Quiz&quot; (entire column)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reopen flow:</strong></p>
+<ol>
+<li>Teacher clicks <strong>[Reopen]</strong> on an expired row</li>
+<li>Confirmation dialog: student name, current <code>effective_expiry</code>, reopens used (<code>reopen_logs.length</code>), remaining (<code>2 - logs.length</code>)</li>
+<li>Confirm → <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body)</li>
+<li>On success → re-fetch <code>students-progress/</code> for that page</li>
+<li><code>extra_days</code> increments, <code>effective_expiry</code> extends, <code>can_reopen</code> updates</li>
+</ol>
+<p><strong>Empty states:</strong></p>
+<ul>
+<li>No enrolled students → &quot;No students are enrolled in this course yet.&quot;</li>
+<li>No homework → entire column uses &quot;No Homework&quot; hint</li>
+<li>No quiz → entire column uses &quot;No Quiz&quot; hint</li>
+<li>No videos → watch column shows &quot;—&quot;</li>
+</ul>
 <hr>
 <h3 id="page-4-homework-bubble-sheet-standalone--lecture-tab">Page 4: Homework Bubble Sheet (Standalone + Lecture Tab)</h3>
 <p><strong>Purpose:</strong> Create bubble-sheet homework with questions. View submissions with per-question results.</p>
