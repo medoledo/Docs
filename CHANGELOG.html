@@ -367,7 +367,7 @@ code {
   </script>
 <h1 id="edutrack-api-changelog">EduTrack API Changelog</h1>
 <blockquote>
-<p><strong>Last Updated:</strong> July 16, 2026</p>
+<p><strong>Last Updated:</strong> July 18, 2026</p>
 </blockquote>
 <p>This document lists every API endpoint that was <strong>removed</strong>, <strong>renamed</strong>, or <strong>changed</strong>, along with what replaced it and why.</p>
 <hr>
@@ -712,27 +712,28 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <h3 id="enrollments-now-validate-school-type-and-division">Enrollments now validate school type and division</h3>
 <p>Student enrollment now checks that the student's <code>school_type</code> is in the teacher's subject's <code>school_types</code> and the student's <code>division</code> is in the teacher's subject's <code>divisions</code> (only enforced if the subject has school_types/divisions assigned — if none, any school_type/division is accepted).</p>
 <hr>
-<h3 id="quiz-questions-can-be-created-inline">Quiz questions can be created inline</h3>
-<p><code>POST /learning/quizzes/</code> and <code>PUT/PATCH /learning/quizzes/&lt;id&gt;/</code> now accept an optional <code>questions</code> array with inline question text, type, order, points, and choices:</p>
+<h3 id="quiz-questions-can-be-created-and-upserted-inline">Quiz questions can be created and upserted inline</h3>
+<p><code>POST /learning/quizzes/</code> and <code>PUT/PATCH /learning/quizzes/&lt;id&gt;/</code> now accept an optional <code>questions</code> array with inline question text, type, order, points, image, and choices:</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz Title"</span>,
   <span class="hljs-attr">"settings"</span>: { ... },
   <span class="hljs-attr">"questions"</span>: [
     {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">10</span>,
       <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is 2+2?"</span>,
       <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>,
       <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
       <span class="hljs-attr">"points_override"</span>: <span class="hljs-number">2</span>,
       <span class="hljs-attr">"choices"</span>: [
-        {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"4"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
+        {<span class="hljs-attr">"id"</span>: <span class="hljs-number">50</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"4"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
         {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"5"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
       ]
     }
   ]
 }
 </div></code></pre>
-<p>Sending <code>questions</code> on update <strong>replaces all existing questions</strong>.</p>
+<p>On update, questions are matched by <code>id</code> and updated in-place (upsert). New questions (no <code>id</code>) are created. Questions in the DB but absent from the payload are deleted.</p>
 <hr>
 <h3 id="assistant-list-now-auto-filters-by-teacher">Assistant list now auto-filters by teacher</h3>
 <p><code>GET /accounts/teacher/assistants/</code> — teachers now see ONLY their own assistants. SiteOwner sees all. Assistants see coworkers under the same teacher.</p>
@@ -792,6 +793,10 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><strong>Quiz/Exam questions lost on PATCH</strong></td>
+<td>Inline question update (PUT/PATCH) deleted all questions then recreated them, ignoring the <code>id</code> field in the payload. This caused existing questions to get new IDs and lose data when sent via multipart/form-data. Fixed by adding <code>id</code> to inline serializers and implementing upsert logic: matching questions by <code>id</code> are updated in-place, new ones created, missing ones deleted.</td>
+</tr>
 <tr>
 <td><strong>Assistant isolation</strong></td>
 <td>Teachers could see ALL assistants in the system. Now filtered to their own.</td>

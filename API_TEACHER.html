@@ -1426,7 +1426,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   ]
 }
 </div></code></pre>
-<p><strong>Inline Question Fields (JSON — text only, no images):</strong></p>
+<p><strong>Inline Question Fields:</strong></p>
 <table>
 <thead>
 <tr>
@@ -1436,6 +1436,11 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>id</code></td>
+<td>Integer</td>
+<td>Existing question ID to update (omit or null for new questions)</td>
+</tr>
 <tr>
 <td><code>text</code></td>
 <td>String</td>
@@ -1457,13 +1462,18 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td>Points for this question (null = 1)</td>
 </tr>
 <tr>
+<td><code>image</code></td>
+<td>File</td>
+<td>Question image (optional, multipart/form-data only)</td>
+</tr>
+<tr>
 <td><code>choices</code></td>
 <td>Array</td>
 <td>List of choice objects (required for MCQ types)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Each Choice (JSON — text only, no images):</strong></p>
+<p><strong>Each Choice:</strong></p>
 <table>
 <thead>
 <tr>
@@ -1473,6 +1483,11 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>id</code></td>
+<td>Integer</td>
+<td>Existing choice ID to update (omit or null for new choices)</td>
+</tr>
 <tr>
 <td><code>text</code></td>
 <td>String</td>
@@ -1488,15 +1503,20 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td>Integer</td>
 <td>Display order (default: 0)</td>
 </tr>
+<tr>
+<td><code>image</code></td>
+<td>File</td>
+<td>Choice image (optional, multipart/form-data only)</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Notes:</strong></p>
 <ul>
 <li>The <code>questions</code> field is optional. If omitted, the exam is created with no questions.</li>
-<li>On update (PUT/PATCH), if <code>questions</code> is provided, <strong>all existing questions are replaced</strong> (blocked if submissions exist to prevent data loss).</li>
+<li>On update (PUT/PATCH), if <code>questions</code> is provided, <strong>existing questions are matched by <code>id</code> and updated in-place</strong>. New questions (no <code>id</code>) are created. Questions present in the DB but absent from the payload are deleted. Blocked if submissions exist to prevent data loss.</li>
 <li>At least one choice must have <code>is_correct: true</code> for MCQ questions.</li>
 <li>MCQ questions should have at least 2 choices.</li>
-<li><strong>Images for questions/choices:</strong> NOT supported via inline JSON creation. Upload via <code>PATCH /learning/questions/&lt;id&gt;/</code> (note: questions are currently read-only, use quiz question update endpoint or admin).</li>
+<li><strong>Images:</strong> Can be uploaded inline via <code>multipart/form-data</code> using the <code>image</code> field on questions and choices. When using JSON content-type, omit the <code>image</code> field (the existing image is preserved on update).</li>
 </ul>
 <p><strong>Success Response — 201 Created:</strong> Same structure as GET detail.</p>
 <hr>
@@ -2192,7 +2212,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   ]
 }
 </div></code></pre>
-<p><strong>Inline Question Fields (JSON — text only, no images):</strong></p>
+<p><strong>Inline Question Fields:</strong></p>
 <table>
 <thead>
 <tr>
@@ -2202,6 +2222,11 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>id</code></td>
+<td>Integer</td>
+<td>Existing question ID to update (omit or null for new questions)</td>
+</tr>
 <tr>
 <td><code>text</code></td>
 <td>String</td>
@@ -2223,13 +2248,18 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td>Points for this question (null = 1)</td>
 </tr>
 <tr>
+<td><code>image</code></td>
+<td>File</td>
+<td>Question image (optional, multipart/form-data only)</td>
+</tr>
+<tr>
 <td><code>choices</code></td>
 <td>Array</td>
 <td>List of choice objects (required for MCQ types)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Each Choice (JSON — text only, no images):</strong></p>
+<p><strong>Each Choice:</strong></p>
 <table>
 <thead>
 <tr>
@@ -2239,6 +2269,11 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>id</code></td>
+<td>Integer</td>
+<td>Existing choice ID to update (omit or null for new choices)</td>
+</tr>
 <tr>
 <td><code>text</code></td>
 <td>String</td>
@@ -2254,15 +2289,20 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td>Integer</td>
 <td>Display order (default: 0)</td>
 </tr>
+<tr>
+<td><code>image</code></td>
+<td>File</td>
+<td>Choice image (optional, multipart/form-data only)</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Notes:</strong></p>
 <ul>
 <li>The <code>questions</code> field is optional. If omitted, the quiz is created with no questions.</li>
-<li>On update (PUT/PATCH), if <code>questions</code> is provided, <strong>all existing questions are replaced</strong>.</li>
+<li>On update (PUT/PATCH), if <code>questions</code> is provided, <strong>existing questions are matched by <code>id</code> and updated in-place</strong>. New questions (no <code>id</code>) are created. Questions present in the DB but absent from the payload are deleted. Blocked if submissions exist to prevent data loss.</li>
 <li>At least one choice must have <code>is_correct: true</code> for MCQ questions.</li>
 <li>MCQ questions should have at least 2 choices.</li>
-<li><strong>Images for questions/choices: NOT supported via inline JSON creation.</strong> The <code>questions</code> array accepts only text fields. To add images to individual questions, use the separate endpoint below after creation.</li>
+<li><strong>Images:</strong> Can be uploaded inline via <code>multipart/form-data</code> using the <code>image</code> field on questions and choices. When using JSON content-type, omit the <code>image</code> field (the existing image is preserved on update).</li>
 </ul>
 <p><strong>Uploading question/choice images (separate step):</strong></p>
 <table>
@@ -3014,7 +3054,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p>Same response shape as the list endpoint.</p>
 <hr>
 <h4 id="putpatch-courseslecturesidprerequisitesprereqid"><code>PUT|PATCH /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
-<p><strong>Description:</strong> Update a prerequisite (change <code>content_type</code>, <code>content_id</code>, or <code>passing_score</code>).</p>
+<p><strong>Description:</strong> Update a prerequisite. You can only change <code>passing_score</code>. To change <code>content_type</code> or <code>content_id</code>, delete and recreate the prerequisite.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
 <p><strong>Request Body (partial update allowed):</strong></p>
 <pre class="hljs"><code><div>{
@@ -3033,6 +3073,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-17T23:00:00Z"</span>
 }
 </div></code></pre>
+<p><strong>Note:</strong> <code>content_type</code> and <code>content_id</code> are ignored on update. If you send them, they won't be applied. Delete and recreate instead.</p>
 <hr>
 <h4 id="delete-courseslecturesidprerequisitesprereqid"><code>DELETE /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
 <p><strong>Description:</strong> Remove a prerequisite from a lecture.</p>

@@ -1310,7 +1310,7 @@ Q2: Student answered B | Correct: B | ✅ Correct
   ]
 }
 </div></code></pre>
-<p><strong>CAUTION:</strong> Sending <code>questions</code> on update (<code>PUT/PATCH /quizzes/&lt;id&gt;/</code>) <strong>replaces ALL existing questions</strong>. For auto-save, use individual <code>PATCH /questions/&lt;id&gt;/</code> instead.</p>
+<p><strong>CAUTION:</strong> Sending <code>questions</code> on update (<code>PUT/PATCH /quizzes/&lt;id&gt;/</code>) <strong>upserts by question <code>id</code></strong>: existing questions (with matching <code>id</code>) are updated in-place, new questions (no <code>id</code>) are created, questions absent from the payload are deleted. For auto-save without risking deletion, use individual <code>PATCH /questions/&lt;id&gt;/</code> instead.</p>
 <hr>
 <h3 id="page-6-exams-standalone-course-level">Page 6: Exams (Standalone Course-Level)</h3>
 <p><strong>Purpose:</strong> Create exams independent of lectures. Can be used as prerequisites.</p>
