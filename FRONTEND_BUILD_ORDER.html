@@ -1453,8 +1453,8 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <p><strong>Valid types:</strong> <code>homework</code>, <code>quiz</code>, <code>exam</code></p>
 <p><strong>The &quot;available assessments&quot; endpoint</strong> returns all homeworks, quizzes, and exams for a lecture in one call — so the prerequisite picker dropdown can be populated with a single request instead of three:</p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"homeworks"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Bubble Sheet 1"</span> }],
-  <span class="hljs-attr">"quizzes"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span> }],
+  <span class="hljs-attr">"homeworks"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Bubble Sheet 1"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span> }],
+  <span class="hljs-attr">"quizzes"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span> }],
   <span class="hljs-attr">"exams"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Midterm Exam"</span> }]
 }
 </div></code></pre>

@@ -2933,10 +2933,10 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"homeworks"</span>: [
-    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Bubble Sheet 1"</span> }
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Bubble Sheet 1"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span> }
   ],
   <span class="hljs-attr">"quizzes"</span>: [
-    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span> }
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span> }
   ],
   <span class="hljs-attr">"exams"</span>: [
     { <span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Midterm Exam"</span> }
@@ -2947,7 +2947,8 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <ul>
 <li><code>homeworks</code> and <code>quizzes</code> are filtered by <code>lecture=&lt;id&gt;</code> (the given lecture)</li>
 <li><code>exams</code> are filtered by the <strong>course</strong> the lecture belongs to (exams are course-level)</li>
-<li>Each item includes only <code>id</code> and <code>title</code> — lightweight for dropdown population</li>
+<li>Homeworks and quizzes also include <code>lecture_id</code> and <code>lecture_name</code> so the teacher can identify which lecture each assessment belongs to</li>
+<li>Exams are course-level (no lecture FK), so they only include <code>id</code> and <code>title</code></li>
 <li>Results are empty arrays rather than omitted if no assessments exist</li>
 </ul>
 <hr>
