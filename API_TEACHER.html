@@ -1214,7 +1214,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
         <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"40.00"</span>,
         <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
         <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"2026-07-31T10:00:00Z"</span>,
-        <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"2026-08-02T10:00:00Z"</span>,
         <span class="hljs-attr">"extra_days"</span>: <span class="hljs-number">2</span>,
         <span class="hljs-attr">"is_expired"</span>: <span class="hljs-literal">false</span>,
         <span class="hljs-attr">"reopened_by_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
@@ -1364,7 +1363,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-  <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"Decimal"</span>,
   <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer — Total extra days granted (cumulative)"</span>,
   <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
@@ -1414,7 +1412,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <li>Reopen is intended for <strong>expired</strong> purchases — the frontend should only show the reopen button when <code>can_reopen</code> is <code>true</code> (from <code>students-progress/</code> response).</li>
 <li>Teachers can only reopen lectures in their own courses.</li>
 <li>Assistants can only reopen lectures for their teacher's courses.</li>
-<li><code>effective_expiry</code> is recalculated as <code>expires_at + extra_days</code>.</li>
+<li>The <code>is_expired</code> field uses <code>expires_at + extra_days</code> to determine if access is still valid — it always reflects the current real expiry.</li>
 <li>Does NOT reset watch count.</li>
 </ul>
 <hr>

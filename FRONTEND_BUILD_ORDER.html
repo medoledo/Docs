@@ -1170,10 +1170,10 @@ Page 1 of 2 — [Next ►]
 <p><strong>Reopen flow:</strong></p>
 <ol>
 <li>Teacher clicks <strong>[Reopen]</strong> on an expired row</li>
-<li>Confirmation dialog: student name, current <code>effective_expiry</code>, reopens used (<code>reopen_logs.length</code>), remaining (<code>2 - logs.length</code>)</li>
+<li>Confirmation dialog: student name, original <code>expires_at</code>, extra days already granted (<code>extra_days</code>), reopens used (<code>reopen_logs.length</code>), remaining (<code>2 - logs.length</code>)</li>
 <li>Confirm → <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body)</li>
 <li>On success → re-fetch <code>students-progress/</code> for that page</li>
-<li><code>extra_days</code> increments, <code>effective_expiry</code> extends, <code>can_reopen</code> updates</li>
+<li><code>extra_days</code> increments, <code>is_expired</code> recalculates, <code>can_reopen</code> updates</li>
 </ol>
 <hr>
 <h3 id="view-modal--full-student-detail">[View] Modal — Full Student Detail</h3>
