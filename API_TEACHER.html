@@ -1413,7 +1413,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <li>Teachers can only reopen lectures in their own courses.</li>
 <li>Assistants can only reopen lectures for their teacher's courses.</li>
 <li>The <code>is_expired</code> field uses <code>expires_at + extra_days</code> to determine if access is still valid — it always reflects the current real expiry.</li>
-<li>Does NOT reset watch count.</li>
+<li><strong>Resets watch count</strong> — the student's <code>VideoWatchProgress</code> records for this lecture are reset to <code>watch_count=0</code>, allowing them to watch again.</li>
 </ul>
 <hr>
 <h2 id="9-exams">9. Exams</h2>

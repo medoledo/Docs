@@ -1170,10 +1170,10 @@ Page 1 of 2 — [Next ►]
 <p><strong>Reopen flow:</strong></p>
 <ol>
 <li>Teacher clicks <strong>[Reopen]</strong> on an expired row</li>
-<li>Confirmation dialog: student name, original <code>expires_at</code>, extra days already granted (<code>extra_days</code>), reopens used (<code>reopen_logs.length</code>), remaining (<code>2 - logs.length</code>)</li>
+<li>Confirmation dialog: student name, original <code>expires_at</code>, extra days already granted (<code>extra_days</code>), reopens used (<code>reopen_logs.length</code>), remaining (<code>2 - logs.length</code>), <strong>watch count will be reset to 0</strong></li>
 <li>Confirm → <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body)</li>
 <li>On success → re-fetch <code>students-progress/</code> for that page</li>
-<li><code>extra_days</code> increments, <code>is_expired</code> recalculates, <code>can_reopen</code> updates</li>
+<li><code>extra_days</code> increments, <code>is_expired</code> recalculates, <code>can_reopen</code> updates, <strong>watch count is reset to 0</strong> so the student can watch again</li>
 </ol>
 <hr>
 <h3 id="view-modal--full-student-detail">[View] Modal — Full Student Detail</h3>
@@ -2079,7 +2079,7 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 </tr>
 </tbody>
 </table>
-<p><strong>Teacher's Cut Calculation:</strong> Each teacher has a <code>video_security</code> setting with a <code>price_per_student</code> (default: 0 EGP). Every time a code is redeemed, that fee is deducted from the code value for the teacher. The remainder is the platform's cut. Example: Code value = 100 EGP, Teacher fee = 20 EGP → Teacher cut = 20 EGP, SiteOwner cut = 80 EGP.</p>
+<p><strong>Revenue Split Calculation:</strong> The <code>video_security.price_per_student</code> is the <strong>platform fee</strong> deducted from each code's value. The remainder goes to the teacher. Example: Code value = 100 EGP, Platform fee = 20 EGP → Teacher cut = 80 EGP, SiteOwner cut = 20 EGP. Default fee is 0 EGP when no video security is assigned.</p>
 <hr>
 <p><strong>Code Model Fields:</strong></p>
 <table>
@@ -2204,7 +2204,28 @@ For deeper analytics: <code>GET /courses/&lt;id&gt;/analytics/</code> — per-to
 <p><strong>Purpose:</strong> Aggregated stats across all courses. <code>GET /courses/dashboard/teacher/</code> — total courses, students, revenue, recent enrollments, recent purchases, per-course breakdown.</p>
 <hr>
 <h2 id="phase-3-student-pages-build-after-phase-2">Phase 3: Student Pages (Build After Phase 2)</h2>
-<p>Build these <strong>in order</strong>. Each page depends on the previous one.</p>
+<p>Build in <strong>dependency order</strong>. Pages without dependencies can be built in parallel.</p>
+<p><strong>Dependency graph:</strong></p>
+<pre class="hljs"><code><div>Early (independent):
+  Page 1: Profile
+  Page 2: Recharge Codes
+
+Chain (build in order):
+  Page 3: Course Catalog
+       ↓
+  Page 4: Course Preview
+       ↓
+  Page 5: My Enrollments
+       ↓
+  Page 6: Course Lectures
+       ↓
+  Page 7: Purchase Lecture
+       ↓
+  Page 8: Lecture Player (includes Homework + Quiz + Exam tabs)
+
+Last (build after everything):
+  Page 9: Student Dashboard
+</div></code></pre>
 <p><strong>Student authentication behavior by status:</strong>
 After login (<code>POST /accounts/login/</code>), the response includes <code>status</code> for students:</p>
 <ul>
@@ -2215,8 +2236,8 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><code>suspended_permanent</code> → <strong>Blocked</strong> — <code>401 &quot;Your account has been permanently suspended.&quot;</code></li>
 </ul>
 <hr>
-<h3 id="page-1-student-dashboard-home">Page 1: Student Dashboard (Home)</h3>
-<p><strong>Purpose:</strong> Landing page after student login. Shows enrolled courses and balances at a glance.</p>
+<h3 id="page-1-profile-independent--build-any-time">Page 1: Profile (Independent — Build Any Time)</h3>
+<p><strong>Purpose:</strong> View and edit the student's own profile. Also includes change password. <strong>No student-page dependencies</strong> — can be built immediately after Phase 1.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -2224,75 +2245,242 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
-<th>Purpose</th>
+<th>Roles</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>My enrolled courses</td>
+<td>Get profile</td>
 <td>GET</td>
-<td><code>/courses/enrolled/</code></td>
-<td>List approved-enrolled courses</td>
+<td><code>/accounts/profile/me/</code></td>
+<td>Student only</td>
 </tr>
+<tr>
+<td>Update profile</td>
+<td>PATCH</td>
+<td><code>/accounts/profile/me/</code></td>
+<td>Student only</td>
+</tr>
+<tr>
+<td>Change password</td>
+<td>POST</td>
+<td><code>/accounts/change-password/</code></td>
+<td>Any authenticated</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>GET /accounts/profile/me/</code> Response:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"user_id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"username"</span>: <span class="hljs-string">"ahmed123"</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"ahmed@gmail.com"</span>,
+  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"1234567"</span>,
+  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"أحمد"</span>, <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"Ahmed"</span>,
+  <span class="hljs-attr">"full_name"</span>: <span class="hljs-string">"Ahmed / أحمد"</span>,
+  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"01234567890"</span>,
+  <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"01112345678"</span>,
+  <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"01087654321"</span>,
+  <span class="hljs-attr">"school_type"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"school_type_name"</span>: <span class="hljs-string">"Public School"</span>,
+  <span class="hljs-attr">"grade"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"3rd Secondary"</span>,
+  <span class="hljs-attr">"division"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"division_name"</span>: <span class="hljs-string">"Scientific"</span>,
+  <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"Al-Haram Secondary School"</span>,
+  <span class="hljs-attr">"birth_date"</span>: <span class="hljs-string">"2008-05-15"</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"male"</span>,
+  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"ahmed@gmail.com"</span>,
+  <span class="hljs-attr">"governorate"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"governorate_name"</span>: <span class="hljs-string">"Cairo"</span>,
+  <span class="hljs-attr">"area"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"area_name"</span>: <span class="hljs-string">"Nasr City"</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"verified"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-06-01T10:00:00Z"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>
+}
+</div></code></pre>
+<p><strong><code>PATCH /accounts/profile/me/</code> Request:</strong> Same fields as GET (all optional for PATCH). Can use JSON or multipart.</p>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Email exists (another user)</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Area doesn't belong to governorate</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Missing required fields</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Page layout:</strong></p>
+<ul>
+<li><strong>Read-only fields:</strong> <code>student_code</code>, <code>username</code>, <code>status</code>, <code>is_active</code>, <code>created_at</code></li>
+<li><strong>Editable fields:</strong> All other profile fields</li>
+<li><strong>Form sections:</strong>
+<ol>
+<li><strong>Personal Info:</strong> Name (Arabic + English), gender, birth date</li>
+<li><strong>Contact:</strong> Phone, father phone, mother phone, gmail</li>
+<li><strong>School Info:</strong> School type, grade, division, school name</li>
+<li><strong>Location:</strong> Governorate, area (dropdowns — area filters by governorate)</li>
+</ol>
+</li>
+<li><strong>Save button</strong> → <code>PATCH /accounts/profile/me/</code></li>
+</ul>
+<p><strong>Business rules (edit restrictions by status):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Can edit?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>verified</code></td>
+<td><strong>Cannot edit</strong></td>
+</tr>
+<tr>
+<td><code>pending</code></td>
+<td><strong>Cannot edit</strong></td>
+</tr>
+<tr>
+<td><code>declined</code></td>
+<td><strong>Can edit</strong> — after saving, status resets to <code>pending</code></td>
+</tr>
+<tr>
+<td><code>suspended_temporary</code></td>
+<td><strong>Cannot edit</strong></td>
+</tr>
+<tr>
+<td><code>suspended_permanent</code></td>
+<td>Blocked from login entirely</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>If <code>status === 'declined'</code>, show a message: &quot;Your registration was declined. Edit your profile to resubmit for review.&quot;</li>
+<li>Gmail must be globally unique across ALL user types</li>
+</ul>
+<hr>
+<h3 id="page-2-recharge-codes-independent--build-any-time">Page 2: Recharge Codes (Independent — Build Any Time)</h3>
+<p><strong>Purpose:</strong> Redeem physical voucher codes to add balance to a specific course. Referenced from Page 8 when balance is insufficient. <strong>No student-page dependencies.</strong></p>
+<p><strong>APIs to use (from API_STUDENT.md):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Roles</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td>My balances</td>
 <td>GET</td>
 <td><code>/payments/balance/</code></td>
-<td>Per-course balance amounts</td>
+<td>Student only</td>
+</tr>
+<tr>
+<td>Course balance</td>
+<td>GET</td>
+<td><code>/courses/&lt;id&gt;/balance/</code></td>
+<td>Student only</td>
+</tr>
+<tr>
+<td>Redeem code</td>
+<td>POST</td>
+<td><code>/payments/codes/redeem/</code></td>
+<td>Student only</td>
 </tr>
 </tbody>
 </table>
-<p><strong><code>GET /courses/enrolled/</code> Response:</strong></p>
+<p><strong><code>POST /payments/codes/redeem/</code> Request:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
-  <span class="hljs-attr">"next"</span>: <span class="hljs-literal">null</span>,
-  <span class="hljs-attr">"previous"</span>: <span class="hljs-literal">null</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
-      <span class="hljs-attr">"teacher"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Dr Hany"</span>},
-      <span class="hljs-attr">"grade"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>},
-      <span class="hljs-attr">"subject"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry"</span>},
-      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Full course covering..."</span>,
-      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../cover.jpg"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"approved"</span>
-    }
-  ]
+  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>
 }
 </div></code></pre>
-<p><strong><code>GET /payments/balance/</code> Response:</strong></p>
-<pre class="hljs"><code><div>[
-  {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed"</span>,
-    <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
-    <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
-    <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"150.00"</span>,
-    <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-07-15T10:00:00Z"</span>
-  }
-]
+<p><strong><code>POST /payments/codes/redeem/</code> Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Code redeemed successfully. Added 50.00 EGP to your Chemistry balance."</span>,
+  <span class="hljs-attr">"new_balance"</span>: <span class="hljs-string">"200.00"</span>,
+  <span class="hljs-attr">"transaction_id"</span>: <span class="hljs-number">42</span>
+}
 </div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Code already used</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Code expired (1 year from creation)</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Code belongs to a different course</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Not enrolled and approved in this course</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Invalid code (doesn't exist)</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>Header:</strong> Student name + code (from <code>GET /accounts/me/</code> or stored from login response)</li>
-<li><strong>Balance summary card:</strong> &quot;You have X EGP in Y courses&quot; — clickable to see breakdown</li>
-<li><strong>Enrolled courses grid:</strong> 2-column card layout
+<li><strong>Balance summary:</strong> Table showing all course balances (from <code>/payments/balance/</code>)
 <ul>
-<li>Each card: cover picture, course name, teacher name, grade name</li>
-<li>Balance badge per course (from <code>/payments/balance/</code>)</li>
-<li>Click card → navigate to <strong>Course Lectures</strong> (Page 5)</li>
+<li>Course name, current balance</li>
 </ul>
 </li>
-<li><strong>Empty state:</strong> &quot;You are not enrolled in any courses yet. Browse our catalog.&quot; + link to <strong>Course Catalog</strong> (Page 2)</li>
-<li><strong>Loading:</strong> Skeleton cards</li>
+<li><strong>Redeem section:</strong>
+<ul>
+<li><strong>Course dropdown</strong> (select which course to add balance to)
+<ul>
+<li>Only shows courses where the student is approved-enrolled</li>
+</ul>
+</li>
+<li><strong>Code input:</strong> Single text field for the 16-char code (XXXX-XXXX-XXXX-XXXX format)
+<ul>
+<li>Auto-format as user types (add dashes after every 4 chars)</li>
+</ul>
+</li>
+<li><strong>Redeem button</strong></li>
+</ul>
+</li>
+<li>On success → <code>new_balance</code> shown, balance list refreshes, success toast</li>
+<li>On error → show specific error message</li>
 </ul>
 <p><strong>Business rules:</strong></p>
 <ul>
-<li>Only shows <code>approved</code> enrollments (pending/rejected are not shown)</li>
-<li>Balances are per-course — show the balance for each course card</li>
+<li>Codes are course-specific — must select the correct course</li>
+<li>Code format: XXXX-XXXX-XXXX-XXXX (16 uppercase alphanumeric chars with dashes)</li>
+<li>One-time use only</li>
+<li>Race-condition safe (backend uses <code>select_for_update()</code>)</li>
+<li>Every redemption creates an immutable <code>BalanceTransaction</code> ledger entry</li>
 </ul>
 <hr>
-<h3 id="page-2-course-catalog">Page 2: Course Catalog</h3>
+<h3 id="page-3-course-catalog">Page 3: Course Catalog</h3>
 <p><strong>Purpose:</strong> Browse available courses by subject. Auto-filtered to the student's grade, school type, and division.</p>
 <p><strong>APIs to use (from API_STUDENT.md / API_PUBLIC.md):</strong></p>
 <table>
@@ -2389,7 +2577,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><code>?all=true</code> bypasses pagination for subjects (typically &lt; 20 items)</li>
 </ul>
 <hr>
-<h3 id="page-3-course-preview">Page 3: Course Preview</h3>
+<h3 id="page-4-course-preview">Page 4: Course Preview</h3>
 <p><strong>Purpose:</strong> View full course structure before enrolling — topics, lectures, and prices.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
@@ -2487,7 +2675,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li>Teacher's profile picture is optional (may be null)</li>
 </ul>
 <hr>
-<h3 id="page-4-my-enrollments">Page 4: My Enrollments</h3>
+<h3 id="page-5-my-enrollments">Page 5: My Enrollments</h3>
 <p><strong>Purpose:</strong> View all enrollment requests, their status, and manage pending ones.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
@@ -2612,7 +2800,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li>Grade must match the course's grade</li>
 </ul>
 <hr>
-<h3 id="page-5-course-lectures">Page 5: Course Lectures</h3>
+<h3 id="page-6-course-lectures">Page 6: Course Lectures</h3>
 <p><strong>Purpose:</strong> View all lectures inside an enrolled course, see purchase status, and access purchased content.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
@@ -2731,7 +2919,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><strong>Reopen indicator:</strong> If <code>extra_days &gt; 0</code>, show &quot;Extended by X days&quot;</li>
 </ul>
 <hr>
-<h3 id="page-6-purchase-lecture">Page 6: Purchase Lecture</h3>
+<h3 id="page-7-purchase-lecture">Page 7: Purchase Lecture</h3>
 <p><strong>Purpose:</strong> Buy a single lecture by deducting from course balance.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
@@ -2820,118 +3008,6 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><code>expires_at</code> = <code>purchased_at + lecture.available_days</code></li>
 <li><code>amount_paid</code> snapshots the lecture's <code>final_price</code> at time of purchase</li>
 </ul>
-<hr>
-<h3 id="page-7-recharge-codes">Page 7: Recharge Codes</h3>
-<p><strong>Purpose:</strong> Redeem physical voucher codes to add balance to a specific course.</p>
-<p><strong>APIs to use (from API_STUDENT.md):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Action</th>
-<th>Method</th>
-<th>Endpoint</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>My balances</td>
-<td>GET</td>
-<td><code>/payments/balance/</code></td>
-<td>All per-course balances</td>
-</tr>
-<tr>
-<td>Course balance</td>
-<td>GET</td>
-<td><code>/courses/&lt;id&gt;/balance/</code></td>
-<td>Balance for a specific course</td>
-</tr>
-<tr>
-<td>Redeem code</td>
-<td>POST</td>
-<td><code>/payments/codes/redeem/</code></td>
-<td>Redeem a recharge code</td>
-</tr>
-</tbody>
-</table>
-<p><strong><code>POST /payments/codes/redeem/</code> Request:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>,
-  <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>
-}
-</div></code></pre>
-<p><strong><code>POST /payments/codes/redeem/</code> Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Code redeemed successfully. Added 50.00 EGP to your Chemistry balance."</span>,
-  <span class="hljs-attr">"new_balance"</span>: <span class="hljs-string">"200.00"</span>,
-  <span class="hljs-attr">"transaction_id"</span>: <span class="hljs-number">42</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>400</td>
-<td>Code already used</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Code expired (1 year from creation)</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Code belongs to a different course</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Not enrolled and approved in this course</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Invalid code (doesn't exist)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Page layout:</strong></p>
-<ul>
-<li><strong>Balance summary:</strong> Table showing all course balances (from <code>/payments/balance/</code>)
-<ul>
-<li>Course name, current balance</li>
-</ul>
-</li>
-<li><strong>Redeem section:</strong>
-<ul>
-<li><strong>Course dropdown</strong> (select which course to add balance to)
-<ul>
-<li>Only shows courses where the student is approved-enrolled</li>
-</ul>
-</li>
-<li><strong>Code input:</strong> Single text field for the 16-char code (XXXX-XXXX-XXXX-XXXX format)
-<ul>
-<li>Auto-format as user types (add dashes after every 4 chars)</li>
-</ul>
-</li>
-<li><strong>Redeem button</strong></li>
-</ul>
-</li>
-<li>On success → <code>new_balance</code> shown, balance list refreshes, success toast</li>
-<li>On error → show specific error message</li>
-</ul>
-<p><strong>Business rules:</strong></p>
-<ul>
-<li>Codes are course-specific — must select the correct course</li>
-<li>Code format: XXXX-XXXX-XXXX-XXXX (16 uppercase alphanumeric chars with dashes)</li>
-<li>One-time use only</li>
-<li>Race-condition safe (backend uses <code>select_for_update()</code>)</li>
-<li>Every redemption creates an immutable <code>BalanceTransaction</code> ledger entry</li>
-</ul>
-<hr>
 <h3 id="page-8-lecture-player">Page 8: Lecture Player</h3>
 <p><strong>Purpose:</strong> Watch videos, track progress, access homework/quizzes/materials for a purchased lecture.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
@@ -3145,7 +3221,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li>Teacher can reopen access (grants 1 extra day, max 2 reopens — does NOT reset watch count)</li>
 </ul>
 <hr>
-<h3 id="page-9-homework-submission-bubble-sheet">Page 9: Homework Submission (Bubble Sheet)</h3>
+<h3 id="page-9a-homework-submission-bubble-sheet--tab-inside-lecture-player">Page 9a: Homework Submission (Bubble Sheet — Tab inside Lecture Player)</h3>
 <p><strong>Purpose:</strong> Answer bubble-sheet homework (A/B/C/D choices) and submit for auto-grading.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
@@ -3294,7 +3370,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li>Score = sum of points for correct questions</li>
 </ul>
 <hr>
-<h3 id="page-10-quiz-taking">Page 10: Quiz Taking</h3>
+<h3 id="page-9b-quiz-taking-tab-inside-lecture-player">Page 9b: Quiz Taking (Tab inside Lecture Player)</h3>
 <p><strong>Purpose:</strong> Take a timed quiz with MCQ and written questions, auto-save drafts, submit for grading.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
@@ -3548,7 +3624,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><code>correct_standalone_choice_texts</code> only shown if <code>answers_visibility</code> allows</li>
 </ul>
 <hr>
-<h3 id="page-11-exam-taking">Page 11: Exam Taking</h3>
+<h3 id="page-9c-exam-taking-tab-inside-lecture-player">Page 9c: Exam Taking (Tab inside Lecture Player)</h3>
 <p><strong>Purpose:</strong> Take a course-level exam with open/close dates. Same flow as quizzes.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
@@ -3673,8 +3749,8 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><code>after_close</code> visibility: scores/answers become visible automatically after <code>close_date</code> passes</li>
 </ul>
 <hr>
-<h3 id="page-12-profile">Page 12: Profile</h3>
-<p><strong>Purpose:</strong> View and edit the student's own profile.</p>
+<h3 id="page-9-student-dashboard-build-last">Page 9: Student Dashboard (Build Last)</h3>
+<p><strong>Purpose:</strong> Landing page after student login. Shows enrolled courses and balances at a glance. <strong>This is the last student page to build</strong> — it aggregates all features.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -3682,124 +3758,73 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <th>Action</th>
 <th>Method</th>
 <th>Endpoint</th>
-<th>Purpose</th>
+<th>Roles</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Get profile</td>
+<td>My enrolled courses</td>
 <td>GET</td>
-<td><code>/accounts/profile/me/</code></td>
-<td>Full student profile</td>
+<td><code>/courses/enrolled/</code></td>
+<td>Student only</td>
 </tr>
 <tr>
-<td>Update profile</td>
-<td>PATCH</td>
-<td><code>/accounts/profile/me/</code></td>
-<td>Update fields</td>
+<td>My balances</td>
+<td>GET</td>
+<td><code>/payments/balance/</code></td>
+<td>Student only</td>
 </tr>
 </tbody>
 </table>
-<p><strong><code>GET /accounts/profile/me/</code> Response:</strong></p>
+<p><strong><code>GET /courses/enrolled/</code> Response:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"user_id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"username"</span>: <span class="hljs-string">"ahmed123"</span>,
-  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"ahmed@gmail.com"</span>,
-  <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"1234567"</span>,
-  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"أحمد"</span>, <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"Ahmed"</span>,
-  <span class="hljs-attr">"full_name"</span>: <span class="hljs-string">"Ahmed / أحمد"</span>,
-  <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"01234567890"</span>,
-  <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"01112345678"</span>,
-  <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"01087654321"</span>,
-  <span class="hljs-attr">"school_type"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"school_type_name"</span>: <span class="hljs-string">"Public School"</span>,
-  <span class="hljs-attr">"grade"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"3rd Secondary"</span>,
-  <span class="hljs-attr">"division"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"division_name"</span>: <span class="hljs-string">"Scientific"</span>,
-  <span class="hljs-attr">"school_name"</span>: <span class="hljs-string">"Al-Haram Secondary School"</span>,
-  <span class="hljs-attr">"birth_date"</span>: <span class="hljs-string">"2008-05-15"</span>,
-  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"male"</span>,
-  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"ahmed@gmail.com"</span>,
-  <span class="hljs-attr">"governorate"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"governorate_name"</span>: <span class="hljs-string">"Cairo"</span>,
-  <span class="hljs-attr">"area"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"area_name"</span>: <span class="hljs-string">"Nasr City"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"verified"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-06-01T10:00:00Z"</span>,
-  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-literal">null</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-literal">null</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+      <span class="hljs-attr">"teacher"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Dr Hany"</span>},
+      <span class="hljs-attr">"grade"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>},
+      <span class="hljs-attr">"subject"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry"</span>},
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Full course covering..."</span>,
+      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../cover.jpg"</span>,
+      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"approved"</span>
+    }
+  ]
 }
 </div></code></pre>
-<p><strong><code>PATCH /accounts/profile/me/</code> Request:</strong> Same fields as GET (all optional for PATCH). Can use JSON or multipart.</p>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>400</td>
-<td>Email exists (another user)</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Area doesn't belong to governorate</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Missing required fields</td>
-</tr>
-</tbody>
-</table>
+<p><strong><code>GET /payments/balance/</code> Response:</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed"</span>,
+    <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+    <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
+    <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"150.00"</span>,
+    <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-07-15T10:00:00Z"</span>
+  }
+]
+</div></code></pre>
 <p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>Read-only fields:</strong> <code>student_code</code>, <code>username</code>, <code>status</code>, <code>is_active</code>, <code>created_at</code></li>
-<li><strong>Editable fields:</strong> All other profile fields</li>
-<li><strong>Form sections:</strong>
-<ol>
-<li><strong>Personal Info:</strong> Name (Arabic + English), gender, birth date</li>
-<li><strong>Contact:</strong> Phone, father phone, mother phone, gmail</li>
-<li><strong>School Info:</strong> School type, grade, division, school name</li>
-<li><strong>Location:</strong> Governorate, area (dropdowns — area filters by governorate)</li>
-</ol>
-</li>
-<li><strong>Save button</strong> → <code>PATCH /accounts/profile/me/</code></li>
-</ul>
-<p><strong>Business rules (edit restrictions by status):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Can edit?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>verified</code></td>
-<td><strong>Cannot edit</strong></td>
-</tr>
-<tr>
-<td><code>pending</code></td>
-<td><strong>Cannot edit</strong></td>
-</tr>
-<tr>
-<td><code>declined</code></td>
-<td><strong>Can edit</strong> — after saving, status resets to <code>pending</code></td>
-</tr>
-<tr>
-<td><code>suspended_temporary</code></td>
-<td><strong>Cannot edit</strong></td>
-</tr>
-<tr>
-<td><code>suspended_permanent</code></td>
-<td>Blocked from login entirely</td>
-</tr>
-</tbody>
-</table>
+<li><strong>Header:</strong> Student name + code (from <code>GET /accounts/me/</code> or stored from login response)</li>
+<li><strong>Balance summary card:</strong> &quot;You have X EGP in Y courses&quot; — clickable to see breakdown</li>
+<li><strong>Enrolled courses grid:</strong> 2-column card layout
 <ul>
-<li>If <code>status === 'declined'</code>, show a message: &quot;Your registration was declined. Edit your profile to resubmit for review.&quot;</li>
-<li>Gmail must be globally unique across ALL user types</li>
+<li>Each card: cover picture, course name, teacher name, grade name</li>
+<li>Balance badge per course (from <code>/payments/balance/</code>)</li>
+<li>Click card → navigate to <strong>Course Lectures</strong> (Page 6)</li>
 </ul>
-<hr>
+</li>
+<li><strong>Empty state:</strong> &quot;You are not enrolled in any courses yet. Browse our catalog.&quot; + link to <strong>Course Catalog</strong> (Page 3)</li>
+<li><strong>Loading:</strong> Skeleton cards</li>
+</ul>
+<p><strong>Business rules:</strong></p>
+<ul>
+<li>Only shows <code>approved</code> enrollments (pending/rejected are not shown)</li>
+<li>Balances are per-course — show the balance for each course card</li>
+</ul>
 
 </body>
 </html>

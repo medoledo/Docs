@@ -554,7 +554,7 @@ No request body
 </tbody>
 </table>
 <blockquote>
-<p><strong>⚠️ Concurrent upload protection:</strong> The <code>create-upload/</code> endpoint uses <code>select_for_update()</code> to serialize concurrent requests. If user A starts an upload (calls <code>create-upload/</code>) and user B tries to upload to the same video while status is 0-3 (Created/Uploaded/Processing/Transcoding), user B gets <strong>409 Conflict</strong>. This prevents invisible overwrites. Re-upload is only allowed when status is 5 (Error) or null.</p>
+<p><strong>⚠️ Concurrent upload protection:</strong> Once a Bunny video entry is created (status = 0), <code>create-upload/</code> always returns <strong>409 Conflict</strong> until the encoding finishes or the video record is deleted. To re-upload after a failed/abandoned upload: delete the video record (<code>DELETE /courses/videos/&lt;id&gt;/</code>) and create a new one.</p>
 </blockquote>
 <blockquote>
 <p><strong>⚠️ CRITICAL: <code>expiration_time</code> is a Unix timestamp in SECONDS, not milliseconds.</strong>
@@ -713,8 +713,7 @@ JavaScript's <code>Date.now()</code> returns <strong>milliseconds</strong>. If y
 <ol>
 <li>Does the video have a <code>bunny_video_id</code>?</li>
 <li>Is the current status &lt; 4 (not finished)?</li>
-<li>Was the video created less than 24 hours ago (not a stale video)?</li>
-<li>If all yes → backend calls Bunny's API to get the real status → updates the DB if changed</li>
+<li>If both yes → backend calls Bunny's API to get the real status → updates the DB if changed</li>
 </ol>
 <p>This makes the polling <strong>self-healing</strong> — you don't need <code>POST /courses/videos/&lt;id&gt;/upload-complete/</code> or the webhook. The polling loop discovers status changes automatically.</p>
 <p><strong>Status Reference:</strong></p>
@@ -1032,14 +1031,29 @@ Content-Type: application/json
 <td>Retry with exponential backoff (3 retries, 1s/2s/4s delays)</td>
 </tr>
 <tr>
-<td><strong>create-upload returns 409</strong></td>
-<td>Another user is already uploading to the same video</td>
-<td>Wait for the upload to finish. The second user will see the first user's upload when the video reaches status=4.</td>
+<td><strong>create-upload returns 409 (status 1,2,3)</strong></td>
+<td>Upload/encoding already in progress</td>
+<td>Wait for encoding to finish. The second user will see the first user's upload when the video reaches status=4.</td>
+</tr>
+<tr>
+<td><strong>create-upload returns 409 (status 0)</strong></td>
+<td>A Bunny entry exists but no file has completed encoding</td>
+<td>Delete the video record and create a new one to start fresh.</td>
+</tr>
+<tr>
+<td><strong>create-upload returns 409 (status 0 — webhook hint)</strong></td>
+<td>Upload may have completed; try <code>GET /courses/videos/&lt;id&gt;/</code> first to trigger a status sync</td>
+<td>The detail endpoint polls Bunny's API and updates the DB. After calling it, try <code>create-upload/</code> again.</td>
 </tr>
 <tr>
 <td><strong>create-upload returns 400 &quot;finalized&quot;</strong></td>
 <td>Video is already encoded (status=4)</td>
 <td>Delete the video record and create a new one to upload a replacement.</td>
+</tr>
+<tr>
+<td><strong>Delete video fails</strong></td>
+<td>Network error when calling Bunny's delete API</td>
+<td>Backend retries 3 times with 1s delay. If still failing, local record is deleted and Bunny video becomes orphaned.</td>
 </tr>
 <tr>
 <td><strong>create-upload returns 400 &quot;no collection&quot;</strong></td>

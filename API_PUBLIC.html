@@ -702,6 +702,11 @@ code {
 </tr>
 <tr>
 <td><code>400</code></td>
+<td>Weak password</td>
+<td><code>{&quot;error&quot;: &quot;This password is too common.&quot;}</code> or <code>{&quot;error&quot;: &quot;This password is entirely numeric.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>400</code></td>
 <td>OTP expired</td>
 <td><code>{&quot;error&quot;: &quot;OTP has expired&quot;}</code></td>
 </tr>
@@ -724,6 +729,7 @@ code {
 </table>
 <p><strong>Business Rules:</strong></p>
 <ul>
+<li>Django's password validators are applied: minimum 8 characters, not too common, not entirely numeric, not too similar to user attributes.</li>
 <li>All refresh tokens for the user are deleted, forcing re-login on all devices.</li>
 <li>The OTP is marked as used and cannot be reused.</li>
 <li>Unauthenticated requests (including forgot-password and verify-otp) are rate-limited to 60 requests per minute globally.</li>
@@ -784,6 +790,7 @@ code {
 </table>
 <p><strong>Business Rules:</strong></p>
 <ul>
+<li>Django's password validators are applied: minimum 8 characters, not too common, not entirely numeric, not too similar to user attributes.</li>
 <li>All refresh tokens for the user are deleted, forcing re-login on all devices.</li>
 </ul>
 <hr>

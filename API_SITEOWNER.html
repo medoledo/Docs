@@ -536,7 +536,7 @@ code {
 <tr>
 <td><code>400</code></td>
 <td>Weak password</td>
-<td><code>{&quot;password&quot;: [&quot;Password validation error&quot;]}</code></td>
+<td><code>{&quot;password&quot;: [&quot;Password validation error&quot;]}</code> — Django validators: too common, entirely numeric, too similar to username</td>
 </tr>
 <tr>
 <td><code>403</code></td>
@@ -1322,16 +1322,17 @@ Use `GET /codes/history/` for a unified code audit log (redemptions + blacklists
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"total_batches"</span>: <span class="hljs-number">45</span>,
   <span class="hljs-attr">"total_codes"</span>: <span class="hljs-number">5000</span>,
-  <span class="hljs-attr">"total_value"</span>: <span class="hljs-string">"250000.00"</span>,
   <span class="hljs-attr">"valid_count"</span>: <span class="hljs-number">3000</span>,
+  <span class="hljs-attr">"valid_value"</span>: <span class="hljs-string">"150000.00"</span>,
   <span class="hljs-attr">"used_count"</span>: <span class="hljs-number">1800</span>,
   <span class="hljs-attr">"used_value"</span>: <span class="hljs-string">"90000.00"</span>,
   <span class="hljs-attr">"blacklisted_count"</span>: <span class="hljs-number">200</span>,
+  <span class="hljs-attr">"blacklisted_value"</span>: <span class="hljs-string">"10000.00"</span>,
   <span class="hljs-attr">"teachers_cut"</span>: <span class="hljs-string">"36000.00"</span>,
   <span class="hljs-attr">"siteowner_cut"</span>: <span class="hljs-string">"54000.00"</span>
 }
 </div></code></pre>
-<p><strong>Teacher's Cut Calculation:</strong> Each redeemed code deducts the teacher's <code>video_security.price_per_student</code> from the code value. The remainder is the SiteOwner's cut. Default fee is 0 EGP when no video security is assigned.</p>
+<p><strong>Revenue Split Calculation:</strong> The <code>video_security.price_per_student</code> is the <strong>platform fee</strong> deducted from each code's value. The remainder goes to the teacher. Example: Code value = 100 EGP, Platform fee = 20 EGP → Teacher cut = 80 EGP, SiteOwner cut = 20 EGP. Default fee is 0 EGP when no video security is assigned.</p>
 <hr>
 <h3 id="get-paymentscodesbatches">GET /payments/codes/batches/</h3>
 <p><strong>Description:</strong> List code batches grouped by <code>batch_id</code>. Paginated. Each row shows batch name, course, teacher, code counts per status, and code value.</p>
