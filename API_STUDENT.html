@@ -515,7 +515,6 @@ code {
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String"</span>,
-  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"String"</span>,
@@ -542,10 +541,10 @@ code {
   <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-string">"Boolean"</span>,
   <span class="hljs-attr">"status_history"</span>: [
     {
-      <span class="hljs-attr">"from_status"</span>: <span class="hljs-string">"pending | null"</span>,
+      <span class="hljs-attr">"changed_by"</span>: <span class="hljs-string">"String | null — Username of the admin who made the change"</span>,
+      <span class="hljs-attr">"from_status"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"to_status"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"changed_by_name"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
     }
   ],

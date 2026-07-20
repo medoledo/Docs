@@ -365,7 +365,7 @@ code {
           : 'default'
     });
   </script>
-<h1 id="edutrack-online--frontend-build-order-phase-1-siteowner">EduTrack Online — Frontend Build Order (Phase 1: SiteOwner)</h1>
+<h1 id="edutrack-online-%C3%A2%E2%82%AC-frontend-build-order-phase-1-siteowner">EduTrack Online â€” Frontend Build Order (Phase 1: SiteOwner)</h1>
 <h2 id="overview">Overview</h2>
 <p>Build these pages <strong>in order</strong>. Each page depends on the previous one.</p>
 <hr>
@@ -409,10 +409,10 @@ code {
 </table>
 <p><strong>Flow:</strong></p>
 <ol>
-<li>User enters username + password → <code>POST /accounts/login/</code></li>
-<li>If 200 → store <code>{role, name}</code> in React state, redirect to <strong>Teachers Page</strong> (if role=siteowner)</li>
-<li>If 401 → show error message</li>
-<li>&quot;Forgot Password?&quot; link → step-by-step: email → OTP → new password</li>
+<li>User enters username + password â†’ <code>POST /accounts/login/</code></li>
+<li>If 200 â†’ store <code>{role, name}</code> in React state, redirect to <strong>Teachers Page</strong> (if role=siteowner)</li>
+<li>If 401 â†’ show error message</li>
+<li>&quot;Forgot Password?&quot; link â†’ step-by-step: email â†’ OTP â†’ new password</li>
 </ol>
 <p><strong>Required:</strong> Login form, Forgot Password modal/flow.</p>
 <hr>
@@ -468,19 +468,19 @@ code {
 </table>
 <p><strong>3-Step Registration Flow:</strong></p>
 <pre class="hljs"><code><div>Step 1:  POST /verify-email/request/ { email }
-         → OTP sent to email
+         â†’ OTP sent to email
 
 Step 2:  POST /verify-email/confirm/ { email, otp }
-         → Returns { verified, email, verification_token }
-         → Save verification_token in React state
+         â†’ Returns { verified, email, verification_token }
+         â†’ Save verification_token in React state
 
 Step 3:  POST /accounts/student/register/ { verification_token, gmail, ...all fields }
-         → Server validates token matches gmail
-         → Creates student if valid
+         â†’ Server validates token matches gmail
+         â†’ Creates student if valid
 </div></code></pre>
 <p><strong>Step 3 form fields:</strong></p>
 <ul>
-<li><code>verification_token</code> (hidden field — from Step 2 response)</li>
+<li><code>verification_token</code> (hidden field â€” from Step 2 response)</li>
 <li><code>gmail</code> (must match the email verified in Step 2)</li>
 <li><code>username</code> (unique)</li>
 <li><code>password</code> + <code>password_confirm</code></li>
@@ -539,12 +539,12 @@ Step 3:  POST /accounts/student/register/ { verification_token, gmail, ...all fi
 <ul>
 <li>Name (from <code>name</code>)</li>
 <li>Subject (from <code>subject_name</code>)</li>
-<li>Grades (from <code>grade_names</code> — array of strings)</li>
+<li>Grades (from <code>grade_names</code> â€” array of strings)</li>
 <li>Course count (from <code>courses_count</code>)</li>
 <li>Student count (from <code>students_count</code>)</li>
 <li>Active/Inactive status badge (from <code>is_active</code>)</li>
-<li>&quot;View Courses&quot; button → navigates to <strong>Teacher Courses Page</strong></li>
-<li>&quot;Edit&quot; button → opens edit modal/inline form</li>
+<li>&quot;View Courses&quot; button â†’ navigates to <strong>Teacher Courses Page</strong></li>
+<li>&quot;Edit&quot; button â†’ opens edit modal/inline form</li>
 </ul>
 <p><strong>Teacher List Filters:</strong></p>
 <ul>
@@ -556,9 +556,9 @@ Step 3:  POST /accounts/student/register/ { verification_token, gmail, ...all fi
 <ul>
 <li><code>username</code>, <code>password</code></li>
 <li><code>name</code>, <code>phone</code>, <code>secondary_phone</code>, <code>gmail</code></li>
-<li><code>gender</code> (male/female — <strong>required</strong>)</li>
+<li><code>gender</code> (male/female â€” <strong>required</strong>)</li>
 <li><code>subject</code> (ID from subjects list)</li>
-<li><code>grades</code> (array of grade IDs — <strong>filtered by selected subject</strong>)</li>
+<li><code>grades</code> (array of grade IDs â€” <strong>filtered by selected subject</strong>)</li>
 <li><code>is_active</code> (checkbox, default true)</li>
 <li><code>biography</code>, <code>facebook</code> (optional)</li>
 </ul>
@@ -618,19 +618,19 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </table>
 <p><strong>Teacher Detail sections:</strong></p>
 <ol>
-<li><strong>Profile Info</strong> — name, phone, gmail, subject, grades, active status, <code>bunny_collection_id</code>. Editable.</li>
-<li><strong>Bunny Collection</strong> — shows current <code>bunny_collection_id</code> (if assigned). Button to assign a collection: <code>PATCH /accounts/teachers/&lt;id&gt;/PATCH /teachers/&lt;id&gt;/ (set bunny_collection_id)/</code> with <code>{ &quot;collection_id&quot;: &quot;...&quot; }</code>. Or create one via <code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code>.</li>
-<li><strong>Assistants List</strong> — read-only table showing assigned assistants (name, phone, gmail, is_active). Note: assistants are created later by the teacher themselves.</li>
-<li><strong>Create Course Button</strong> → opens a form to create a course for this teacher.</li>
+<li><strong>Profile Info</strong> â€” name, phone, gmail, subject, grades, active status, <code>bunny_collection_id</code>. Editable.</li>
+<li><strong>Bunny Collection</strong> â€” shows current <code>bunny_collection_id</code> (if assigned). Button to assign a collection: <code>PATCH /accounts/teachers/&lt;id&gt;/PATCH /teachers/&lt;id&gt;/ (set bunny_collection_id)/</code> with <code>{ &quot;collection_id&quot;: &quot;...&quot; }</code>. Or create one via <code>POST /accounts/teachers/&lt;id&gt;/create-collection/</code>.</li>
+<li><strong>Assistants List</strong> â€” read-only table showing assigned assistants (name, phone, gmail, is_active). Note: assistants are created later by the teacher themselves.</li>
+<li><strong>Create Course Button</strong> â†’ opens a form to create a course for this teacher.</li>
 </ol>
 <p><strong>Course Create Form (inline):</strong></p>
 <ul>
-<li><code>name</code> (text — will be validated as unique per teacher+grade)</li>
-<li><code>grade</code> (select from dropdown — teacher must teach this grade)</li>
+<li><code>name</code> (text â€” will be validated as unique per teacher+grade)</li>
+<li><code>grade</code> (select from dropdown â€” teacher must teach this grade)</li>
 <li><code>description</code> (textarea, optional)</li>
 <li><code>is_active</code> (checkbox, default true)</li>
 </ul>
-<p><strong>Note:</strong> Subject is auto-derived from <code>teacher.subject</code> — NOT sent in request.</p>
+<p><strong>Note:</strong> Subject is auto-derived from <code>teacher.subject</code> â€” NOT sent in request.</p>
 <p><strong>Success:</strong> After creating a course, the page should show a success message and optionally navigate to the <strong>Teacher Courses Page</strong>.</p>
 <hr>
 <h2 id="page-5-teacher-courses-page">Page 5: Teacher Courses Page</h2>
@@ -680,8 +680,8 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <li>Created date</li>
 <li>Topic count (from <code>topic_count</code> in response)</li>
 <li>Total lectures count (from <code>total_lectures</code> in response)</li>
-<li>&quot;Edit&quot; button → opens edit modal</li>
-<li>&quot;Delete&quot; button → only if course is empty (no enrollments)</li>
+<li>&quot;Edit&quot; button â†’ opens edit modal</li>
+<li>&quot;Delete&quot; button â†’ only if course is empty (no enrollments)</li>
 </ul>
 <p><strong>Course Edit Form:</strong></p>
 <ul>
@@ -747,58 +747,58 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 <li>Student Code, Name (en), Grade, Phone, Gmail, Status badge, Created date, Actions</li>
 </ul>
 <p><strong>Student Detail view (3 sections):</strong></p>
-<p><strong>Section 1 — Profile Info:</strong></p>
+<p><strong>Section 1 â€” Profile Info:</strong></p>
 <ul>
 <li>Full profile info (name_ar, name_en, phone, father/mother numbers, school info, gmail, birth_date, gender, governorate, area, etc.)</li>
 <li><code>enrollments[]</code> array shows all courses the student is enrolled in with per-course balance, teacher name, status, enrollment date.</li>
 <li>Status history timeline from <code>status_history</code> field.</li>
 </ul>
-<p><strong>Section 2 — Status Management:</strong></p>
+<p><strong>Section 2 â€” Status Management:</strong></p>
 <ul>
 <li>
 <p>Status change buttons (with <code>reason</code> field):</p>
 <ul>
-<li>&quot;Decline&quot; → <code>PATCH {status: &quot;declined&quot;, is_active: false, reason: &quot;...&quot;}</code> — reason <strong>required</strong></li>
-<li>&quot;Suspend (Temporary)&quot; → <code>PATCH {status: &quot;suspended_temporary&quot;, is_active: false, reason: &quot;...&quot;}</code> — reason <strong>required</strong></li>
-<li>&quot;Suspend (Permanent)&quot; → <code>PATCH {status: &quot;suspended_permanent&quot;, is_active: false, reason: &quot;...&quot;}</code> — reason <strong>required</strong></li>
-<li>&quot;Verify/Reactivate&quot; → <code>PATCH {status: &quot;verified&quot;, is_active: true, reason: &quot;...&quot;}</code> — reason optional</li>
+<li>&quot;Decline&quot; â†’ <code>PATCH {status: &quot;declined&quot;, is_active: false, reason: &quot;...&quot;}</code> â€” reason <strong>required</strong></li>
+<li>&quot;Suspend (Temporary)&quot; â†’ <code>PATCH {status: &quot;suspended_temporary&quot;, is_active: false, reason: &quot;...&quot;}</code> â€” reason <strong>required</strong></li>
+<li>&quot;Suspend (Permanent)&quot; â†’ <code>PATCH {status: &quot;suspended_permanent&quot;, is_active: false, reason: &quot;...&quot;}</code> â€” reason <strong>required</strong></li>
+<li>&quot;Verify/Reactivate&quot; â†’ <code>PATCH {status: &quot;verified&quot;, is_active: true, reason: &quot;...&quot;}</code> â€” reason optional</li>
 </ul>
 </li>
 <li>
 <p><strong>Status transition rules:</strong></p>
 <ul>
-<li><code>pending</code> → only &quot;Verify&quot; or &quot;Decline&quot;</li>
-<li><code>verified</code> → only &quot;Suspend&quot; (cannot decline or set to pending)</li>
-<li><code>declined</code> → only &quot;Verify&quot; (cannot suspend)</li>
-<li><code>suspended</code> → only &quot;Verify&quot; (reactivate)</li>
+<li><code>pending</code> â†’ only &quot;Verify&quot; or &quot;Decline&quot;</li>
+<li><code>verified</code> â†’ only &quot;Suspend&quot; (cannot decline or set to pending)</li>
+<li><code>declined</code> â†’ only &quot;Verify&quot; (cannot suspend)</li>
+<li><code>suspended</code> â†’ only &quot;Verify&quot; (reactivate)</li>
 </ul>
 </li>
 <li>
 <p><strong>Profile edit rules</strong> (student self-service):</p>
 <ul>
-<li><code>verified</code> → <strong>Cannot edit</strong></li>
-<li><code>pending</code> → <strong>Cannot edit</strong></li>
-<li><code>declined</code> → <strong>Can edit</strong> — after saving, status resets to <code>pending</code></li>
-<li><code>suspended_temporary</code> → <strong>Cannot edit</strong></li>
-<li><code>suspended_permanent</code> → <strong>Blocked from login</strong></li>
+<li><code>verified</code> â†’ <strong>Cannot edit</strong></li>
+<li><code>pending</code> â†’ <strong>Cannot edit</strong></li>
+<li><code>declined</code> â†’ <strong>Can edit</strong> â€” after saving, status resets to <code>pending</code></li>
+<li><code>suspended_temporary</code> â†’ <strong>Cannot edit</strong></li>
+<li><code>suspended_permanent</code> â†’ <strong>Blocked from login</strong></li>
 </ul>
 </li>
 <li>
 <p><strong>Login behavior by status:</strong></p>
 <ul>
-<li><code>pending</code> → receives <code>{status: &quot;pending&quot;}</code> — show &quot;pending approval&quot; page</li>
-<li><code>verified</code> → Normal login</li>
-<li><code>declined</code> → receives <code>{status: &quot;declined&quot;}</code> — show reason + prompt to edit profile</li>
-<li><code>suspended_temporary</code> → receives <code>{status: &quot;suspended_temporary&quot;}</code> — show reason</li>
-<li><code>suspended_permanent</code> → <strong>Blocked</strong> — 401 &quot;Your account has been permanently suspended.&quot;</li>
+<li><code>pending</code> â†’ receives <code>{status: &quot;pending&quot;}</code> â€” show &quot;pending approval&quot; page</li>
+<li><code>verified</code> â†’ Normal login</li>
+<li><code>declined</code> â†’ receives <code>{status: &quot;declined&quot;}</code> â€” show reason + prompt to edit profile</li>
+<li><code>suspended_temporary</code> â†’ receives <code>{status: &quot;suspended_temporary&quot;}</code> â€” show reason</li>
+<li><code>suspended_permanent</code> â†’ <strong>Blocked</strong> â€” 401 &quot;Your account has been permanently suspended.&quot;</li>
 </ul>
 </li>
 </ul>
-<p><strong>Section 3 — Transaction History (per course):</strong></p>
+<p><strong>Section 3 â€” Transaction History (per course):</strong></p>
 <ul>
 <li><strong>SiteOwner MUST select a course first</strong> (from the enrollments table) before viewing transactions</li>
 <li>Once a course is selected: <code>GET /payments/transactions/?student=&lt;id&gt;&amp;course=&lt;id&gt;</code></li>
-<li>Shows full ledger: Date &amp; Time | Type | Amount | Balance Before → After | Performed By | Code</li>
+<li>Shows full ledger: Date &amp; Time | Type | Amount | Balance Before â†’ After | Performed By | Code</li>
 <li>Filters: <code>?start_date=YYYY-MM-DD</code>, <code>?end_date=YYYY-MM-DD</code>, <code>?code=ABC123</code>, <code>?transaction_type=code_redeemed|lecture_purchase</code></li>
 <li>Pagination: 25 per page (<code>?page_size=25</code>)</li>
 </ul>
@@ -864,7 +864,7 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 3. Server returns JSON: {role: &quot;siteowner&quot;, name: &quot;Admin&quot;, is_active: true}
 4. Frontend stores {role, name} in React context/state
 5. All subsequent requests automatically send cookies (browser handles this)
-6. When access_token expires → POST /accounts/token/refresh/ (reads refresh cookie)
+6. When access_token expires â†’ POST /accounts/token/refresh/ (reads refresh cookie)
 7. POST /accounts/logout/ to clear cookies
 </div></code></pre>
 <p><strong>Note:</strong> Since cookies are httpOnly, the frontend CANNOT read the JWT. Session restoration works via <code>GET /accounts/me/</code> which reads the cookie and returns <code>{role, name, is_active}</code>.</p>
@@ -875,27 +875,27 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </div></code></pre>
 <p>HTTP Status codes:</p>
 <ul>
-<li><code>200</code> — Success</li>
-<li><code>201</code> — Created</li>
-<li><code>400</code> — Bad request (validation error)</li>
-<li><code>401</code> — Not authenticated or invalid credentials</li>
-<li><code>403</code> — Not authorized (wrong role)</li>
-<li><code>404</code> — Not found</li>
-<li><code>500</code> — Server error</li>
+<li><code>200</code> â€” Success</li>
+<li><code>201</code> â€” Created</li>
+<li><code>400</code> â€” Bad request (validation error)</li>
+<li><code>401</code> â€” Not authenticated or invalid credentials</li>
+<li><code>403</code> â€” Not authorized (wrong role)</li>
+<li><code>404</code> â€” Not found</li>
+<li><code>500</code> â€” Server error</li>
 </ul>
 <hr>
 <h2 id="phase-2-teacher--assistant-pages">Phase 2: Teacher &amp; Assistant Pages</h2>
 <p>Build these <strong>in order</strong> after Phase 1 is complete.</p>
-<p><strong>IMPORTANT:</strong> All pages in Phase 2 apply to <strong>both Teacher and Assistant roles</strong> unless noted. The only exception is the <strong>Assistants management page</strong> — assistants can view coworkers but cannot create/delete.</p>
-<p>Dashboards (Course Dashboard, Teacher Dashboard) are built <strong>last</strong> — after all features exist.</p>
+<p><strong>IMPORTANT:</strong> All pages in Phase 2 apply to <strong>both Teacher and Assistant roles</strong> unless noted. The only exception is the <strong>Assistants management page</strong> â€” assistants can view coworkers but cannot create/delete.</p>
+<p>Dashboards (Course Dashboard, Teacher Dashboard) are built <strong>last</strong> â€” after all features exist.</p>
 <hr>
 <h3 id="page-1-my-courses-page-entry-point">Page 1: My Courses Page (Entry Point)</h3>
-<p>Teacher logs in → <code>POST /accounts/login/</code> → JWT cookies set → <code>GET /accounts/me/</code> → redirects to My Courses.</p>
+<p>Teacher logs in â†’ <code>POST /accounts/login/</code> â†’ JWT cookies set â†’ <code>GET /accounts/me/</code> â†’ redirects to My Courses.</p>
 <p><strong>Page layout:</strong> Grid of course cards, each showing:</p>
 <ul>
 <li>Course name, grade, subject, cover picture</li>
 <li>Topic count, enrolled/pending/rejected counts</li>
-<li>Click card → navigate to Content Management</li>
+<li>Click card â†’ navigate to Content Management</li>
 </ul>
 <table>
 <thead>
@@ -914,21 +914,21 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </tbody>
 </table>
 <hr>
-<h3 id="page-2-content-management-topics-%E2%86%92-lectures-%E2%86%92-videos">Page 2: Content Management (Topics → Lectures → Videos)</h3>
+<h3 id="page-2-content-management-topics-%C3%A2%E2%80%A0-lectures-%C3%A2%E2%80%A0-videos">Page 2: Content Management (Topics â†’ Lectures â†’ Videos)</h3>
 <p><strong>Purpose:</strong> The core page where teachers build their course content hierarchy. Teacher spends most time here.</p>
-<p><strong>Navigation:</strong> Select course → Topics list → Click topic → Lectures list → Click lecture → Lecture Detail</p>
+<p><strong>Navigation:</strong> Select course â†’ Topics list â†’ Click topic â†’ Lectures list â†’ Click lecture â†’ Lecture Detail</p>
 <p><strong>Page layout (left-to-right hierarchy):</strong></p>
 <pre class="hljs"><code><div>Course: Chemistry 3rd Secondary
-┌────────────────────────────────────────────────┐
-│  Unit 1: Chemical Reactions          [+ Topic] │
-│  ├── Lecture 1: Intro               [3 videos] │
-│  ├── Lecture 2: Balancing           [2 videos] │
-│  └── + Add Lecture                             │
-│                                                │
-│  Unit 2: Organic Chemistry                     │
-│  ├── Lecture 3: Hydrocarbons        [0 videos] │
-│  └── + Add Lecture                             │
-└────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Unit 1: Chemical Reactions          [+ Topic] â”‚
+â”‚  â”œâ”€â”€ Lecture 1: Intro               [3 videos] â”‚
+â”‚  â”œâ”€â”€ Lecture 2: Balancing           [2 videos] â”‚
+â”‚  â””â”€â”€ + Add Lecture                             â”‚
+â”‚                                                â”‚
+â”‚  Unit 2: Organic Chemistry                     â”‚
+â”‚  â”œâ”€â”€ Lecture 3: Hydrocarbons        [0 videos] â”‚
+â”‚  â””â”€â”€ + Add Lecture                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 </div></code></pre>
 <p><strong>Topic CRUD:</strong></p>
 <table>
@@ -976,8 +976,8 @@ The <code>GET /accounts/subjects/</code> response includes <code>grade_ids</code
 </tr>
 </tbody>
 </table>
-<p><strong>Click a lecture → Lecture Detail page with sub-tabs:</strong></p>
-<pre class="hljs"><code><div>← Back to Content
+<p><strong>Click a lecture â†’ Lecture Detail page with sub-tabs:</strong></p>
+<pre class="hljs"><code><div>â† Back to Content
 
 Lecture: Intro to Chemical Reactions
 Price: 50 EGP | Discount: 10 EGP | Available: 30 days
@@ -1018,11 +1018,11 @@ Price: 50 EGP | Discount: 10 EGP | Available: 30 days
 </table>
 <p><strong>Bunny Upload Flow (TUS Direct Upload):</strong></p>
 <ol>
-<li>Teacher clicks &quot;Add Video&quot; → modal: name, order → Video record created (<code>bunny_video_id=null</code>, status=&quot;Pending&quot;)</li>
-<li>Teacher clicks &quot;Upload&quot; on the pending row → <code>POST .../create-upload/</code> → returns TUS credentials
+<li>Teacher clicks &quot;Add Video&quot; â†’ modal: name, order â†’ Video record created (<code>bunny_video_id=null</code>, status=&quot;Pending&quot;)</li>
+<li>Teacher clicks &quot;Upload&quot; on the pending row â†’ <code>POST .../create-upload/</code> â†’ returns TUS credentials
 <ul>
-<li>⚠️ <strong>409 Conflict</strong>: If another user is already uploading to the same video, <code>create-upload/</code> rejects with 409. Wait for their upload to finish.</li>
-<li>⚠️ <strong>400 Already Finalized</strong>: If the video is already encoded (status=4), delete and re-create to upload a replacement.</li>
+<li>âš ï¸ <strong>409 Conflict</strong>: If another user is already uploading to the same video, <code>create-upload/</code> rejects with 409. Wait for their upload to finish.</li>
+<li>âš ï¸ <strong>400 Already Finalized</strong>: If the video is already encoded (status=4), delete and re-create to upload a replacement.</li>
 </ul>
 </li>
 <li>Frontend uploads directly to Bunny using <code>tus-js-client</code>:
@@ -1032,32 +1032,32 @@ Price: 50 EGP | Discount: 10 EGP | Available: 30 days
 <li><strong>Zero backend bandwidth/RAM used</strong></li>
 </ul>
 </li>
-<li>(Optional) Call <code>POST /courses/videos/&lt;id&gt;/upload-complete/</code> after TUS <code>onSuccess</code> — faster status detection, but not required</li>
-<li>Frontend polls <code>GET /courses/videos/&lt;id&gt;/</code> every 5 seconds — <strong>self-healing sync</strong> (backend checks Bunny API on each poll)</li>
-<li>UI shows live status: Created → Uploaded → Processing → Transcoding → <strong>Ready ✅</strong></li>
+<li>(Optional) Call <code>POST /courses/videos/&lt;id&gt;/upload-complete/</code> after TUS <code>onSuccess</code> â€” faster status detection, but not required</li>
+<li>Frontend polls <code>GET /courses/videos/&lt;id&gt;/</code> every 5 seconds â€” <strong>self-healing sync</strong> (backend checks Bunny API on each poll)</li>
+<li>UI shows live status: Created â†’ Uploaded â†’ Processing â†’ Transcoding â†’ <strong>Ready âœ…</strong></li>
 <li>When status=4, <code>is_active=true</code>, teacher sees &quot;Ready&quot; badge</li>
 </ol>
-<p><strong>TUS handles pause/resume natively</strong> — <code>findPreviousUploads()</code> + <code>resumeFromPreviousUpload()</code>
+<p><strong>TUS handles pause/resume natively</strong> â€” <code>findPreviousUploads()</code> + <code>resumeFromPreviousUpload()</code>
 stores progress in localStorage and resumes at the exact byte.
 Use 5 MB chunks (<code>chunkSize: 5 * 1024 * 1024</code>) and add 300ms delay between chunks
 via <code>onChunkComplete</code> to prevent WiFi saturation.</p>
 <p><strong>Note:</strong> The old <code>POST /upload/</code> proxy endpoint has been removed (returns 410 Gone).</p>
 <pre class="hljs"><code><div>Video List UI Table:
-# │ Name          │ Status                            │ Actions
-──┼───────────────┼───────────────────────────────────┼────────────
-1 │ Intro         │ ✅ Ready                         │ [Preview] [Delete]
-2 │ Types         │ ⬆️ ████████░░ 80% Uploading      │ [Pause] [Cancel]
-3 │ Graphs        │ 📝 Pending (not uploaded yet)    │ [Upload] [Delete]
-4 │ Advanced      │ ❌ Error — encoding failed        │ [Retry] [Delete]
+# â”‚ Name          â”‚ Status                            â”‚ Actions
+â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+1 â”‚ Intro         â”‚ âœ… Ready                         â”‚ [Preview] [Delete]
+2 â”‚ Types         â”‚ â¬†ï¸ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘ 80% Uploading      â”‚ [Pause] [Cancel]
+3 â”‚ Graphs        â”‚ ðŸ“ Pending (not uploaded yet)    â”‚ [Upload] [Delete]
+4 â”‚ Advanced      â”‚ âŒ Error â€” encoding failed        â”‚ [Retry] [Delete]
 </div></code></pre>
 <p><strong>Playback Preview (teacher):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns signed URL. Teacher can preview own videos.</p>
 <p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to see exactly what students see (only active topics, visible lectures, active videos).</p>
 <hr>
-<h3 id="page-3-lecture-detail--students-progress-tab">Page 3: Lecture Detail — Students Progress Tab</h3>
-<p><strong>Purpose:</strong> See ALL enrolled students for this lecture — who bought it, who didn't, their homework/quiz scores, watch progress, and reopen expired purchases.</p>
+<h3 id="page-3-lecture-detail-%C3%A2%E2%82%AC-students-progress-tab">Page 3: Lecture Detail â€” Students Progress Tab</h3>
+<p><strong>Purpose:</strong> See ALL enrolled students for this lecture â€” who bought it, who didn't, their homework/quiz scores, watch progress, and reopen expired purchases.</p>
 <p><strong>Single API call:</strong> <code>GET /courses/lectures/&lt;id&gt;/students-progress/</code></p>
 <p><strong>Reopen purchase:</strong> <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body, 1 day, max 2)</p>
-<p><strong>The <code>students-progress/</code> endpoint returns everything in one response (see API_TEACHER.md §8 for full response).</strong></p>
+<p><strong>The <code>students-progress/</code> endpoint returns everything in one response (see API_TEACHER.md Â§8 for full response).</strong></p>
 <p><strong>Pagination:</strong> Supports <code>?page=</code> and <code>?page_size=</code> (default 50, max 200). Response includes <code>count</code>, <code>next</code>, <code>previous</code>, <code>results</code>. Add &quot;Load More&quot; / page navigation when <code>next</code> is not null.</p>
 <p><strong>Top-level arrays:</strong></p>
 <table>
@@ -1080,24 +1080,24 @@ via <code>onChunkComplete</code> to prevent WiFi saturation.</p>
 </table>
 <p>Per-student <code>homeworks[]</code> and <code>quizzes[]</code> always match the length and order of these top-level arrays. Empty array = no assessments of that type.</p>
 <p><strong>UI Layout (summary table):</strong></p>
-<pre class="hljs"><code><div>← Back to Lecture Detail
+<pre class="hljs"><code><div>â† Back to Lecture Detail
 
 Lecture: Intro to Reactions
-Course: Chemistry 3rd Secondary — Teacher: Dr Hany
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Course: Chemistry 3rd Secondary â€” Teacher: Dr Hany
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 Total enrolled: 25 students | Purchased: 20 | Not purchased: 5
 
 [Search by student name or code...]  (client-side filter)
 
-Student       │ Code    │ Bought   │ Paid     │ Watch      │ Actions
-──────────────┼─────────┼──────────┼──────────┼────────────┼─────────────
-Ahmed Ali     │ 1234567 │ ✅ Yes   │ 40 EGP   │ 2/3 (67%)  │ [View]
-Sara Ahmed    │ 7654321 │ ❌ No    │ —        │ —          │ [View]
-Mohamed Omar  │ 1122334 │ ✅ Yes   │ 40 EGP   │ 3/3 (100%) │ ✅ Active
-Nora Hassan   │ 9988776 │ ✅ Yes   │ 40 EGP   │ 0/3 (0%)   │ [View]
-Khaled Ali    │ 5544332 │ ✅ Yes   │ 40 EGP   │ 1/3 (33%)  │ 🔴 Expired [Reopen]
+Student       â”‚ Code    â”‚ Bought   â”‚ Paid     â”‚ Watch      â”‚ Actions
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Ahmed Ali     â”‚ 1234567 â”‚ âœ… Yes   â”‚ 40 EGP   â”‚ 2/3 (67%)  â”‚ [View]
+Sara Ahmed    â”‚ 7654321 â”‚ âŒ No    â”‚ â€”        â”‚ â€”          â”‚ [View]
+Mohamed Omar  â”‚ 1122334 â”‚ âœ… Yes   â”‚ 40 EGP   â”‚ 3/3 (100%) â”‚ âœ… Active
+Nora Hassan   â”‚ 9988776 â”‚ âœ… Yes   â”‚ 40 EGP   â”‚ 0/3 (0%)   â”‚ [View]
+Khaled Ali    â”‚ 5544332 â”‚ âœ… Yes   â”‚ 40 EGP   â”‚ 1/3 (33%)  â”‚ ðŸ”´ Expired [Reopen]
 
-Page 1 of 2 — [Next ►]
+Page 1 of 2 â€” [Next â–º]
 </div></code></pre>
 <p><strong>Each column explained:</strong></p>
 <table>
@@ -1118,7 +1118,7 @@ Page 1 of 2 — [Next ►]
 </tr>
 <tr>
 <td><strong>Bought</strong></td>
-<td><code>is_purchased</code> → ✅ Yes / ❌ No</td>
+<td><code>is_purchased</code> â†’ âœ… Yes / âŒ No</td>
 </tr>
 <tr>
 <td><strong>Paid</strong></td>
@@ -1153,7 +1153,7 @@ Page 1 of 2 — [Next ►]
 </tr>
 <tr>
 <td><strong>Purchased + Expired + can reopen</strong> (<code>is_expired=true</code>, <code>can_reopen=true</code>)</td>
-<td>Red &quot;Expired&quot; badge, <strong>[Reopen]</strong> button (no [View] — reopen is the primary action)</td>
+<td>Red &quot;Expired&quot; badge, <strong>[Reopen]</strong> button (no [View] â€” reopen is the primary action)</td>
 </tr>
 <tr>
 <td><strong>Purchased + Expired + max reopens</strong> (<code>can_reopen=false</code>)</td>
@@ -1161,7 +1161,7 @@ Page 1 of 2 — [Next ►]
 </tr>
 <tr>
 <td><strong>No videos</strong> (<code>total_videos=0</code>)</td>
-<td>Watch column shows &quot;—&quot;</td>
+<td>Watch column shows &quot;â€”&quot;</td>
 </tr>
 </tbody>
 </table>
@@ -1171,33 +1171,33 @@ Page 1 of 2 — [Next ►]
 <ol>
 <li>Teacher clicks <strong>[Reopen]</strong> on an expired row</li>
 <li>Confirmation dialog: student name, original <code>expires_at</code>, extra days already granted (<code>extra_days</code>), reopens used (<code>reopen_logs.length</code>), remaining (<code>2 - logs.length</code>), <strong>watch count will be reset to 0</strong></li>
-<li>Confirm → <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body)</li>
-<li>On success → re-fetch <code>students-progress/</code> for that page</li>
+<li>Confirm â†’ <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> (no body)</li>
+<li>On success â†’ re-fetch <code>students-progress/</code> for that page</li>
 <li><code>extra_days</code> increments, <code>is_expired</code> recalculates, <code>can_reopen</code> updates, <strong>watch count is reset to 0</strong> so the student can watch again</li>
 </ol>
 <hr>
-<h3 id="view-modal--full-student-detail">[View] Modal — Full Student Detail</h3>
-<p>When the teacher clicks <strong>[View]</strong> on any row, a modal/drawer opens showing everything about that student for this lecture. <strong>No additional API call needed</strong> — all data is already in the <code>students-progress/</code> response.</p>
+<h3 id="view-modal-%C3%A2%E2%82%AC-full-student-detail">[View] Modal â€” Full Student Detail</h3>
+<p>When the teacher clicks <strong>[View]</strong> on any row, a modal/drawer opens showing everything about that student for this lecture. <strong>No additional API call needed</strong> â€” all data is already in the <code>students-progress/</code> response.</p>
 <p><strong>Modal layout:</strong></p>
-<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────────────────┐
-│  Student: Ahmed Ali (1234567)                               [X] │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ── Purchase Info ────────────────────────────────────────────  │
-│  Status:    Purchased ✅                                        │
-│  Paid:      40.00 EGP                                           │
-│  Purchased: July 1, 2026                                        │
-│  Expires:   August 2, 2026 (1 reopen used, 1 remaining)        │
-│  Watched:   2/3 videos (67%)                                    │
-│                                                                  │
-│  ── Homeworks ────────────────────────────────────────────────  │
-│  Week 1 HW    │ ✅ Submitted    │ Score: 2/3  │ Jul 1, 2026    │
-│  Week 2 HW    │ ❌ Not done     │ —           │ —               │
-│                                                                  │
-│  ── Quizzes ──────────────────────────────────────────────────  │
-│  Quiz 1       │ ❌ Not done     │ —           │ Attempt 0/1    │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+<pre class="hljs"><code><div>â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Student: Ahmed Ali (1234567)                               [X] â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                  â”‚
+â”‚  â”€â”€ Purchase Info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚
+â”‚  Status:    Purchased âœ…                                        â”‚
+â”‚  Paid:      40.00 EGP                                           â”‚
+â”‚  Purchased: July 1, 2026                                        â”‚
+â”‚  Expires:   August 2, 2026 (1 reopen used, 1 remaining)        â”‚
+â”‚  Watched:   2/3 videos (67%)                                    â”‚
+â”‚                                                                  â”‚
+â”‚  â”€â”€ Homeworks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚
+â”‚  Week 1 HW    â”‚ âœ… Submitted    â”‚ Score: 2/3  â”‚ Jul 1, 2026    â”‚
+â”‚  Week 2 HW    â”‚ âŒ Not done     â”‚ â€”           â”‚ â€”               â”‚
+â”‚                                                                  â”‚
+â”‚  â”€â”€ Quizzes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚
+â”‚  Quiz 1       â”‚ âŒ Not done     â”‚ â€”           â”‚ Attempt 0/1    â”‚
+â”‚                                                                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 </div></code></pre>
 <p><strong>Modal sections:</strong></p>
 <table>
@@ -1246,15 +1246,15 @@ Page 1 of 2 — [Next ►]
 </tr>
 <tr>
 <td>Status</td>
-<td>&quot;✅ Submitted&quot; if <code>submitted=true</code>, &quot;❌ Not done&quot; if false</td>
+<td>&quot;âœ… Submitted&quot; if <code>submitted=true</code>, &quot;âŒ Not done&quot; if false</td>
 </tr>
 <tr>
 <td>Score</td>
-<td><code>score / total</code> from top-level <code>homeworks[i].total</code> (null = &quot;—&quot;)</td>
+<td><code>score / total</code> from top-level <code>homeworks[i].total</code> (null = &quot;â€”&quot;)</td>
 </tr>
 <tr>
 <td>Submission date</td>
-<td>If submitted, fetch from <code>GET /learning/homework-submissions/&lt;submission_id&gt;/</code> or show &quot;—&quot;</td>
+<td>If submitted, fetch from <code>GET /learning/homework-submissions/&lt;submission_id&gt;/</code> or show &quot;â€”&quot;</td>
 </tr>
 </tbody>
 </table>
@@ -1273,11 +1273,11 @@ Page 1 of 2 — [Next ►]
 </tr>
 <tr>
 <td>Status</td>
-<td>&quot;✅ Submitted&quot; if <code>submitted=true</code>, &quot;❌ Not done&quot; if false</td>
+<td>&quot;âœ… Submitted&quot; if <code>submitted=true</code>, &quot;âŒ Not done&quot; if false</td>
 </tr>
 <tr>
 <td>Score</td>
-<td><code>score / total</code> from top-level <code>quizzes[i].total</code> (null = &quot;Not graded&quot; if submitted, or &quot;—&quot;)</td>
+<td><code>score / total</code> from top-level <code>quizzes[i].total</code> (null = &quot;Not graded&quot; if submitted, or &quot;â€”&quot;)</td>
 </tr>
 <tr>
 <td>Attempt</td>
@@ -1287,14 +1287,14 @@ Page 1 of 2 — [Next ►]
 </table>
 <p><strong>Empty states inside modal:</strong></p>
 <ul>
-<li>No homeworks exist → section shows &quot;No homeworks for this lecture.&quot;</li>
-<li>No quizzes exist → section shows &quot;No quizzes for this lecture.&quot;</li>
-<li>Student not purchased → Purchase section shows &quot;Not purchased.&quot;</li>
+<li>No homeworks exist â†’ section shows &quot;No homeworks for this lecture.&quot;</li>
+<li>No quizzes exist â†’ section shows &quot;No quizzes for this lecture.&quot;</li>
+<li>Student not purchased â†’ Purchase section shows &quot;Not purchased.&quot;</li>
 </ul>
 <p><strong>Empty states for the main table:</strong></p>
 <ul>
-<li>No enrolled students → &quot;No students are enrolled in this course yet.&quot;</li>
-<li>No videos → watch column shows &quot;—&quot;</li>
+<li>No enrolled students â†’ &quot;No students are enrolled in this course yet.&quot;</li>
+<li>No videos â†’ watch column shows &quot;â€”&quot;</li>
 </ul>
 <hr>
 <h3 id="page-4-homework-bubble-sheet-standalone--lecture-tab">Page 4: Homework Bubble Sheet (Standalone + Lecture Tab)</h3>
@@ -1343,11 +1343,11 @@ Page 1 of 2 — [Next ►]
 <pre class="hljs"><code><div>Title: [Week 1 Homework______________]
 Description: [________________]
 Published: [  ] (toggle)
-Show grades to students: [  ] (toggle — when on, students see correct answers after submission)
+Show grades to students: [  ] (toggle â€” when on, students see correct answers after submission)
 
 Bubble Questions:
-Q1: Choices [4 ▼] | Answer [A] | Explanation (optional): [_________] | Points: [1]
-Q2: Choices [5 ▼] | Answer [B] | Explanation (optional): [_________] | Points: [2]
+Q1: Choices [4 â–¼] | Answer [A] | Explanation (optional): [_________] | Points: [1]
+Q2: Choices [5 â–¼] | Answer [B] | Explanation (optional): [_________] | Points: [2]
 + Add Question
 </div></code></pre>
 <p><strong>Request body:</strong></p>
@@ -1363,14 +1363,14 @@ Q2: Choices [5 ▼] | Answer [B] | Explanation (optional): [_________] | Points:
 }
 </div></code></pre>
 <p><strong>Submissions table (teacher view):</strong></p>
-<pre class="hljs"><code><div>Student      │ Code    │ Score │ Status │ Submitted
-─────────────┼─────────┼───────┼────────┼──────────────
-Ahmed Ali    │ S-001   │ 2/3   │ Graded │ 2026-07-08
-Sara Ahmed   │ S-002   │ 3/3   │ Graded │ 2026-07-07
+<pre class="hljs"><code><div>Student      â”‚ Code    â”‚ Score â”‚ Status â”‚ Submitted
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Ahmed Ali    â”‚ S-001   â”‚ 2/3   â”‚ Graded â”‚ 2026-07-08
+Sara Ahmed   â”‚ S-002   â”‚ 3/3   â”‚ Graded â”‚ 2026-07-07
 </div></code></pre>
-<p>Click a submission → per-question results:</p>
-<pre class="hljs"><code><div>Q1: Student answered B | Correct: A | ❌ Wrong | Explanation: Because...
-Q2: Student answered B | Correct: B | ✅ Correct
+<p>Click a submission â†’ per-question results:</p>
+<pre class="hljs"><code><div>Q1: Student answered B | Correct: A | âŒ Wrong | Explanation: Because...
+Q2: Student answered B | Correct: B | âœ… Correct
 </div></code></pre>
 <hr>
 <h3 id="page-5-quizzes-standalone--lecture-tab">Page 5: Quizzes (Standalone + Lecture Tab)</h3>
@@ -1405,11 +1405,11 @@ Q2: Student answered B | Correct: B | ✅ Correct
 </tr>
 <tr>
 <td><strong>Update question image</strong></td>
-<td><code>PATCH /learning/questions/&lt;id&gt;/</code> (multipart — <code>image</code> field)</td>
+<td><code>PATCH /learning/questions/&lt;id&gt;/</code> (multipart â€” <code>image</code> field)</td>
 </tr>
 <tr>
 <td><strong>Update question text</strong></td>
-<td><code>PATCH /learning/questions/&lt;id&gt;/</code> (JSON — <code>text</code>, <code>question_type</code>, <code>points_override</code>)</td>
+<td><code>PATCH /learning/questions/&lt;id&gt;/</code> (JSON â€” <code>text</code>, <code>question_type</code>, <code>points_override</code>)</td>
 </tr>
 <tr>
 <td>List submissions</td>
@@ -1470,7 +1470,7 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <tbody>
 <tr>
 <td><code>timer_minutes</code></td>
-<td>0–1440</td>
+<td>0â€“1440</td>
 <td>0</td>
 <td>0 = no limit. Max 1440 (24h).</td>
 </tr>
@@ -1591,7 +1591,7 @@ Q2: Student answered B | Correct: B | ✅ Correct
 <p><strong>Settings:</strong> Same as quizzes (5 fields) plus <code>AFTER_CLOSE</code> visibility option (exams have <code>open_date</code>/<code>close_date</code>).</p>
 <p><strong>Note:</strong> Created at <strong>course level</strong>, not lecture level. Appears in student's Exams page and can gate lecture access via prerequisites.</p>
 <hr>
-<h3 id="page-7-study-materials-lecture-detail-%E2%86%92-materials-tab">Page 7: Study Materials (Lecture Detail → Materials Tab)</h3>
+<h3 id="page-7-study-materials-lecture-detail-%C3%A2%E2%80%A0-materials-tab">Page 7: Study Materials (Lecture Detail â†’ Materials Tab)</h3>
 <table>
 <thead>
 <tr>
@@ -1622,11 +1622,11 @@ Q2: Student answered B | Correct: B | ✅ Correct
 </tr>
 </tbody>
 </table>
-<p><strong>Accepted formats:</strong> PDF, JPG, JPEG, PNG — <strong>Max size:</strong> 20 MB<br>
+<p><strong>Accepted formats:</strong> PDF, JPG, JPEG, PNG â€” <strong>Max size:</strong> 20 MB<br>
 <strong>Write access:</strong> Teachers, assistants, and siteowners (students read-only)<br>
-<strong>File uploads</strong> get a unique UUID filename — no overwrites</p>
+<strong>File uploads</strong> get a unique UUID filename â€” no overwrites</p>
 <hr>
-<h3 id="page-8-lecture-prerequisites-lecture-detail-%E2%86%92-prerequisites-tab">Page 8: Lecture Prerequisites (Lecture Detail → Prerequisites Tab)</h3>
+<h3 id="page-8-lecture-prerequisites-lecture-detail-%C3%A2%E2%80%A0-prerequisites-tab">Page 8: Lecture Prerequisites (Lecture Detail â†’ Prerequisites Tab)</h3>
 <p><strong>Purpose:</strong> Gate lecture video access behind homework/quiz/exam passing scores.</p>
 <table>
 <thead>
@@ -1663,7 +1663,7 @@ Q2: Student answered B | Correct: B | ✅ Correct
 </tbody>
 </table>
 <p><strong>Valid types:</strong> <code>homework</code>, <code>quiz</code>, <code>exam</code></p>
-<p><strong>The &quot;available assessments&quot; endpoint</strong> returns all homeworks, quizzes, and exams for a lecture in one call — so the prerequisite picker dropdown can be populated with a single request instead of three:</p>
+<p><strong>The &quot;available assessments&quot; endpoint</strong> returns all homeworks, quizzes, and exams for a lecture in one call â€” so the prerequisite picker dropdown can be populated with a single request instead of three:</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"homeworks"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Bubble Sheet 1"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span> }],
   <span class="hljs-attr">"quizzes"</span>: [{ <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span> }],
@@ -1676,53 +1676,53 @@ Q2: Student answered B | Correct: B | ✅ Correct
   - Quiz #2 (must score &gt;= 70%)      [Remove]
 
 + Add Prerequisite
-  Type: [Homework ▼]  ID: [____]  Passing Score: [50]%
+  Type: [Homework â–¼]  ID: [____]  Passing Score: [50]%
 </div></code></pre>
 <hr>
 <h3 id="page-9-students-page-enrollments--purchases--balances">Page 9: Students Page (Enrollments + Purchases + Balances)</h3>
 <p><strong>Purpose:</strong> Manage everything about every student in a course. Approve/reject enrollments, view balances, purchases, attendance, homework/quiz/exam grades.</p>
 <p><strong>Flow Overview:</strong></p>
-<pre class="hljs"><code><div>1. Load page → GET /courses/enrollments/?course=X&amp;status=approved → list of approved students + balances
+<pre class="hljs"><code><div>1. Load page â†’ GET /courses/enrollments/?course=X&amp;status=approved â†’ list of approved students + balances
 2. Tabs: Pending | Approved | Rejected
-3. Click student → expanded row with per-lecture purchases + homework/quiz/video status
-4. Click student → see full details in expanded row (balance, purchases, activity from enrollment list + transactions)
+3. Click student â†’ expanded row with per-lecture purchases + homework/quiz/video status
+4. Click student â†’ see full details in expanded row (balance, purchases, activity from enrollment list + transactions)
 </div></code></pre>
 <p><strong>Page layout:</strong></p>
 <pre class="hljs"><code><div>Course: Chemistry 3rd Secondary
 
 Pending (3) | Approved (24) | Rejected (2)
 
-── Pending Tab ──────────────────────────────────────
+â”€â”€ Pending Tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Gets data from: GET /courses/enrollments/?course=X&amp;status=pending
 
-Student      │ Code    │ Requested    │ Actions
-─────────────┼─────────┼──────────────┼────────────────────────────
-Ali Hassan   │ S-010   │ 2026-07-07   │ [Approve] [Reject]
-Nora Ahmed   │ S-011   │ 2026-07-06   │ [Approve] [Reject]
+Student      â”‚ Code    â”‚ Requested    â”‚ Actions
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Ali Hassan   â”‚ S-010   â”‚ 2026-07-07   â”‚ [Approve] [Reject]
+Nora Ahmed   â”‚ S-011   â”‚ 2026-07-06   â”‚ [Approve] [Reject]
 
-── Approved Tab ──────────────────────────────────────
+â”€â”€ Approved Tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Gets data from: GET /courses/enrollments/?course=X&amp;status=approved
 (returns: student_id, student_name, student_code, balance, enrolled_at)
 
-Student      │ Code    │ Balance  │ Actions
-─────────────┼─────────┼──────────┼────────────────────────────
-Ahmed Ali    │ S-001   │ 200 EGP  │ [Report] [Reopen] [History]
-  ▶ Expanded (per-lecture data, fetched on expand):
+Student      â”‚ Code    â”‚ Balance  â”‚ Actions
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Ahmed Ali    â”‚ S-001   â”‚ 200 EGP  â”‚ [Report] [Reopen] [History]
+  â–¶ Expanded (per-lecture data, fetched on expand):
     Data source: GET /courses/enrollments/?course=X&amp;status=approved (enrollment list with balance)
-    - Lecture 1: Intro → Bought Jul 1 → Expires Jul 31 → Watch 2/4 → [Reopen]
-    - Lecture 2: Types → Bought Jul 3 → Expires Aug 2 → Watch 1/4 → [Reopen]
-    - Quiz 1: 80% ✅
+    - Lecture 1: Intro â†’ Bought Jul 1 â†’ Expires Jul 31 â†’ Watch 2/4 â†’ [Reopen]
+    - Lecture 2: Types â†’ Bought Jul 3 â†’ Expires Aug 2 â†’ Watch 1/4 â†’ [Reopen]
+    - Quiz 1: 80% âœ…
     - Homework 1: 2/3
 
-── Full Report (modal / new page) ───────────────────
+â”€â”€ Full Report (modal / new page) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Data source: GET /payments/transactions/?student=X
 (one API call returns everything: student info, enrollment, balance,
  ALL lectures (bought + not bought) with per-lecture progress:
  videos watched, homework submitted, quiz taken, purchases, etc.)
 
-── Balance History (modal) ─────────────────────────
+â”€â”€ Balance History (modal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Data source: GET /payments/transactions/?student=X
-Shows every transaction with balance_before → balance_after:
+Shows every transaction with balance_before â†’ balance_after:
  code redemptions (shows code, amount, balance snapshots),
  lecture purchases (shows lecture name, amount deducted, balance snapshots)
 </div></code></pre>
@@ -1799,7 +1799,7 @@ Shows every transaction with balance_before → balance_after:
 <tr>
 <td>Reopen lecture access</td>
 <td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code></td>
-<td>No body — grants 1 extra day (max 2 reopens)</td>
+<td>No body â€” grants 1 extra day (max 2 reopens)</td>
 </tr>
 <tr>
 <td>Homework submission detail</td>
@@ -1820,17 +1820,17 @@ Shows every transaction with balance_before → balance_after:
 </table>
 <p><strong>Expanded Row Data Flow:</strong></p>
 <ol>
-<li>Teacher clicks a student row → fetch <code>GET /payments/transactions/</code> for a specific lecture</li>
+<li>Teacher clicks a student row â†’ fetch <code>GET /payments/transactions/</code> for a specific lecture</li>
 <li>The report returns per-student data structure: purchased (T/F), amount_paid, expires_at, is_expired, homeworks[], quizzes[], videos[]</li>
 <li>Render each lecture's data in the expanded row</li>
-<li>For the students who haven't purchased → <code>purchased: false</code> → show [Buy] prompt instead</li>
+<li>For the students who haven't purchased â†’ <code>purchased: false</code> â†’ show [Buy] prompt instead</li>
 </ol>
 <p><strong>Full Report Data Flow:</strong></p>
 <ol>
-<li>Teacher clicks [Report] → fetch <code>GET /payments/transactions/?student=X</code></li>
+<li>Teacher clicks [Report] â†’ fetch <code>GET /payments/transactions/?student=X</code></li>
 <li>Returns everything: student profile, enrollment, balance, ALL lectures (bought + not bought), per-lecture homework/quiz/video progress, ALL purchases, ALL submissions</li>
-<li>One API call replaces the need for multiple individual calls — complete picture in a single response</li>
-<li>For balance history drill-down: <code>GET /payments/transactions/?student=X</code> (balance_before → balance_after per action)</li>
+<li>One API call replaces the need for multiple individual calls â€” complete picture in a single response</li>
+<li>For balance history drill-down: <code>GET /payments/transactions/?student=X</code> (balance_before â†’ balance_after per action)</li>
 </ol>
 <hr>
 <h3 id="page-10-student-report">Page 10: Student Report</h3>
@@ -1850,7 +1850,7 @@ Shows every transaction with balance_before → balance_after:
 </tbody>
 </table>
 <p><strong>Response includes:</strong> student info, enrollment status, balance, ALL lectures (bought + not bought) with per-lecture homework/quiz/video progress, purchases (with watch counts/expiry), quiz submissions, exam submissions, homework submissions.</p>
-<p><strong>Balance history (separate):</strong> <code>GET /payments/transactions/?student=X</code> — full ledger with balance_before and balance_after for every code redemption and lecture purchase.</p>
+<p><strong>Balance history (separate):</strong> <code>GET /payments/transactions/?student=X</code> â€” full ledger with balance_before and balance_after for every code redemption and lecture purchase.</p>
 <hr>
 <h3 id="page-11-assistants-page-teachers-only">Page 11: Assistants Page (Teachers Only)</h3>
 <p><strong>Purpose:</strong> Manage assistants who share all course management capabilities.</p>
@@ -1887,38 +1887,38 @@ Shows every transaction with balance_before → balance_after:
 <p><strong>Note:</strong> Assistant creation is <strong>teacher-only</strong>. Assistants can view other assistants but cannot create/delete.</p>
 <hr>
 <h3 id="page-12-codes-page-teacher--siteowner">Page 12: Codes Page (Teacher + SiteOwner)</h3>
-<p><strong>Purpose:</strong> Generate, track, and export recharge codes. Codes are money — every action is audited.</p>
+<p><strong>Purpose:</strong> Generate, track, and export recharge codes. Codes are money â€” every action is audited.</p>
 <p><strong>Roles:</strong> SiteOwner (all courses), Teacher (own courses only). Assistant can view their teacher's codes.</p>
 <hr>
 <p><strong>Page Layout (3 views):</strong></p>
-<pre class="hljs"><code><div>┌──────────────────────────────────────────────────────────────────┐
-│  Analytics Cards: Total Batches | Codes | Valid | Used |        │
-│  Blacklisted | Revenue | Teacher Cut | SiteOwner Cut            │
-├──────────────────────────────────────────────────────────────────┤
-│  Filter Bar: [Teacher ▼] [Course ▼] [Clear]  Showing 12 batches │
-├──────────────────────────────────────────────────────────────────┤
-│  Batch List Table:                                               │
-│  Batch ID │ Course │ Teacher │ Codes │ Value │ Status │ Notes   │
-│  Batch #1 │ Chem   │ Dr Hany │ 100   │ 50    │ ████░░ │ Center  │
-│  Batch #2 │ Phys   │ Omar    │ 50    │ 100   │ ██░░░░ │ School  │
-├──────────────────────────────────────────────────────────────────┤
-│  Pagination                                                     │
-└──────────────────────────────────────────────────────────────────┘
+<pre class="hljs"><code><div>â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Analytics Cards: Total Batches | Codes | Valid | Used |        â”‚
+â”‚  Blacklisted | Revenue | Teacher Cut | SiteOwner Cut            â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Filter Bar: [Teacher â–¼] [Course â–¼] [Clear]  Showing 12 batches â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Batch List Table:                                               â”‚
+â”‚  Batch ID â”‚ Course â”‚ Teacher â”‚ Codes â”‚ Value â”‚ Status â”‚ Notes   â”‚
+â”‚  Batch #1 â”‚ Chem   â”‚ Dr Hany â”‚ 100   â”‚ 50    â”‚ â–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘ â”‚ Center  â”‚
+â”‚  Batch #2 â”‚ Phys   â”‚ Omar    â”‚ 50    â”‚ 100   â”‚ â–ˆâ–ˆâ–‘â–‘â–‘â–‘ â”‚ School  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Pagination                                                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-Click a batch row → View individual codes in that batch:
+Click a batch row â†’ View individual codes in that batch:
 
-┌──────────────────────────────────────────────────────────────────┐
-│  ← Back to Batches                                              │
-│  Batch #1 — Chemistry 3rd Secondary — Dr Hany Hassanin          │
-│  Codes: 100 | Value: 50 EGP | Redeemed Value: 17,500 EGP       │
-├──────────────────────────────────────────────────────────────────┤
-│  Code (masked)  │ Value │ Status   │ Used By       │ Used At     │
-│  X7K9 XXXX…    │ 50    │ ✅ Used │ Ahmed / أحمد  │ 2026-07-14  │
-│  A1B2 XXXX…    │ 50    │ 🟢 Valid │ —             │ —           │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  â† Back to Batches                                              â”‚
+â”‚  Batch #1 â€” Chemistry 3rd Secondary â€” Dr Hany Hassanin          â”‚
+â”‚  Codes: 100 | Value: 50 EGP | Redeemed Value: 17,500 EGP       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Code (masked)  â”‚ Value â”‚ Status   â”‚ Used By       â”‚ Used At     â”‚
+â”‚  X7K9 XXXXâ€¦    â”‚ 50    â”‚ âœ… Used â”‚ Ahmed / Ø£Ø­Ù…Ø¯  â”‚ 2026-07-14  â”‚
+â”‚  A1B2 XXXXâ€¦    â”‚ 50    â”‚ ðŸŸ¢ Valid â”‚ â€”             â”‚ â€”           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-Click &quot;History&quot; → Full audit modal with date/type/code filters.
-Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
+Click &quot;History&quot; â†’ Full audit modal with date/type/code filters.
+Click &quot;Blacklist&quot; â†’ OTP verification â†’ irreversible blacklist.
 </div></code></pre>
 <hr>
 <p><strong>APIs for the Page:</strong></p>
@@ -1937,91 +1937,91 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 <td><strong>Analytics dashboard</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/analytics/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>Returns total_batches, total_codes, valid/used/blacklisted counts, Teachers Cut, SiteOwner Cut</td>
 </tr>
 <tr>
 <td><strong>Batch list (paginated)</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/batches/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>Grouped by batch_id, filters: <code>?teacher=X</code>, <code>?course=X</code></td>
 </tr>
 <tr>
 <td><strong>Batch detail</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/batches/&lt;uuid:batch_id&gt;/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>Individual codes inside a batch with their status</td>
 </tr>
 <tr>
 <td><strong>Generate codes</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>Bulk create (1-1000). Body: <code>{course, value, notes, count}</code></td>
 </tr>
 <tr>
 <td><strong>Code summary</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/summary/?course=X</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>Aggregate totals: generated, redeemed, blacklisted, values</td>
 </tr>
 <tr>
 <td><strong>Code audit history</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/history/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>Unified feed of redemptions + blacklists. Response also includes <code>analytics</code> block with <code>total</code>, <code>redeemed</code>, <code>blacklisted</code>, and <code>revenue</code> counts computed from the <strong>full filtered dataset</strong> (respects all query parameters). Filters: <code>?start_date=</code>, <code>?end_date=</code>, <code>?type=redeemed|blacklisted</code>, <code>?search=X7K9</code>, <code>?teacher=X</code>, <code>?course=X</code>. Paginated (20/page). Newest first.</td>
 </tr>
 <tr>
 <td><strong>Export all codes</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/export/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>Download ALL visible codes as Excel (no <code>?batch=</code> needed). Supports <code>?teacher=X</code>, <code>?course=X</code>. Columns: Code, Value, Status, Course, Teacher, Student, Redemption Date, Blacklist Date, etc.</td>
 </tr>
 <tr>
 <td><strong>Batch detail export</strong></td>
 <td>GET</td>
 <td><code>/payments/codes/export/?batch=&lt;uuid&gt;</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>Download .xlsx with full code details for a specific batch</td>
 </tr>
 <tr>
 <td><strong>Batch blacklist codes</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/batch-blacklist/</code></td>
-<td>API_SITEOWNER.md §5</td>
-<td>Body: <code>{ code_ids: [...], otp: &quot;...&quot; }</code>. Blacklists multiple codes with one OTP. Only <code>valid</code> codes affected — used/blacklisted skipped.</td>
+<td>API_SITEOWNER.md Â§5</td>
+<td>Body: <code>{ code_ids: [...], otp: &quot;...&quot; }</code>. Blacklists multiple codes with one OTP. Only <code>valid</code> codes affected â€” used/blacklisted skipped.</td>
 </tr>
 <tr>
 <td><strong>Request blacklist OTP</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/&lt;pk&gt;/request-blacklist-otp/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>SiteOwner only. Sends OTP to their gmail</td>
 </tr>
 <tr>
 <td><strong>Request batch blacklist OTP</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/request-blacklist-otp/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>SiteOwner only. Same OTP works for single and batch blacklist.</td>
 </tr>
 <tr>
 <td><strong>Blacklist code</strong></td>
 <td>POST</td>
 <td><code>/payments/codes/&lt;pk&gt;/blacklist/</code></td>
-<td>API_SITEOWNER.md §5</td>
+<td>API_SITEOWNER.md Â§5</td>
 <td>SiteOwner only. One-way irreversible. Requires 6-digit OTP</td>
 </tr>
 <tr>
 <td><strong>Transaction history</strong></td>
 <td>GET</td>
 <td><code>/payments/transactions/?transaction_type=code_redeemed</code></td>
-<td>API_SITEOWNER.md §6</td>
+<td>API_SITEOWNER.md Â§6</td>
 <td>Full audit log with date filters. Filter by <code>?start_date=</code>, <code>?end_date=</code>, <code>?code=</code></td>
 </tr>
 </tbody>
@@ -2079,7 +2079,7 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 </tr>
 </tbody>
 </table>
-<p><strong>Revenue Split Calculation:</strong> The <code>video_security.price_per_student</code> is the <strong>platform fee</strong> deducted from each code's value. The remainder goes to the teacher. Example: Code value = 100 EGP, Platform fee = 20 EGP → Teacher cut = 80 EGP, SiteOwner cut = 20 EGP. Default fee is 0 EGP when no video security is assigned.</p>
+<p><strong>Revenue Split Calculation:</strong> The <code>video_security.price_per_student</code> is the <strong>platform fee</strong> deducted from each code's value. The remainder goes to the teacher. Example: Code value = 100 EGP, Platform fee = 20 EGP â†’ Teacher cut = 80 EGP, SiteOwner cut = 20 EGP. Default fee is 0 EGP when no video security is assigned.</p>
 <hr>
 <p><strong>Code Model Fields:</strong></p>
 <table>
@@ -2096,11 +2096,11 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 </tr>
 <tr>
 <td><code>value</code></td>
-<td>1–1000 EGP. Set at creation, <strong>never editable</strong></td>
+<td>1â€“1000 EGP. Set at creation, <strong>never editable</strong></td>
 </tr>
 <tr>
 <td><code>status</code></td>
-<td><code>valid</code> → <code>used</code> or <code>blacklisted</code> (both terminal)</td>
+<td><code>valid</code> â†’ <code>used</code> or <code>blacklisted</code> (both terminal)</td>
 </tr>
 <tr>
 <td><code>batch_id</code></td>
@@ -2142,19 +2142,19 @@ Click &quot;Blacklist&quot; → OTP verification → irreversible blacklist.
 </table>
 <hr>
 <p><strong>Code Status Flow:</strong></p>
-<pre class="hljs"><code><div>Valid ──→ Redeemed (used)     — Student self-redeem or Teacher recharge
-Valid ──→ Blacklisted         — SiteOwner only, OTP required, irreversible
+<pre class="hljs"><code><div>Valid â”€â”€â†’ Redeemed (used)     â€” Student self-redeem or Teacher recharge
+Valid â”€â”€â†’ Blacklisted         â€” SiteOwner only, OTP required, irreversible
 </div></code></pre>
 <hr>
 <p><strong>Business Rules:</strong></p>
 <ul>
-<li>Codes are <strong>course-specific</strong> — can only be redeemed for the course they were generated for</li>
+<li>Codes are <strong>course-specific</strong> â€” can only be redeemed for the course they were generated for</li>
 <li>If the course is <strong>deleted</strong>, all its codes are <strong>permanently deleted</strong> (CASCADE)</li>
 <li>If the course is <strong>deactivated</strong>, codes remain valid but <strong>cannot be redeemed</strong></li>
 <li>Cannot delete a code (financial records)</li>
 <li>Cannot edit value or expiry after creation</li>
 <li>Expiry is 1 year from creation (not changeable)</li>
-<li>Race-condition-safe with <code>select_for_update()</code> — no double-redemption possible</li>
+<li>Race-condition-safe with <code>select_for_update()</code> â€” no double-redemption possible</li>
 <li>Every code action creates an immutable <code>BalanceTransaction</code> (source of truth for finances)</li>
 <li>Batch name format is <code>&quot;{TeacherName} Batch #{n}&quot;</code> where n is a <strong>per-teacher</strong> sequential counter</li>
 </ul>
@@ -2163,18 +2163,18 @@ Valid ──→ Blacklisted         — SiteOwner only, OTP required, irreversib
 Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted By | Blacklisted At | Created At | Expires At | Notes</p>
 <hr>
 <p><strong>Page Flow for SiteOwner:</strong></p>
-<pre class="hljs"><code><div>1. Page loads → GET /payments/codes/analytics/ → populate analytics cards (Total Batches, Codes, Valid, Used, Blacklisted, Revenue, Teacher Cut, SiteOwner Cut)
-2. GET /payments/codes/batches/ → populate batch table (paginated, 20 per page)
-3. Teacher dropdown → GET /payments/codes/batches/?teacher=X → filter batches
-4. Course dropdown (dependent on teacher) → GET /payments/codes/batches/?course=X → filter batches
-5. Click batch row → GET /payments/codes/batches/&lt;uuid&gt;/ → show individual codes with `code_masked` (&quot;ABDC XXXX XXXX XXXX&quot;) by default, &quot;Reveal&quot; button to show full code
-6. Click &quot;Export&quot; on batch → GET /payments/codes/export/?batch=&lt;uuid&gt; → download .xlsx
-7. Click &quot;Export All&quot; → GET /payments/codes/export/ → download all codes .xlsx
-8. Click &quot;History&quot; → open modal → GET /payments/codes/history/ with default date range (last 30 days) → populate history table with filters
-9. In History modal: filter by type, code search, date range → refetch or client-filter
-10. Click &quot;Generate Batch&quot; → POST /payments/codes/ → modal with course/count/value/notes
-11. Select one or more codes via checkboxes → Click &quot;Blacklist Selected&quot; → POST /codes/request-blacklist-otp/ → OTP modal
-12. Enter OTP → POST /codes/batch-blacklist/ with { code_ids: [...] } → codes permanently blacklisted
+<pre class="hljs"><code><div>1. Page loads â†’ GET /payments/codes/analytics/ â†’ populate analytics cards (Total Batches, Codes, Valid, Used, Blacklisted, Revenue, Teacher Cut, SiteOwner Cut)
+2. GET /payments/codes/batches/ â†’ populate batch table (paginated, 20 per page)
+3. Teacher dropdown â†’ GET /payments/codes/batches/?teacher=X â†’ filter batches
+4. Course dropdown (dependent on teacher) â†’ GET /payments/codes/batches/?course=X â†’ filter batches
+5. Click batch row â†’ GET /payments/codes/batches/&lt;uuid&gt;/ â†’ show individual codes with `code_masked` (&quot;ABDC XXXX XXXX XXXX&quot;) by default, &quot;Reveal&quot; button to show full code
+6. Click &quot;Export&quot; on batch â†’ GET /payments/codes/export/?batch=&lt;uuid&gt; â†’ download .xlsx
+7. Click &quot;Export All&quot; â†’ GET /payments/codes/export/ â†’ download all codes .xlsx
+8. Click &quot;History&quot; â†’ open modal â†’ GET /payments/codes/history/ with default date range (last 30 days) â†’ populate history table with filters
+9. In History modal: filter by type, code search, date range â†’ refetch or client-filter
+10. Click &quot;Generate Batch&quot; â†’ POST /payments/codes/ â†’ modal with course/count/value/notes
+11. Select one or more codes via checkboxes â†’ Click &quot;Blacklist Selected&quot; â†’ POST /codes/request-blacklist-otp/ â†’ OTP modal
+12. Enter OTP â†’ POST /codes/batch-blacklist/ with { code_ids: [...] } â†’ codes permanently blacklisted
 </div></code></pre>
 <p><strong>Page Flow for Teacher (same as above, but:</strong></p>
 <ul>
@@ -2183,25 +2183,25 @@ Code | Value (EGP) | Status | Course | Redeemed By | Redeemed At | Blacklisted B
 <li>Analytics show only their own codes</li>
 <li>Batch list shows only their own batches</li>
 </ul>
-<h3 id="page-12-course-dashboard-unified--built-last">Page 12: Course Dashboard (Unified — Built Last)</h3>
+<h3 id="page-12-course-dashboard-unified-%C3%A2%E2%82%AC-built-last">Page 12: Course Dashboard (Unified â€” Built Last)</h3>
 <p>When all features exist, build a <strong>single page</strong> that unifies everything into 4 tabs:</p>
-<pre class="hljs"><code><div>┌────────────────────────────────────────────────────────────┐
-│  ← Chemistry 3rd Secondary                                 │
-│                                                            │
-│  ┌──────────┬─────────────────────┬──────────┬───────────┐ │
-│  │  📊     │  👥                 │  📚     │  📋       │ │
-│  │Overview │ Students            │ Content  │ Reports   │ │
-│  │ (Stats) │ Same as Page 9      │ Same as  │ Same as   │ │
-│  │         │ (embedded)          │ Page 2   │ Page 10   │ │
-│  │         │                     │ (embedded)│ (embedded)│ │
-│  └──────────┴─────────────────────┴──────────┴───────────┘ │
-└────────────────────────────────────────────────────────────┘
+<pre class="hljs"><code><div>â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  â† Chemistry 3rd Secondary                                 â”‚
+â”‚                                                            â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚  ðŸ“Š     â”‚  ðŸ‘¥                 â”‚  ðŸ“š     â”‚  ðŸ“‹       â”‚ â”‚
+â”‚  â”‚Overview â”‚ Students            â”‚ Content  â”‚ Reports   â”‚ â”‚
+â”‚  â”‚ (Stats) â”‚ Same as Page 9      â”‚ Same as  â”‚ Same as   â”‚ â”‚
+â”‚  â”‚         â”‚ (embedded)          â”‚ Page 2   â”‚ Page 10   â”‚ â”‚
+â”‚  â”‚         â”‚                     â”‚ (embedded)â”‚ (embedded)â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 </div></code></pre>
-<p><strong>Tab 1 — Overview:</strong> <code>GET /courses/&lt;id&gt;/</code> — enrolled/pending/rejected counts, topic/lecture/video counts.<br>
-For deeper analytics: <code>GET /courses/&lt;id&gt;/analytics/</code> — per-topic and per-lecture purchase breakdowns with revenue.</p>
+<p><strong>Tab 1 â€” Overview:</strong> <code>GET /courses/&lt;id&gt;/</code> â€” enrolled/pending/rejected counts, topic/lecture/video counts.<br>
+For deeper analytics: <code>GET /courses/&lt;id&gt;/analytics/</code> â€” per-topic and per-lecture purchase breakdowns with revenue.</p>
 <hr>
-<h3 id="page-13-teacher-dashboard-last--standalone">Page 13: Teacher Dashboard (Last — Standalone)</h3>
-<p><strong>Purpose:</strong> Aggregated stats across all courses. <code>GET /courses/dashboard/teacher/</code> — total courses, students, revenue, recent enrollments, recent purchases, per-course breakdown.</p>
+<h3 id="page-13-teacher-dashboard-last-%C3%A2%E2%82%AC-standalone">Page 13: Teacher Dashboard (Last â€” Standalone)</h3>
+<p><strong>Purpose:</strong> Aggregated stats across all courses. <code>GET /courses/dashboard/teacher/</code> â€” total courses, students, revenue, recent enrollments, recent purchases, per-course breakdown.</p>
 <hr>
 <h2 id="phase-3-student-pages-build-after-phase-2">Phase 3: Student Pages (Build After Phase 2)</h2>
 <p>Build in <strong>dependency order</strong>. Pages without dependencies can be built in parallel.</p>
@@ -2213,18 +2213,21 @@ For deeper analytics: <code>GET /courses/&lt;id&gt;/analytics/</code> — per-to
 
 Chain (build in order):
   Page 4: Course Preview
-       ↓
+       â†“
   Page 5: My Enrollments
-       ↓
+       â†“
   Page 6: Course Lectures
-       ↓
+       â†“
   Page 7: Purchase Lecture
-       ↓
+       â†“
   Page 8: Lecture Player
 
 Independent (can build anytime after Chain):
   Page 9: Homework Bubble Sheet
   Page 10: Quiz Taking
+  Page 12: My Lectures (aggregate â€” all purchased lectures)
+  Page 13: My Homeworks (aggregate â€” all available homeworks)
+  Page 14: My Quizzes (aggregate â€” all available quizzes)
 
 Last (build after everything):
   Page 11: Student Dashboard
@@ -2232,15 +2235,15 @@ Last (build after everything):
 <p><strong>Student authentication behavior by status:</strong>
 After login (<code>POST /accounts/login/</code>), the response includes <code>status</code> for students:</p>
 <ul>
-<li><code>pending</code> → Show &quot;pending approval&quot; message — can't access courses yet</li>
-<li><code>verified</code> → Normal login — full access</li>
-<li><code>declined</code> → Receive <code>{status: &quot;declined&quot;}</code> — show reason + prompt to edit profile (editing resets to <code>pending</code>)</li>
-<li><code>suspended_temporary</code> → Receive <code>{status: &quot;suspended_temporary&quot;}</code> — show reason</li>
-<li><code>suspended_permanent</code> → <strong>Blocked</strong> — <code>401 &quot;Your account has been permanently suspended.&quot;</code></li>
+<li><code>pending</code> â†’ Show &quot;pending approval&quot; message â€” can't access courses yet</li>
+<li><code>verified</code> â†’ Normal login â€” full access</li>
+<li><code>declined</code> â†’ Receive <code>{status: &quot;declined&quot;}</code> â€” show reason + prompt to edit profile (editing resets to <code>pending</code>)</li>
+<li><code>suspended_temporary</code> â†’ Receive <code>{status: &quot;suspended_temporary&quot;}</code> â€” show reason</li>
+<li><code>suspended_permanent</code> â†’ <strong>Blocked</strong> â€” <code>401 &quot;Your account has been permanently suspended.&quot;</code></li>
 </ul>
 <hr>
-<h3 id="page-1-profile-independent--build-any-time">Page 1: Profile (Independent — Build Any Time)</h3>
-<p><strong>Purpose:</strong> View profile + change password + edit profile if declined. <strong>No student-page dependencies</strong> — can be built immediately after Phase 1.</p>
+<h3 id="page-1-profile-independent-%C3%A2%E2%82%AC-build-any-time">Page 1: Profile (Independent â€” Build Any Time)</h3>
+<p><strong>Purpose:</strong> View profile + change password + edit profile if declined. <strong>No student-page dependencies</strong> â€” can be built immediately after Phase 1.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -2275,10 +2278,9 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong><code>GET /accounts/profile/me/</code> Response:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"user_id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"username"</span>: <span class="hljs-string">"ahmed123"</span>,
-  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"ahmed@gmail.com"</span>,
   <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"1234567"</span>,
-  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"أحمد"</span>, <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"Ahmed"</span>,
-  <span class="hljs-attr">"full_name"</span>: <span class="hljs-string">"Ahmed / أحمد"</span>,
+  <span class="hljs-attr">"name_ar"</span>: <span class="hljs-string">"Ø£Ø­Ù…Ø¯"</span>, <span class="hljs-attr">"name_en"</span>: <span class="hljs-string">"Ahmed"</span>,
+  <span class="hljs-attr">"full_name"</span>: <span class="hljs-string">"Ahmed / Ø£Ø­Ù…Ø¯"</span>,
   <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"01234567890"</span>,
   <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"01112345678"</span>,
   <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"01087654321"</span>,
@@ -2310,12 +2312,12 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong><code>PATCH /accounts/profile/me/</code> Request:</strong> Same fields as GET (all optional for PATCH). Can use JSON or multipart. Only sends if <code>status === 'declined'</code>.</p>
 <p><strong><code>POST /accounts/change-password/</code> Request:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"old_password"</span>: <span class="hljs-string">"String (Required) — Current password"</span>,
-  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"String (Required) — Minimum 8 characters"</span>,
-  <span class="hljs-attr">"new_password_confirm"</span>: <span class="hljs-string">"String (Required) — Must match new_password"</span>
+  <span class="hljs-attr">"old_password"</span>: <span class="hljs-string">"String (Required) â€” Current password"</span>,
+  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"String (Required) â€” Minimum 8 characters"</span>,
+  <span class="hljs-attr">"new_password_confirm"</span>: <span class="hljs-string">"String (Required) â€” Must match new_password"</span>
 }
 </div></code></pre>
-<p><strong><code>POST /accounts/change-password/</code> Response — 200 OK:</strong></p>
+<p><strong><code>POST /accounts/change-password/</code> Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Password changed successfully. Please log in again."</span>
 }
@@ -2355,7 +2357,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong>Page layout:</strong></p>
 <ul>
 <li><strong>Purple banner</strong> at top with welcome message and stats (profile completion, status)</li>
-<li><strong>Status alert banner:</strong> For <code>declined</code> → shows reason from <code>status_history</code> in a warning card with edit prompt</li>
+<li><strong>Status alert banner:</strong> For <code>declined</code> â†’ shows reason from <code>status_history</code> in a warning card with edit prompt</li>
 <li><strong>Profile form:</strong> Two-column grid with fields (name_ar, name_en, phone, school info, location, etc.)
 <ul>
 <li>Status badge shown inline</li>
@@ -2375,28 +2377,28 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <tbody>
 <tr>
 <td><code>verified</code></td>
-<td>❌</td>
-<td>✅</td>
+<td>âŒ</td>
+<td>âœ…</td>
 </tr>
 <tr>
 <td><code>pending</code></td>
-<td>❌</td>
-<td>✅</td>
+<td>âŒ</td>
+<td>âœ…</td>
 </tr>
 <tr>
 <td><code>declined</code></td>
-<td>✅ (resets to pending)</td>
-<td>✅</td>
+<td>âœ… (resets to pending)</td>
+<td>âœ…</td>
 </tr>
 <tr>
 <td><code>suspended_temporary</code></td>
-<td>❌</td>
-<td>✅</td>
+<td>âŒ</td>
+<td>âœ…</td>
 </tr>
 <tr>
 <td><code>suspended_permanent</code></td>
-<td>❌ Blocked from login</td>
-<td>❌</td>
+<td>âŒ Blocked from login</td>
+<td>âŒ</td>
 </tr>
 </tbody>
 </table>
@@ -2404,7 +2406,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </ul>
 <p><strong>Populates from:</strong> <code>profile</code> endpoint</p>
 <hr>
-<h3 id="page-2-recharge-codes-independent--build-any-time">Page 2: Recharge Codes (Independent — Build Any Time)</h3>
+<h3 id="page-2-recharge-codes-independent-%C3%A2%E2%82%AC-build-any-time">Page 2: Recharge Codes (Independent â€” Build Any Time)</h3>
 <p><strong>Purpose:</strong> Redeem physical voucher codes to add balance to a specific course.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
@@ -2440,7 +2442,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong><code>POST /payments/codes/redeem/</code> Request:</strong></p>
 <pre class="hljs"><code><div>{<span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>, <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>}
 </div></code></pre>
-<p><strong><code>POST /payments/codes/redeem/</code> Response — 200 OK:</strong></p>
+<p><strong><code>POST /payments/codes/redeem/</code> Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Code redeemed successfully. Added 50.00 EGP to your Chemistry balance."</span>,
   <span class="hljs-attr">"new_balance"</span>: <span class="hljs-string">"200.00"</span>,
@@ -2477,15 +2479,15 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><strong>Redeem section:</strong> Course dropdown, code input (auto-format dashes), Redeem button
 <ul>
 <li>Course dropdown only shows courses where student is approved-enrolled</li>
-<li>On success → <code>new_balance</code> shown, balance list refreshes</li>
+<li>On success â†’ <code>new_balance</code> shown, balance list refreshes</li>
 </ul>
 </li>
 </ul>
 <p><strong>Populates from:</strong> <code>balance</code> endpoint for course list + balances; <code>redeem</code> for code application</p>
 <hr>
-<h3 id="page-3-transaction-history-independent--build-any-time">Page 3: Transaction History (Independent — Build Any Time)</h3>
+<h3 id="page-3-transaction-history-independent-%C3%A2%E2%82%AC-build-any-time">Page 3: Transaction History (Independent â€” Build Any Time)</h3>
 <p><strong>Purpose:</strong> View full ledger of all code redemptions and lecture purchases with per-course balance tracking.</p>
-<p><strong>API: <code>GET /payments/transactions/</code></strong> — auto-filtered to the logged-in student. Paginated.</p>
+<p><strong>API: <code>GET /payments/transactions/</code></strong> â€” auto-filtered to the logged-in student. Paginated.</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -2561,7 +2563,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <tbody>
 <tr>
 <td>Jul 19</td>
-<td>Redeemed ✅</td>
+<td>Redeemed âœ…</td>
 <td>Dr Hany</td>
 <td>Code X7K9-...</td>
 <td>Teacher name</td>
@@ -2570,11 +2572,11 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </tr>
 <tr>
 <td>Jul 18</td>
-<td>Purchased 🔶</td>
+<td>Purchased ðŸ”¶</td>
 <td>Dr Hany</td>
 <td>Intro to Reactions</td>
 <td>Student</td>
-<td>−40.00</td>
+<td>âˆ’40.00</td>
 <td>100.00 (was 140)</td>
 </tr>
 </tbody>
@@ -2585,7 +2587,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong>Populates from:</strong> <code>transactions</code> endpoint</p>
 <hr>
 <h3 id="page-4-course-preview">Page 4: Course Preview</h3>
-<p><strong>Purpose:</strong> Preview a course before enrolling — shows full structure with topics, lectures, prices, and teacher info. Available to any authenticated user.</p>
+<p><strong>Purpose:</strong> Preview a course before enrolling â€” shows full structure with topics, lectures, prices, and teacher info. Available to any authenticated user.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -2645,19 +2647,19 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong>Page layout:</strong></p>
 <ul>
 <li><strong>Course hero:</strong> Cover image (left), course name + grade badge + teacher info (name, initials, subject) on right</li>
-<li><strong>No course description</strong> section (backend's <code>description</code> field is for internal use — not shown to students)</li>
+<li><strong>No course description</strong> section (backend's <code>description</code> field is for internal use â€” not shown to students)</li>
 <li><strong>Course Curriculum card:</strong> Expandable topic cards with thumbnail images
 <ul>
 <li>Each topic card: thumbnail image, topic name, lecture count</li>
-<li>Click to expand → lecture list with names</li>
+<li>Click to expand â†’ lecture list with names</li>
 </ul>
 </li>
 <li><strong>Instructor card:</strong> Teacher avatar, name, subject, bio text</li>
 <li><strong>Side card:</strong> Course cover thumbnail, &quot;Enroll for Free&quot; button</li>
 <li><strong>Enroll flow:</strong>
 <ul>
-<li>Not enrolled → &quot;Enroll for Free&quot; → <code>POST /courses/enrollments/enroll/</code> with <code>{&quot;course&quot;: &lt;id&gt;}</code></li>
-<li>Enrollment response includes status (pending) — redirect to My Enrollments</li>
+<li>Not enrolled â†’ &quot;Enroll for Free&quot; â†’ <code>POST /courses/enrollments/enroll/</code> with <code>{&quot;course&quot;: &lt;id&gt;}</code></li>
+<li>Enrollment response includes status (pending) â€” redirect to My Enrollments</li>
 </ul>
 </li>
 </ul>
@@ -2714,7 +2716,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li>Course name</li>
 <li>Teacher name</li>
 <li>Topics count, lectures count (from enrollment/course data)</li>
-<li>&quot;Continue Learning&quot; button → links to <strong>Course Lectures</strong> (Page 6)</li>
+<li>&quot;Continue Learning&quot; button â†’ links to <strong>Course Lectures</strong> (Page 6)</li>
 </ul>
 </li>
 <li><strong>Empty state:</strong> &quot;No enrollments yet&quot;</li>
@@ -2773,14 +2775,14 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li>Each card: thumbnail image, topic name, lecture count</li>
 <li>Click card:
 <ul>
-<li>If any lecture in topic is purchased → navigate to <strong>Lecture Player</strong> (Page 8)</li>
-<li>If no lectures purchased → navigate to <strong>Purchase Lecture</strong> (Page 7) for the first unpurchased lecture</li>
+<li>If any lecture in topic is purchased â†’ navigate to <strong>Lecture Player</strong> (Page 8)</li>
+<li>If no lectures purchased â†’ navigate to <strong>Purchase Lecture</strong> (Page 7) for the first unpurchased lecture</li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<p><strong>Populates from:</strong> <code>lectures</code> endpoint — topics with lecture purchase status</p>
+<p><strong>Populates from:</strong> <code>lectures</code> endpoint â€” topics with lecture purchase status</p>
 <hr>
 <h3 id="page-7-purchase-lecture">Page 7: Purchase Lecture</h3>
 <p><strong>Purpose:</strong> View lecture details and purchase access by deducting from course balance.</p>
@@ -2812,7 +2814,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong><code>POST /courses/purchases/buy/</code> Request:</strong></p>
 <pre class="hljs"><code><div>{<span class="hljs-attr">"lecture"</span>: <span class="hljs-number">10</span>}
 </div></code></pre>
-<p><strong>Response — 201 Created:</strong></p>
+<p><strong>Response â€” 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
   <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"Chemical Reactions"</span>,
@@ -2853,7 +2855,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <ul>
 <li>Lock icon banner with &quot;Purchase to access this lecture&quot;</li>
 <li><strong>Lecture info:</strong> Topic tag, lecture name, course + teacher</li>
-<li><strong>Description</strong> — from <code>lecture.description</code></li>
+<li><strong>Description</strong> â€” from <code>lecture.description</code></li>
 <li><strong>Specs grid (3 cards):</strong>
 <ul>
 <li>Video count (<code>video_count</code>)</li>
@@ -2871,10 +2873,10 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><strong>Purchase card:</strong>
 <ul>
 <li><strong>Price:</strong> <code>final_price</code> (with <code>price</code> strikethrough if discounted)</li>
-<li><strong>Available days:</strong> <code>available_days</code> — shown as &quot;Access for X days after purchase&quot;</li>
+<li><strong>Available days:</strong> <code>available_days</code> â€” shown as &quot;Access for X days after purchase&quot;</li>
 <li><strong>Balance:</strong> Current course balance</li>
 <li><strong>Purchase button</strong> (disabled if insufficient balance)</li>
-<li><strong>Recharge link</strong> → Recharge Codes (Page 2)</li>
+<li><strong>Recharge link</strong> â†’ Recharge Codes (Page 2)</li>
 <li><strong>Code section:</strong> Input + Apply button for recharge code</li>
 </ul>
 </li>
@@ -2962,7 +2964,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong>Page layout:</strong></p>
 <ul>
 <li><strong>Dark topbar</strong> with breadcrumb nav back to Course Lectures</li>
-<li><strong>Video player:</strong> 16:9 aspect ratio, max 854px wide (YouTube-sized) — not full width</li>
+<li><strong>Video player:</strong> 16:9 aspect ratio, max 854px wide (YouTube-sized) â€” not full width</li>
 <li><strong>Video info:</strong> Lecture name, topic name, teacher, &quot;Video X of Y&quot; indicator</li>
 <li><strong>Tabs below player:</strong> Overview | Materials
 <ul>
@@ -2973,13 +2975,13 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><strong>Quizzes section (below tabs):</strong> Cards for each quiz:
 <ul>
 <li>Title, question count, status badge (Passed/Failed/Pending), score, action button (&quot;View Results&quot; / &quot;Start Quiz&quot;)</li>
-<li>Click &quot;Start Quiz&quot; → navigate to <strong>Quiz Taking</strong> (Page 10)</li>
+<li>Click &quot;Start Quiz&quot; â†’ navigate to <strong>Quiz Taking</strong> (Page 10)</li>
 </ul>
 </li>
 <li><strong>Homeworks section (below tabs):</strong> Cards for each homework:
 <ul>
 <li>Title, question count, status badge (Done/Pending), score, action button (&quot;View Submission&quot; / &quot;Start Homework&quot;)</li>
-<li>Click &quot;Start Homework&quot; → navigate to <strong>Homework Bubble Sheet</strong> (Page 9)</li>
+<li>Click &quot;Start Homework&quot; â†’ navigate to <strong>Homework Bubble Sheet</strong> (Page 9)</li>
 </ul>
 </li>
 <li><strong>Right sidebar:</strong> Playlist of other videos in this lecture (prev/next navigation)</li>
@@ -2992,7 +2994,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong>Populates from:</strong> <code>play</code> endpoint; <code>materials</code> endpoint; <code>quizzes/my</code> and <code>homeworks/my</code> endpoints</p>
 <hr>
 <h3 id="page-9-homework-bubble-sheet-standalone-page">Page 9: Homework Bubble Sheet (Standalone Page)</h3>
-<p><strong>Purpose:</strong> Answer bubble-sheet homework — no question text, just A/B/C/D choices in a compact grid. Opened from Lecture Player's homework card.</p>
+<p><strong>Purpose:</strong> Answer bubble-sheet homework â€” no question text, just A/B/C/D choices in a compact grid. Opened from Lecture Player's homework card.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -3047,7 +3049,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
   ]
 }
 </div></code></pre>
-<p>Note: <code>HomeworkBubbleQuestion</code> has NO <code>text</code> field — only <code>order</code>, <code>choices_count</code>, <code>correct_answer</code>, <code>points</code>.</p>
+<p>Note: <code>HomeworkBubbleQuestion</code> has NO <code>text</code> field â€” only <code>order</code>, <code>choices_count</code>, <code>correct_answer</code>, <code>points</code>.</p>
 <p><strong><code>POST /learning/homeworks/&lt;id&gt;/submit/</code> Request:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"bubble_answers"</span>: [
@@ -3056,13 +3058,13 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
   ]
 }
 </div></code></pre>
-<p><strong>Response — 200 OK:</strong></p>
+<p><strong>Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Homework submitted and auto-graded."</span>,
   <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>, <span class="hljs-attr">"status"</span>: <span class="hljs-string">"graded"</span>
 }
 </div></code></pre>
-<p><strong>Page layout (compact — no scroll):</strong></p>
+<p><strong>Page layout (compact â€” no scroll):</strong></p>
 <ul>
 <li><strong>Dark topbar</strong> with breadcrumb back to Lecture Player</li>
 <li><strong>Header bar:</strong> Homework title, question count, points per question</li>
@@ -3076,7 +3078,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </li>
 <li><strong>Footer:</strong> Answered/unanswered count with progress bar, Submit button, Back link</li>
 <li><strong>Result bar</strong> (after submit): Score (e.g. &quot;105 / 150&quot;), inline Back link</li>
-<li><strong>No question text</strong> shown — matches <code>HomeworkBubbleQuestion</code> model (only <code>order</code> + <code>choices_count</code>)</li>
+<li><strong>No question text</strong> shown â€” matches <code>HomeworkBubbleQuestion</code> model (only <code>order</code> + <code>choices_count</code>)</li>
 </ul>
 <p><strong>Populates from:</strong> <code>homeworks/&lt;id&gt;</code> for questions; <code>draft</code> for save/load; <code>submit</code> for grading; <code>homework-submissions/&lt;id&gt;</code> for results</p>
 <hr>
@@ -3152,7 +3154,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
   ]
 }
 </div></code></pre>
-<p><strong>Response — 200 OK:</strong></p>
+<p><strong>Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Quiz submitted successfully."</span>, <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">15</span>,
   <span class="hljs-attr">"score"</span>: <span class="hljs-string">"5.00"</span>, <span class="hljs-attr">"score_visible"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-literal">true</span>
@@ -3170,7 +3172,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <tbody>
 <tr>
 <td><code>timer_minutes</code></td>
-<td>0–1440</td>
+<td>0â€“1440</td>
 <td>Time limit. 0 = no limit.</td>
 </tr>
 <tr>
@@ -3201,13 +3203,13 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><strong>Quiz in progress (after start):</strong>
 <ul>
 <li><strong>Timer countdown</strong> in header (if <code>timer_minutes &gt; 0</code>)</li>
-<li><strong>Question navigator:</strong> Circle dots for each question — active (filled brand), answered (green outline), unanswered (empty). Click to jump.</li>
+<li><strong>Question navigator:</strong> Circle dots for each question â€” active (filled brand), answered (green outline), unanswered (empty). Click to jump.</li>
 <li><strong>One question per page:</strong> Question text, choices (radio for mcq_single, checkbox for mcq_multiple), Previous/Next buttons</li>
 <li><strong>Auto-save:</strong> Call <code>PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</code> on answer change</li>
 <li><strong>Submit button</strong> at bottom</li>
 </ul>
 </li>
-<li><strong>On page refresh:</strong> <code>GET /learning/quizzes/&lt;id&gt;/resume/</code> → restore timer, questions, saved answers</li>
+<li><strong>On page refresh:</strong> <code>GET /learning/quizzes/&lt;id&gt;/resume/</code> â†’ restore timer, questions, saved answers</li>
 <li><strong>Results screen (after submit):</strong>
 <ul>
 <li>Score (X / Y), Passed/Failed status</li>
@@ -3267,6 +3269,183 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><strong>Quick Access card:</strong> Links to My Enrollments, Recharge Codes, Profile Settings with icons</li>
 </ul>
 <p><strong>Populates from:</strong> <code>enrolled</code> endpoint; <code>balance</code> endpoint</p>
+<hr>
+<h3 id="page-12-my-lectures-aggregate">Page 12: My Lectures (Aggregate)</h3>
+<p><strong>Purpose:</strong> View all purchased lectures across all enrolled courses. Filter and navigate to watch.</p>
+<p><strong>APIs to use (from API_STUDENT.md §6):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>My purchases</td>
+<td>GET</td>
+<td><code>/courses/purchases/</code></td>
+<td>All purchased lectures across courses</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>GET /courses/purchases/</code> Response:</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
+    <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"Chemical Reactions"</span>, <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+    <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
+    <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
+    <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"2026-07-31T10:00:00Z"</span>,
+    <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"40.00"</span>,
+    <span class="hljs-attr">"extra_days"</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">"is_expired"</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-attr">"max_watch_count"</span>: <span class="hljs-number">4</span>
+  }
+]
+</div></code></pre>
+<p><strong>Page layout:</strong></p>
+<ul>
+<li><strong>Page title + subtitle</strong> showing total purchased count</li>
+<li><strong>Filters:</strong> Course dropdown, Status dropdown (Active/Expired)</li>
+<li><strong>Card grid:</strong> Each card shows:
+<ul>
+<li>Course cover thumbnail, lecture name, topic name, teacher name</li>
+<li>Purchase date, expiry date</li>
+<li>Active/Expired badge</li>
+<li>&quot;Watch&quot; button (if active) → Lecture Player | &quot;Expired&quot; disabled state</li>
+</ul>
+</li>
+<li><strong>Empty state:</strong> &quot;No purchased lectures yet. Enroll in a course and buy lectures to get started.&quot;</li>
+</ul>
+<p><strong>Populates from:</strong> <code>purchases</code> endpoint</p>
+<hr>
+<h3 id="page-13-my-homeworks-aggregate">Page 13: My Homeworks (Aggregate)</h3>
+<p><strong>Purpose:</strong> View all available homeworks across all purchased lectures. Start homework or view submission results.</p>
+<p><strong>APIs to use (from API_STUDENT.md §10):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List homeworks</td>
+<td>GET</td>
+<td><code>/learning/homeworks/</code></td>
+<td>All published homeworks for purchased lectures</td>
+</tr>
+<tr>
+<td>My submissions</td>
+<td>GET</td>
+<td><code>/learning/homeworks/my/</code></td>
+<td>All homework submissions with scores</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>GET /learning/homeworks/</code> Response (student):</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Week 1 HW"</span>, <span class="hljs-attr">"description"</span>: <span class="hljs-string">"..."</span>,
+    <span class="hljs-attr">"total_points"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"..."</span>
+  }
+]
+</div></code></pre>
+<p><strong><code>GET /learning/homeworks/my/</code> Response:</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"homework_id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"Week 1 HW"</span>,
+    <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
+    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>, <span class="hljs-attr">"status"</span>: <span class="hljs-string">"graded"</span>, <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"..."</span>
+  }
+]
+</div></code></pre>
+<p><strong>Page layout:</strong></p>
+<ul>
+<li><strong>Page title + subtitle</strong> showing total available homeworks</li>
+<li><strong>Filters:</strong> Course dropdown, Status dropdown (Not Submitted / Submitted / Graded)</li>
+<li><strong>Card grid:</strong> Each card shows:
+<ul>
+<li>Homework title, lecture → course breadcrumb</li>
+<li>Question count, total points</li>
+<li>Status badge: &quot;Not Submitted&quot; (gray) / &quot;Submitted&quot; (amber) / &quot;Graded: X/Y&quot; (green)</li>
+<li>Action: &quot;Start Homework&quot; → Homework Bubble Sheet | &quot;View Submission&quot; → results page</li>
+</ul>
+</li>
+<li>Status determined by merging list endpoint with submissions: if <code>homework_id</code> matches a submission, show that status; otherwise &quot;Not Submitted&quot;</li>
+</ul>
+<p><strong>Populates from:</strong> <code>homeworks</code> list + <code>homeworks/my</code> submissions</p>
+<hr>
+<h3 id="page-14-my-quizzes-aggregate">Page 14: My Quizzes (Aggregate)</h3>
+<p><strong>Purpose:</strong> View all available quizzes across all purchased lectures. Start, resume, or view quiz results.</p>
+<p><strong>APIs to use (from API_STUDENT.md §11):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List quizzes</td>
+<td>GET</td>
+<td><code>/learning/quizzes/</code></td>
+<td>All published quizzes for purchased lectures</td>
+</tr>
+<tr>
+<td>My submissions</td>
+<td>GET</td>
+<td><code>/learning/quizzes/my/</code></td>
+<td>All quiz submissions with scores and attempt info</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>GET /learning/quizzes/</code> Response (student):</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz 1"</span>, <span class="hljs-attr">"description"</span>: <span class="hljs-string">"..."</span>,
+    <span class="hljs-attr">"total_points"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"question_count"</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">"settings"</span>: {<span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-number">1</span>, ...},
+    <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"..."</span>
+  }
+]
+</div></code></pre>
+<p><strong><code>GET /learning/quizzes/my/</code> Response:</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"Quiz 1"</span>,
+    <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
+    <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>, <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"..."</span>,
+    <span class="hljs-attr">"score_visible"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-literal">true</span>
+  }
+]
+</div></code></pre>
+<p><strong>Page layout:</strong></p>
+<ul>
+<li><strong>Page title + subtitle</strong> showing total available quizzes</li>
+<li><strong>Filters:</strong> Course dropdown, Status dropdown (Not Taken / Passed / Failed)</li>
+<li><strong>Card grid:</strong> Each card shows:
+<ul>
+<li>Quiz title, lecture → course breadcrumb</li>
+<li>Specs: question count, total points, timer, max attempts</li>
+<li>Status badge: &quot;Not Taken&quot; (gray) / &quot;Passed: X/Y&quot; (green) / &quot;Failed: X/Y&quot; (red)</li>
+<li>Action: &quot;Start Quiz&quot; → Quiz Taking page | &quot;View Results&quot; → results view | &quot;Retry&quot; → start new attempt (if attempts remain)</li>
+</ul>
+</li>
+<li>Status determined by merging list endpoint with submissions</li>
+</ul>
+<p><strong>Populates from:</strong> <code>quizzes</code> list + <code>quizzes/my</code> submissions</p>
 
 </body>
 </html>
