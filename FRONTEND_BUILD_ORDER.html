@@ -2209,10 +2209,9 @@ For deeper analytics: <code>GET /courses/&lt;id&gt;/analytics/</code> — per-to
 <pre class="hljs"><code><div>Early (independent):
   Page 1: Profile
   Page 2: Recharge Codes
+  Page 3: Transaction History
 
 Chain (build in order):
-  Page 3: Course Catalog
-       ↓
   Page 4: Course Preview
        ↓
   Page 5: My Enrollments
@@ -2221,10 +2220,14 @@ Chain (build in order):
        ↓
   Page 7: Purchase Lecture
        ↓
-  Page 8: Lecture Player (includes Homework + Quiz + Exam tabs)
+  Page 8: Lecture Player
+
+Independent (can build anytime after Chain):
+  Page 9: Homework Bubble Sheet
+  Page 10: Quiz Taking
 
 Last (build after everything):
-  Page 9: Student Dashboard
+  Page 11: Student Dashboard
 </div></code></pre>
 <p><strong>Student authentication behavior by status:</strong>
 After login (<code>POST /accounts/login/</code>), the response includes <code>status</code> for students:</p>
@@ -2237,7 +2240,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </ul>
 <hr>
 <h3 id="page-1-profile-independent--build-any-time">Page 1: Profile (Independent — Build Any Time)</h3>
-<p><strong>Purpose:</strong> View and edit the student's own profile. Also includes change password. <strong>No student-page dependencies</strong> — can be built immediately after Phase 1.</p>
+<p><strong>Purpose:</strong> View profile + change password + edit profile if declined. <strong>No student-page dependencies</strong> — can be built immediately after Phase 1.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -2259,7 +2262,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td>Update profile</td>
 <td>PATCH</td>
 <td><code>/accounts/profile/me/</code></td>
-<td>Student only</td>
+<td>Student only (declined only)</td>
 </tr>
 <tr>
 <td>Change password</td>
@@ -2288,89 +2291,121 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
   <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"ahmed@gmail.com"</span>,
   <span class="hljs-attr">"governorate"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"governorate_name"</span>: <span class="hljs-string">"Cairo"</span>,
   <span class="hljs-attr">"area"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"area_name"</span>: <span class="hljs-string">"Nasr City"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"verified"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"declined"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">"status_history"</span>: [
+    {
+      <span class="hljs-attr">"from_status"</span>: <span class="hljs-string">"pending"</span>,
+      <span class="hljs-attr">"to_status"</span>: <span class="hljs-string">"declined"</span>,
+      <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"Missing father's phone number. Please re-submit with correct info."</span>,
+      <span class="hljs-attr">"changed_by_name"</span>: <span class="hljs-string">"Admin"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-15T10:00:00Z"</span>
+    }
+  ],
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-06-01T10:00:00Z"</span>,
   <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>
 }
 </div></code></pre>
-<p><strong><code>PATCH /accounts/profile/me/</code> Request:</strong> Same fields as GET (all optional for PATCH). Can use JSON or multipart.</p>
+<p><strong><code>PATCH /accounts/profile/me/</code> Request:</strong> Same fields as GET (all optional for PATCH). Can use JSON or multipart. Only sends if <code>status === 'declined'</code>.</p>
+<p><strong><code>POST /accounts/change-password/</code> Request:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"old_password"</span>: <span class="hljs-string">"String (Required) — Current password"</span>,
+  <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"String (Required) — Minimum 8 characters"</span>,
+  <span class="hljs-attr">"new_password_confirm"</span>: <span class="hljs-string">"String (Required) — Must match new_password"</span>
+}
+</div></code></pre>
+<p><strong><code>POST /accounts/change-password/</code> Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Password changed successfully. Please log in again."</span>
+}
+</div></code></pre>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
 <tr>
 <th>Status</th>
+<th>Endpoint</th>
 <th>Condition</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>400</td>
-<td>Email exists (another user)</td>
+<td>403</td>
+<td>PATCH profile</td>
+<td>Verified / pending / suspended profiles cannot edit</td>
 </tr>
 <tr>
 <td>400</td>
-<td>Area doesn't belong to governorate</td>
+<td>PATCH profile</td>
+<td>Email exists, area/governorate mismatch</td>
 </tr>
 <tr>
 <td>400</td>
-<td>Missing required fields</td>
+<td>Change password</td>
+<td>Missing fields, passwords don't match, too short, wrong old password</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Change password</td>
+<td>Weak password (common, entirely numeric, too similar to username)</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>Read-only fields:</strong> <code>student_code</code>, <code>username</code>, <code>status</code>, <code>is_active</code>, <code>created_at</code></li>
-<li><strong>Editable fields:</strong> All other profile fields</li>
-<li><strong>Form sections:</strong>
-<ol>
-<li><strong>Personal Info:</strong> Name (Arabic + English), gender, birth date</li>
-<li><strong>Contact:</strong> Phone, father phone, mother phone, gmail</li>
-<li><strong>School Info:</strong> School type, grade, division, school name</li>
-<li><strong>Location:</strong> Governorate, area (dropdowns — area filters by governorate)</li>
-</ol>
-</li>
-<li><strong>Save button</strong> → <code>PATCH /accounts/profile/me/</code></li>
+<li><strong>Purple banner</strong> at top with welcome message and stats (profile completion, status)</li>
+<li><strong>Status alert banner:</strong> For <code>declined</code> → shows reason from <code>status_history</code> in a warning card with edit prompt</li>
+<li><strong>Profile form:</strong> Two-column grid with fields (name_ar, name_en, phone, school info, location, etc.)
+<ul>
+<li>Status badge shown inline</li>
+<li>Edit enabled only when <code>status === 'declined'</code></li>
 </ul>
-<p><strong>Business rules (edit restrictions by status):</strong></p>
+</li>
+<li><strong>Change password section:</strong> Old password, new password, confirm new password</li>
+<li><strong>Business rules table:</strong>
 <table>
 <thead>
 <tr>
 <th>Status</th>
-<th>Can edit?</th>
+<th>Can edit profile?</th>
+<th>Can change password?</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>verified</code></td>
-<td><strong>Cannot edit</strong></td>
+<td>❌</td>
+<td>✅</td>
 </tr>
 <tr>
 <td><code>pending</code></td>
-<td><strong>Cannot edit</strong></td>
+<td>❌</td>
+<td>✅</td>
 </tr>
 <tr>
 <td><code>declined</code></td>
-<td><strong>Can edit</strong> — after saving, status resets to <code>pending</code></td>
+<td>✅ (resets to pending)</td>
+<td>✅</td>
 </tr>
 <tr>
 <td><code>suspended_temporary</code></td>
-<td><strong>Cannot edit</strong></td>
+<td>❌</td>
+<td>✅</td>
 </tr>
 <tr>
 <td><code>suspended_permanent</code></td>
-<td>Blocked from login entirely</td>
+<td>❌ Blocked from login</td>
+<td>❌</td>
 </tr>
 </tbody>
 </table>
-<ul>
-<li>If <code>status === 'declined'</code>, show a message: &quot;Your registration was declined. Edit your profile to resubmit for review.&quot;</li>
-<li>Gmail must be globally unique across ALL user types</li>
+</li>
 </ul>
+<p><strong>Populates from:</strong> <code>profile</code> endpoint</p>
 <hr>
 <h3 id="page-2-recharge-codes-independent--build-any-time">Page 2: Recharge Codes (Independent — Build Any Time)</h3>
-<p><strong>Purpose:</strong> Redeem physical voucher codes to add balance to a specific course. Referenced from Page 8 when balance is insufficient. <strong>No student-page dependencies.</strong></p>
+<p><strong>Purpose:</strong> Redeem physical voucher codes to add balance to a specific course.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -2403,10 +2438,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </tbody>
 </table>
 <p><strong><code>POST /payments/codes/redeem/</code> Request:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>,
-  <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>
-}
+<pre class="hljs"><code><div>{<span class="hljs-attr">"code"</span>: <span class="hljs-string">"X7K9-M2P4-QR1W-L5D8"</span>, <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>}
 </div></code></pre>
 <p><strong><code>POST /payments/codes/redeem/</code> Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
@@ -2426,99 +2458,35 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <tbody>
 <tr>
 <td>400</td>
-<td>Code already used</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Code expired (1 year from creation)</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Code belongs to a different course</td>
+<td>Code already used / expired / wrong course</td>
 </tr>
 <tr>
 <td>403</td>
-<td>Not enrolled and approved in this course</td>
+<td>Not enrolled and approved</td>
 </tr>
 <tr>
 <td>404</td>
-<td>Invalid code (doesn't exist)</td>
+<td>Invalid code</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>Balance summary:</strong> Table showing all course balances (from <code>/payments/balance/</code>)
+<li><strong>Purple banner</strong> with page title</li>
+<li><strong>Balance cards:</strong> For each enrolled course show course name, teacher, current balance</li>
+<li><strong>Redeem section:</strong> Course dropdown, code input (auto-format dashes), Redeem button
 <ul>
-<li>Course name, current balance</li>
+<li>Course dropdown only shows courses where student is approved-enrolled</li>
+<li>On success → <code>new_balance</code> shown, balance list refreshes</li>
 </ul>
 </li>
-<li><strong>Redeem section:</strong>
-<ul>
-<li><strong>Course dropdown</strong> (select which course to add balance to)
-<ul>
-<li>Only shows courses where the student is approved-enrolled</li>
 </ul>
-</li>
-<li><strong>Code input:</strong> Single text field for the 16-char code (XXXX-XXXX-XXXX-XXXX format)
-<ul>
-<li>Auto-format as user types (add dashes after every 4 chars)</li>
-</ul>
-</li>
-<li><strong>Redeem button</strong></li>
-</ul>
-</li>
-<li>On success → <code>new_balance</code> shown, balance list refreshes, success toast</li>
-<li>On error → show specific error message</li>
-</ul>
-<p><strong>Business rules:</strong></p>
-<ul>
-<li>Codes are course-specific — must select the correct course</li>
-<li>Code format: XXXX-XXXX-XXXX-XXXX (16 uppercase alphanumeric chars with dashes)</li>
-<li>One-time use only</li>
-<li>Race-condition safe (backend uses <code>select_for_update()</code>)</li>
-<li>Every redemption creates an immutable <code>BalanceTransaction</code> ledger entry</li>
-</ul>
+<p><strong>Populates from:</strong> <code>balance</code> endpoint for course list + balances; <code>redeem</code> for code application</p>
 <hr>
-<h3 id="page-3-course-catalog">Page 3: Course Catalog</h3>
-<p><strong>Purpose:</strong> Browse available courses by subject. Auto-filtered to the student's grade, school type, and division.</p>
-<p><strong>APIs to use (from API_STUDENT.md / API_PUBLIC.md):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Action</th>
-<th>Method</th>
-<th>Endpoint</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>List subjects</td>
-<td>GET</td>
-<td><code>/accounts/subjects/</code></td>
-<td>Get available subjects for browsing</td>
-</tr>
-<tr>
-<td>Courses by subject</td>
-<td>GET</td>
-<td><code>/courses/by-subject/&lt;subject_id&gt;/</code></td>
-<td>List courses in a subject</td>
-</tr>
-</tbody>
-</table>
-<p><strong><code>GET /accounts/subjects/</code> Response:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry"</span>,
-      <span class="hljs-attr">"grade_ids"</span>: [<span class="hljs-number">3</span>], <span class="hljs-attr">"grades_detail"</span>: [{<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>}],
-      <span class="hljs-attr">"divisions_detail"</span>: [...], <span class="hljs-attr">"school_types_detail"</span>: [...]
-    }
-  ]
-}
-</div></code></pre>
-<p><strong><code>GET /courses/by-subject/&lt;subject_id&gt;/</code> Query Parameters:</strong></p>
+<h3 id="page-3-transaction-history-independent--build-any-time">Page 3: Transaction History (Independent — Build Any Time)</h3>
+<p><strong>Purpose:</strong> View full ledger of all code redemptions and lecture purchases with per-course balance tracking.</p>
+<p><strong>API: <code>GET /payments/transactions/</code></strong> — auto-filtered to the logged-in student. Paginated.</p>
+<p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
 <tr>
@@ -2529,56 +2497,95 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </thead>
 <tbody>
 <tr>
-<td><code>teacher</code></td>
+<td><code>page</code></td>
 <td>Integer</td>
-<td>Filter by teacher ID</td>
+<td>Page number (default: 1)</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>Integer</td>
+<td>Items per page (default: 50)</td>
+</tr>
+<tr>
+<td><code>transaction_type</code></td>
+<td>String</td>
+<td><code>code_redeemed</code> or <code>lecture_purchase</code></td>
 </tr>
 <tr>
 <td><code>search</code></td>
 <td>String</td>
-<td>Search by name, description, or teacher name</td>
+<td>Search in description</td>
 </tr>
 <tr>
-<td><code>ordering</code></td>
+<td><code>start_date</code> / <code>end_date</code></td>
 <td>String</td>
-<td><code>created_at</code>, <code>name</code>, <code>-created_at</code> (default: <code>-created_at</code>)</td>
+<td>Date range filter</td>
 </tr>
 </tbody>
 </table>
-<p><strong><code>GET /courses/by-subject/&lt;subject_id&gt;/</code> Response:</strong></p>
+<p><strong>Response:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">12</span>,
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
-      <span class="hljs-attr">"teacher"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
-      <span class="hljs-attr">"grade"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"3rd Secondary"</span>,
-      <span class="hljs-attr">"subject"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"Chemistry"</span>,
-      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"..."</span>, <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"..."</span>,
-      <span class="hljs-attr">"topic_count"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"..."</span>
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany Hassanin"</span>,
+      <span class="hljs-attr">"transaction_type"</span>: <span class="hljs-string">"code_redeemed"</span>,
+      <span class="hljs-attr">"transaction_type_display"</span>: <span class="hljs-string">"Code Redeemed"</span>,
+      <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"50.00"</span>,
+      <span class="hljs-attr">"balance_before"</span>: <span class="hljs-string">"100.00"</span>,
+      <span class="hljs-attr">"balance_after"</span>: <span class="hljs-string">"150.00"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Code X7K9-M2P4-QR1W-L5D8"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-19T10:00:00Z"</span>
     }
   ]
 }
 </div></code></pre>
 <p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>Subjects navigation:</strong> Horizontal tabs or sidebar — fetch subjects with <code>?all=true</code></li>
-<li>When a subject is selected → call <code>GET /courses/by-subject/&lt;subject_id&gt;/</code></li>
-<li><strong>Search bar:</strong> filters by <code>?search=</code> query param</li>
-<li><strong>Teacher filter dropdown:</strong> filters by <code>?teacher=</code> query param</li>
-<li><strong>Course cards grid:</strong> each shows cover image, course name, teacher name, grade, topic count, description</li>
-<li>Click card → navigate to <strong>Course Preview</strong> (Page 3)</li>
-<li>If already enrolled (or pending), show a small &quot;Enrolled&quot; / &quot;Pending&quot; badge on the card</li>
+<li><strong>Summary cards:</strong> Total Redeemed (green), Total Spent (red), Current Balance (brand color)</li>
+<li><strong>Filters:</strong> Course dropdown, Type dropdown (All/Code Redeemed/Lecture Purchased), Search input, Clear button</li>
+<li><strong>Ledger table:</strong>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Type</th>
+<th>Teacher</th>
+<th>Description</th>
+<th>Performed by</th>
+<th>Amount</th>
+<th>Balance After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Jul 19</td>
+<td>Redeemed ✅</td>
+<td>Dr Hany</td>
+<td>Code X7K9-...</td>
+<td>Teacher name</td>
+<td>+50.00</td>
+<td>150.00 (was 100)</td>
+</tr>
+<tr>
+<td>Jul 18</td>
+<td>Purchased 🔶</td>
+<td>Dr Hany</td>
+<td>Intro to Reactions</td>
+<td>Student</td>
+<td>−40.00</td>
+<td>100.00 (was 140)</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><strong>Pagination</strong> with page numbers</li>
 </ul>
-<p><strong>Business rules:</strong></p>
-<ul>
-<li>Backend auto-filters results to the student's grade, school type, and division</li>
-<li>Students see only courses with a grade assigned to them</li>
-<li><code>?all=true</code> bypasses pagination for subjects (typically &lt; 20 items)</li>
-</ul>
+<p><strong>Populates from:</strong> <code>transactions</code> endpoint</p>
 <hr>
 <h3 id="page-4-course-preview">Page 4: Course Preview</h3>
-<p><strong>Purpose:</strong> View full course structure before enrolling — topics, lectures, and prices.</p>
+<p><strong>Purpose:</strong> Preview a course before enrolling — shows full structure with topics, lectures, prices, and teacher info. Available to any authenticated user.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -2596,104 +2603,6 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td><code>/courses/&lt;id&gt;/preview/</code></td>
 <td>Topics + lectures with prices</td>
 </tr>
-</tbody>
-</table>
-<p><strong><code>GET /courses/&lt;id&gt;/preview/</code> Response:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Full course covering chemical reactions..."</span>,
-  <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../cover.jpg"</span>,
-  <span class="hljs-attr">"teacher"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Dr Hany"</span>, <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"..."</span>},
-  <span class="hljs-attr">"grade"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>},
-  <span class="hljs-attr">"subject"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry"</span>},
-  <span class="hljs-attr">"topic_count"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-number">20</span>,
-  <span class="hljs-attr">"topics"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Unit 1: Chemical Reactions"</span>,
-      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Fundamentals of chemical reactions"</span>,
-      <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"lecture_count"</span>: <span class="hljs-number">4</span>,
-      <span class="hljs-attr">"lectures"</span>: [
-        {
-          <span class="hljs-attr">"id"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
-          <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Basic concepts"</span>,
-          <span class="hljs-attr">"price"</span>: <span class="hljs-string">"50.00"</span>, <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"40.00"</span>,
-          <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"10.00"</span>, <span class="hljs-attr">"available_days"</span>: <span class="hljs-number">30</span>,
-          <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"video_count"</span>: <span class="hljs-number">2</span>
-        }
-      ]
-    }
-  ],
-  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-06-01T10:00:00Z"</span>
-}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>401</td>
-<td>Not authenticated</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Course not found</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Page layout:</strong></p>
-<ul>
-<li><strong>Hero section:</strong> Cover image (full width), course name, teacher info (picture + name), grade + subject badges</li>
-<li><strong>Description section:</strong> Full course description</li>
-<li><strong>Topic accordion:</strong> Expandable — each topic shows its lectures
-<ul>
-<li>Lecture row: name, video count, <s>original price</s> <strong>final price</strong> (with discount strikethrough), available days</li>
-</ul>
-</li>
-<li><strong>Enroll button</strong> (fixed bottom or top-right):
-<ul>
-<li>Not enrolled → &quot;Enroll Now&quot; button
-<ul>
-<li>Calls <code>POST /courses/enrollments/enroll/</code> with <code>{&quot;course&quot;: &lt;id&gt;}</code></li>
-<li>On success (201) → show &quot;Enrollment request sent! Waiting for teacher approval.&quot;</li>
-</ul>
-</li>
-<li>Already enrolled (approved) → &quot;Go to Course&quot; button → link to <strong>Course Lectures</strong> (Page 5)</li>
-<li>Already enrolled (pending) → &quot;Request Pending&quot; disabled button + &quot;Cancel&quot; button → calls <code>POST /courses/enrollments/&lt;id&gt;/cancel/</code></li>
-<li>Already enrolled (rejected) → &quot;Enrollment Rejected&quot; with note + &quot;Enroll Again&quot; button</li>
-</ul>
-</li>
-</ul>
-<p><strong>Business rules:</strong></p>
-<ul>
-<li>No video URLs are returned (students must purchase to see videos)</li>
-<li><code>final_price</code> = <code>price - discount</code> (flat discount, not percentage)</li>
-<li>Teacher's profile picture is optional (may be null)</li>
-</ul>
-<hr>
-<h3 id="page-5-my-enrollments">Page 5: My Enrollments</h3>
-<p><strong>Purpose:</strong> View all enrollment requests, their status, and manage pending ones.</p>
-<p><strong>APIs to use (from API_STUDENT.md):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Action</th>
-<th>Method</th>
-<th>Endpoint</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>List my enrollments</td>
-<td>GET</td>
-<td><code>/courses/enrollments/</code></td>
-<td>All student's enrollments (auto-filtered)</td>
-</tr>
 <tr>
 <td>Enroll in course</td>
 <td>POST</td>
@@ -2708,100 +2617,112 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </tr>
 </tbody>
 </table>
-<p><strong><code>POST /courses/enrollments/enroll/</code> Request:</strong></p>
-<pre class="hljs"><code><div>{<span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>}
-</div></code></pre>
-<p><strong><code>POST /courses/enrollments/enroll/</code> Response — 201 Created:</strong></p>
+<p><strong><code>GET /courses/&lt;id&gt;/preview/</code> Response:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed"</span>, <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"1234567"</span>,
-  <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
-  <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"3rd Secondary"</span>, <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"pending"</span>, <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"Pending"</span>,
-  <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>,
-  <span class="hljs-attr">"responded_by"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"responded_by_name"</span>: <span class="hljs-literal">null</span>,
-  <span class="hljs-attr">"responded_at"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"response_note"</span>: <span class="hljs-literal">null</span>
+  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Full course covering chemical reactions..."</span>,
+  <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../cover.jpg"</span>,
+  <span class="hljs-attr">"teacher"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Dr Hany"</span>, <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"..."</span>},
+  <span class="hljs-attr">"grade"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>},
+  <span class="hljs-attr">"subject"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry"</span>},
+  <span class="hljs-attr">"topic_count"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-number">20</span>,
+  <span class="hljs-attr">"topics"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemical Reactions"</span>,
+      <span class="hljs-attr">"lecture_count"</span>: <span class="hljs-number">4</span>,
+      <span class="hljs-attr">"lectures"</span>: [
+        {
+          <span class="hljs-attr">"id"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
+          <span class="hljs-attr">"price"</span>: <span class="hljs-string">"50.00"</span>, <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"40.00"</span>,
+          <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"10.00"</span>, <span class="hljs-attr">"available_days"</span>: <span class="hljs-number">30</span>,
+          <span class="hljs-attr">"video_count"</span>: <span class="hljs-number">2</span>
+        }
+      ]
+    }
+  ]
 }
 </div></code></pre>
-<p><strong><code>DELETE /courses/enrollments/&lt;id&gt;/cancel/</code> Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{<span class="hljs-attr">"message"</span>: <span class="hljs-string">"Enrollment cancelled successfully"</span>}
-</div></code></pre>
-<p><strong>Error Responses for enroll:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>400</td>
-<td>No student profile</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Already enrolled or pending request exists</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Grade mismatch between student and course</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Error Responses for cancel:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>403</td>
-<td>Not your own enrollment</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Enrollment is not pending (already approved/rejected)</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Enrollment not found</td>
-</tr>
-</tbody>
-</table>
 <p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>3 tabs:</strong> Pending | Approved | Rejected</li>
-<li><strong>Pending tab:</strong> List of enrollments awaiting teacher approval
+<li><strong>Course hero:</strong> Cover image (left), course name + grade badge + teacher info (name, initials, subject) on right</li>
+<li><strong>No course description</strong> section (backend's <code>description</code> field is for internal use — not shown to students)</li>
+<li><strong>Course Curriculum card:</strong> Expandable topic cards with thumbnail images
 <ul>
-<li>Each row: course name, teacher name, enrolled date, &quot;Cancel&quot; button</li>
-<li>Cancel → confirmation dialog → <code>DELETE /courses/enrollments/&lt;id&gt;/cancel/</code></li>
+<li>Each topic card: thumbnail image, topic name, lecture count</li>
+<li>Click to expand → lecture list with names</li>
 </ul>
 </li>
-<li><strong>Approved tab:</strong> Enrollments that were approved
+<li><strong>Instructor card:</strong> Teacher avatar, name, subject, bio text</li>
+<li><strong>Side card:</strong> Course cover thumbnail, &quot;Enroll for Free&quot; button</li>
+<li><strong>Enroll flow:</strong>
 <ul>
-<li>Each row: course name, teacher name, &quot;Go to Course&quot; button → link to <strong>Course Lectures</strong> (Page 5)</li>
+<li>Not enrolled → &quot;Enroll for Free&quot; → <code>POST /courses/enrollments/enroll/</code> with <code>{&quot;course&quot;: &lt;id&gt;}</code></li>
+<li>Enrollment response includes status (pending) — redirect to My Enrollments</li>
 </ul>
 </li>
-<li><strong>Rejected tab:</strong> Enrollments that were rejected
+</ul>
+<p><strong>Populates from:</strong> <code>preview</code> endpoint for course data; <code>enroll</code> for enrollment</p>
+<hr>
+<h3 id="page-5-my-enrollments">Page 5: My Enrollments</h3>
+<p><strong>Purpose:</strong> View all enrolled courses with teacher info, topics/lectures count. Each card links to the course lectures page.</p>
+<p><strong>APIs to use (from API_STUDENT.md):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>My enrollments</td>
+<td>GET</td>
+<td><code>/courses/enrollments/</code></td>
+<td>All student enrollments (auto-filtered)</td>
+</tr>
+<tr>
+<td>Enrolled courses</td>
+<td>GET</td>
+<td><code>/courses/enrolled/</code></td>
+<td>Only approved enrollments</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>GET /courses/enrolled/</code> Response:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+      <span class="hljs-attr">"teacher"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Dr Hany"</span>},
+      <span class="hljs-attr">"grade"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>},
+      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../cover.jpg"</span>,
+      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"approved"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Page layout:</strong></p>
 <ul>
-<li>Each row: course name, teacher name, <code>responded_by_name</code>, <code>responded_at</code>, <code>response_note</code> (why rejected)</li>
+<li><strong>Page title:</strong> &quot;My Enrollments&quot;</li>
+<li><strong>Course cards grid:</strong> Each card shows:
+<ul>
+<li>Cover image</li>
+<li>Course name</li>
+<li>Teacher name</li>
+<li>Topics count, lectures count (from enrollment/course data)</li>
+<li>&quot;Continue Learning&quot; button → links to <strong>Course Lectures</strong> (Page 6)</li>
 </ul>
 </li>
-<li><strong>Empty state:</strong> &quot;You haven't enrolled in any courses yet&quot; + link to <strong>Course Catalog</strong> (Page 2)</li>
+<li><strong>Empty state:</strong> &quot;No enrollments yet&quot;</li>
 </ul>
-<p><strong>Business rules:</strong></p>
-<ul>
-<li><code>GET /courses/enrollments/</code> auto-filters to the authenticated student</li>
-<li>A student can only have ONE enrollment per course (unique constraint)</li>
-<li>Only <code>pending</code> enrollments can be cancelled</li>
-<li>Grade must match the course's grade</li>
-</ul>
+<p><strong>Populates from:</strong> <code>enrolled</code> endpoint; course counts from <code>preview</code> or <code>lectures</code> endpoints</p>
 <hr>
 <h3 id="page-6-course-lectures">Page 6: Course Lectures</h3>
-<p><strong>Purpose:</strong> View all lectures inside an enrolled course, see purchase status, and access purchased content.</p>
+<p><strong>Purpose:</strong> View all topics inside an enrolled course. Each topic is a clickable square card that navigates to the lecture player or purchase page.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -2817,13 +2738,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td>Course lectures</td>
 <td>GET</td>
 <td><code>/courses/&lt;id&gt;/lectures/</code></td>
-<td>Lectures with purchase status</td>
-</tr>
-<tr>
-<td>Balance per course</td>
-<td>GET</td>
-<td><code>/courses/&lt;id&gt;/balance/</code></td>
-<td>Current balance for this course</td>
+<td>Topics + lectures with purchase status</td>
 </tr>
 </tbody>
 </table>
@@ -2832,95 +2747,43 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
   <span class="hljs-attr">"course"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>},
   <span class="hljs-attr">"topics"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Unit 1"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemical Reactions"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
       <span class="hljs-attr">"lectures"</span>: [
         {
           <span class="hljs-attr">"id"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
-          <span class="hljs-attr">"description"</span>: <span class="hljs-string">"..."</span>,
           <span class="hljs-attr">"price"</span>: <span class="hljs-string">"50.00"</span>, <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"40.00"</span>,
-          <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"10.00"</span>, <span class="hljs-attr">"available_days"</span>: <span class="hljs-number">30</span>,
           <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"video_count"</span>: <span class="hljs-number">2</span>,
           <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-literal">true</span>,
           <span class="hljs-attr">"purchase"</span>: {
             <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
             <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"2026-07-31T10:00:00Z"</span>,
-            <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"2026-08-02T10:00:00Z"</span>,
-            <span class="hljs-attr">"is_expired"</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-attr">"extra_days"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"40.00"</span>
+            <span class="hljs-attr">"is_expired"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"40.00"</span>
           }
-        },
-        {
-          <span class="hljs-attr">"id"</span>: <span class="hljs-number">11</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Balancing Equations"</span>,
-          <span class="hljs-attr">"price"</span>: <span class="hljs-string">"50.00"</span>, <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"40.00"</span>,
-          <span class="hljs-attr">"available_days"</span>: <span class="hljs-number">30</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"video_count"</span>: <span class="hljs-number">3</span>,
-          <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-literal">false</span>
         }
       ]
     }
   ]
 }
 </div></code></pre>
-<p><strong><code>GET /courses/&lt;id&gt;/balance/</code> Response:</strong></p>
-<pre class="hljs"><code><div>{<span class="hljs-attr">"balance"</span>: <span class="hljs-string">"150.00"</span>}
-</div></code></pre>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>400</td>
-<td>No student profile</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Not enrolled in the course</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Course not found</td>
-</tr>
-</tbody>
-</table>
 <p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>Course header:</strong> Course name + back button to dashboard</li>
-<li><strong>Balance display:</strong> Show current balance for this course (from <code>/courses/&lt;id&gt;/balance/</code>)</li>
-<li><strong>Topic accordion:</strong> Expandable sections</li>
-<li><strong>Lecture rows</strong> (per topic):
+<li><strong>Course header:</strong> Cover thumbnail + course name + teacher name</li>
+<li><strong>Topic grid:</strong> 4-column grid of square topic cards (aspect-ratio: 1)
 <ul>
-<li><strong>Not purchased:</strong>
+<li>Each card: thumbnail image, topic name, lecture count</li>
+<li>Click card:
 <ul>
-<li>Lecture name, description, video count badge</li>
-<li><code>final_price</code> with <s>original price</s> strikethrough, available days</li>
-<li><strong>Buy button</strong> → opens purchase confirmation (Page 6)</li>
-</ul>
-</li>
-<li><strong>Purchased + active</strong> (<code>is_purchased=true</code>, <code>is_expired=false</code>):
-<ul>
-<li>Green &quot;Active&quot; badge</li>
-<li>Expiry date (<code>effective_expiry</code>)</li>
-<li>Progress bar: watch count (<code>purchase.</code> info shows watched count)</li>
-<li><strong>Open button</strong> → navigate to <strong>Lecture Player</strong> (Page 8)</li>
-</ul>
-</li>
-<li><strong>Purchased + expired</strong> (<code>is_purchased=true</code>, <code>is_expired=true</code>):
-<ul>
-<li>Grayed out, red &quot;Expired&quot; badge</li>
-<li>&quot;Access expired on: [date]&quot;</li>
+<li>If any lecture in topic is purchased → navigate to <strong>Lecture Player</strong> (Page 8)</li>
+<li>If no lectures purchased → navigate to <strong>Purchase Lecture</strong> (Page 7) for the first unpurchased lecture</li>
 </ul>
 </li>
 </ul>
 </li>
-<li><strong>Reopen indicator:</strong> If <code>extra_days &gt; 0</code>, show &quot;Extended by X days&quot;</li>
 </ul>
+<p><strong>Populates from:</strong> <code>lectures</code> endpoint — topics with lecture purchase status</p>
 <hr>
 <h3 id="page-7-purchase-lecture">Page 7: Purchase Lecture</h3>
-<p><strong>Purpose:</strong> Buy a single lecture by deducting from course balance.</p>
+<p><strong>Purpose:</strong> View lecture details and purchase access by deducting from course balance.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -2938,26 +2801,27 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td><code>/courses/purchases/buy/</code></td>
 <td>Deduct balance and grant access</td>
 </tr>
+<tr>
+<td>Course balance</td>
+<td>GET</td>
+<td><code>/courses/&lt;id&gt;/balance/</code></td>
+<td>Current balance</td>
+</tr>
 </tbody>
 </table>
 <p><strong><code>POST /courses/purchases/buy/</code> Request:</strong></p>
 <pre class="hljs"><code><div>{<span class="hljs-attr">"lecture"</span>: <span class="hljs-number">10</span>}
 </div></code></pre>
-<p><strong><code>POST /courses/purchases/buy/</code> Response — 201 Created:</strong></p>
+<p><strong>Response — 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"student"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">10</span>,
-  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
-  <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"Unit 1"</span>,
+  <span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
+  <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"Chemical Reactions"</span>,
   <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
   <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
   <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>,
   <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"2026-08-17T10:00:00Z"</span>,
-  <span class="hljs-attr">"effective_expiry"</span>: <span class="hljs-string">"2026-08-17T10:00:00Z"</span>,
   <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"40.00"</span>,
-  <span class="hljs-attr">"extra_days"</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">"is_expired"</span>: <span class="hljs-literal">false</span>,
-  <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"reopened_by_name"</span>: <span class="hljs-literal">null</span>,
-  <span class="hljs-attr">"reopened_at"</span>: <span class="hljs-literal">null</span>,
-  <span class="hljs-attr">"reopen_logs"</span>: []
+  <span class="hljs-attr">"is_expired"</span>: <span class="hljs-literal">false</span>
 }
 </div></code></pre>
 <p><strong>Error Responses:</strong></p>
@@ -2970,46 +2834,55 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </thead>
 <tbody>
 <tr>
-<td>400</td>
-<td>No student profile</td>
-</tr>
-<tr>
 <td>403</td>
-<td>Not enrolled and approved in this course</td>
+<td>Not enrolled/approved</td>
 </tr>
 <tr>
 <td>400</td>
-<td>Already purchased this lecture</td>
+<td>Already purchased</td>
 </tr>
 <tr>
 <td>400</td>
-<td>Insufficient balance (includes how much more is needed)</td>
+<td>Insufficient balance</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Page flow:</strong></p>
-<ol>
-<li>Student clicks &quot;Buy&quot; on a lecture (from Page 5)</li>
-<li>Confirmation dialog shows:
+<p><strong>Page layout:</strong></p>
 <ul>
-<li>Lecture name, <code>final_price</code>, available days</li>
-<li>Current balance (from <code>/courses/&lt;id&gt;/balance/</code>)</li>
-<li><strong>&quot;Confirm Purchase&quot;</strong> button</li>
+<li><strong>Lecture locked section</strong> (shown when not purchased):
+<ul>
+<li>Lock icon banner with &quot;Purchase to access this lecture&quot;</li>
+<li><strong>Lecture info:</strong> Topic tag, lecture name, course + teacher</li>
+<li><strong>Description</strong> — from <code>lecture.description</code></li>
+<li><strong>Specs grid (3 cards):</strong>
+<ul>
+<li>Video count (<code>video_count</code>)</li>
+<li>Has quiz indicator (from <code>available-assessments</code> endpoint)</li>
+<li>Has homework indicator</li>
 </ul>
 </li>
-<li>On confirm → <code>POST /courses/purchases/buy/</code></li>
-<li>On success (201) → show &quot;Purchased!&quot; toast, update balance display, navigate to <strong>Lecture Player</strong> (Page 8)</li>
-<li>On insufficient balance → show &quot;You need X more EGP. Redeem a code?&quot; with link to <strong>Recharge Codes</strong> (Page 7)</li>
-</ol>
-<p><strong>Business rules:</strong></p>
+<li><strong>Prerequisites list</strong> (from <code>LecturePrerequisite</code> model):
 <ul>
-<li>Must be enrolled AND approved in the course</li>
-<li>Cannot purchase the same lecture twice</li>
-<li><code>expires_at</code> = <code>purchased_at + lecture.available_days</code></li>
-<li><code>amount_paid</code> snapshots the lecture's <code>final_price</code> at time of purchase</li>
+<li>Each prereq item: name + passed/not passed status</li>
 </ul>
+</li>
+</ul>
+</li>
+<li><strong>Purchase card:</strong>
+<ul>
+<li><strong>Price:</strong> <code>final_price</code> (with <code>price</code> strikethrough if discounted)</li>
+<li><strong>Available days:</strong> <code>available_days</code> — shown as &quot;Access for X days after purchase&quot;</li>
+<li><strong>Balance:</strong> Current course balance</li>
+<li><strong>Purchase button</strong> (disabled if insufficient balance)</li>
+<li><strong>Recharge link</strong> → Recharge Codes (Page 2)</li>
+<li><strong>Code section:</strong> Input + Apply button for recharge code</li>
+</ul>
+</li>
+</ul>
+<p><strong>Populates from:</strong> <code>buy</code> endpoint; lecture data from <code>lectures</code> or <code>preview</code> endpoint; <code>balance</code> endpoint</p>
+<hr>
 <h3 id="page-8-lecture-player">Page 8: Lecture Player</h3>
-<p><strong>Purpose:</strong> Watch videos, track progress, access homework/quizzes/materials for a purchased lecture.</p>
+<p><strong>Purpose:</strong> Watch purchased lecture videos, access materials, view quizzes and homeworks.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -3022,16 +2895,10 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </thead>
 <tbody>
 <tr>
-<td>Get playback URL</td>
+<td>Playback URL</td>
 <td>GET</td>
 <td><code>/courses/videos/&lt;id&gt;/play/</code></td>
 <td>Signed Bunny Stream URL</td>
-</tr>
-<tr>
-<td>List progress</td>
-<td>GET</td>
-<td><code>/courses/progress/</code></td>
-<td>All video watch progress</td>
 </tr>
 <tr>
 <td>Update progress</td>
@@ -3040,105 +2907,32 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td>Save watch progress</td>
 </tr>
 <tr>
-<td>Video progress detail</td>
-<td>GET</td>
-<td><code>/courses/progress/&lt;video_id&gt;/</code></td>
-<td>Progress for a specific video</td>
-</tr>
-<tr>
 <td>List materials</td>
 <td>GET</td>
 <td><code>/materials/</code></td>
-<td>Study materials for purchased lectures</td>
+<td>Study materials</td>
 </tr>
 <tr>
-<td>Homework detail</td>
-<td>GET</td>
-<td><code>/learning/homeworks/&lt;id&gt;/</code></td>
-<td>Bubble sheet questions</td>
-</tr>
-<tr>
-<td>Submit homework</td>
-<td>POST</td>
-<td><code>/learning/homeworks/&lt;id&gt;/submit/</code></td>
-<td>Submit bubble sheet</td>
-</tr>
-<tr>
-<td>Homework submissions</td>
-<td>GET</td>
-<td><code>/learning/homework-submissions/&lt;id&gt;/</code></td>
-<td>Results</td>
-</tr>
-<tr>
-<td>Save homework draft</td>
-<td>PATCH</td>
-<td><code>/learning/homeworks/&lt;id&gt;/draft/</code></td>
-<td>Auto-save bubble answers</td>
-</tr>
-<tr>
-<td>Load homework draft</td>
-<td>GET</td>
-<td><code>/learning/homeworks/&lt;id&gt;/draft/</code></td>
-<td>Restore saved answers</td>
-</tr>
-<tr>
-<td>Quiz detail</td>
-<td>GET</td>
-<td><code>/learning/quizzes/&lt;id&gt;/</code></td>
-<td>Quiz info</td>
-</tr>
-<tr>
-<td>Start quiz</td>
-<td>POST</td>
-<td><code>/learning/quizzes/&lt;id&gt;/start/</code></td>
-<td>Create attempt</td>
-</tr>
-<tr>
-<td>Resume quiz</td>
-<td>GET</td>
-<td><code>/learning/quizzes/&lt;id&gt;/resume/</code></td>
-<td>Continue attempt</td>
-</tr>
-<tr>
-<td>Save quiz draft</td>
-<td>PATCH</td>
-<td><code>/learning/quiz-answers/&lt;id&gt;/save-draft/</code></td>
-<td>Auto-save</td>
-</tr>
-<tr>
-<td>Submit quiz</td>
-<td>POST</td>
-<td><code>/learning/quizzes/&lt;id&gt;/submit/</code></td>
-<td>Submit attempt</td>
-</tr>
-<tr>
-<td>Quiz results</td>
-<td>GET</td>
-<td><code>/learning/quiz-submissions/&lt;id&gt;/</code></td>
-<td>View results</td>
-</tr>
-<tr>
-<td>Quiz history</td>
+<td>Quizzes list</td>
 <td>GET</td>
 <td><code>/learning/quizzes/my/</code></td>
-<td>All quiz submissions</td>
+<td>Quiz submissions for this lecture</td>
 </tr>
 <tr>
-<td>Exam history</td>
+<td>Homeworks list</td>
 <td>GET</td>
-<td><code>/learning/exams/my/</code></td>
-<td>All exam submissions</td>
+<td><code>/learning/homeworks/my/</code></td>
+<td>Homework submissions</td>
 </tr>
 </tbody>
 </table>
 <p><strong><code>GET /courses/videos/&lt;id&gt;/play/</code> Response:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"https://vz-964b4290-bbe.b-cdn.net/a1b2c3d4-.../play_720p.m3u8?token=...&amp;expires=..."</span>,
-  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-number">1721407200</span>,
-  <span class="hljs-attr">"token"</span>: <span class="hljs-string">"7a8b9c0d..."</span>
+  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"https://vz-...b-cdn.net/.../play_720p.m3u8?token=..."</span>,
+  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-number">1721407200</span>
 }
 </div></code></pre>
-<p><strong>Access Rules for play:</strong></p>
+<p><strong>Access Rules:</strong></p>
 <table>
 <thead>
 <tr>
@@ -3148,15 +2942,15 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </thead>
 <tbody>
 <tr>
-<td>Lecture not purchased</td>
+<td>Not purchased</td>
 <td><code>403</code></td>
 </tr>
 <tr>
-<td>Purchase expired</td>
+<td>Expired</td>
 <td><code>403</code></td>
 </tr>
 <tr>
-<td>Watch limit reached (default: 4)</td>
+<td>Watch limit reached</td>
 <td><code>403</code></td>
 </tr>
 <tr>
@@ -3165,64 +2959,40 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </tr>
 </tbody>
 </table>
-<p><strong><code>POST /courses/progress/update/</code> Request:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"video"</span>: <span class="hljs-number">42</span>,
-  <span class="hljs-attr">"progress_seconds"</span>: <span class="hljs-number">300</span>,
-  <span class="hljs-attr">"duration_seconds"</span>: <span class="hljs-number">600</span>,
-  <span class="hljs-attr">"platform_data"</span>: {}
-}
-</div></code></pre>
-<p><strong>Page layout (video player + tabs below):</strong></p>
+<p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>HLS Video Player</strong> (e.g., hls.js or video.js):
+<li><strong>Dark topbar</strong> with breadcrumb nav back to Course Lectures</li>
+<li><strong>Video player:</strong> 16:9 aspect ratio, max 854px wide (YouTube-sized) — not full width</li>
+<li><strong>Video info:</strong> Lecture name, topic name, teacher, &quot;Video X of Y&quot; indicator</li>
+<li><strong>Tabs below player:</strong> Overview | Materials
 <ul>
-<li>Source: <code>GET /courses/videos/&lt;id&gt;/play/</code> → <code>playback_url</code></li>
-<li>On play: track progress via <code>POST /courses/progress/update/</code> every 30 seconds</li>
-<li>On pause/end: final progress update</li>
-<li>Show video name and lecture name</li>
-<li>Previous/Next video navigation within the same lecture</li>
+<li><strong>Overview tab:</strong> Lecture description + buttons for &quot;Take Quiz&quot; and &quot;Do Homework&quot;</li>
+<li><strong>Materials tab:</strong> Downloadable files (name, size, Download button)</li>
 </ul>
 </li>
-<li><strong>Tabs below the player:</strong>
+<li><strong>Quizzes section (below tabs):</strong> Cards for each quiz:
 <ul>
-<li><strong>Videos tab:</strong> List of all videos in this lecture with watch status</li>
-<li><strong>Materials tab:</strong> Study materials (from <code>GET /materials/</code> — auto-filtered to purchased lectures)
-<ul>
-<li>List: file name, type badge (PDF/image), download link</li>
+<li>Title, question count, status badge (Passed/Failed/Pending), score, action button (&quot;View Results&quot; / &quot;Start Quiz&quot;)</li>
+<li>Click &quot;Start Quiz&quot; → navigate to <strong>Quiz Taking</strong> (Page 10)</li>
 </ul>
 </li>
-<li><strong>Homework tab:</strong> (if exists for this lecture)
+<li><strong>Homeworks section (below tabs):</strong> Cards for each homework:
 <ul>
-<li>Show homework title + description</li>
-<li>Bubble sheet UI (see Page 9 for details)</li>
+<li>Title, question count, status badge (Done/Pending), score, action button (&quot;View Submission&quot; / &quot;Start Homework&quot;)</li>
+<li>Click &quot;Start Homework&quot; → navigate to <strong>Homework Bubble Sheet</strong> (Page 9)</li>
 </ul>
 </li>
-<li><strong>Quiz tab:</strong> (if exists for this lecture)
+<li><strong>Right sidebar:</strong> Playlist of other videos in this lecture (prev/next navigation)</li>
+</ul>
+<p><strong>Progress tracking:</strong></p>
 <ul>
-<li>Show quiz info + &quot;Start Quiz&quot; button (see Page 10 for details)</li>
+<li>On video play: <code>POST /courses/progress/update/</code> every 30 seconds with <code>{&quot;video&quot;: id, &quot;progress_seconds&quot;: X, &quot;duration_seconds&quot;: Y}</code></li>
+<li>Progress only increases, <code>is_completed</code> when &gt;= 90%</li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
-<p><strong>Progress tracking rules:</strong></p>
-<ul>
-<li>Progress only increases (lower values ignored)</li>
-<li><code>is_completed</code> auto-set when &gt;= 90% watched</li>
-<li><code>watch_count</code> increments when gap &gt; 5 minutes since last watch</li>
-<li>Student must have purchased the lecture</li>
-<li>Each video tracks progress independently</li>
-</ul>
-<p><strong>Business rules for playback access:</strong></p>
-<ul>
-<li>Playback URL is signed and expires in 2 hours</li>
-<li>Watch limit is per-lecture (across ALL videos in the lecture), default 4 times</li>
-<li>Teacher can reopen access (grants 1 extra day, max 2 reopens — does NOT reset watch count)</li>
-</ul>
+<p><strong>Populates from:</strong> <code>play</code> endpoint; <code>materials</code> endpoint; <code>quizzes/my</code> and <code>homeworks/my</code> endpoints</p>
 <hr>
-<h3 id="page-9a-homework-submission-bubble-sheet--tab-inside-lecture-player">Page 9a: Homework Submission (Bubble Sheet — Tab inside Lecture Player)</h3>
-<p><strong>Purpose:</strong> Answer bubble-sheet homework (A/B/C/D choices) and submit for auto-grading.</p>
+<h3 id="page-9-homework-bubble-sheet-standalone-page">Page 9: Homework Bubble Sheet (Standalone Page)</h3>
+<p><strong>Purpose:</strong> Answer bubble-sheet homework — no question text, just A/B/C/D choices in a compact grid. Opened from Lecture Player's homework card.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -3238,7 +3008,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td>Homework detail</td>
 <td>GET</td>
 <td><code>/learning/homeworks/&lt;id&gt;/</code></td>
-<td>Bubble questions (student view)</td>
+<td>Bubble questions (only <code>order</code> + <code>choices_count</code>)</td>
 </tr>
 <tr>
 <td>Save draft</td>
@@ -3256,7 +3026,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td>Submit</td>
 <td>POST</td>
 <td><code>/learning/homeworks/&lt;id&gt;/submit/</code></td>
-<td>Submit for grading</td>
+<td>Submit for auto-grading</td>
 </tr>
 <tr>
 <td>View results</td>
@@ -3268,7 +3038,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </table>
 <p><strong><code>GET /learning/homeworks/&lt;id&gt;/</code> Response (student view):</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro"</span>,
+  <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">10</span>,
   <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Week 1 HW"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Chapter 1 exercises"</span>,
   <span class="hljs-attr">"bubble_questions"</span>: [
@@ -3277,11 +3047,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
   ]
 }
 </div></code></pre>
-<p><strong><code>PATCH /learning/homeworks/&lt;id&gt;/draft/</code> Request:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"answers"</span>: {<span class="hljs-attr">"1"</span>: <span class="hljs-string">"A"</span>, <span class="hljs-attr">"2"</span>: <span class="hljs-string">"B,D"</span>}
-}
-</div></code></pre>
+<p>Note: <code>HomeworkBubbleQuestion</code> has NO <code>text</code> field — only <code>order</code>, <code>choices_count</code>, <code>correct_answer</code>, <code>points</code>.</p>
 <p><strong><code>POST /learning/homeworks/&lt;id&gt;/submit/</code> Request:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"bubble_answers"</span>: [
@@ -3290,88 +3056,32 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
   ]
 }
 </div></code></pre>
-<p><strong><code>POST /learning/homeworks/&lt;id&gt;/submit/</code> Response — 200 OK:</strong></p>
+<p><strong>Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Homework submitted and auto-graded."</span>,
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">10</span>,
-  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"graded"</span>
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>, <span class="hljs-attr">"status"</span>: <span class="hljs-string">"graded"</span>
 }
 </div></code></pre>
-<p><strong><code>GET /learning/homework-submissions/&lt;id&gt;/</code> Response:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"homework"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>,
-  <span class="hljs-attr">"status"</span>: <span class="hljs-string">"graded"</span>, <span class="hljs-attr">"total_points"</span>: <span class="hljs-number">3</span>,
-  <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>,
-  <span class="hljs-attr">"bubble_answers"</span>: [
-    {
-      <span class="hljs-attr">"bubble_question"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"question_order"</span>: <span class="hljs-number">1</span>,
-      <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"A"</span>, <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"A"</span>,
-      <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">true</span>,
-      <span class="hljs-attr">"points_earned"</span>: <span class="hljs-string">"1.00"</span>
-    },
-    {
-      <span class="hljs-attr">"bubble_question"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"question_order"</span>: <span class="hljs-number">2</span>,
-      <span class="hljs-attr">"selected_choice"</span>: <span class="hljs-string">"B,D"</span>, <span class="hljs-attr">"correct_answer"</span>: <span class="hljs-string">"A,C"</span>,
-      <span class="hljs-attr">"answer_explanation"</span>: <span class="hljs-string">"Because..."</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">false</span>,
-      <span class="hljs-attr">"points_earned"</span>: <span class="hljs-string">"0.00"</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong>Access Control:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Check</th>
-<th>Blocked?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Must have purchased the lecture</td>
-<td><code>404</code></td>
-</tr>
-<tr>
-<td>Homework must be published</td>
-<td><code>404</code></td>
-</tr>
-<tr>
-<td>One submission only per student</td>
-<td><code>400</code> if already submitted</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Page layout:</strong></p>
+<p><strong>Page layout (compact — no scroll):</strong></p>
 <ul>
-<li><strong>Homework info:</strong> Title, description, total points</li>
-<li><strong>Bubble sheet form:</strong>
+<li><strong>Dark topbar</strong> with breadcrumb back to Lecture Player</li>
+<li><strong>Header bar:</strong> Homework title, question count, points per question</li>
+<li><strong>Bubble sheet table:</strong> Single scrollable column, no page scroll
 <ul>
-<li>Each question: &quot;Q1&quot; / &quot;Q2&quot; etc.</li>
-<li>Choice buttons: A / B / C / D (or more, based on <code>choices_count</code>)</li>
-<li>Single choice = radio button, multiple choices = checkboxes</li>
-<li>Correct answer letter is hidden from students (only shown if <code>show_grades=true</code> on the homework)</li>
+<li><strong>Columns:</strong> <code>#</code> | <code>Answer</code> (selected choice letter) | <code>A</code> | <code>B</code> | <code>C</code> | <code>D</code></li>
+<li>Each row = one question (numbered 1..N)</li>
+<li>Circles (~28px): click to select. Selected circle fills with brand color.</li>
+<li>After submit: green = correct, red = wrong. Correct answers also highlighted.</li>
 </ul>
 </li>
-<li><strong>Auto-save:</strong> Call <code>PATCH .../draft/</code> every 5 seconds or on answer change</li>
-<li><strong>Load draft:</strong> On page load, call <code>GET .../draft/</code> to restore saved answers</li>
-<li><strong>Submit button:</strong> Validates all questions answered → <code>POST .../submit/</code></li>
-<li><strong>Results view</strong> (after submission):
-<ul>
-<li>Per-question: student's choice, correct/wrong indicator, points earned</li>
-<li>Correct answer + explanation shown <strong>only if</strong> <code>show_grades=true</code></li>
+<li><strong>Footer:</strong> Answered/unanswered count with progress bar, Submit button, Back link</li>
+<li><strong>Result bar</strong> (after submit): Score (e.g. &quot;105 / 150&quot;), inline Back link</li>
+<li><strong>No question text</strong> shown — matches <code>HomeworkBubbleQuestion</code> model (only <code>order</code> + <code>choices_count</code>)</li>
 </ul>
-</li>
-</ul>
-<p><strong>Grading:</strong></p>
-<ul>
-<li>Auto-graded immediately on submit</li>
-<li>No partial credit for multiple-answer questions — all must match</li>
-<li>Score = sum of points for correct questions</li>
-</ul>
+<p><strong>Populates from:</strong> <code>homeworks/&lt;id&gt;</code> for questions; <code>draft</code> for save/load; <code>submit</code> for grading; <code>homework-submissions/&lt;id&gt;</code> for results</p>
 <hr>
-<h3 id="page-9b-quiz-taking-tab-inside-lecture-player">Page 9b: Quiz Taking (Tab inside Lecture Player)</h3>
-<p><strong>Purpose:</strong> Take a timed quiz with MCQ and written questions, auto-save drafts, submit for grading.</p>
+<h3 id="page-10-quiz-taking-standalone-page">Page 10: Quiz Taking (Standalone Page)</h3>
+<p><strong>Purpose:</strong> Take a timed quiz one question at a time with navigator, auto-save drafts, and view detailed results after submission.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -3384,28 +3094,22 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </thead>
 <tbody>
 <tr>
-<td>Quiz list</td>
-<td>GET</td>
-<td><code>/learning/quizzes/my/</code></td>
-<td>All quiz submissions (history)</td>
-</tr>
-<tr>
 <td>Quiz detail</td>
 <td>GET</td>
 <td><code>/learning/quizzes/&lt;id&gt;/</code></td>
-<td>Quiz info (no questions until started)</td>
+<td>Quiz info (settings visible, questions hidden until started)</td>
 </tr>
 <tr>
 <td>Start quiz</td>
 <td>POST</td>
 <td><code>/learning/quizzes/&lt;id&gt;/start/</code></td>
-<td>Create attempt, get questions</td>
+<td>Create attempt, get questions + <code>submission_id</code></td>
 </tr>
 <tr>
 <td>Resume quiz</td>
 <td>GET</td>
 <td><code>/learning/quizzes/&lt;id&gt;/resume/</code></td>
-<td>Continue existing attempt</td>
+<td>Restore active attempt with saved answers</td>
 </tr>
 <tr>
 <td>Save draft</td>
@@ -3429,328 +3133,93 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </table>
 <p><strong><code>POST /learning/quizzes/&lt;id&gt;/start/</code> Response:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">15</span>,
-  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-number">1</span>,
-  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-number">30</span>,
-  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>,
+  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">15</span>, <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-number">30</span>, <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>,
   <span class="hljs-attr">"questions"</span>: [
     {
-      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-number">50</span>,
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-number">10</span>,
-      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is 2+2?"</span>,
-      <span class="hljs-attr">"image"</span>: <span class="hljs-literal">null</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-number">2</span>,
-      <span class="hljs-attr">"choices"</span>: [
-        {<span class="hljs-attr">"id"</span>: <span class="hljs-number">100</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"4"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
-        {<span class="hljs-attr">"id"</span>: <span class="hljs-number">101</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"5"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
-      ]
-    },
-    {
-      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-number">51</span>,
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-number">11</span>,
-      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"Explain photosynthesis."</span>,
-      <span class="hljs-attr">"image"</span>: <span class="hljs-literal">null</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"written"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-number">5</span>,
-      <span class="hljs-attr">"choices"</span>: []
+      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-number">50</span>, <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-number">10</span>,
+      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is 2+2?"</span>, <span class="hljs-attr">"image"</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>, <span class="hljs-attr">"points"</span>: <span class="hljs-number">2</span>,
+      <span class="hljs-attr">"choices"</span>: [{<span class="hljs-attr">"id"</span>: <span class="hljs-number">100</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"4"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>}, {<span class="hljs-attr">"id"</span>: <span class="hljs-number">101</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"5"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}]
     }
   ]
-}
-</div></code></pre>
-<p><strong><code>GET /learning/quizzes/&lt;id&gt;/resume/</code> Response</strong> (same format as start but includes saved answers):</p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">15</span>,
-  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-number">1</span>,
-  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-number">30</span>,
-  <span class="hljs-attr">"timer_remaining"</span>: <span class="hljs-number">25.5</span>,
-  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>,
-  <span class="hljs-attr">"questions"</span>: [
-    {
-      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-number">50</span>,
-      <span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-number">10</span>,
-      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is 2+2?"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-number">2</span>,
-      <span class="hljs-attr">"choices"</span>: [...],
-      <span class="hljs-attr">"saved_choice_ids"</span>: [<span class="hljs-number">100</span>],
-      <span class="hljs-attr">"saved_written_answer"</span>: <span class="hljs-string">""</span>
-    }
-  ]
-}
-</div></code></pre>
-<p><strong><code>PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</code> Request:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"choice_ids"</span>: [<span class="hljs-number">100</span>],
-  <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">""</span>
 }
 </div></code></pre>
 <p><strong><code>POST /learning/quizzes/&lt;id&gt;/submit/</code> Request:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"answers"</span>: [
-    {<span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"choice_ids"</span>: [<span class="hljs-number">100</span>], <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">""</span>},
-    {<span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-number">11</span>, <span class="hljs-attr">"choice_ids"</span>: [], <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"Plants use sunlight..."</span>}
+    {<span class="hljs-attr">"quiz_question_id"</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">"choice_ids"</span>: [<span class="hljs-number">100</span>], <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">""</span>}
   ]
 }
 </div></code></pre>
-<p><strong><code>POST /learning/quizzes/&lt;id&gt;/submit/</code> Response — 200 OK:</strong></p>
+<p><strong>Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Quiz submitted successfully."</span>,
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">15</span>,
-  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"5.00"</span>,
-  <span class="hljs-attr">"score_visible"</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-literal">true</span>
+  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Quiz submitted successfully."</span>, <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">15</span>,
+  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"5.00"</span>, <span class="hljs-attr">"score_visible"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-literal">true</span>
 }
 </div></code></pre>
-<p><strong>Access Checks for start:</strong></p>
+<p><strong>Settings fields (from <code>QuizSettings</code>):</strong></p>
 <table>
 <thead>
 <tr>
-<th>Check</th>
-<th>Failure</th>
+<th>Field</th>
+<th>Values</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Must have purchased the lecture</td>
-<td><code>403</code></td>
+<td><code>timer_minutes</code></td>
+<td>0–1440</td>
+<td>Time limit. 0 = no limit.</td>
 </tr>
 <tr>
-<td>Must be enrolled and approved</td>
-<td><code>403</code></td>
+<td><code>max_attempts</code></td>
+<td>1+</td>
+<td>Max attempts allowed</td>
 </tr>
 <tr>
-<td>Quiz must be published</td>
-<td><code>404</code></td>
+<td><code>score_visibility</code></td>
+<td>immediate / manual</td>
+<td>When score is shown to student</td>
 </tr>
 <tr>
-<td>Must not exceed max attempts</td>
-<td><code>400</code></td>
+<td><code>answers_visibility</code></td>
+<td>immediate / manual</td>
+<td>When correct answers are shown</td>
+</tr>
+<tr>
+<td><code>question_order</code></td>
+<td>fixed / random</td>
+<td>Order of questions</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Grading Rules (for submit):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Question Type</th>
-<th>Correct</th>
-<th>Points</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>mcq_single</code></td>
-<td>Exactly correct choice</td>
-<td>Full</td>
-</tr>
-<tr>
-<td><code>mcq_single</code></td>
-<td>Wrong choice</td>
-<td>0</td>
-</tr>
-<tr>
-<td><code>mcq_multiple</code></td>
-<td>All correct, no extras</td>
-<td>Full</td>
-</tr>
-<tr>
-<td><code>mcq_multiple</code></td>
-<td>Subset of correct (no extras)</td>
-<td>Partial (proportional)</td>
-</tr>
-<tr>
-<td><code>mcq_multiple</code></td>
-<td>Any incorrect chosen</td>
-<td>0</td>
-</tr>
-<tr>
-<td><code>written</code></td>
-<td>Auto-graded</td>
-<td>0 until teacher manually grades</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Timer behavior:</strong></p>
-<ul>
-<li><code>timer_minutes</code> = time limit (0 = unlimited)</li>
-<li>If timer expires + 1 min grace, submission is rejected as <code>is_timed_out</code></li>
-<li><code>timer_remaining</code> in resume response = minutes left (can be 0 if expired)</li>
-</ul>
 <p><strong>Page flow:</strong></p>
 <ol>
-<li><strong>Before starting:</strong> Show quiz info (title, description, total_points, settings) — questions hidden</li>
-<li><strong>Click &quot;Start Quiz&quot;:</strong> <code>POST /learning/quizzes/&lt;id&gt;/start/</code> → get questions + <code>submission_id</code></li>
-<li><strong>Quiz page:</strong>
+<li><strong>Start screen:</strong> Quiz title, question count, settings displayed (timer, max attempts, score/answer visibility, question order). &quot;Start Quiz&quot; button.</li>
+<li><strong>Quiz in progress (after start):</strong>
 <ul>
-<li><strong>Timer countdown</strong> (if <code>timer_minutes &gt; 0</code>)</li>
-<li><strong>Questions:</strong> One per page or scrollable list</li>
-<li>MCQ: radio buttons (single) or checkboxes (multiple)</li>
-<li>Written: text area</li>
-<li><strong>Auto-save:</strong> Call <code>PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</code> every 5-10 seconds for each modified answer</li>
-<li><strong>Submit button:</strong> → confirmation dialog → <code>POST /learning/quizzes/&lt;id&gt;/submit/</code></li>
+<li><strong>Timer countdown</strong> in header (if <code>timer_minutes &gt; 0</code>)</li>
+<li><strong>Question navigator:</strong> Circle dots for each question — active (filled brand), answered (green outline), unanswered (empty). Click to jump.</li>
+<li><strong>One question per page:</strong> Question text, choices (radio for mcq_single, checkbox for mcq_multiple), Previous/Next buttons</li>
+<li><strong>Auto-save:</strong> Call <code>PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</code> on answer change</li>
+<li><strong>Submit button</strong> at bottom</li>
 </ul>
 </li>
-<li><strong>On page refresh:</strong> Call <code>GET /learning/quizzes/&lt;id&gt;/resume/</code> to restore state + saved answers + timer</li>
-<li><strong>After submission:</strong> Show results (score, per-question correct/wrong, correct answers if <code>answers_visible</code>)</li>
-<li><strong>History:</strong> <code>GET /learning/quizzes/my/</code> — see all past attempts</li>
+<li><strong>On page refresh:</strong> <code>GET /learning/quizzes/&lt;id&gt;/resume/</code> → restore timer, questions, saved answers</li>
+<li><strong>Results screen (after submit):</strong>
+<ul>
+<li>Score (X / Y), Passed/Failed status</li>
+<li>Attempt number, time taken, started time, finished time</li>
+<li>&quot;Back to Lecture&quot; link</li>
+</ul>
+</li>
 </ol>
-<p><strong>Error handling:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>400</td>
-<td>No active attempt found (start first)</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Already submitted</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Time limit exceeded</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Student sees:</strong></p>
-<ul>
-<li><code>correct_answer</code> on choices is <strong>NEVER shown</strong> to students (teachers only)</li>
-<li><code>correct_standalone_choice_texts</code> only shown if <code>answers_visibility</code> allows</li>
-</ul>
+<p><strong>Populates from:</strong> <code>quizzes/&lt;id&gt;</code> for info; <code>start</code> for beginning; <code>resume</code> for recovery; <code>save-draft</code> for auto-save; <code>submit</code> for grading; <code>quiz-submissions/&lt;id&gt;</code> for results</p>
 <hr>
-<h3 id="page-9c-exam-taking-tab-inside-lecture-player">Page 9c: Exam Taking (Tab inside Lecture Player)</h3>
-<p><strong>Purpose:</strong> Take a course-level exam with open/close dates. Same flow as quizzes.</p>
-<p><strong>APIs to use (from API_STUDENT.md):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Action</th>
-<th>Method</th>
-<th>Endpoint</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Exam history</td>
-<td>GET</td>
-<td><code>/learning/exams/my/</code></td>
-<td>All exam submissions</td>
-</tr>
-<tr>
-<td>Start exam</td>
-<td>POST</td>
-<td><code>/learning/exams/&lt;id&gt;/start/</code></td>
-<td>Create attempt, get questions</td>
-</tr>
-<tr>
-<td>Resume exam</td>
-<td>GET</td>
-<td><code>/learning/exams/&lt;id&gt;/resume/</code></td>
-<td>Continue existing attempt</td>
-</tr>
-<tr>
-<td>Submit exam</td>
-<td>POST</td>
-<td><code>/learning/exams/&lt;id&gt;/submit/</code></td>
-<td>Submit all answers</td>
-</tr>
-<tr>
-<td>View results</td>
-<td>GET</td>
-<td><code>/learning/exam-submissions/&lt;id&gt;/</code></td>
-<td>Per-question results</td>
-</tr>
-</tbody>
-</table>
-<p><strong><code>POST /learning/exams/&lt;id&gt;/start/</code> Response:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">20</span>,
-  <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-number">1</span>,
-  <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-number">60</span>,
-  <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"2026-07-18T10:00:00Z"</span>,
-  <span class="hljs-attr">"questions"</span>: [
-    {
-      <span class="hljs-attr">"answer_id"</span>: <span class="hljs-number">60</span>,
-      <span class="hljs-attr">"exam_question_id"</span>: <span class="hljs-number">15</span>,
-      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is the atomic mass of Carbon?"</span>,
-      <span class="hljs-attr">"image"</span>: <span class="hljs-literal">null</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>,
-      <span class="hljs-attr">"points"</span>: <span class="hljs-number">2</span>,
-      <span class="hljs-attr">"choices"</span>: [
-        {<span class="hljs-attr">"id"</span>: <span class="hljs-number">200</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"12"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
-        {<span class="hljs-attr">"id"</span>: <span class="hljs-number">201</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"14"</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
-      ]
-    }
-  ]
-}
-</div></code></pre>
-<p><strong><code>POST /learning/exams/&lt;id&gt;/submit/</code> Request:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"answers"</span>: [
-    {<span class="hljs-attr">"question_id"</span>: <span class="hljs-number">15</span>, <span class="hljs-attr">"choice_ids"</span>: [<span class="hljs-number">200</span>], <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">""</span>}
-  ]
-}
-</div></code></pre>
-<p><strong><code>POST /learning/exams/&lt;id&gt;/submit/</code> Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Exam submitted successfully."</span>,
-  <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">20</span>,
-  <span class="hljs-attr">"score"</span>: <span class="hljs-string">"2.00"</span>,
-  <span class="hljs-attr">"score_visible"</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-literal">true</span>
-}
-</div></code></pre>
-<p><strong>Access Checks for start:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Check</th>
-<th>Failure</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Must be enrolled and approved in the course</td>
-<td><code>403</code></td>
-</tr>
-<tr>
-<td>Current time must be after <code>open_date</code> (if set)</td>
-<td><code>403</code></td>
-</tr>
-<tr>
-<td>Current time must be before <code>close_date</code> (if set)</td>
-<td><code>403</code></td>
-</tr>
-<tr>
-<td>Must not exceed max attempts</td>
-<td><code>400</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Page flow:</strong> Identical to Quiz Taking (Page 10) but:</p>
-<ul>
-<li>Created at <strong>course level</strong>, not lecture level</li>
-<li>Has <code>open_date</code> and <code>close_date</code> — exam is locked outside this window</li>
-<li>Score/answers visibility can be set to <code>after_close</code> (auto-revealed after close_date passes)</li>
-<li>No draft auto-save (no <code>save-draft</code> endpoint for exams)</li>
-</ul>
-<p><strong>Business rules:</strong></p>
-<ul>
-<li>Same grading logic as quizzes (MCQ auto-graded, written = 0 until manual grade)</li>
-<li>Same timer rules</li>
-<li>Same resume flow on page refresh</li>
-<li><code>after_close</code> visibility: scores/answers become visible automatically after <code>close_date</code> passes</li>
-</ul>
-<hr>
-<h3 id="page-9-student-dashboard-build-last">Page 9: Student Dashboard (Build Last)</h3>
-<p><strong>Purpose:</strong> Landing page after student login. Shows enrolled courses and balances at a glance. <strong>This is the last student page to build</strong> — it aggregates all features.</p>
+<h3 id="page-11-student-dashboard-build-last">Page 11: Student Dashboard (Build Last)</h3>
+<p><strong>Purpose:</strong> Landing page after student login. Shows enrolled courses and quick links to all features.</p>
 <p><strong>APIs to use (from API_STUDENT.md):</strong></p>
 <table>
 <thead>
@@ -3779,15 +3248,11 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <p><strong><code>GET /courses/enrolled/</code> Response:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
-  <span class="hljs-attr">"next"</span>: <span class="hljs-literal">null</span>,
-  <span class="hljs-attr">"previous"</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">"results"</span>: [
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
       <span class="hljs-attr">"teacher"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Dr Hany"</span>},
       <span class="hljs-attr">"grade"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>},
-      <span class="hljs-attr">"subject"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry"</span>},
-      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Full course covering..."</span>,
       <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../cover.jpg"</span>,
       <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
       <span class="hljs-attr">"status"</span>: <span class="hljs-string">"approved"</span>
@@ -3795,36 +3260,13 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
   ]
 }
 </div></code></pre>
-<p><strong><code>GET /payments/balance/</code> Response:</strong></p>
-<pre class="hljs"><code><div>[
-  {
-    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed"</span>,
-    <span class="hljs-attr">"course"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
-    <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
-    <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"150.00"</span>,
-    <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"2026-07-15T10:00:00Z"</span>
-  }
-]
-</div></code></pre>
 <p><strong>Page layout:</strong></p>
 <ul>
-<li><strong>Header:</strong> Student name + code (from <code>GET /accounts/me/</code> or stored from login response)</li>
-<li><strong>Balance summary card:</strong> &quot;You have X EGP in Y courses&quot; — clickable to see breakdown</li>
-<li><strong>Enrolled courses grid:</strong> 2-column card layout
-<ul>
-<li>Each card: cover picture, course name, teacher name, grade name</li>
-<li>Balance badge per course (from <code>/payments/balance/</code>)</li>
-<li>Click card → navigate to <strong>Course Lectures</strong> (Page 6)</li>
+<li><strong>Page title:</strong> &quot;Dashboard&quot;</li>
+<li><strong>My Enrollments card:</strong> List of enrolled courses (cover thumbnail, course name, teacher name)</li>
+<li><strong>Quick Access card:</strong> Links to My Enrollments, Recharge Codes, Profile Settings with icons</li>
 </ul>
-</li>
-<li><strong>Empty state:</strong> &quot;You are not enrolled in any courses yet. Browse our catalog.&quot; + link to <strong>Course Catalog</strong> (Page 3)</li>
-<li><strong>Loading:</strong> Skeleton cards</li>
-</ul>
-<p><strong>Business rules:</strong></p>
-<ul>
-<li>Only shows <code>approved</code> enrollments (pending/rejected are not shown)</li>
-<li>Balances are per-course — show the balance for each course card</li>
-</ul>
+<p><strong>Populates from:</strong> <code>enrolled</code> endpoint; <code>balance</code> endpoint</p>
 
 </body>
 </html>

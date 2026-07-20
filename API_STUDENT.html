@@ -540,17 +540,26 @@ code {
   <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
   <span class="hljs-attr">"can_access_course"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"status_history"</span>: [
+    {
+      <span class="hljs-attr">"from_status"</span>: <span class="hljs-string">"pending | null"</span>,
+      <span class="hljs-attr">"to_status"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"changed_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ],
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
 }
 </div></code></pre>
 <hr>
 <h3 id="patch-accountsprofileme">PATCH /accounts/profile/me/</h3>
-<p><strong>Description:</strong> Update the current student's own profile.</p>
+<p><strong>Description:</strong> Update the current student's own profile. <strong>Only works when <code>status='declined'</code></strong> — other statuses are blocked.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code> or <code>application/json</code></p>
 <p><strong>Request Body:</strong> All fields from the profile are optional for PATCH. Same validation rules as registration apply.</p>
-<p><strong>Success Response — 200 OK:</strong> Same structure as GET.</p>
+<p><strong>Success Response — 200 OK:</strong> Same structure as GET. On success, if the student was <code>declined</code>, their status auto-resets to <code>pending</code> and <code>is_active</code> becomes <code>false</code> — the SiteOwner must review and re-activate.</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -561,6 +570,16 @@ code {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>403</code></td>
+<td>Profile is verified</td>
+<td><code>{&quot;error&quot;: &quot;Cannot update a verified profile. Contact an administrator.&quot;}</code></td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Profile is pending or suspended</td>
+<td><code>{&quot;error&quot;: &quot;Cannot update profile while account is in this state.&quot;}</code></td>
+</tr>
 <tr>
 <td><code>400</code></td>
 <td>Email exists (other user)</td>
@@ -1392,6 +1411,92 @@ code {
 <li>Code format: <code>XXXX-XXXX-XXXX-XXXX</code> (16 random chars, cryptographically secure).</li>
 <li>Every redemption creates an immutable <code>BalanceTransaction</code> ledger entry.</li>
 </ul>
+<hr>
+<h3 id="get-paymentstransactions">GET /payments/transactions/</h3>
+<p><strong>Description:</strong> Full balance transaction ledger for the logged-in student. Shows every balance change with <strong>before and after snapshots</strong>. Auto-filtered to the authenticated student.</p>
+<p><strong>Authentication:</strong> Student (auto-filtered to own transactions)</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>course</code></td>
+<td>Integer</td>
+<td>Filter by course ID</td>
+</tr>
+<tr>
+<td><code>transaction_type</code></td>
+<td>String</td>
+<td>Filter: <code>code_redeemed</code> or <code>lecture_purchase</code></td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Search in description text</td>
+</tr>
+<tr>
+<td><code>start_date</code></td>
+<td>String</td>
+<td>Filter by date range start (YYYY-MM-DD)</td>
+</tr>
+<tr>
+<td><code>end_date</code></td>
+<td>String</td>
+<td>Filter by date range end (YYYY-MM-DD)</td>
+</tr>
+<tr>
+<td><code>ordering</code></td>
+<td>String</td>
+<td><code>created_at</code> or <code>-created_at</code> (default: newest first)</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>Integer</td>
+<td>Page number</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>Integer</td>
+<td>Items per page (default: 50)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String (name_en / name_ar)"</span>,
+      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"transaction_type"</span>: <span class="hljs-string">"String (code_redeemed|lecture_purchase)"</span>,
+      <span class="hljs-attr">"transaction_type_display"</span>: <span class="hljs-string">"String (Code Redeemed|Lecture Purchased)"</span>,
+      <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"String (Decimal)"</span>,
+      <span class="hljs-attr">"balance_before"</span>: <span class="hljs-string">"String (Decimal)"</span>,
+      <span class="hljs-attr">"balance_after"</span>: <span class="hljs-string">"String (Decimal)"</span>,
+      <span class="hljs-attr">"source_type"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"source_type_display"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"source_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"metadata"</span>: {
+        <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String — The code string (for code_redeemed)"</span>,
+        <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String — Lecture name (for lecture_purchase)"</span>
+      },
+      <span class="hljs-attr">"performed_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"performed_by_name"</span>: <span class="hljs-string">"String | null — 'Student' for self-purchases, teacher name for code redemptions"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
 <hr>
 <h2 id="10-homeworks">10. Homeworks</h2>
 <p>Homework uses the <strong>Bubble Sheet</strong> model. Students see question numbers with A/B/C/D choices, select answers, and submit. All questions are auto-graded immediately.</p>

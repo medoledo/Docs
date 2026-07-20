@@ -906,6 +906,133 @@ Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;
 <p>| <strong>Batch name + batch list API</strong> | RechargeCode now has atch_name (auto-generated, per-teacher counter). Added GET /codes/batches/ (paginated batch list), GET /codes/batches/<uuid>/ (batch detail with codes), GET /codes/analytics/ (analytics dashboard with Teacher's Cut / SiteOwner's Cut). |</p>
 <p>| <strong>Code masking + audit history</strong> | Codes now returned with <code>code_masked</code> field (<code>&quot;ABDC XXXX XXXX XXXX&quot;</code>) for secure display. Added <code>redeemed_value</code> to batch detail. Added <code>GET /codes/history/</code> — unified audit log combining redemptions + blacklists with filters (date range, type, code search, teacher, course), sorted newest-first, paginated. Export now supports <code>GET /codes/export/</code> without <code>?batch=</code> — exports all visible codes. Added Teacher Name and Student Code columns to Excel export. |</p>
 <p>| <strong>Quiz/Exam settings cleanup</strong> | Removed 7 dead fields from both Quizzes and Exams: <code>shuffle_choices</code>, <code>allow_multiple_attempts</code> (merged into <code>max_attempts</code>), <code>attempt_scoring</code>, <code>show_correct_after_submission</code> (covered by <code>answers_visibility</code>), <code>difficulty</code> from questions, <code>passed</code> from submissions (always null). Removed <code>AFTER_CLOSE</code> visibility from Quizzes (no close date). Kept for Exams where it's used. |</p>
+<hr>
+<h2 id="v14--july-19-2026">v1.4 — July 19, 2026</h2>
+<h3 id="new-features">New Features</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Lecture Students Progress endpoint</strong></td>
+<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code> — single API returns ALL enrolled students with purchase status, homework scores, quiz scores, and watch progress. Supports pagination (<code>?page=</code>, <code>?page_size=</code>). Shows non-buyers too.</td>
+</tr>
+<tr>
+<td><strong>Choice image update endpoints</strong></td>
+<td><code>PATCH /learning/quiz-choices/&lt;id&gt;/</code> and <code>PATCH /learning/exam-choices/&lt;id&gt;/</code> — same pattern as question image updates. Accepts multipart for image upload, JSON for text.</td>
+</tr>
+<tr>
+<td><strong>Management command: cleanup_stale_uploads</strong></td>
+<td><code>python manage.py cleanup_stale_uploads</code> — releases upload locks on videos where Bunny status hasn't progressed.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bug-fixes">Bug Fixes</h3>
+<table>
+<thead>
+<tr>
+<th>Fix</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Quiz/Exam multipart form data</strong></td>
+<td><code>settings</code> and <code>questions</code> JSON strings in multipart forms are now parsed correctly. QueryDict flattened before reaching serializer.</td>
+</tr>
+<tr>
+<td><strong>Choice images preserved on PATCH</strong></td>
+<td><code>_update_questions</code> no longer deletes+recreates choices. Existing choices are updated in-place; omitted fields (like <code>image</code>) are preserved.</td>
+</tr>
+<tr>
+<td><strong>Bunny: abandoned upload re-usable</strong></td>
+<td><code>create-upload/</code> no longer blocks re-upload on status 0 (Created, no file). User can re-upload if they navigated away.</td>
+</tr>
+<tr>
+<td><strong>Bunny: concurrent upload protection</strong></td>
+<td>While a TUS upload is in progress (status 0 with bytes on Bunny), other users get 409 Conflict.</td>
+</tr>
+<tr>
+<td><strong>Bunny: delete retry</strong></td>
+<td><code>DELETE /courses/videos/&lt;id&gt;/</code> retries Bunny's delete API 3 times before giving up.</td>
+</tr>
+<tr>
+<td><strong>Bunny: stale sync removed</strong></td>
+<td><code>_sync_bunny_status</code> no longer has a 24-hour cutoff — videos of any age are synced.</td>
+</tr>
+<tr>
+<td><strong>Reopen resets watch count</strong></td>
+<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> now resets <code>VideoWatchProgress.watch_count = 0</code> so the student can watch again.</td>
+</tr>
+<tr>
+<td><strong>Codes analytics split</strong></td>
+<td><code>total_value</code> replaced by <code>valid_value</code>, <code>used_value</code>, <code>blacklisted_value</code> — blacklisted code values no longer inflate totals.</td>
+</tr>
+<tr>
+<td><strong>Teacher/SiteOwner cut swapped</strong></td>
+<td>Teacher now gets <code>used_value - platform_fee</code> (the remainder), SiteOwner gets the flat <code>price_per_student</code> fee.</td>
+</tr>
+<tr>
+<td><strong>Batch counter removed from notes</strong></td>
+<td>Generated codes no longer append <code> (1/1000)</code> counter to the <code>notes</code> field.</td>
+</tr>
+<tr>
+<td><strong>Email verification blocks existing emails</strong></td>
+<td><code>POST /accounts/verify-email/request/</code> now checks if the email is already linked to any account before sending OTP.</td>
+</tr>
+<tr>
+<td><strong>OTP_EXPIRY_MINUTES cleanup</strong></td>
+<td>Removed unused <code>OTP_EXPIRY_MINUTES = 10</code> from <code>validators.py</code> — actual expiry is always 30 minutes from <code>settings.py</code>.</td>
+</tr>
+<tr>
+<td><strong>Password validation on all endpoints</strong></td>
+<td>Django's password validators now applied to student registration, password reset, change password, and teacher password update.</td>
+</tr>
+<tr>
+<td><strong>effective_expiry removed from purchase serializer</strong></td>
+<td><code>effective_expiry</code> removed because it changes on every reopen — <code>is_expired</code> + <code>expires_at</code> + <code>extra_days</code> give the full picture.</td>
+</tr>
+<tr>
+<td><strong>reopened_at redundant source removed</strong></td>
+<td>Fixed <code>AssertionError</code> in <code>StudentPurchaseInfoSerializer</code> by removing redundant <code>source='reopened_at'</code> argument.</td>
+</tr>
+<tr>
+<td><strong>Codes history pagination fix</strong></td>
+<td>Generator converted to list to support <code>len()</code> for Django paginator.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="permission-changes">Permission Changes</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Old</th>
+<th>New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /accounts/verify-email/request/</code></td>
+<td>Public (any email)</td>
+<td>Public but blocks already-registered emails</td>
+</tr>
+<tr>
+<td><code>PATCH /accounts/profile/me/</code></td>
+<td>Verified/pending/suspended could edit</td>
+<td><strong>Only declined</strong> can edit; resets to pending</td>
+</tr>
+<tr>
+<td><code>POST /payments/codes/</code></td>
+<td>Assistant could generate</td>
+<td><strong>Teacher and SiteOwner only</strong> (Assistant view-only)</td>
+</tr>
+</tbody>
+</table>
 
 </body>
 </html>
