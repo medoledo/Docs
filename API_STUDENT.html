@@ -396,7 +396,6 @@ code {
 <ul>
 <li><a href="#post-coursesenrollmentsenroll">POST /courses/enrollments/enroll/</a></li>
 <li><a href="#get-coursesenrollmentsmy">GET /courses/enrollments/</a></li>
-<li><a href="#get-coursesenrolled">GET /courses/enrolled/</a></li>
 <li>[<code>POST /courses/enrollments/&lt;id&gt;/cancel/](#post-coursesenrollmentsidcancel)</code></li>
 </ul>
 </li>
@@ -879,41 +878,52 @@ code {
 </ul>
 <hr>
 <h3 id="get-coursesenrollments">GET /courses/enrollments/</h3>
-<p><strong>Description:</strong> Student views their own enrollments.</p>
+<p><strong>Description:</strong> Student views their own enrollments. Returns all statuses (pending/approved/rejected). For approved enrollments, includes course cover picture and topic/lecture counts.</p>
 <p><strong>Authentication:</strong> Student</p>
-<p><strong>Success Response — 200 OK:</strong> Array of enrollments.</p>
-<hr>
-<h3 id="get-coursesenrolled">GET /courses/enrolled/</h3>
-<p><strong>Description:</strong> Get all courses the student is enrolled in (approved status only).</p>
-<p><strong>Authentication:</strong> Student</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td>String</td>
+<td>Filter: <code>pending</code>, <code>approved</code>, <code>rejected</code></td>
+</tr>
+</tbody>
+</table>
 <p><strong>Success Response — 200 OK:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"teacher"</span>: {
-        <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-        <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
-      },
-      <span class="hljs-attr">"grade"</span>: {
-        <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-        <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
-      },
-      <span class="hljs-attr">"subject"</span>: {
-        <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-        <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>
-      },
-      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
-      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String — approved"</span>
-    }
-  ]
-}
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+    <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String (en / ar)"</span>,
+    <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String | null"</span>,
+    <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String | null"</span>,
+    <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
+    <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"String | null"</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (pending|approved|rejected)"</span>,
+    <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"String (Pending|Approved|Rejected)"</span>,
+    <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String (Decimal) — '0.00' if no balance"</span>,
+    <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"String (URL) | null — Only for approved enrollments"</span>,
+    <span class="hljs-attr">"topic_count"</span>: <span class="hljs-string">"Integer | null — Only for approved enrollments"</span>,
+    <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-string">"Integer | null — Only for approved enrollments"</span>,
+    <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+    <span class="hljs-attr">"responded_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+    <span class="hljs-attr">"responded_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+    <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
+    <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
+  }
+]
 </div></code></pre>
 <hr>
 <h3 id="post-coursesenrollmentsidcancel"><code>POST /courses/enrollments/&lt;id&gt;/cancel/</code></h3>

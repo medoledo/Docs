@@ -2684,46 +2684,49 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td>My enrollments</td>
 <td>GET</td>
 <td><code>/courses/enrollments/</code></td>
-<td>All student enrollments (auto-filtered)</td>
-</tr>
-<tr>
-<td>Enrolled courses</td>
-<td>GET</td>
-<td><code>/courses/enrolled/</code></td>
-<td>Only approved enrollments</td>
+<td>All student enrollments (auto-filtered). Use <code>?status=approved</code> for approved only</td>
 </tr>
 </tbody>
 </table>
-<p><strong><code>GET /courses/enrolled/</code> Response:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
-      <span class="hljs-attr">"teacher"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Dr Hany"</span>},
-      <span class="hljs-attr">"grade"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>},
-      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../cover.jpg"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"approved"</span>
-    }
-  ]
-}
+<p><strong><code>GET /courses/enrollments/</code> Response (student view):</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Ahmed / أحمد"</span>, <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"1234567"</span>,
+    <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+    <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"3rd Secondary"</span>,
+    <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
+    <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"Chemistry"</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"approved"</span>,
+    <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"Approved"</span>,
+    <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"150.00"</span>,
+    <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../covers/chem.jpg"</span>,
+    <span class="hljs-attr">"topic_count"</span>: <span class="hljs-number">5</span>,
+    <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-number">20</span>,
+    <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
+    <span class="hljs-attr">"responded_by"</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">"responded_by_name"</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">"responded_at"</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">"response_note"</span>: <span class="hljs-literal">null</span>
+  }
+]
 </div></code></pre>
+<p><strong>Note:</strong> <code>cover_picture</code>, <code>topic_count</code>, <code>total_lectures</code> are only non-null for approved enrollments.</p>
 <p><strong>Page layout:</strong></p>
 <ul>
 <li><strong>Page title:</strong> &quot;My Enrollments&quot;</li>
 <li><strong>Course cards grid:</strong> Each card shows:
 <ul>
-<li>Cover image</li>
+<li>Cover image (from <code>cover_picture</code>)</li>
 <li>Course name</li>
 <li>Teacher name</li>
-<li>Topics count, lectures count (from enrollment/course data)</li>
-<li>&quot;Continue Learning&quot; button â†’ links to <strong>Course Lectures</strong> (Page 6)</li>
+<li>Topics count, lectures count (from <code>topic_count</code>, <code>total_lectures</code>)</li>
+<li>&quot;Continue Learning&quot; button → links to <strong>Course Lectures</strong> (Page 6)</li>
 </ul>
 </li>
 <li><strong>Empty state:</strong> &quot;No enrollments yet&quot;</li>
 </ul>
-<p><strong>Populates from:</strong> <code>enrolled</code> endpoint; course counts from <code>preview</code> or <code>lectures</code> endpoints</p>
+<p><strong>Populates from:</strong> <code>enrollments</code> endpoint with <code>?status=approved</code></p>
 <hr>
 <h3 id="page-6-course-lectures">Page 6: Course Lectures</h3>
 <p><strong>Purpose:</strong> View all topics inside an enrolled course. Each topic is a clickable square card that navigates to the lecture player or purchase page.</p>
@@ -3236,9 +3239,9 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </thead>
 <tbody>
 <tr>
-<td>My enrolled courses</td>
+<td>My enrollments</td>
 <td>GET</td>
-<td><code>/courses/enrolled/</code></td>
+<td><code>/courses/enrollments/?status=approved</code></td>
 <td>Student only</td>
 </tr>
 <tr>
@@ -3249,20 +3252,19 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </tr>
 </tbody>
 </table>
-<p><strong><code>GET /courses/enrolled/</code> Response:</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
-  <span class="hljs-attr">"results"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
-      <span class="hljs-attr">"teacher"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Dr Hany"</span>},
-      <span class="hljs-attr">"grade"</span>: {<span class="hljs-attr">"id"</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">"name"</span>: <span class="hljs-string">"3rd Secondary"</span>},
-      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../cover.jpg"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"approved"</span>
-    }
-  ]
-}
+<p><strong><code>GET /courses/enrollments/?status=approved</code> Response:</strong></p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry 3rd Secondary"</span>,
+    <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"Dr Hany"</span>,
+    <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"Chemistry"</span>,
+    <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"https://.../covers/chem.jpg"</span>,
+    <span class="hljs-attr">"topic_count"</span>: <span class="hljs-number">5</span>,
+    <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-number">20</span>,
+    <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"150.00"</span>,
+    <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"2026-07-01T10:00:00Z"</span>
+  }
+]
 </div></code></pre>
 <p><strong>Page layout:</strong></p>
 <ul>
@@ -3270,7 +3272,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <li><strong>My Enrollments card:</strong> List of enrolled courses (cover thumbnail, course name, teacher name)</li>
 <li><strong>Quick Access card:</strong> Links to My Enrollments, Recharge Codes, Profile Settings with icons</li>
 </ul>
-<p><strong>Populates from:</strong> <code>enrolled</code> endpoint; <code>balance</code> endpoint</p>
+<p><strong>Populates from:</strong> <code>enrollments/?status=approved</code> endpoint; <code>balance</code> endpoint</p>
 <hr>
 <h3 id="page-12-my-lectures-aggregate">Page 12: My Lectures (Aggregate)</h3>
 <p><strong>Purpose:</strong> View all purchased lectures across all enrolled courses. Filter and navigate to watch.</p>
