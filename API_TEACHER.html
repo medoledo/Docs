@@ -1143,25 +1143,6 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Description:</strong> Returns ALL enrolled students for a lecture's course in a single response. For each student: purchase status, homework score, quiz score, and watch progress. Non-buyers are included (shows <code>is_purchased: false</code>). This replaces the need for 4+ separate API calls.</p>
 <p><strong>One response = everything you need for the Purchases tab.</strong></p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Error Responses:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Condition</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>403</code></td>
-<td>Not course owner</td>
-</tr>
-<tr>
-<td><code>404</code></td>
-<td>Lecture not found</td>
-</tr>
-</tbody>
-</table>
 <p><strong>Query Parameters:</strong></p>
 <table>
 <thead>
@@ -1181,6 +1162,35 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <td><code>page_size</code></td>
 <td>Integer</td>
 <td>Items per page (default: 50, max: 200)</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Filter by student name (en/ar) or student code — case-insensitive partial match</td>
+</tr>
+<tr>
+<td><code>is_purchased</code></td>
+<td>Boolean</td>
+<td><code>true</code> = only students who bought this lecture, <code>false</code> = only those who haven't</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>403</code></td>
+<td>Not course owner</td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Lecture not found</td>
 </tr>
 </tbody>
 </table>
