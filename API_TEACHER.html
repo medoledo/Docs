@@ -379,8 +379,8 @@ code {
 <ul>
 <li><strong>Login:</strong> Call <code>POST /api/accounts/login/</code>. The server sets two cookies:
 <ul>
-<li><code>access_token</code> — short-lived (30 minutes)</li>
-<li><code>refresh_token</code> — long-lived (7 days)</li>
+<li><code>access_token</code> â€” short-lived (30 minutes)</li>
+<li><code>refresh_token</code> â€” long-lived (7 days)</li>
 </ul>
 </li>
 <li><strong>Subsequent Requests:</strong> The browser automatically sends cookies. No <code>Authorization</code> header needed.</li>
@@ -480,7 +480,7 @@ code {
 <h4 id="get-accountsteacherassistants">GET /accounts/teacher/assistants/</h4>
 <p><strong>Description:</strong> List all assistants belonging to the authenticated teacher.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -497,7 +497,7 @@ code {
       <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
-      <span class="hljs-attr">"teacher"</span>: <span class="hljs-string">"Integer — Teacher ID"</span>
+      <span class="hljs-attr">"teacher"</span>: <span class="hljs-string">"Integer â€” Teacher ID"</span>
     }
   ]
 }
@@ -510,12 +510,12 @@ code {
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required) — Minimum 8 characters"</span>,
+  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"String (Required) â€” Minimum 8 characters"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"phone"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) — Must be globally unique"</span>,
-  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Optional) — male|female"</span>,
-  <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"File (Optional) — image/jpeg|image/png|image/webp"</span>
+  <span class="hljs-attr">"gmail"</span>: <span class="hljs-string">"String (Required) â€” Must be globally unique"</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"String (Optional) â€” male|female"</span>,
+  <span class="hljs-attr">"profile_picture"</span>: <span class="hljs-string">"File (Optional) â€” image/jpeg|image/png|image/webp"</span>
 }
 </div></code></pre>
 <hr>
@@ -527,14 +527,14 @@ code {
 <hr>
 <h4 id="delete-accountsteacherassistantid"><code>DELETE /accounts/teacher/assistant/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (must own the assistant)</p>
-<p><strong>Success Response — 204 No Content</strong></p>
+<p><strong>Success Response â€” 204 No Content</strong></p>
 <hr>
 <h2 id="2-my-courses">2. My Courses</h2>
 <hr>
 <h4 id="get-courses">GET /courses/</h4>
 <p><strong>Description:</strong> List courses taught by the authenticated teacher.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
-<p><strong>Success Response — 200 OK:</strong> Array of courses.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Array of courses.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -587,7 +587,7 @@ code {
 <h4 id="get-coursesidanalytics"><code>GET /courses/&lt;id&gt;/analytics/</code></h4>
 <p><strong>Description:</strong> Returns enrollment and purchase analytics for a specific course. Teachers/assistants can only view their own courses.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant (must own the course)</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
   <span class="hljs-attr">"enrollments"</span>: {
@@ -646,7 +646,7 @@ code {
 <h4 id="get-coursesenrollmentscoursexstatusapproved"><code>GET /courses/enrollments/?course=X&amp;status=approved</code></h4>
 <p><strong>Description:</strong> List all approved students enrolled in a specific course, with each student's balance for <strong>this course only</strong> (not their total across all courses).</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -655,9 +655,9 @@ code {
       <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String (en / ar)"</span>,
       <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String — Student's phone number"</span>,
-      <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String — Father's phone number"</span>,
-      <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String — Mother's phone number"</span>,
+      <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String â€” Student's phone number"</span>,
+      <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String â€” Father's phone number"</span>,
+      <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String â€” Mother's phone number"</span>,
       <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"String"</span>,
@@ -665,10 +665,10 @@ code {
       <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (pending|approved|rejected)"</span>,
       <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"String (Pending|Approved|Rejected)"</span>,
-      <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String (Decimal) — Current balance for this course"</span>,
-      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"String (URL) | null — Only for approved enrollments"</span>,
-      <span class="hljs-attr">"topic_count"</span>: <span class="hljs-string">"Integer | null — Only for approved enrollments"</span>,
-      <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-string">"Integer | null — Only for approved enrollments"</span>,
+      <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String (Decimal) â€” Current balance for this course"</span>,
+      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"String (URL) | null â€” Only for approved enrollments"</span>,
+      <span class="hljs-attr">"topic_count"</span>: <span class="hljs-string">"Integer | null â€” Only for approved enrollments"</span>,
+      <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-string">"Integer | null â€” Only for approved enrollments"</span>,
       <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
       <span class="hljs-attr">"responded_by"</span>: <span class="hljs-string">"Integer | null"</span>,
       <span class="hljs-attr">"responded_by_name"</span>: <span class="hljs-string">"String | null"</span>,
@@ -701,7 +701,7 @@ code {
 <h4 id="get-coursesidtopics"><code>GET /courses/&lt;id&gt;/topics/</code></h4>
 <p><strong>Description:</strong> List topics for a specific course (convenience shortcut for <code>GET /courses/topics/?course=&lt;id&gt;</code>).</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Success Response — 200 OK:</strong> Same format as <code>GET /courses/topics/</code>.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Same format as <code>GET /courses/topics/</code>.</p>
 <hr>
 <h4 id="get-coursestopics">GET /courses/topics/</h4>
 <p><strong>Description:</strong> List all topics.</p>
@@ -738,7 +738,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"next"</span>: <span class="hljs-string">"String (URL) | null"</span>,
@@ -766,11 +766,11 @@ code {
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer (Required) — Course ID"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer (Required) â€” Course ID"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String (Optional)"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional) — Default: 0"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional) — Default: true"</span>
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional) â€” Default: 0"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional) â€” Default: true"</span>
 }
 </div></code></pre>
 <hr>
@@ -793,7 +793,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong> Single topic with nested lectures.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Single topic with nested lectures.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
@@ -812,8 +812,8 @@ code {
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
       <span class="hljs-attr">"price"</span>: <span class="hljs-string">"Decimal"</span>,
-      <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal — Flat discount amount in EGP (not percentage)"</span>,
-      <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal — Price after subtracting discount (never below 0)"</span>,
+      <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal â€” Flat discount amount in EGP (not percentage)"</span>,
+      <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal â€” Price after subtracting discount (never below 0)"</span>,
       <span class="hljs-attr">"formatted_price"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean"</span>,
@@ -872,25 +872,25 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong> Array of lectures.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Array of lectures.</p>
 <hr>
 <h4 id="post-courseslectures">POST /courses/lectures/</h4>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <p><strong>Content-Type:</strong> <code>multipart/form-data</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"topic"</span>: <span class="hljs-string">"Integer (Required) — Topic ID"</span>,
+  <span class="hljs-attr">"topic"</span>: <span class="hljs-string">"Integer (Required) â€” Topic ID"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String (Required)"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String (Optional)"</span>,
   <span class="hljs-attr">"price"</span>: <span class="hljs-string">"Decimal (Required)"</span>,
-  <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal (Optional) — Default: 0.00"</span>,
-  <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer (Required) — Days of access after purchase (1-365)"</span>,
-  <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean (Optional) — Default: true"</span>,
-  <span class="hljs-attr">"picture"</span>: <span class="hljs-string">"File (Optional) — image/jpeg|image/png|image/webp"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional) — Default: 0"</span>
+  <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal (Optional) â€” Default: 0.00"</span>,
+  <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer (Required) â€” Days of access after purchase (1-365)"</span>,
+  <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean (Optional) â€” Default: true"</span>,
+  <span class="hljs-attr">"picture"</span>: <span class="hljs-string">"File (Optional) â€” image/jpeg|image/png|image/webp"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional) â€” Default: 0"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 201 Created:</strong> Single lecture.</p>
+<p><strong>Success Response â€” 201 Created:</strong> Single lecture.</p>
 <hr>
 <h4 id="get-courseslecturesid"><code>GET /courses/lectures/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
@@ -911,7 +911,7 @@ code {
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong> Single lecture with nested videos.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Single lecture with nested videos.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"topic"</span>: <span class="hljs-string">"Integer"</span>,
@@ -933,10 +933,10 @@ code {
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null — Bunny Stream GUID"</span>,
-      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
-      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
-      <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"String | null — Bunny auto-generated thumbnail URL (https://{cdn}/{id}/thumbnail.jpg)"</span>,
+      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null â€” Bunny Stream GUID"</span>,
+      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null â€” 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
+      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String â€” Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
+      <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"String | null â€” Bunny auto-generated thumbnail URL (https://{cdn}/{id}/thumbnail.jpg)"</span>,
       <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
@@ -956,16 +956,16 @@ code {
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active)</p>
 <hr>
 <h2 id="6-videos">6. Videos</h2>
-<p>All videos are hosted on <strong>Bunny Stream</strong>. The upload uses <strong>TUS direct upload</strong> — the backend
+<p>All videos are hosted on <strong>Bunny Stream</strong>. The upload uses <strong>TUS direct upload</strong> â€” the backend
 generates time-limited credentials server-side, and the frontend uploads directly to Bunny Stream
 using <code>tus-js-client</code>. <strong>No video bytes ever pass through the backend.</strong></p>
-<pre class="hljs"><code><div>1. Teacher creates a video record → POST /courses/videos/
-2. Frontend calls `POST /courses/videos/&lt;id&gt;/create-upload/` → returns TUS credentials
+<pre class="hljs"><code><div>1. Teacher creates a video record â†’ POST /courses/videos/
+2. Frontend calls `POST /courses/videos/&lt;id&gt;/create-upload/` â†’ returns TUS credentials
    (library_id, signature, expiration_time). API key stays server-side.
 3. Frontend uploads directly to Bunny using tus-js-client:
-   → endpoint: https://video.bunnycdn.com/tusupload
-   → headers: AuthorizationSignature, AuthorizationExpire, VideoId, LibraryId
-   → Zero backend CPU/RAM/bandwidth used
+   â†’ endpoint: https://video.bunnycdn.com/tusupload
+   â†’ headers: AuthorizationSignature, AuthorizationExpire, VideoId, LibraryId
+   â†’ Zero backend CPU/RAM/bandwidth used
 4. Bunny processes the video and calls the webhook when done
 5. Frontend polls `GET /courses/videos/&lt;id&gt;/` until status=4 (Finished)
 </div></code></pre>
@@ -1009,7 +1009,7 @@ using <code>tus-js-client</code>. <strong>No video bytes ever pass through the b
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -1017,10 +1017,10 @@ using <code>tus-js-client</code>. <strong>No video bytes ever pass through the b
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
-      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null — Bunny Stream GUID"</span>,
-      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null — 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
-      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String — Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
-      <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"String | null — Bunny auto-generated thumbnail URL (https://{cdn}/{id}/thumbnail.jpg)"</span>,
+      <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String | null â€” Bunny Stream GUID"</span>,
+      <span class="hljs-attr">"bunny_status"</span>: <span class="hljs-string">"Integer | null â€” 0=Created, 1=Uploaded, 2=Processing, 3=Transcoding, 4=Finished, 5=Error"</span>,
+      <span class="hljs-attr">"bunny_status_display"</span>: <span class="hljs-string">"String â€” Human-readable status (Pending, Created, Uploaded, Finished, etc.)"</span>,
+      <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"String | null â€” Bunny auto-generated thumbnail URL (https://{cdn}/{id}/thumbnail.jpg)"</span>,
       <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
@@ -1035,36 +1035,36 @@ using <code>tus-js-client</code>. <strong>No video bytes ever pass through the b
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer (Required) — Lecture ID"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer (Required) â€” Lecture ID"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String (Required)"</span>,
-  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional) — Default: 0"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional) — Default: true"</span>
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional) â€” Default: 0"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional) â€” Default: true"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 201 Created:</strong> Single video object (same structure as list item).</p>
+<p><strong>Success Response â€” 201 Created:</strong> Single video object (same structure as list item).</p>
 <hr>
 <h4 id="get-coursesvideosid"><code>GET /courses/videos/&lt;id&gt;/</code></h4>
 <p><strong>Authentication:</strong> Any authenticated user</p>
-<p><strong>Success Response — 200 OK:</strong> Single video object.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Single video object.</p>
 <hr>
 <h4 id="post-coursesvideosidcreate-upload"><code>POST /courses/videos/&lt;id&gt;/create-upload/</code></h4>
 <p><strong>Description:</strong> Creates the video entry on Bunny Stream and returns <strong>TUS credentials</strong>
 for direct browser-to-Bunny upload. The backend creates the Bunny entry (API key stays
 server-side) and generates a time-limited SHA256 signature. The frontend uses these
-credentials with <code>tus-js-client</code> to upload directly to Bunny — <strong>zero backend bandwidth</strong>.</p>
+credentials with <code>tus-js-client</code> to upload directly to Bunny â€” <strong>zero backend bandwidth</strong>.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (must own the lecture's course)</p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 201 Created:</strong></p>
+<p><strong>Success Response â€” 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"Integer — Local video ID"</span>,
-  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String — Bunny Stream GUID"</span>,
-  <span class="hljs-attr">"library_id"</span>: <span class="hljs-string">"Integer — Bunny Stream library ID (698152)"</span>,
-  <span class="hljs-attr">"expiration_time"</span>: <span class="hljs-string">"Integer — Unix timestamp (seconds) when credentials expire"</span>,
-  <span class="hljs-attr">"signature"</span>: <span class="hljs-string">"String — SHA256 hex signature for TUS AuthorizationSignature header"</span>
+  <span class="hljs-attr">"video_id"</span>: <span class="hljs-string">"Integer â€” Local video ID"</span>,
+  <span class="hljs-attr">"bunny_video_id"</span>: <span class="hljs-string">"String â€” Bunny Stream GUID"</span>,
+  <span class="hljs-attr">"library_id"</span>: <span class="hljs-string">"Integer â€” Bunny Stream library ID (698152)"</span>,
+  <span class="hljs-attr">"expiration_time"</span>: <span class="hljs-string">"Integer â€” Unix timestamp (seconds) when credentials expire"</span>,
+  <span class="hljs-attr">"signature"</span>: <span class="hljs-string">"String â€” SHA256 hex signature for TUS AuthorizationSignature header"</span>
 }
 </div></code></pre>
 <blockquote>
-<p><strong>⚠️ <code>expiration_time</code> is in SECONDS</strong> — JavaScript's <code>Date.now()</code> returns milliseconds.
+<p><strong>âš ï¸ <code>expiration_time</code> is in SECONDS</strong> â€” JavaScript's <code>Date.now()</code> returns milliseconds.
 Pass <code>expiration_time</code> directly to the <code>AuthorizationExpire</code> header without multiplying by 1000.</p>
 </blockquote>
 <hr>
@@ -1074,12 +1074,12 @@ Pass <code>expiration_time</code> directly to the <code>AuthorizationExpire</cod
 title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String (Optional) — New video title"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String (Optional) â€” New video title"</span>,
   <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer (Optional)"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean (Optional)"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong> Updated video object (same structure as list item).</p>
+<p><strong>Success Response â€” 200 OK:</strong> Updated video object (same structure as list item).</p>
 <p><strong>Note:</strong> If the Bunny update fails, the local DB is still updated and the error is logged.</p>
 <hr>
 <h4 id="delete-coursesvideosid"><code>DELETE /courses/videos/&lt;id&gt;/</code></h4>
@@ -1094,13 +1094,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"enrollment_ids"</span>: <span class="hljs-string">"[Integer] (required) — IDs of pending enrollments to approve"</span>,
-  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (optional) — Note for the student"</span>
+  <span class="hljs-attr">"enrollment_ids"</span>: <span class="hljs-string">"[Integer] (required) â€” IDs of pending enrollments to approve"</span>,
+  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (optional) â€” Note for the student"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"processed"</span>: <span class="hljs-string">"Integer — Number successfully approved"</span>,
+  <span class="hljs-attr">"processed"</span>: <span class="hljs-string">"Integer â€” Number successfully approved"</span>,
   <span class="hljs-attr">"total_requested"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"errors"</span>: <span class="hljs-string">"[{enrollment_id, error}]"</span>
 }
@@ -1139,13 +1139,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Content-Type:</strong> <code>application/json</code></p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"enrollment_ids"</span>: <span class="hljs-string">"[Integer] (required) — IDs of pending enrollments to reject"</span>,
-  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (optional) — Note for the student"</span>
+  <span class="hljs-attr">"enrollment_ids"</span>: <span class="hljs-string">"[Integer] (required) â€” IDs of pending enrollments to reject"</span>,
+  <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String (optional) â€” Note for the student"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"processed"</span>: <span class="hljs-string">"Integer — Number successfully rejected"</span>,
+  <span class="hljs-attr">"processed"</span>: <span class="hljs-string">"Integer â€” Number successfully rejected"</span>,
   <span class="hljs-attr">"total_requested"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"errors"</span>: <span class="hljs-string">"[{enrollment_id, error}]"</span>
 }
@@ -1181,7 +1181,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <tr>
 <td><code>search</code></td>
 <td>String</td>
-<td>Filter by student name (en/ar) or student code — case-insensitive partial match</td>
+<td>Filter by student name (en/ar) or student code â€” case-insensitive partial match</td>
 </tr>
 <tr>
 <td><code>is_purchased</code></td>
@@ -1209,7 +1209,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">10</span>,
   <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span>,
@@ -1268,7 +1268,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   ]
 }
 </div></code></pre>
-<p><strong>Field Reference — Top Level:</strong></p>
+<p><strong>Field Reference â€” Top Level:</strong></p>
 <table>
 <thead>
 <tr>
@@ -1369,8 +1369,8 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Business Rules:</strong></p>
 <ul>
 <li><code>can_reopen</code> is <strong>only true</strong> when <code>is_expired=true</code> AND <code>reopen_logs.count &lt; 2</code>. Non-expired purchases always get <code>can_reopen: false</code>.</li>
-<li><code>amount_paid</code> is a snapshot from the time of purchase — never changes, even if the lecture price changes later.</li>
-<li><code>homeworks[]</code> and <code>quizzes[]</code> at the top level define what assessments exist for this lecture. The per-student arrays always match the same length and order — iterate over them together.</li>
+<li><code>amount_paid</code> is a snapshot from the time of purchase â€” never changes, even if the lecture price changes later.</li>
+<li><code>homeworks[]</code> and <code>quizzes[]</code> at the top level define what assessments exist for this lecture. The per-student arrays always match the same length and order â€” iterate over them together.</li>
 <li>If a lecture has <strong>no homeworks</strong>, <code>homeworks</code> is <code>[]</code>. Same for quizzes.</li>
 </ul>
 <hr>
@@ -1378,7 +1378,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Description:</strong> Teacher/Assistant extends a student's access to an <strong>expired</strong> lecture by adding 1 extra day. Reopen is only available when the purchase is expired and hasn't reached the max reopen limit.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active) (lecture course owner), Assistant</p>
 <p><strong>Request Body:</strong> None (always grants exactly 1 extra day).</p>
-<p><strong>Success Response — 200 OK:</strong> Updated purchased lecture.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Updated purchased lecture.</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
@@ -1390,7 +1390,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"purchased_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"amount_paid"</span>: <span class="hljs-string">"Decimal"</span>,
-  <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer — Total extra days granted (cumulative)"</span>,
+  <span class="hljs-attr">"extra_days"</span>: <span class="hljs-string">"Integer â€” Total extra days granted (cumulative)"</span>,
   <span class="hljs-attr">"is_expired"</span>: <span class="hljs-string">"Boolean"</span>,
   <span class="hljs-attr">"reopened_by"</span>: <span class="hljs-string">"Integer | null"</span>,
   <span class="hljs-attr">"reopened_by_name"</span>: <span class="hljs-string">"String | null"</span>,
@@ -1435,11 +1435,11 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <ul>
 <li>Each reopen grants exactly <strong>1 extra day</strong>.</li>
 <li>Maximum <strong>2 reopens</strong> per purchase.</li>
-<li>Reopen is intended for <strong>expired</strong> purchases — the frontend should only show the reopen button when <code>can_reopen</code> is <code>true</code> (from <code>students-progress/</code> response).</li>
+<li>Reopen is intended for <strong>expired</strong> purchases â€” the frontend should only show the reopen button when <code>can_reopen</code> is <code>true</code> (from <code>students-progress/</code> response).</li>
 <li>Teachers can only reopen lectures in their own courses.</li>
 <li>Assistants can only reopen lectures for their teacher's courses.</li>
-<li>The <code>is_expired</code> field uses <code>expires_at + extra_days</code> to determine if access is still valid — it always reflects the current real expiry.</li>
-<li><strong>Resets watch count</strong> — the student's <code>VideoWatchProgress</code> records for this lecture are reset to <code>watch_count=0</code>, allowing them to watch again.</li>
+<li>The <code>is_expired</code> field uses <code>expires_at + extra_days</code> to determine if access is still valid â€” it always reflects the current real expiry.</li>
+<li><strong>Resets watch count</strong> â€” the student's <code>VideoWatchProgress</code> records for this lecture are reset to <code>watch_count=0</code>, allowing them to watch again.</li>
 </ul>
 <hr>
 <h2 id="9-exams">9. Exams</h2>
@@ -1602,7 +1602,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -1634,17 +1634,17 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </ul>
 <p><strong>Request Body (with inline questions):</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"integer (required) — Course ID"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string (required) — Exam title"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"integer (required) â€” Course ID"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string (required) â€” Exam title"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string (optional)"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean (optional, default: true)"</span>,
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean (optional, default: false)"</span>,
-  <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"datetime (ISO 8601, optional) — Students cannot start before this date."</span>,
-  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"datetime (ISO 8601, optional) — Students cannot start after this date."</span>,
+  <span class="hljs-attr">"open_date"</span>: <span class="hljs-string">"datetime (ISO 8601, optional) â€” Students cannot start before this date."</span>,
+  <span class="hljs-attr">"close_date"</span>: <span class="hljs-string">"datetime (ISO 8601, optional) â€” Students cannot start after this date."</span>,
   <span class="hljs-attr">"settings"</span>: {
-    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer (optional, default: 0) — 0 = unlimited, max 1440."</span>,
-    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') — 'immediate' or 'manual'"</span>,
-    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') — 'immediate' or 'manual'"</span>,
+    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer (optional, default: 0) â€” 0 = unlimited, max 1440."</span>,
+    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') â€” 'immediate' or 'manual'"</span>,
+    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') â€” 'immediate' or 'manual'"</span>,
     <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string (optional, default: 'fixed')"</span>,
     <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer (optional, default: 1)"</span>
   },
@@ -1761,13 +1761,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <li>MCQ questions should have at least 2 choices.</li>
 <li><strong>Images:</strong> Can be uploaded inline via <code>multipart/form-data</code> using the <code>image</code> field on questions and choices. When using JSON content-type, omit the <code>image</code> field (the existing image is preserved on update).</li>
 </ul>
-<p><strong>Success Response — 201 Created:</strong> Same structure as GET detail.</p>
+<p><strong>Success Response â€” 201 Created:</strong> Same structure as GET detail.</p>
 <hr>
 <h4 id="93-get-learningexamsid">9.3 GET /learning/exams/<id>/</h4>
 <p><strong>Description:</strong> Retrieve an exam with all questions, choices, and settings.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only view exams for their own courses. Others get 404.</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"course"</span>: <span class="hljs-string">"integer"</span>,
@@ -1816,13 +1816,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only update exams in their own courses. Others get 404.</p>
 <p><strong>Request Body:</strong> Same as POST (all fields optional for PATCH).</p>
-<p><strong>Success Response — 200 OK:</strong> Updated exam object.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Updated exam object.</p>
 <hr>
 <h4 id="95-delete-learningexamsid">9.5 DELETE /learning/exams/<id>/</h4>
 <p><strong>Description:</strong> Delete an exam and all its submissions, answers, and grades.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Access Control:</strong> Teachers can only delete exams in their own courses. Others get 404.</p>
-<p><strong>Success Response — 204 No Content</strong></p>
+<p><strong>Success Response â€” 204 No Content</strong></p>
 <hr>
 <h3 id="student-exam-flow">Student Exam Flow</h3>
 <hr>
@@ -1861,7 +1861,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tbody>
 </table>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
@@ -1886,7 +1886,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="97-get-learningexamsidresume">9.7 GET /learning/exams/<id>/resume/</h4>
 <p><strong>Description:</strong> Resume an active (not yet submitted) exam attempt. Returns remaining time, all questions with choices, and any previously saved draft answers. If the timer has expired, <code>timer_remaining</code> will be <code>0</code>.</p>
 <p><strong>Authentication:</strong> Student</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
@@ -1921,7 +1921,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <tbody>
 <tr>
 <td>400</td>
-<td>No active attempt found — student must start the exam first</td>
+<td>No active attempt found â€” student must start the exam first</td>
 </tr>
 <tr>
 <td>404</td>
@@ -1938,13 +1938,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"answers"</span>: [
     {
       <span class="hljs-attr">"question_id"</span>: <span class="hljs-string">"integer (required)"</span>,
-      <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] — For MCQ questions"</span>,
-      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string — For written questions"</span>
+      <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] â€” For MCQ questions"</span>,
+      <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string â€” For written questions"</span>
     }
   ]
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Exam submitted successfully."</span>,
   <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer"</span>,
@@ -1975,7 +1975,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"feedback"</span>: <span class="hljs-string">"string (optional)"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Written answer graded successfully."</span>,
   <span class="hljs-attr">"new_score"</span>: <span class="hljs-string">"string (decimal)"</span>
@@ -1986,7 +1986,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Description:</strong> Release scores for all submissions (for <code>manual</code> score_visibility).</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Scores released for X submissions."</span>
 }
@@ -1996,7 +1996,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Description:</strong> Release correct answers for all submissions (for <code>manual</code> answers_visibility).</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Answers released for X submissions."</span>
 }
@@ -2005,7 +2005,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="915-get-learningexamsmy">9.15 GET /learning/exams/my/</h4>
 <p><strong>Description:</strong> (Student-only) Get all exam submissions for the logged-in student across all courses.</p>
 <p><strong>Authentication:</strong> Student</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>[
   {
     <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
@@ -2057,7 +2057,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong> Updated choice object.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Updated choice object.</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -2086,10 +2086,10 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Query Parameters:</strong></p>
 <ul>
-<li><code>lecture</code> — Filter by lecture ID</li>
-<li><code>is_published</code> — <code>true</code> or <code>false</code></li>
+<li><code>lecture</code> â€” Filter by lecture ID</li>
+<li><code>is_published</code> â€” <code>true</code> or <code>false</code></li>
 </ul>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -2097,10 +2097,10 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
       <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title (required)"</span>,
+      <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string â€” Homework title (required)"</span>,
       <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
-      <span class="hljs-attr">"show_grades"</span>: <span class="hljs-string">"boolean — When true, students see correct answers after submission"</span>,
+      <span class="hljs-attr">"show_grades"</span>: <span class="hljs-string">"boolean â€” When true, students see correct answers after submission"</span>,
       <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
     }
@@ -2119,7 +2119,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer - Lecture ID"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title (required)"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string â€” Homework title (required)"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string - Description"</span>,
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
   <span class="hljs-attr">"show_grades"</span>: <span class="hljs-string">"boolean - When true, students see correct answers after submission"</span>,
@@ -2131,10 +2131,10 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </div></code></pre>
 <p><strong>Notes:</strong></p>
 <ul>
-<li><code>bubble_questions</code> is optional — questions can be added/updated later via PUT/PATCH with the same body format.</li>
+<li><code>bubble_questions</code> is optional â€” questions can be added/updated later via PUT/PATCH with the same body format.</li>
 <li><code>choices_count</code>: number of answer choices (4 = A/B/C/D, 5 = A/B/C/D/E, <strong>up to 8</strong>).</li>
 <li><strong>Maximum 300 bubble questions</strong> per homework.</li>
-<li><code>correct_answer</code>: single answer <code>&quot;A&quot;</code> or multiple answers <code>&quot;A,C&quot;</code>. <strong>No partial credit</strong> — all must match.</li>
+<li><code>correct_answer</code>: single answer <code>&quot;A&quot;</code> or multiple answers <code>&quot;A,C&quot;</code>. <strong>No partial credit</strong> â€” all must match.</li>
 <li><code>answer_explanation</code>: optional field shown to students after submission (only if <code>show_grades=true</code>).</li>
 <li>Bubble sheets are auto-graded on submission.</li>
 </ul>
@@ -2142,13 +2142,13 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="get-learninghomeworksid">GET /learning/homeworks/{id}/</h4>
 <p><strong>Description:</strong> Retrieve a homework with all bubble questions (teacher view).</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string — Homework title (required)"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string â€” Homework title (required)"</span>,
   <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean"</span>,
   <span class="hljs-attr">"total_points"</span>: <span class="hljs-string">"integer"</span>,
@@ -2178,7 +2178,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="get-learninghomeworksidsubmissions">GET /learning/homeworks/{id}/submissions/</h4>
 <p><strong>Description:</strong> List all submissions for a homework.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -2200,7 +2200,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="get-learninghomework-submissionsid">GET /learning/homework-submissions/{id}/</h4>
 <p><strong>Description:</strong> View a specific submission with per-question results.</p>
 <p><strong>Authentication:</strong> Student (own submissions), Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"homework"</span>: <span class="hljs-string">"integer"</span>,
@@ -2447,7 +2447,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -2485,16 +2485,16 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </ul>
 <p><strong>Request Body (with inline questions):</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer (required) — Lecture ID"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string (required) — Quiz title"</span>,
-  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string (optional) — Description"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer (required) â€” Lecture ID"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"string (required) â€” Quiz title"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string (optional) â€” Description"</span>,
   <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"boolean (optional, default: true)"</span>,
-  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean (optional, default: false) — Must be true for students to see the quiz."</span>,
+  <span class="hljs-attr">"is_published"</span>: <span class="hljs-string">"boolean (optional, default: false) â€” Must be true for students to see the quiz."</span>,
   <span class="hljs-attr">"settings"</span>: {
-    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer (optional, default: 0) — Time limit. 0 = unlimited, max 1440."</span>,
-    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') — 'immediate' or 'manual'."</span>,
-    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') — 'immediate' or 'manual'."</span>,
-    <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string (optional, default: 'fixed') — 'fixed' or 'random'."</span>,
+    <span class="hljs-attr">"timer_minutes"</span>: <span class="hljs-string">"integer (optional, default: 0) â€” Time limit. 0 = unlimited, max 1440."</span>,
+    <span class="hljs-attr">"score_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') â€” 'immediate' or 'manual'."</span>,
+    <span class="hljs-attr">"answers_visibility"</span>: <span class="hljs-string">"string (optional, default: 'immediate') â€” 'immediate' or 'manual'."</span>,
+    <span class="hljs-attr">"question_order"</span>: <span class="hljs-string">"string (optional, default: 'fixed') â€” 'fixed' or 'random'."</span>,
     <span class="hljs-attr">"max_attempts"</span>: <span class="hljs-string">"integer (optional, default: 1)"</span>
   },
   <span class="hljs-attr">"questions"</span>: [
@@ -2691,17 +2691,17 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p>The <code>image</code> field on both questions and choices is returned as a <strong>full URL</strong> in all responses (e.g. <code>&quot;https://.../media/quiz_questions/photo.jpg&quot;</code>). Upload the file using the dedicated PATCH endpoint with content type <code>multipart/form-data</code> — the <code>image</code> field accepts a binary file, not a URL string.</p>
+<p>The <code>image</code> field on both questions and choices is returned as a <strong>full URL</strong> in all responses (e.g. <code>&quot;https://.../media/quiz_questions/photo.jpg&quot;</code>). Upload the file using the dedicated PATCH endpoint with content type <code>multipart/form-data</code> â€” the <code>image</code> field accepts a binary file, not a URL string.</p>
 <blockquote>
-<p><strong>⚠️ CRITICAL: Never send the image URL back as JSON.</strong> If you call <code>PATCH /learning/questions/&lt;id&gt;/</code> or <code>PATCH /learning/quiz-choices/&lt;id&gt;/</code> with <code>Content-Type: application/json</code> and include <code>&quot;image&quot;: &quot;https://...&quot;</code> in the body, the backend <strong>cannot parse a URL string as a file upload</strong> and will clear the existing image from storage.</p>
+<p><strong>âš ï¸ CRITICAL: Never send the image URL back as JSON.</strong> If you call <code>PATCH /learning/questions/&lt;id&gt;/</code> or <code>PATCH /learning/quiz-choices/&lt;id&gt;/</code> with <code>Content-Type: application/json</code> and include <code>&quot;image&quot;: &quot;https://...&quot;</code> in the body, the backend <strong>cannot parse a URL string as a file upload</strong> and will clear the existing image from storage.</p>
 <p><strong>How to avoid losing the image:</strong></p>
 <ul>
-<li><strong>To update text only (keep existing image):</strong> Send <code>PATCH</code> with <code>Content-Type: application/json</code> and body <code>{&quot;text&quot;: &quot;New text&quot;}</code> — <strong>omit the <code>image</code> field entirely</strong>. The existing image is preserved automatically.</li>
+<li><strong>To update text only (keep existing image):</strong> Send <code>PATCH</code> with <code>Content-Type: application/json</code> and body <code>{&quot;text&quot;: &quot;New text&quot;}</code> â€” <strong>omit the <code>image</code> field entirely</strong>. The existing image is preserved automatically.</li>
 <li><strong>To update the image:</strong> Send <code>PATCH</code> with <code>Content-Type: multipart/form-data</code> and include the file as the <code>image</code> field. Text fields can be included in the same request.</li>
 <li><strong>To remove the image:</strong> Send multipart with <code>image</code> set to an empty file.</li>
 </ul>
 </blockquote>
-<p><strong>Success Response — 201 Created:</strong></p>
+<p><strong>Success Response â€” 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"integer"</span>,
@@ -2788,15 +2788,15 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </table>
 <hr>
 <h4 id="119-patch-learningquiz-answersansweridsave-draft">11.9 PATCH /learning/quiz-answers/&lt;answer_id&gt;/save-draft/</h4>
-<p><strong>Description:</strong> Auto-save individual answer choices while the student is working. These saved answers are restored when the student resumes the quiz via <code>GET /resume/</code>. Does NOT submit the quiz — student must call <code>/submit/</code> separately.</p>
+<p><strong>Description:</strong> Auto-save individual answer choices while the student is working. These saved answers are restored when the student resumes the quiz via <code>GET /resume/</code>. Does NOT submit the quiz â€” student must call <code>/submit/</code> separately.</p>
 <p><strong>Authentication:</strong> Student</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] — Selected choice IDs (for MCQ questions)"</span>,
-  <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string — Written answer text (for written questions)"</span>
+  <span class="hljs-attr">"choice_ids"</span>: <span class="hljs-string">"array[integer] â€” Selected choice IDs (for MCQ questions)"</span>,
+  <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string â€” Written answer text (for written questions)"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"saved"</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer"</span>
@@ -2809,8 +2809,8 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="1110-get-learningquizzesidresults">11.10 GET /learning/quizzes/<id>/results/</h4>
 <p><strong>Description:</strong> List all student submissions for a specific quiz. Returns each submission with score, attempt number, and timed-out status. Teachers see submissions for their own courses only.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Query Parameters:</strong> (none — returns all submissions for this quiz)</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Query Parameters:</strong> (none â€” returns all submissions for this quiz)</p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -2867,15 +2867,15 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Access Control:</strong> Teachers can only grade quizzes in their own courses.</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer (required) — The QuizAnswer ID to grade"</span>,
-  <span class="hljs-attr">"score_override"</span>: <span class="hljs-string">"string (decimal, required) — Points to award (cannot be negative)"</span>,
-  <span class="hljs-attr">"feedback"</span>: <span class="hljs-string">"string (optional) — Feedback text shown to student"</span>
+  <span class="hljs-attr">"answer_id"</span>: <span class="hljs-string">"integer (required) â€” The QuizAnswer ID to grade"</span>,
+  <span class="hljs-attr">"score_override"</span>: <span class="hljs-string">"string (decimal, required) â€” Points to award (cannot be negative)"</span>,
+  <span class="hljs-attr">"feedback"</span>: <span class="hljs-string">"string (optional) â€” Feedback text shown to student"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Written answer graded successfully."</span>,
-  <span class="hljs-attr">"new_score"</span>: <span class="hljs-string">"string (decimal) — Updated total score for the submission"</span>
+  <span class="hljs-attr">"new_score"</span>: <span class="hljs-string">"string (decimal) â€” Updated total score for the submission"</span>
 }
 </div></code></pre>
 <hr>
@@ -2883,7 +2883,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Description:</strong> Release scores for all submissions of a quiz. Only affects quizzes with <code>score_visibility=manual</code>. After release, students can see their scores in the quiz results.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Scores released for 15 submissions."</span>
 }
@@ -2893,7 +2893,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Description:</strong> Release correct answers for all submissions of a quiz. Only affects quizzes with <code>answers_visibility=manual</code>. After release, students can see which choices were correct.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong> None</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Answers released for 15 submissions."</span>
 }
@@ -2935,7 +2935,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong> Updated choice object.</p>
+<p><strong>Success Response â€” 200 OK:</strong> Updated choice object.</p>
 <p><strong>Error Responses:</strong></p>
 <table>
 <thead>
@@ -2959,7 +2959,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="1116-get-learningquizzesmy">11.16 GET /learning/quizzes/my/</h4>
 <p><strong>Description:</strong> (Student-only) Get all quiz submissions for the logged-in student across all courses.</p>
 <p><strong>Authentication:</strong> Student</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>[
   {
     <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
@@ -2967,7 +2967,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
     <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
     <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
-    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null — Hidden if score_visibility=manual and not released"</span>,
+    <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null â€” Hidden if score_visibility=manual and not released"</span>,
     <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
     <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
     <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>
@@ -2996,20 +2996,20 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <li>Accepted formats: PDF, JPG, JPEG, PNG</li>
 <li><strong>Content validation:</strong> Files are validated by their <strong>magic bytes</strong> (file header), not just the file extension. A renamed <code>.exe</code> with a <code>.pdf</code> extension is rejected. Allowed: <code>%PDF</code>, JPEG (<code>FFD8</code>), PNG (<code>89504E47</code>), WEBP (<code>RIFF...WEBP</code>).</li>
 <li>Maximum file size: 20 MB</li>
-<li>Each upload gets a <strong>unique filename</strong> (UUID-based) — files with identical names never overwrite each other</li>
+<li>Each upload gets a <strong>unique filename</strong> (UUID-based) â€” files with identical names never overwrite each other</li>
 </ul>
-<p><strong>Success Response — 201 Created:</strong></p>
+<p><strong>Success Response â€” 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer — Lecture ID"</span>,
-  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String — Lecture name"</span>,
-  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String — Course name"</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String — Material title"</span>,
-  <span class="hljs-attr">"file"</span>: <span class="hljs-string">"String (URL) — File download URL"</span>,
-  <span class="hljs-attr">"file_url"</span>: <span class="hljs-string">"String (URL) — Absolute URL to the file"</span>,
-  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean — Whether this material is active"</span>,
-  <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer — User ID of the creator"</span>,
-  <span class="hljs-attr">"created_by_name"</span>: <span class="hljs-string">"String — Creator's username"</span>,
+  <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer â€” Lecture ID"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String â€” Lecture name"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String â€” Course name"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String â€” Material title"</span>,
+  <span class="hljs-attr">"file"</span>: <span class="hljs-string">"String (URL) â€” File download URL"</span>,
+  <span class="hljs-attr">"file_url"</span>: <span class="hljs-string">"String (URL) â€” Absolute URL to the file"</span>,
+  <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean â€” Whether this material is active"</span>,
+  <span class="hljs-attr">"created_by"</span>: <span class="hljs-string">"Integer â€” User ID of the creator"</span>,
+  <span class="hljs-attr">"created_by_name"</span>: <span class="hljs-string">"String â€” Creator's username"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
 }
@@ -3047,8 +3047,8 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Query Parameters:</strong></p>
 <ul>
-<li><code>lecture</code> — Filter by lecture ID</li>
-<li><code>is_active</code> — <code>true</code> or <code>false</code></li>
+<li><code>lecture</code> â€” Filter by lecture ID</li>
+<li><code>is_active</code> â€” <code>true</code> or <code>false</code></li>
 </ul>
 <p><strong>Data isolation by role:</strong></p>
 <table>
@@ -3109,25 +3109,25 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <hr>
 <p><strong>Codes list:</strong> <code>GET /payments/codes/</code> with filters <code>?course=X</code>, <code>?status=valid|used|blacklisted</code>, <code>?batch=&lt;uuid&gt;</code>. Now includes <code>code_masked</code> field.
-<strong>Codes summary:</strong> <code>GET /payments/codes/summary/?course=X</code> — aggregate stats (total generated, redeemed, blacklisted, values).
-<strong>Codes export:</strong> <code>GET /payments/codes/export/?batch=&lt;uuid&gt;</code> — download batch as Excel sheet.
-<strong>Export all:</strong> <code>GET /payments/codes/export/</code> — download ALL visible codes (with Teacher Name + Student Code columns).
-<strong>Codes history:</strong> <code>GET /payments/codes/history/</code> — unified audit log (redemptions + blacklists), filters: <code>?start_date=</code>, <code>?end_date=</code>, <code>?type=</code>, <code>?search=</code>, paginated, newest first.
-<strong>Codes analytics:</strong> <code>GET /payments/codes/analytics/</code> — dashboard stats (total_batches, total_codes, used/valid/blacklisted counts, teachers_cut, siteowner_cut).
-<strong>Batch list:</strong> <code>GET /payments/codes/batches/</code> — grouped by batch_id, filters <code>?teacher=X</code>, <code>?course=X</code>.
-<strong>Batch detail:</strong> <code>GET /payments/codes/batches/&lt;uuid&gt;/</code> — individual codes with <code>code_masked</code>, <code>redeemed_value</code>.</p>
+<strong>Codes summary:</strong> <code>GET /payments/codes/summary/?course=X</code> â€” aggregate stats (total generated, redeemed, blacklisted, values).
+<strong>Codes export:</strong> <code>GET /payments/codes/export/?batch=&lt;uuid&gt;</code> â€” download batch as Excel sheet.
+<strong>Export all:</strong> <code>GET /payments/codes/export/</code> â€” download ALL visible codes (with Teacher Name + Student Code columns).
+<strong>Codes history:</strong> <code>GET /payments/codes/history/</code> â€” unified audit log (redemptions + blacklists), filters: <code>?start_date=</code>, <code>?end_date=</code>, <code>?type=</code>, <code>?search=</code>, paginated, newest first.
+<strong>Codes analytics:</strong> <code>GET /payments/codes/analytics/</code> â€” dashboard stats (total_batches, total_codes, used/valid/blacklisted counts, teachers_cut, siteowner_cut).
+<strong>Batch list:</strong> <code>GET /payments/codes/batches/</code> â€” grouped by batch_id, filters <code>?teacher=X</code>, <code>?course=X</code>.
+<strong>Batch detail:</strong> <code>GET /payments/codes/batches/&lt;uuid&gt;/</code> â€” individual codes with <code>code_masked</code>, <code>redeemed_value</code>.</p>
 <h4 id="post-paymentsrecharge">POST /payments/recharge/</h4>
 <p><strong>Description:</strong> Add balance to a student's account for a specific course. The student must be enrolled and approved in the course. Teacher/Assistant only.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer — Student ID (required)"</span>,
-  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer — Course ID (required)"</span>,
-  <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"String (Decimal) — Amount to add (required, must be positive)"</span>,
-  <span class="hljs-attr">"note"</span>: <span class="hljs-string">"String (Optional) — Note for the transaction"</span>
+  <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer â€” Student ID (required)"</span>,
+  <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer â€” Course ID (required)"</span>,
+  <span class="hljs-attr">"amount"</span>: <span class="hljs-string">"String (Decimal) â€” Amount to add (required, must be positive)"</span>,
+  <span class="hljs-attr">"note"</span>: <span class="hljs-string">"String (Optional) â€” Note for the transaction"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"detail"</span>: <span class="hljs-string">"Successfully added 50.00 EGP to student balance."</span>,
   <span class="hljs-attr">"new_balance"</span>: <span class="hljs-string">"150.00"</span>,
@@ -3167,7 +3167,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </table>
 <hr>
 <h4 id="get-paymentstransactions">GET /payments/transactions/</h4>
-<p><strong>Description:</strong> Full balance transaction ledger for students. Shows every balance change with <strong>before and after snapshots</strong>. Includes code redemptions (with code, value, balance_before, balance_after) and lecture purchases (with lecture name, amount, balance_before, balance_after). Transactions are immutable — never editable or deletable.</p>
+<p><strong>Description:</strong> Full balance transaction ledger for students. Shows every balance change with <strong>before and after snapshots</strong>. Includes code redemptions (with code, value, balance_before, balance_after) and lecture purchases (with lecture name, amount, balance_before, balance_after). Transactions are immutable â€” never editable or deletable.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant (sees students enrolled in their courses), Student (sees own), SiteOwner (sees all)</p>
 <p><strong>Query Parameters:</strong></p>
 <table>
@@ -3226,7 +3226,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
@@ -3248,8 +3248,8 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
       <span class="hljs-attr">"source_id"</span>: <span class="hljs-string">"Integer"</span>,
       <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"metadata"</span>: {
-        <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String — The code string (for code_redeemed)"</span>,
-        <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String — Lecture name (for lecture_purchase)"</span>
+        <span class="hljs-attr">"code"</span>: <span class="hljs-string">"String â€” The code string (for code_redeemed)"</span>,
+        <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String â€” Lecture name (for lecture_purchase)"</span>
       },
       <span class="hljs-attr">"performed_by"</span>: <span class="hljs-string">"Integer | null"</span>,
       <span class="hljs-attr">"performed_by_name"</span>: <span class="hljs-string">"String | null"</span>,
@@ -3264,7 +3264,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="get-coursesdashboardteacher">GET /courses/dashboard/teacher/</h4>
 <p><strong>Description:</strong> Get aggregated stats for the teacher's dashboard.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"total_courses"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"total_students"</span>: <span class="hljs-string">"Integer"</span>,
@@ -3326,7 +3326,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h2 id="16-lecture-prerequisites">16. Lecture Prerequisites</h2>
 <p>Lecture prerequisites gate video access behind assessment scores. A student cannot play a lecture's videos until they achieve the <code>passing_score</code> on the specified homework, quiz, or exam.</p>
-<p>When the teacher is setting prerequisites for a lecture, they need to know what assessments exist for that lecture. This single endpoint returns all available homeworks, quizzes, and exams in one call — so the frontend doesn't need three separate API calls.</p>
+<p>When the teacher is setting prerequisites for a lecture, they need to know what assessments exist for that lecture. This single endpoint returns all available homeworks, quizzes, and exams in one call â€” so the frontend doesn't need three separate API calls.</p>
 <blockquote>
 <p><strong>Why this endpoint exists:</strong> Without it, the frontend would have to call <code>GET /learning/homeworks/?lecture=X</code>, <code>GET /learning/quizzes/?lecture=X</code>, and <code>GET /learning/exams/?course=X</code> separately and merge the results. This endpoint exists specifically for the prerequisite picker UI and should not be deleted.</p>
 </blockquote>
@@ -3334,7 +3334,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="get-courseslecturesidavailable-assessments"><code>GET /courses/lectures/&lt;id&gt;/available-assessments/</code></h4>
 <p><strong>Description:</strong> Returns all homeworks, quizzes, and exams available for a lecture, grouped by type. Teachers/assistants can only see assessments for their own courses.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"homeworks"</span>: [
     { <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Bubble Sheet 1"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Intro to Reactions"</span> }
@@ -3359,18 +3359,18 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="get-courseslecturesidprerequisites"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
 <p><strong>Description:</strong> List all prerequisites for a lecture. Includes the lecture name and the resolved content name for display.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped), SiteOwner (all)</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
     {
       <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
       <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
-      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 — Introduction"</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 â€” Introduction"</span>,
       <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"homework"</span>,
       <span class="hljs-attr">"content_id"</span>: <span class="hljs-number">12</span>,
       <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"50.00"</span>,
-      <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 — Chapter 1"</span>,
+      <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 â€” Chapter 1"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-17T23:00:00Z"</span>
     }
   ]
@@ -3434,20 +3434,20 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
 <p><strong>Request Body:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) — homework|quiz|exam"</span>,
-  <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer (Required) — ID of the homework or quiz"</span>,
-  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"Decimal (Optional, default: 50.0) — Minimum score required to pass"</span>
+  <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (Required) â€” homework|quiz|exam"</span>,
+  <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer (Required) â€” ID of the homework or quiz"</span>,
+  <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"Decimal (Optional, default: 50.0) â€” Minimum score required to pass"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 201 Created:</strong></p>
+<p><strong>Success Response â€” 201 Created:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
-  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 — Introduction"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 â€” Introduction"</span>,
   <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"homework"</span>,
   <span class="hljs-attr">"content_id"</span>: <span class="hljs-number">12</span>,
   <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"50.00"</span>,
-  <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 — Chapter 1"</span>,
+  <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 â€” Chapter 1"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-17T23:00:00Z"</span>
 }
 </div></code></pre>
@@ -3455,7 +3455,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="get-courseslecturesidprerequisitesprereqid"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
 <p><strong>Description:</strong> Get a single prerequisite by ID.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <p>Same response shape as the list endpoint.</p>
 <hr>
 <h4 id="putpatch-courseslecturesidprerequisitesprereqid"><code>PUT|PATCH /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
@@ -3466,15 +3466,15 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
   <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"75.00"</span>
 }
 </div></code></pre>
-<p><strong>Success Response — 200 OK:</strong></p>
+<p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>,
   <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
-  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 — Introduction"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Chapter 1 â€” Introduction"</span>,
   <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"homework"</span>,
   <span class="hljs-attr">"content_id"</span>: <span class="hljs-number">12</span>,
   <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"75.00"</span>,
-  <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 — Chapter 1"</span>,
+  <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"Homework 1 â€” Chapter 1"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-17T23:00:00Z"</span>
 }
 </div></code></pre>
@@ -3483,9 +3483,9 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h4 id="delete-courseslecturesidprerequisitesprereqid"><code>DELETE /courses/lectures/&lt;id&gt;/prerequisites/&lt;prereq_id&gt;/</code></h4>
 <p><strong>Description:</strong> Remove a prerequisite from a lecture.</p>
 <p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
-<p><strong>Success Response — 204 No Content</strong></p>
+<p><strong>Success Response â€” 204 No Content</strong></p>
 <hr>
-<h3 id="data-integrity--orphan-cleanup">Data Integrity — Orphan Cleanup</h3>
+<h3 id="data-integrity-%C3%A2%E2%82%AC-orphan-cleanup">Data Integrity â€” Orphan Cleanup</h3>
 <p>When a homework, quiz, or exam is <strong>deleted</strong>, all <code>LecturePrerequisite</code> records that reference it are <strong>automatically deleted</strong> via database signals. This prevents dangling prerequisites that could never be passed.</p>
 <p><strong>What happens when content changes:</strong></p>
 <table>
@@ -3506,7 +3506,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </tr>
 <tr>
 <td><strong>Scoring changed</strong></td>
-<td>No effect — each prerequisite has its own <code>passing_score</code> independent of the assessment</td>
+<td>No effect â€” each prerequisite has its own <code>passing_score</code> independent of the assessment</td>
 </tr>
 <tr>
 <td><strong>Lecture deleted</strong></td>
@@ -3517,7 +3517,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h2 id="17-watching-times-limit">17. Watching Times Limit</h2>
 <p>Each lecture enforces a <strong>watching times limit</strong> (default: 4). Once a student has used all their watching times, the lecture's videos are locked.</p>
 <ul>
-<li>The limit applies to the <strong>entire lecture</strong> — watching any video counts toward the limit.</li>
+<li>The limit applies to the <strong>entire lecture</strong> â€” watching any video counts toward the limit.</li>
 <li>Once locked, the student can still access homework, quizzes, and materials for that lecture.</li>
 <li>The teacher can <strong>reopen</strong> the lecture (via the existing reopen endpoint), which resets the watch count.</li>
 <li>The <code>GET /courses/lectures/&lt;id&gt;/purchases/</code> response now includes <code>watch_count</code> and <code>max_watch_count</code> per purchase.</li>
