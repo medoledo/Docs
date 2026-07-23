@@ -651,14 +651,29 @@ code {
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"Integer"</span>,
-      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"String (en / ar)"</span>,
       <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"String"</span>,
       <span class="hljs-attr">"phone_number"</span>: <span class="hljs-string">"String — Student's phone number"</span>,
       <span class="hljs-attr">"father_number"</span>: <span class="hljs-string">"String — Father's phone number"</span>,
       <span class="hljs-attr">"mother_number"</span>: <span class="hljs-string">"String — Mother's phone number"</span>,
-      <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String (Decimal) - Current balance for this course"</span>,
-      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+      <span class="hljs-attr">"course"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"grade_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"subject_name"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"String (pending|approved|rejected)"</span>,
+      <span class="hljs-attr">"status_display"</span>: <span class="hljs-string">"String (Pending|Approved|Rejected)"</span>,
+      <span class="hljs-attr">"balance"</span>: <span class="hljs-string">"String (Decimal) — Current balance for this course"</span>,
+      <span class="hljs-attr">"cover_picture"</span>: <span class="hljs-string">"String (URL) | null — Only for approved enrollments"</span>,
+      <span class="hljs-attr">"topic_count"</span>: <span class="hljs-string">"Integer | null — Only for approved enrollments"</span>,
+      <span class="hljs-attr">"total_lectures"</span>: <span class="hljs-string">"Integer | null — Only for approved enrollments"</span>,
+      <span class="hljs-attr">"enrolled_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+      <span class="hljs-attr">"responded_by"</span>: <span class="hljs-string">"Integer | null"</span>,
+      <span class="hljs-attr">"responded_by_name"</span>: <span class="hljs-string">"String | null"</span>,
+      <span class="hljs-attr">"responded_at"</span>: <span class="hljs-string">"DateTime | null"</span>,
+      <span class="hljs-attr">"response_note"</span>: <span class="hljs-string">"String | null"</span>
     }
   ]
 }
