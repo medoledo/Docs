@@ -944,6 +944,16 @@ code {
     }
   ],
   <span class="hljs-attr">"video_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"materials_count"</span>: <span class="hljs-string">"Integer — Number of active study materials"</span>,
+  <span class="hljs-attr">"homeworks_count"</span>: <span class="hljs-string">"Integer — Number of published homeworks"</span>,
+  <span class="hljs-attr">"quizzes_count"</span>: <span class="hljs-string">"Integer — Number of published quizzes"</span>,
+  <span class="hljs-attr">"prerequisites"</span>: [
+    {
+      <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (homework|quiz|exam)"</span>,
+      <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"Decimal"</span>
+    }
+  ],
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
   <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
 }
@@ -2176,26 +2186,80 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
 <hr>
 <h4 id="get-learninghomeworksidsubmissions">GET /learning/homeworks/{id}/submissions/</h4>
-<p><strong>Description:</strong> List all submissions for a homework.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Description:</strong> Returns ALL students who purchased the lecture, with their homework submission status. Includes both students who submitted and those who haven't. Does NOT include students who didn't purchase the lecture.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Filter by student name or code (case-insensitive partial match)</td>
+</tr>
+<tr>
+<td><code>submitted</code></td>
+<td>Boolean</td>
+<td><code>true</code> = only submitted, <code>false</code> = only not submitted</td>
+</tr>
+<tr>
+<td><code>purchased</code></td>
+<td>Boolean</td>
+<td><code>true</code> (default) = only students who bought the lecture. Set to <code>false</code> to exclude purchasers (edge case)</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>Integer</td>
+<td>Page number (default: 1)</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>Integer</td>
+<td>Items per page (default: 50, max: 200)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
+  <span class="hljs-attr">"homework_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"total_purchased"</span>: <span class="hljs-string">"integer — Total students who bought this lecture"</span>,
+  <span class="hljs-attr">"total_submitted"</span>: <span class="hljs-string">"integer — Total submissions for this homework"</span>,
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"string (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"string (URL) | null"</span>,
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"homework"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal)"</span>,
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string (submitted|graded)"</span>,
-      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>
+      <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"purchase_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"submitted"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer | null"</span>,
+      <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"string (submitted|graded) | null"</span>,
+      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>
     }
   ]
 }
 </div></code></pre>
+<p><strong>Business rules:</strong></p>
+<ul>
+<li>Only shows students who <strong>purchased</strong> the lecture — non-buyers are excluded</li>
+<li>Use <code>?submitted=false</code> to find students who bought but haven't done the homework</li>
+<li>Use <code>?submitted=true</code> to see only students who already submitted</li>
+<li>Student can have at most 1 submission per homework (unique constraint on student + homework)</li>
+<li>Per-question bubble answers are available via <code>GET /learning/homework-submissions/&lt;submission_id&gt;/</code></li>
+</ul>
 <hr>
 <h4 id="get-learninghomework-submissionsid">GET /learning/homework-submissions/{id}/</h4>
 <p><strong>Description:</strong> View a specific submission with per-question results.</p>
@@ -2807,48 +2871,77 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <h3 id="teacher-review--grading">Teacher Review &amp; Grading</h3>
 <hr>
 <h4 id="1110-get-learningquizzesidresults">11.10 GET /learning/quizzes/<id>/results/</h4>
-<p><strong>Description:</strong> List all student submissions for a specific quiz. Returns each submission with score, attempt number, and timed-out status. Teachers see submissions for their own courses only.</p>
-<p><strong>Authentication:</strong> Any authenticated user (teachers see own, siteowner sees all, students see active), Assistant</p>
-<p><strong>Query Parameters:</strong> (none â€” returns all submissions for this quiz)</p>
-<p><strong>Success Response â€” 200 OK:</strong></p>
+<p><strong>Description:</strong> Returns ALL students who purchased the lecture, with their quiz submission status. Three states: <code>not_started</code>, <code>in_progress</code> (started but not submitted), <code>submitted</code>. Does NOT include students who didn't purchase the lecture.</p>
+<p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped)</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>quiz_status</code></td>
+<td>String</td>
+<td>Filter: <code>not_started</code>, <code>in_progress</code>, or <code>submitted</code></td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>String</td>
+<td>Filter by student name or code (case-insensitive partial match)</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>Integer</td>
+<td>Page number (default: 1)</td>
+</tr>
+<tr>
+<td><code>page_size</code></td>
+<td>Integer</td>
+<td>Items per page (default: 50, max: 200)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
+  <span class="hljs-attr">"quiz_id"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"total_purchased"</span>: <span class="hljs-string">"integer — Total students who bought this lecture"</span>,
+  <span class="hljs-attr">"total_submitted"</span>: <span class="hljs-string">"integer — Students who submitted"</span>,
+  <span class="hljs-attr">"total_in_progress"</span>: <span class="hljs-string">"integer — Students who started but didn't submit"</span>,
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"integer"</span>,
+  <span class="hljs-attr">"next"</span>: <span class="hljs-string">"string (URL) | null"</span>,
+  <span class="hljs-attr">"previous"</span>: <span class="hljs-string">"string (URL) | null"</span>,
   <span class="hljs-attr">"results"</span>: [
     {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"quiz"</span>: <span class="hljs-string">"integer"</span>,
-      <span class="hljs-attr">"quiz_title"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"student"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"student_id"</span>: <span class="hljs-string">"integer"</span>,
       <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"string"</span>,
       <span class="hljs-attr">"student_code"</span>: <span class="hljs-string">"string"</span>,
-      <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-string">"boolean"</span>,
+      <span class="hljs-attr">"purchase_id"</span>: <span class="hljs-string">"integer"</span>,
+      <span class="hljs-attr">"quiz_status"</span>: <span class="hljs-string">"string (not_started|in_progress|submitted)"</span>,
+      <span class="hljs-attr">"submission_id"</span>: <span class="hljs-string">"integer | null"</span>,
+      <span class="hljs-attr">"attempt_number"</span>: <span class="hljs-string">"integer | null"</span>,
       <span class="hljs-attr">"score"</span>: <span class="hljs-string">"string (decimal) | null"</span>,
-      <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601)"</span>,
-      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
-      <span class="hljs-attr">"is_timed_out"</span>: <span class="hljs-string">"boolean"</span>,
-      <span class="hljs-attr">"score_visible"</span>: <span class="hljs-string">"boolean"</span>,
-      <span class="hljs-attr">"answers_visible"</span>: <span class="hljs-string">"boolean"</span>,
-      <span class="hljs-attr">"answers"</span>: [
-        {
-          <span class="hljs-attr">"quiz_question"</span>: <span class="hljs-string">"integer"</span>,
-          <span class="hljs-attr">"text"</span>: <span class="hljs-string">"string"</span>,
-          <span class="hljs-attr">"selected_standalone_choices"</span>: <span class="hljs-string">"array[integer]"</span>,
-          <span class="hljs-attr">"selected_standalone_choice_texts"</span>: <span class="hljs-string">"array[string]"</span>,
-          <span class="hljs-attr">"correct_standalone_choice_texts"</span>: <span class="hljs-string">"array[string]"</span>,
-          <span class="hljs-attr">"written_answer"</span>: <span class="hljs-string">"string"</span>,
-          <span class="hljs-attr">"is_correct"</span>: <span class="hljs-string">"boolean | null"</span>,
-          <span class="hljs-attr">"points_earned"</span>: <span class="hljs-string">"string (decimal)"</span>,
-          <span class="hljs-attr">"display_order"</span>: <span class="hljs-string">"integer"</span>
-        }
-      ]
+      <span class="hljs-attr">"started_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>,
+      <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"datetime (ISO 8601) | null"</span>
     }
   ]
 }
 </div></code></pre>
-<p><strong>Notes:</strong></p>
+<p><strong>Business rules:</strong></p>
 <ul>
-<li><code>score</code> is null if <code>score_visibility=manual</code> and scores haven't been released.</li>
-<li>For written questions: <code>is_correct</code> is null and <code>points_earned</code> is 0 until manually graded.</li>
+<li>Only shows students who <strong>purchased</strong> the lecture — non-buyers are excluded</li>
+<li>Use <code>?quiz_status=not_started</code> to find students who haven't attempted</li>
+<li>Use <code>?quiz_status=in_progress</code> to find students who started but didn't finish</li>
+<li>Use <code>?quiz_status=submitted</code> to see only completed attempts</li>
+<li>For multi-attempt quizzes, only the latest attempt per student is shown</li>
+<li>Per-question answer details are available via <code>GET /learning/quiz-submissions/&lt;submission_id&gt;/</code></li>
 </ul>
 <hr>
 <h4 id="1111-get-learningquiz-submissionsid">11.11 GET /learning/quiz-submissions/<id>/</h4>
@@ -3332,8 +3425,8 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 </blockquote>
 <hr>
 <h4 id="get-courseslecturesidavailable-assessments"><code>GET /courses/lectures/&lt;id&gt;/available-assessments/</code></h4>
-<p><strong>Description:</strong> Returns all homeworks, quizzes, and exams available for a lecture, grouped by type. Teachers/assistants can only see assessments for their own courses.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant</p>
+<p><strong>Description:</strong> Returns all homeworks, quizzes, and exams available for a lecture, grouped by type. Teachers/assistants see all assessments for their courses. Students see only published assessments for purchased lectures.</p>
+<p><strong>Authentication:</strong> Any authenticated user</p>
 <p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"homeworks"</span>: [
@@ -3358,7 +3451,7 @@ title on Bunny Stream</strong> so the Bunny dashboard stays in sync.</p>
 <hr>
 <h4 id="get-courseslecturesidprerequisites"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></h4>
 <p><strong>Description:</strong> List all prerequisites for a lecture. Includes the lecture name and the resolved content name for display.</p>
-<p><strong>Authentication:</strong> Teacher, Assistant (ownership-scoped), SiteOwner (all)</p>
+<p><strong>Authentication:</strong> Any authenticated user (students can read, only teachers/assistants can create/update/delete)</p>
 <p><strong>Success Response â€” 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,

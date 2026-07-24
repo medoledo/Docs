@@ -991,6 +991,9 @@ code {
           <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer"</span>,
           <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
           <span class="hljs-attr">"video_count"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"materials_count"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"homeworks_count"</span>: <span class="hljs-string">"Integer"</span>,
+          <span class="hljs-attr">"quizzes_count"</span>: <span class="hljs-string">"Integer"</span>,
           <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-string">"Boolean"</span>,
           <span class="hljs-attr">"purchase"</span>: {
             <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
@@ -1097,8 +1100,8 @@ code {
 </tr>
 <tr>
 <td><code>400</code></td>
-<td>Already purchased</td>
-<td><code>{&quot;detail&quot;: &quot;You have already purchased this lecture.&quot;}</code></td>
+<td>Already purchased and active</td>
+<td><code>{&quot;detail&quot;: &quot;You have already purchased this lecture and it's still active.&quot;}</code></td>
 </tr>
 <tr>
 <td><code>400</code></td>
@@ -1110,6 +1113,9 @@ code {
 <p><strong>Business Rules:</strong></p>
 <ul>
 <li>Student must be enrolled and APPROVED in the course.</li>
+<li>Cannot purchase a lecture that is already active (not expired). Re-purchase is allowed after expiry.</li>
+<li>If a purchase has expired, the student can buy the lecture again (creates a new purchase with a fresh expiry).</li>
+<li>Teachers/assistants can also reopen an expired purchase to grant 1 extra day (max 2 reopens).</li>
 <li>Lecture's <code>final_price</code> is deducted from the student's course balance.</li>
 <li><code>expires_at</code> is calculated as <code>purchased_at + available_days</code>.</li>
 </ul>
