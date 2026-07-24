@@ -698,13 +698,18 @@ code {
 </tbody>
 </table>
 <p>| <code>GET /courses/&lt;id&gt;/lectures/</code> | No | No | No | Yes* | No |
+| <code>GET /courses/lectures/&lt;id&gt;/</code> | Yes | Yes | Yes | Yes* | No |
 | <code>GET /courses/videos/&lt;id&gt;/play/</code> | No | No | No | Yes* | No |
 | <code>POST /courses/videos/&lt;id&gt;/create-upload/</code> | No | Yes | Yes | No | No |
 | <code>POST /courses/enrollments/enroll/</code> | No | No | No | Yes | No |
 | <code>POST /courses/enrollments/approve/</code> | No | Yes | Yes | No | No |
 | <code>POST /courses/enrollments/reject/</code> | No | Yes | Yes | No | No |
+| <code>GET /courses/purchases/</code> | Yes | Yes | Yes | Yes | No |
 | <code>POST /courses/purchases/buy/</code> | No | No | No | Yes | No |
 | <code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> | No | Yes** | Yes** | No | No |
+| <code>GET /courses/progress/</code> | No | No | No | Yes* | No |
+| <code>POST /courses/progress/update/</code> | No | No | No | Yes* | No |
+| <code>GET /courses/progress/&lt;video_id&gt;/</code> | No | No | No | Yes* | No |
 | <code>GET /courses/dashboard/teacher/</code> | No | Yes | Yes | No | No |
 | <code>GET /learning/homeworks/</code> | Yes | Yes | Yes | Yes* | No |
 | <code>POST /learning/homeworks/</code> | Yes | Yes | Yes | No | No |
@@ -714,6 +719,7 @@ code {
 | <code>POST /learning/quizzes/</code> | Yes | Yes | Yes | No | No |
 | <code>POST /learning/quizzes/&lt;id&gt;/start/</code> | No | No | No | Yes* | No |
 | <code>POST /learning/quizzes/&lt;id&gt;/submit/</code> | No | No | No | Yes* | No |
+| <code>GET /learning/quizzes/&lt;id&gt;/results/</code> | No | Yes | Yes | No | No |
 | <code>POST /learning/quizzes/&lt;id&gt;/release-scores/</code> | No | Yes | Yes | No | No |
 | <code>POST /learning/quizzes/&lt;id&gt;/release-answers/</code> | No | Yes | Yes | No | No |
 | <code>POST /learning/quiz-submissions/&lt;id&gt;/grade-written/</code> | No | Yes | Yes | No | No |
@@ -743,7 +749,8 @@ code {
 | <code>POST /payments/codes/batch-blacklist/</code> | Yes | No | No | No | No |
 | <code>GET /courses/&lt;id&gt;/analytics/</code> | No | Yes | Yes | No | No |
 | <code>GET /courses/&lt;id&gt;/balance/</code> | No | No | No | Yes | No |
-| <code>GET /courses/lectures/&lt;pk&gt;/available-assessments/</code> | No | Yes | Yes | No | No |
+| <code>GET /courses/lectures/&lt;pk&gt;/available-assessments/</code> | Yes | Yes | Yes | Yes | No |
+| <code>GET /courses/lectures/&lt;pk&gt;/prerequisites/</code> | Yes | Yes | Yes | Yes | No |
 | <code>GET /courses/lectures/&lt;pk&gt;/students-progress/</code> | No | Yes | Yes | No | No |
 | <code>GET /learning/quizzes/&lt;id&gt;/resume/</code> | No | No | No | Yes | No |
 | <code>PATCH /learning/quiz-answers/&lt;id&gt;/save-draft/</code> | No | No | No | Yes | No |

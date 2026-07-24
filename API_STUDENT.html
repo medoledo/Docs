@@ -402,6 +402,9 @@ code {
 <li><a href="#5-course-lectures">Course Lectures</a>
 <ul>
 <li>[<code>GET /courses/&lt;id&gt;/lectures/](#get-coursesidlectures)</code></li>
+<li>[<code>GET /courses/lectures/&lt;id&gt;/](#get-courseslecturesid)</code></li>
+<li>[<code>GET /courses/lectures/&lt;id&gt;/available-assessments/](#get-courseslecturesidavailable-assessments)</code></li>
+<li>[<code>GET /courses/lectures/&lt;id&gt;/prerequisites/](#get-courseslecturesidprerequisites)</code></li>
 </ul>
 </li>
 <li><a href="#6-purchases">Purchases</a>
@@ -1037,6 +1040,145 @@ code {
 <td><code>404</code></td>
 <td>Course not found</td>
 <td><code>{&quot;error&quot;: &quot;Course not found&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="get-courseslecturesid"><code>GET /courses/lectures/&lt;id&gt;/</code></h3>
+<p><strong>Description:</strong> Get full details for a single lecture, including videos list, materials count, homework/quiz counts, and prerequisites. Students can access this for any lecture in a course they're enrolled in.</p>
+<p><strong>Authentication:</strong> Student (must be approved enrolled in the course)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"topic"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"topic_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"teacher_name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"String | null"</span>,
+  <span class="hljs-attr">"price"</span>: <span class="hljs-string">"Decimal"</span>,
+  <span class="hljs-attr">"discount"</span>: <span class="hljs-string">"Decimal"</span>,
+  <span class="hljs-attr">"final_price"</span>: <span class="hljs-string">"Decimal"</span>,
+  <span class="hljs-attr">"available_days"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"is_visible"</span>: <span class="hljs-string">"Boolean"</span>,
+  <span class="hljs-attr">"picture"</span>: <span class="hljs-string">"String (URL) | null"</span>,
+  <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"video_count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"materials_count"</span>: <span class="hljs-string">"Integer — Number of active study materials"</span>,
+  <span class="hljs-attr">"homeworks_count"</span>: <span class="hljs-string">"Integer — Number of published homeworks"</span>,
+  <span class="hljs-attr">"quizzes_count"</span>: <span class="hljs-string">"Integer — Number of published quizzes"</span>,
+  <span class="hljs-attr">"prerequisites"</span>: [
+    {
+      <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (homework|quiz|exam)"</span>,
+      <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"Decimal"</span>
+    }
+  ],
+  <span class="hljs-attr">"videos"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"order"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"is_active"</span>: <span class="hljs-string">"Boolean"</span>,
+      <span class="hljs-attr">"thumbnail_url"</span>: <span class="hljs-string">"String | null"</span>
+    }
+  ],
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>,
+  <span class="hljs-attr">"updated_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+<th>Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>400</code></td>
+<td>No student profile</td>
+<td><code>{&quot;error&quot;: &quot;Student profile not found&quot;}</code></td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Not enrolled</td>
+<td><code>{&quot;error&quot;: &quot;You are not enrolled in this course&quot;}</code></td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Lecture not found</td>
+<td><code>{&quot;error&quot;: &quot;Lecture not found&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="get-courseslecturesidavailable-assessments"><code>GET /courses/lectures/&lt;id&gt;/available-assessments/</code></h3>
+<p><strong>Description:</strong> Returns all homeworks, quizzes, and exams available for a lecture. Students see only published assessments. Teachers see all.</p>
+<p><strong>Authentication:</strong> Any authenticated user (students see only published)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"homeworks"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"Integer"</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span> }
+  ],
+  <span class="hljs-attr">"quizzes"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span>, <span class="hljs-attr">"lecture_id"</span>: <span class="hljs-string">"Integer"</span>, <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span> }
+  ],
+  <span class="hljs-attr">"exams"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>, <span class="hljs-attr">"title"</span>: <span class="hljs-string">"String"</span> }
+  ]
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Lecture not found</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="get-courseslecturesidprerequisites"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></h3>
+<p><strong>Description:</strong> List all prerequisites for a lecture. Shows what homework/quiz/exam must be passed before accessing the lecture's videos.</p>
+<p><strong>Authentication:</strong> Any authenticated user (students can read)</p>
+<p><strong>Success Response — 200 OK:</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"count"</span>: <span class="hljs-string">"Integer"</span>,
+  <span class="hljs-attr">"results"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"content_type"</span>: <span class="hljs-string">"String (homework|quiz|exam)"</span>,
+      <span class="hljs-attr">"content_id"</span>: <span class="hljs-string">"Integer"</span>,
+      <span class="hljs-attr">"passing_score"</span>: <span class="hljs-string">"Decimal"</span>,
+      <span class="hljs-attr">"content_name"</span>: <span class="hljs-string">"String"</span>,
+      <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"DateTime (ISO 8601)"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Error Responses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404</code></td>
+<td>Lecture not found</td>
 </tr>
 </tbody>
 </table>

@@ -2803,6 +2803,12 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </thead>
 <tbody>
 <tr>
+<td>Lecture detail</td>
+<td>GET</td>
+<td><code>/courses/lectures/&lt;id&gt;/</code></td>
+<td>Full lecture info with videos, counts, prerequisites</td>
+</tr>
+<tr>
 <td>Buy lecture</td>
 <td>POST</td>
 <td><code>/courses/purchases/buy/</code></td>
@@ -2886,7 +2892,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </ul>
 </li>
 </ul>
-<p><strong>Populates from:</strong> <code>buy</code> endpoint; lecture data from <code>lectures</code> or <code>preview</code> endpoint; <code>balance</code> endpoint</p>
+<p><strong>Populates from:</strong> <code>courses/lectures/&lt;id&gt;/</code> for lecture detail; <code>buy</code> endpoint; <code>balance</code> endpoint</p>
 <hr>
 <h3 id="page-8-lecture-player">Page 8: Lecture Player</h3>
 <p><strong>Purpose:</strong> Watch purchased lecture videos, access materials, view quizzes and homeworks.</p>
@@ -2902,10 +2908,22 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </thead>
 <tbody>
 <tr>
+<td>Lecture detail</td>
+<td>GET</td>
+<td><code>/courses/lectures/&lt;id&gt;/</code></td>
+<td>Lecture info with videos list, counts</td>
+</tr>
+<tr>
 <td>Playback URL</td>
 <td>GET</td>
 <td><code>/courses/videos/&lt;id&gt;/play/</code></td>
 <td>Signed Bunny Stream URL</td>
+</tr>
+<tr>
+<td>List progress</td>
+<td>GET</td>
+<td><code>/courses/progress/</code></td>
+<td>All video watch progress across lectures</td>
 </tr>
 <tr>
 <td>Update progress</td>
@@ -2914,10 +2932,16 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 <td>Save watch progress</td>
 </tr>
 <tr>
+<td>Video progress detail</td>
+<td>GET</td>
+<td><code>/courses/progress/&lt;video_id&gt;/</code></td>
+<td>Progress for a specific video</td>
+</tr>
+<tr>
 <td>List materials</td>
 <td>GET</td>
 <td><code>/materials/</code></td>
-<td>Study materials</td>
+<td>Study materials for purchased lectures</td>
 </tr>
 <tr>
 <td>Quizzes list</td>
