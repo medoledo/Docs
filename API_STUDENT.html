@@ -1270,14 +1270,12 @@ code {
 <h2 id="7-video-playback">7. Video Playback</h2>
 <hr>
 <h3 id="get-coursesvideosidplay"><code>GET /courses/videos/&lt;id&gt;/play/</code></h3>
-<p><strong>Description:</strong> Get a signed playback URL for a video. Enforces purchase check, expiry, watching limits, and prerequisites before returning the URL.</p>
+<p><strong>Description:</strong> Get a playback URL for a video. Enforces purchase check, expiry, watching limits, and prerequisites before returning the URL. With MediaCage Basic DRM enabled, the URL is a direct HLS manifest — no token needed since DRM handles encryption.</p>
 <p><strong>Authentication:</strong> Student (must have purchased the lecture)</p>
 <p><strong>Request Body:</strong> None</p>
 <p><strong>Success Response — 200 OK:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"String — Signed Bunny Stream URL (expires in 2 hours)"</span>,
-  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-string">"Integer — Unix timestamp when the URL expires"</span>,
-  <span class="hljs-attr">"token"</span>: <span class="hljs-string">"String — The generated security token"</span>
+  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"String — HLS playlist URL (e.g. https://cdn/{guid}/playlist.m3u8)"</span>
 }
 </div></code></pre>
 <p><strong>Access Rules:</strong></p>

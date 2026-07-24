@@ -1050,7 +1050,7 @@ via <code>onChunkComplete</code> to prevent WiFi saturation.</p>
 3 â”‚ Graphs        â”‚ ðŸ“ Pending (not uploaded yet)    â”‚ [Upload] [Delete]
 4 â”‚ Advanced      â”‚ âŒ Error â€” encoding failed        â”‚ [Retry] [Delete]
 </div></code></pre>
-<p><strong>Playback Preview (teacher):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns signed URL. Teacher can preview own videos.</p>
+<p><strong>Playback Preview (teacher):</strong> <code>GET /courses/videos/&lt;id&gt;/play/</code> returns Bunny Stream HLS URL. Teacher can preview own videos.</p>
 <p><strong>Student Preview toggle:</strong> Add <code>?as_student=true</code> to any course/topic/lecture detail endpoint to see exactly what students see (only active topics, visible lectures, active videos).</p>
 <hr>
 <h3 id="page-3-lecture-detail-%C3%A2%E2%82%AC-students-progress-tab">Page 3: Lecture Detail â€” Students Progress Tab</h3>
@@ -2301,7 +2301,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
       <span class="hljs-attr">"from_status"</span>: <span class="hljs-string">"pending"</span>,
       <span class="hljs-attr">"to_status"</span>: <span class="hljs-string">"declined"</span>,
       <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"Missing father's phone number. Please re-submit with correct info."</span>,
-      <span class="hljs-attr">"changed_by_name"</span>: <span class="hljs-string">"Admin"</span>,
+      <span class="hljs-attr">"changed_by"</span>: <span class="hljs-string">"Admin — Username of the admin who made the change"</span>,
       <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"2026-07-15T10:00:00Z"</span>
     }
   ],
@@ -2959,8 +2959,7 @@ After login (<code>POST /accounts/login/</code>), the response includes <code>st
 </table>
 <p><strong><code>GET /courses/videos/&lt;id&gt;/play/</code> Response:</strong></p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"https://vz-...b-cdn.net/.../play_720p.m3u8?token=..."</span>,
-  <span class="hljs-attr">"expires_at"</span>: <span class="hljs-number">1721407200</span>
+  <span class="hljs-attr">"playback_url"</span>: <span class="hljs-string">"https://vz-...b-cdn.net/{guid}/playlist.m3u8"</span>
 }
 </div></code></pre>
 <p><strong>Access Rules:</strong></p>
