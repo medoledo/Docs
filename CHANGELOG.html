@@ -367,672 +367,307 @@ code {
   </script>
 <h1 id="edutrack-api-changelog">EduTrack API Changelog</h1>
 <blockquote>
-<p><strong>Last Updated:</strong> July 18, 2026</p>
+<p><strong>Last Updated:</strong> July 24, 2026</p>
 </blockquote>
-<p>This document lists every API endpoint that was <strong>removed</strong>, <strong>renamed</strong>, or <strong>changed</strong>, along with what replaced it and why.</p>
+<p>This document tracks all changes made to the API, organized by feature area.</p>
 <hr>
-<h2 id="table-of-contents">Table of Contents</h2>
-<ul>
-<li><a href="#removed-endpoints">Removed Endpoints (15 total)</a></li>
-<li><a href="#renamed-response-fields">Renamed Response Fields</a></li>
-<li><a href="#changed-endpoint-behavior">Changed Endpoint Behavior</a></li>
-<li><a href="#new-features-added">New Features Added</a></li>
-<li><a href="#bug-fixes--security">Bug Fixes &amp; Security</a></li>
-</ul>
-<hr>
-<h2 id="removed-endpoints">Removed Endpoints</h2>
-<h3 id="enrollment-management--8-endpoints-removed">Enrollment Management — 8 endpoints removed</h3>
-<table>
-<thead>
-<tr>
-<th>Old Endpoint</th>
-<th>Method</th>
-<th>What it did</th>
-<th>Replacement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>/courses/enrollments/pending/</code></td>
-<td>GET</td>
-<td>List pending enrollments for teacher's courses</td>
-<td><code>GET /courses/enrollments/?status=pending</code></td>
-</tr>
-<tr>
-<td><code>/courses/&lt;id&gt;/enrollments/pending/</code></td>
-<td>GET</td>
-<td>Pending enrollments for one course</td>
-<td><code>GET /courses/enrollments/?course=X&amp;status=pending</code></td>
-</tr>
-<tr>
-<td><code>/courses/&lt;id&gt;/enrollments/approved/</code></td>
-<td>GET</td>
-<td>Approved enrollments for one course</td>
-<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code></td>
-</tr>
-<tr>
-<td><code>/courses/&lt;id&gt;/enrollments/rejected/</code></td>
-<td>GET</td>
-<td>Rejected enrollments for one course</td>
-<td><code>GET /courses/enrollments/?course=X&amp;status=rejected</code></td>
-</tr>
-<tr>
-<td><code>/courses/&lt;id&gt;/students/</code></td>
-<td>GET</td>
-<td>Approved students with balance</td>
-<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code> (now includes <code>balance</code> field)</td>
-</tr>
-<tr>
-<td><code>/courses/enrollments/my/</code></td>
-<td>GET</td>
-<td>Student's own enrollments</td>
-<td><code>GET /courses/enrollments/</code> (already filters by student)</td>
-</tr>
-<tr>
-<td><code>/courses/enrollments/bulk-action/</code></td>
-<td>POST</td>
-<td>Bulk approve/reject enrollments</td>
-<td><code>POST /courses/enrollments/approve/</code> with <code>enrollment_ids: [...]</code></td>
-</tr>
-<tr>
-<td><code>/accounts/students/&lt;id&gt;/status/</code></td>
-<td>PATCH</td>
-<td>Update student status (separate endpoint)</td>
-<td><code>PATCH /accounts/students/&lt;id&gt;/</code> with <code>status</code>, <code>is_active</code>, <code>reason</code> fields</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Why:</strong> All enrollment GET endpoints could be replaced by the general <code>GET /courses/enrollments/</code> which already supports <code>?status=</code> and <code>?course=</code> filters. The bulk-action was merged into the approve/reject endpoints by accepting an <code>enrollment_ids</code> array instead of requiring a dedicated endpoint. The status update was merged into the student detail update to consolidate all student modifications in one place.</p>
-<hr>
-<h3 id="course-content--3-endpoints-removed">Course Content — 3 endpoints removed</h3>
-<table>
-<thead>
-<tr>
-<th>Old Endpoint</th>
-<th>Method</th>
-<th>What it did</th>
-<th>Replacement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>/courses/&lt;pk&gt;/topics/</code></td>
-<td>GET</td>
-<td>List topics for a course</td>
-<td><code>GET /courses/topics/?course=X</code></td>
-</tr>
-<tr>
-<td><code>/courses/topics/&lt;pk&gt;/lectures/</code></td>
-<td>GET</td>
-<td>List lectures for a topic</td>
-<td><code>GET /courses/lectures/?topic=X</code></td>
-</tr>
-<tr>
-<td><code>/courses/lectures/&lt;pk&gt;/videos/</code></td>
-<td>GET</td>
-<td>List videos for a lecture</td>
-<td><code>GET /courses/videos/?lecture=X</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Why:</strong> These were convenience shortcuts that duplicated the general list endpoints. The general list views (<code>TopicListCreateView</code>, <code>LectureListCreateView</code>, <code>VideoListCreateView</code>) already support <code>?course=</code>, <code>?topic=</code>, and <code>?lecture=</code> query parameters and return exactly the same data using the same serializers. One less URL to maintain, zero functional loss.</p>
-<hr>
-<h3 id="student-reports--2-endpoints-removed">Student Reports — 2 endpoints removed</h3>
-<table>
-<thead>
-<tr>
-<th>Old Endpoint</th>
-<th>Method</th>
-<th>What it did</th>
-<th>Replacement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>/courses/lectures/&lt;pk&gt;/student-report/</code></td>
-<td>GET</td>
-<td>Per-lecture student progress report</td>
-<td>Get data individually from enrollment list + homework submissions + quiz results + purchase list</td>
-</tr>
-<tr>
-<td><code>/courses/&lt;course_pk&gt;/student-report/&lt;student_id&gt;/</code></td>
-<td>GET</td>
-<td>Per-student full course report</td>
-<td><code>GET /payments/transactions/?student=X</code> for balance history, enrollment list for purchases</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Why:</strong> These were monolithic report endpoints that returned large amounts of data. The same information can be composed from simpler, reusable endpoints.</p>
-<hr>
-<h3 id="balances--history--3-endpoints-removed">Balances &amp; History — 3 endpoints removed</h3>
-<table>
-<thead>
-<tr>
-<th>Old Endpoint</th>
-<th>Method</th>
-<th>What it did</th>
-<th>Replacement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>/payments/balance/my/</code></td>
-<td>GET</td>
-<td>Student's own balances</td>
-<td><code>GET /payments/balance/</code> (already filters by student)</td>
-</tr>
-<tr>
-<td><code>/payments/balance/students/</code></td>
-<td>GET</td>
-<td>Teacher views student balances</td>
-<td><code>GET /courses/enrollments/?course=X&amp;status=approved</code> (now includes <code>balance</code> field)</td>
-</tr>
-<tr>
-<td><code>/payments/history/</code></td>
-<td>GET</td>
-<td>Student activity log</td>
-<td><code>GET /payments/transactions/?student=X</code> (full ledger with balance snapshots)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Why:</strong> The <code>/my/</code> suffix added only a 400 error for non-students. The general list already filters by student role. The <code>history/</code> endpoint was a lightweight view of the same data available in <code>transactions/</code> which has more detail (balance_before, balance_after).</p>
-<hr>
-<h3 id="materials--1-endpoint-removed">Materials — 1 endpoint removed</h3>
-<table>
-<thead>
-<tr>
-<th>Old Endpoint</th>
-<th>Method</th>
-<th>What it did</th>
-<th>Replacement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>/materials/my/</code></td>
-<td>GET</td>
-<td>Student's purchased lecture materials</td>
-<td><code>GET /materials/</code> (already filters by student's purchased lectures)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Why:</strong> The general list endpoint <code>GET /materials/</code> already filters by purchased lectures for students. Same serializer, same data.</p>
-<hr>
-<h3 id="teacher-dashboard--1-endpoint-removed">Teacher Dashboard — 1 endpoint removed</h3>
-<table>
-<thead>
-<tr>
-<th>Old Endpoint</th>
-<th>Method</th>
-<th>What it did</th>
-<th>Replacement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>/courses/my_courses/</code></td>
-<td>GET</td>
-<td>Teacher's courses with enrolled/pending counts</td>
-<td><code>GET /courses/</code> (already filters by teacher, same annotations)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Why:</strong> <code>GET /courses/</code> has the same data with the same serializer annotations. Teachers now see only their own courses (bug fixed: previously the filter was <code>Q(teacher=X) | Q(is_active=True)</code>, leaking other teachers' courses).</p>
-<hr>
-<h2 id="renamed-response-fields">Renamed Response Fields</h2>
-<h3 id="enrollment-responses">Enrollment Responses</h3>
-<p>All enrollment list endpoints return these renamed fields:</p>
-<table>
-<thead>
-<tr>
-<th>Old Field Name</th>
-<th>New Field Name</th>
-<th>Why</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>course</code> (integer ID)</td>
-<td>Removed</td>
-<td>Redundant — <code>course_name</code> already provides context</td>
-</tr>
-<tr>
-<td><code>approved_by</code></td>
-<td><code>responded_by</code></td>
-<td>Makes sense for all statuses (approved, rejected, pending)</td>
-</tr>
-<tr>
-<td><code>approved_by_name</code></td>
-<td><code>responded_by_name</code></td>
-<td>Shows the teacher's actual <strong>name</strong> (not username)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="student-list-endpoints">Student List Endpoints</h3>
-<table>
-<thead>
-<tr>
-<th>Old Field Name</th>
-<th>New Field Name</th>
-<th>Why</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>balance</code> (was only in /students/)</td>
-<td>Now in ALL enrollment responses</td>
-<td>Added <code>balance</code> field to <code>EnrollmentSerializer</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="me-endpoint">Me Endpoint</h3>
-<table>
-<thead>
-<tr>
-<th>Old Response</th>
-<th>New Response</th>
-<th>Why</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>{role, name, is_active}</code></td>
-<td><code>{role, name, is_active, status}</code></td>
-<td>Students now get their <code>status</code> field to differentiate pending/declined/suspended.</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="changed-endpoint-behavior">Changed Endpoint Behavior</h2>
-<h3 id="post-coursesenrollmentsapprove"><code>POST /courses/enrollments/approve/</code></h3>
-<p><strong>Before:</strong> Only accepted a single enrollment via URL parameter:</p>
-<pre class="hljs"><code><div>POST /courses/enrollments/&lt;id&gt;/approve/
-Body: { &quot;response_note&quot;: &quot;...&quot; }
-</div></code></pre>
-<p><strong>After:</strong> Accepts both single and multiple enrollment IDs:</p>
-<pre class="hljs"><code><div>POST /courses/enrollments/approve/
-Body: { &quot;enrollment_ids&quot;: [1, 2, 3], &quot;response_note&quot;: &quot;...&quot; }
-</div></code></pre>
-<p>Response:</p>
+<h2 id="homework">Homework</h2>
+<h3 id="get-learninghomeworksidsubmissions--complete-rewrite"><code>GET /learning/homeworks/&lt;id&gt;/submissions/</code> — Complete Rewrite</h3>
+<p><strong>Before:</strong> Only returned students who actually submitted the homework.</p>
 <pre class="hljs"><code><div>{
-  <span class="hljs-attr">"processed"</span>: <span class="hljs-number">3</span>,
-  <span class="hljs-attr">"total_requested"</span>: <span class="hljs-number">3</span>,
-  <span class="hljs-attr">"action"</span>: <span class="hljs-string">"approved"</span>,
-  <span class="hljs-attr">"errors"</span>: []
-}
-</div></code></pre>
-<h3 id="post-coursesenrollmentsreject"><code>POST /courses/enrollments/reject/</code></h3>
-<p>Same change as approve — accepts <code>enrollment_ids</code> array instead of a single PK.</p>
-<hr>
-<h3 id="patch-accountsstudentsid"><code>PATCH /accounts/students/&lt;id&gt;/</code></h3>
-<p><strong>Before:</strong> Could only update profile fields (name, phone, grade, etc.). Status changes required a separate endpoint.</p>
-<p><strong>After:</strong> Now accepts <code>status</code>, <code>is_active</code>, and <code>reason</code> fields in addition to all profile fields. Includes full transition validation and audit log:</p>
-<table>
-<thead>
-<tr>
-<th>Allowed Transitions</th>
-<th>From</th>
-<th>To</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td><code>pending</code></td>
-<td><code>verified</code>, <code>declined</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>verified</code></td>
-<td><code>suspended_temporary</code>, <code>suspended_permanent</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>declined</code></td>
-<td><code>verified</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>suspended_temporary</code></td>
-<td><code>verified</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>suspended_permanent</code></td>
-<td><code>verified</code></td>
-</tr>
-</tbody>
-</table>
-<p>Reason is <strong>required</strong> for <code>declined</code>, <code>suspended_temporary</code>, and <code>suspended_permanent</code>. A <code>StudentStatusLog</code> entry is automatically created on every status change.</p>
-<hr>
-<h3 id="patch-accountsteachersid"><code>PATCH /accounts/teachers/&lt;id&gt;/</code></h3>
-<p><strong>Before:</strong> Could not change password.</p>
-<p><strong>After:</strong> Now accepts an optional <code>password</code> field (min 8 chars). When provided, the teacher's password is updated via <code>user.set_password()</code>. The teacher can also use the forgot-password flow themselves.</p>
-<hr>
-<h3 id="enrollments-now-validate-school-type-and-division">Enrollments now validate school type and division</h3>
-<p>Student enrollment now checks that the student's <code>school_type</code> is in the teacher's subject's <code>school_types</code> and the student's <code>division</code> is in the teacher's subject's <code>divisions</code> (only enforced if the subject has school_types/divisions assigned — if none, any school_type/division is accepted).</p>
-<hr>
-<h3 id="quiz-questions-can-be-created-and-upserted-inline">Quiz questions can be created and upserted inline</h3>
-<p><code>POST /learning/quizzes/</code> and <code>PUT/PATCH /learning/quizzes/&lt;id&gt;/</code> now accept an optional <code>questions</code> array with inline question text, type, order, points, image, and choices:</p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"lecture"</span>: <span class="hljs-number">5</span>,
-  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Quiz Title"</span>,
-  <span class="hljs-attr">"settings"</span>: { ... },
-  <span class="hljs-attr">"questions"</span>: [
-    {
-      <span class="hljs-attr">"id"</span>: <span class="hljs-number">10</span>,
-      <span class="hljs-attr">"text"</span>: <span class="hljs-string">"What is 2+2?"</span>,
-      <span class="hljs-attr">"question_type"</span>: <span class="hljs-string">"mcq_single"</span>,
-      <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>,
-      <span class="hljs-attr">"points_override"</span>: <span class="hljs-number">2</span>,
-      <span class="hljs-attr">"choices"</span>: [
-        {<span class="hljs-attr">"id"</span>: <span class="hljs-number">50</span>, <span class="hljs-attr">"text"</span>: <span class="hljs-string">"4"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">1</span>},
-        {<span class="hljs-attr">"text"</span>: <span class="hljs-string">"5"</span>, <span class="hljs-attr">"is_correct"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"order"</span>: <span class="hljs-number">2</span>}
-      ]
-    }
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">"results"</span>: [
+    { <span class="hljs-attr">"id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Mariam..."</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-string">"7.00"</span>, <span class="hljs-attr">"status"</span>: <span class="hljs-string">"graded"</span>, <span class="hljs-attr">"submitted_at"</span>: <span class="hljs-string">"..."</span> }
   ]
 }
 </div></code></pre>
-<p>On update, questions are matched by <code>id</code> and updated in-place (upsert). New questions (no <code>id</code>) are created. Questions in the DB but absent from the payload are deleted.</p>
+<p><strong>After:</strong> Returns ALL students who purchased the lecture, with their submission status. Students who bought but haven't submitted are now included.</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"homework_id"</span>: <span class="hljs-number">21</span>,
+  <span class="hljs-attr">"homework_title"</span>: <span class="hljs-string">"Homework 1"</span>,
+  <span class="hljs-attr">"lecture_name"</span>: <span class="hljs-string">"Lecture 1"</span>,
+  <span class="hljs-attr">"course_name"</span>: <span class="hljs-string">"Chemistry"</span>,
+  <span class="hljs-attr">"total_purchased"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"total_submitted"</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">"count"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-attr">"results"</span>: [
+    { <span class="hljs-attr">"student_id"</span>: <span class="hljs-number">78</span>, <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Mariam..."</span>, <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"submission_id"</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-string">"7.00"</span> },
+    { <span class="hljs-attr">"student_id"</span>: <span class="hljs-number">79</span>, <span class="hljs-attr">"student_name"</span>: <span class="hljs-string">"Shahd..."</span>, <span class="hljs-attr">"is_purchased"</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">"submitted"</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">"submission_id"</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">"score"</span>: <span class="hljs-literal">null</span> }
+  ]
+}
+</div></code></pre>
+<p><strong>Added filters:</strong> <code>?submitted=true|false</code>, <code>?search=name_or_code</code></p>
+<p><strong>Why:</strong> Teachers need to see who bought the lecture but hasn't done the homework — not just who already submitted.</p>
 <hr>
-<h3 id="assistant-list-now-auto-filters-by-teacher">Assistant list now auto-filters by teacher</h3>
-<p><code>GET /accounts/teacher/assistants/</code> — teachers now see ONLY their own assistants. SiteOwner sees all. Assistants see coworkers under the same teacher.</p>
-<hr>
-<h3 id="quizsettings--opendateclosedate-removed">QuizSettings — open_date/close_date removed</h3>
-<p>Quizzes no longer have open/close dates. Only Exams have <code>open_date</code> and <code>close_date</code> (directly on the <code>Exam</code> model). Timer <code>max</code> is now <strong>1440 minutes</strong> (24 hours).</p>
-<hr>
-<h2 id="new-features-added">New Features Added</h2>
+<h3 id="get-learningquizzesidresults--complete-rewrite"><code>GET /learning/quizzes/&lt;id&gt;/results/</code> — Complete Rewrite</h3>
+<p><strong>Before:</strong> Only returned students who submitted a quiz attempt.</p>
+<p><strong>After:</strong> Returns ALL students who purchased the lecture, with 3 quiz statuses:</p>
 <table>
 <thead>
 <tr>
-<th>Feature</th>
-<th>Endpoint</th>
-<th>What it does</th>
+<th><code>quiz_status</code></th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Balance Transaction Ledger</strong></td>
-<td><code>GET /payments/transactions/</code></td>
-<td>Full ledger with <code>balance_before</code> and <code>balance_after</code> for every code redemption and lecture purchase. Filterable by <code>?student=X</code>, <code>?course=X</code>, <code>?transaction_type=code_redeemed</code>.</td>
+<td><code>not_started</code></td>
+<td>Bought the lecture, never opened the quiz</td>
 </tr>
 <tr>
-<td><strong>Thumbnail URL</strong></td>
-<td>In all video responses</td>
-<td><code>thumbnail_url</code> field automatically generates the Bunny Stream thumbnail URL from the video's GUID.</td>
+<td><code>in_progress</code></td>
+<td>Started the quiz (has <code>submission_id</code>) but didn't submit (<code>submitted_at</code> is null)</td>
 </tr>
 <tr>
-<td><strong>Bunny video deletion</strong></td>
-<td><code>DELETE /courses/videos/&lt;id&gt;/</code></td>
-<td>Now also deletes the video from Bunny Stream, not just the local database.</td>
-</tr>
-<tr>
-<td><strong>Auto-order</strong></td>
-<td>Topics, Lectures, Videos</td>
-<td>When creating without specifying <code>order</code>, automatically assigns <code>max_order + 1</code> among siblings.</td>
-</tr>
-<tr>
-<td><strong>Disk space check</strong></td>
-<td><code>POST /courses/videos/&lt;id&gt;/upload/</code></td>
-<td>Checks available temp disk space before accepting upload. Returns 503 if space is insufficient.</td>
-</tr>
-<tr>
-<td><strong>Password reset for teachers</strong></td>
-<td><code>PATCH /accounts/teachers/&lt;id&gt;/</code></td>
-<td>SiteOwner can reset a teacher's password directly.</td>
+<td><code>submitted</code></td>
+<td>Completed and submitted</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Added filters:</strong> <code>?quiz_status=not_started|in_progress|submitted</code>, <code>?search=name_or_code</code></p>
+<p><strong>Added meta:</strong> <code>total_purchased</code>, <code>total_submitted</code>, <code>total_in_progress</code></p>
+<p><strong>Why:</strong> Quizzes have 3 states — students can start a quiz and walk away without finishing. Teachers need to see who's stuck in progress.</p>
 <hr>
-<h2 id="bug-fixes--security">Bug Fixes &amp; Security</h2>
+<h2 id="lecture-content-details">Lecture Content Details</h2>
+<h3 id="new-fields-added-to-get-courseslecturesid-lecture-detail-serializer">New fields added to <code>GET /courses/lectures/&lt;id&gt;/</code> (Lecture detail serializer)</h3>
 <table>
 <thead>
 <tr>
-<th>Fix</th>
-<th>Detail</th>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Quiz/Exam questions lost on PATCH</strong></td>
-<td>Inline question update (PUT/PATCH) deleted all questions then recreated them, ignoring the <code>id</code> field in the payload. This caused existing questions to get new IDs and lose data when sent via multipart/form-data. Fixed by adding <code>id</code> to inline serializers and implementing upsert logic: matching questions by <code>id</code> are updated in-place, new ones created, missing ones deleted.</td>
+<td><code>materials_count</code></td>
+<td>Integer</td>
+<td>Number of active study materials for this lecture</td>
 </tr>
 <tr>
-<td><strong>Assistant isolation</strong></td>
-<td>Teachers could see ALL assistants in the system. Now filtered to their own.</td>
+<td><code>homeworks_count</code></td>
+<td>Integer</td>
+<td>Number of published homeworks</td>
 </tr>
 <tr>
-<td><strong>Bunny upload SSL retry</strong></td>
-<td>Retries upload 3 times with exponential backoff on SSL errors.</td>
+<td><code>quizzes_count</code></td>
+<td>Integer</td>
+<td>Number of published quizzes</td>
 </tr>
 <tr>
-<td><strong>Bunny auto-recreate on 404</strong></td>
-<td>If Bunny Stream auto-deleted the video entry, it's re-created automatically before upload.</td>
-</tr>
-<tr>
-<td><strong>Content-Length in upload</strong></td>
-<td>Bunny Stream doesn't support chunked transfer encoding. Now sends explicit <code>Content-Length</code> header.</td>
-</tr>
-<tr>
-<td><strong>Stream from disk (0 RAM)</strong></td>
-<td>Files are streamed from disk to Bunny via <code>urllib3</code>, never loaded into memory.</td>
-</tr>
-<tr>
-<td><strong>Chunked upload (pause/resume)</strong></td>
-<td><code>POST /courses/videos/&lt;id&gt;/upload/</code> now accepts <code>offset</code> + <code>total_size</code> for byte-range chunks. <code>GET /courses/videos/&lt;id&gt;/upload-status/</code> queries Bunny for <code>uploaded_bytes</code>. Frontend splits file, sends chunks, pauses by stopping, resumes from <code>uploaded_bytes</code> after internet recovery or user-initiated pause.</td>
-</tr>
-<tr>
-<td><strong>Rename syncs to Bunny</strong></td>
-<td><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code> now calls Bunny's update API when <code>name</code> changes.</td>
-</tr>
-<tr>
-<td><strong>OTP expiry increased</strong></td>
-<td>Changed from 10 to 30 minutes for student registration flow.</td>
-</tr>
-<tr>
-<td><strong>Enrollment phone validation</strong></td>
-<td>Student phone number cannot be same as father's or mother's number.</td>
-</tr>
-<tr>
-<td><strong>Enrollment grade validation</strong></td>
-<td>Student's grade must match course's grade. School type and division also checked if subject has them.</td>
-</tr>
-<tr>
-<td><strong>Status in me endpoint</strong></td>
-<td>Students get <code>status</code> field to differentiate pending vs declined vs suspended.</td>
-</tr>
-<tr>
-<td><strong>Bunny upload to collection</strong></td>
-<td>When Bunny entry is re-created (404), <code>collection_id</code> is passed so the video goes to the teacher's collection.</td>
-</tr>
-<tr>
-<td><strong>Chunked upload (pause/resume)</strong></td>
-<td><code>POST /courses/videos/&lt;id&gt;/upload/</code> accepts <code>offset</code>+<code>total_size</code> for byte-range chunks. <code>GET /upload-status/</code> queries Bunny for <code>uploaded_bytes</code> to resume after interruption.</td>
-</tr>
-<tr>
-<td><strong>Rename syncs to Bunny Stream</strong></td>
-<td><code>PUT/PATCH /courses/videos/&lt;id&gt;/</code> now calls Bunny's update API when <code>name</code> changes.</td>
-</tr>
-<tr>
-<td><strong>TUS direct upload</strong></td>
-<td>Removed the backend proxy <code>POST /courses/videos/&lt;id&gt;/upload/</code> and <code>GET /upload-status/</code>. <code>create-upload/</code> now returns TUS credentials (<code>library_id</code>, <code>signature</code>, <code>expiration_time</code>). Frontend uploads directly to Bunny using <code>tus-js-client</code> — zero backend bandwidth/RAM.</td>
-</tr>
-<tr>
-<td><strong>Permission fix: Course/Topic/Lecture/Video lists</strong></td>
-<td><code>get_queryset</code> in all four base mixins used <code>Q(teacher=X) | Q(is_active=True)</code> instead of <code>Q(teacher=X)</code>, causing teachers to see every other teacher's content. Fixed to <code>filter(teacher=teacher)</code>.</td>
-</tr>
-<tr>
-<td><strong>Permission fix: RechargeCode list</strong></td>
-<td><code>RechargeCodeListCreateView</code> returned all codes for any teacher. Now filters by <code>course__teacher=teacher</code>.</td>
-</tr>
-<tr>
-<td><strong>video-security → SiteOwner only</strong></td>
-<td><code>GET /accounts/video-security/</code> and <code>&lt;id&gt;/</code> changed from public to <code>IsSiteOwner</code>.</td>
-</tr>
-<tr>
-<td><strong>public/teachers student filter</strong></td>
-<td>When accessed by a student, only shows teachers whose subject matches the student's grade/school_type/division.</td>
-</tr>
-<tr>
-<td><strong>Deleted assign-collection</strong></td>
-<td><code>PATCH /accounts/teachers/&lt;id&gt;/assign-collection/</code> removed — use <code>PATCH /teachers/&lt;id&gt;/</code> directly.</td>
-</tr>
-<tr>
-<td><strong>Added TeacherRechargeView</strong></td>
-<td><code>POST /payments/recharge/</code> — teacher/assistant adds balance to an enrolled student. Requires student to be approved-enrolled in the course.</td>
-</tr>
-<tr>
-<td><strong>Deleted revenue APIs</strong></td>
-<td>5 revenue endpoints removed (summary, course/lecture detail, students, trends).</td>
-</tr>
-<tr>
-<td><strong>Lectures now require auth</strong></td>
-<td><code>GET /courses/lectures/</code> and <code>GET /courses/lectures/&lt;id&gt;/</code> now require authentication (not public).</td>
-</tr>
-<tr>
-<td><strong>Transactions siteowner filter</strong></td>
-<td><code>GET /payments/transactions/</code> — siteowner can optionally filter by <code>?teacher=</code> and <code>?course=</code>.</td>
+<td><code>prerequisites</code></td>
+<td>Array</td>
+<td>List of <code>{content_type, content_name, passing_score}</code></td>
 </tr>
 </tbody>
 </table>
-<p>| <strong>TeacherRechargeView redesigned</strong> | Now uses RechargeCode instead of free-form amount. performed_by is set on all transactions (student self-redeem + teacher recharge). |</p>
-<p>| <strong>Code blacklist system</strong> | RechargeCode.status (valid/used/blacklisted) replaces is_used. Added BlacklistOTP model. Two new endpoints: POST /codes/<pk>/request-blacklist-otp/ (SiteOwner, sends OTP to gmail) and POST /codes/<pk>/blacklist/ (SiteOwner, one-way irreversible). Generation restricted to SiteOwner + Teacher only. |</p>
-<p>| <strong>Student detail includes enrollments</strong> | <code>GET /accounts/students/&lt;id&gt;/</code> now returns <code>enrollments[]</code> array with course name, teacher, status, balance for each enrollment. |
-| <strong>Transaction date filters</strong> | <code>GET /payments/transactions/</code> now supports <code>?start_date=</code> and <code>?end_date=</code> (YYYY-MM-DD) for date range filtering. |
-| <strong>SiteOwner transaction restriction</strong> | SiteOwner must provide both <code>?student=X</code> and <code>?course=X</code> to view transactions. Prevents mixing up students across courses. |</p>
-<p>| <strong>Batch ID + Excel export</strong> | Codes now have a atch_id UUID for grouping bulk generations. GET /codes/export/?batch=<uuid> downloads an Excel sheet. GET /codes/summary/?course=X shows aggregate stats. |
-| <strong>Expiry auto-set to 1 year</strong> | expires_at no longer optional � defaults to created_at + 365 days. Not editable. |
-| <strong>Deactivated course check</strong> | Codes for deactivated courses cannot be redeemed. |</p>
-<p>| <strong>Batch name + batch list API</strong> | RechargeCode now has atch_name (auto-generated, per-teacher counter). Added GET /codes/batches/ (paginated batch list), GET /codes/batches/<uuid>/ (batch detail with codes), GET /codes/analytics/ (analytics dashboard with Teacher's Cut / SiteOwner's Cut). |</p>
-<p>| <strong>Code masking + audit history</strong> | Codes now returned with <code>code_masked</code> field (<code>&quot;ABDC XXXX XXXX XXXX&quot;</code>) for secure display. Added <code>redeemed_value</code> to batch detail. Added <code>GET /codes/history/</code> — unified audit log combining redemptions + blacklists with filters (date range, type, code search, teacher, course), sorted newest-first, paginated. Export now supports <code>GET /codes/export/</code> without <code>?batch=</code> — exports all visible codes. Added Teacher Name and Student Code columns to Excel export. |</p>
-<p>| <strong>Quiz/Exam settings cleanup</strong> | Removed 7 dead fields from both Quizzes and Exams: <code>shuffle_choices</code>, <code>allow_multiple_attempts</code> (merged into <code>max_attempts</code>), <code>attempt_scoring</code>, <code>show_correct_after_submission</code> (covered by <code>answers_visibility</code>), <code>difficulty</code> from questions, <code>passed</code> from submissions (always null). Removed <code>AFTER_CLOSE</code> visibility from Quizzes (no close date). Kept for Exams where it's used. |</p>
+<h3 id="same-fields-added-to-get-coursesidlectures-students-course-lectures">Same fields added to <code>GET /courses/&lt;id&gt;/lectures/</code> (Student's course lectures)</h3>
+<p>Added <code>materials_count</code>, <code>homeworks_count</code>, <code>quizzes_count</code> to each lecture in the student's enrolled course view.</p>
+<p><strong>Why:</strong> The purchase page needs to show students what a lecture contains (X videos, Y materials, Z quizzes) before they buy. Previously this required separate API calls; now it's included in the lecture detail response.</p>
 <hr>
-<h2 id="v14--july-19-2026">v1.4 — July 19, 2026</h2>
-<h3 id="new-features">New Features</h3>
+<h2 id="permissions-changed">Permissions Changed</h2>
+<h3 id="get-courseslecturesidavailable-assessments"><code>GET /courses/lectures/&lt;id&gt;/available-assessments/</code></h3>
+<p><strong>Before:</strong> <code>[IsTeacherOrAssistant]</code> — teachers only.</p>
+<p><strong>After:</strong> <code>[IsAuthenticated]</code> — students can now see published assessments. Teachers/assistants still see all. Ownership check now only applies to teacher/assistant roles.</p>
+<p><strong>Why:</strong> The purchase page needs to show students whether a lecture has quizzes and homework.</p>
+<h3 id="get-courseslecturesidprerequisites"><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></h3>
+<p><strong>Before:</strong> <code>[IsTeacherOrAssistant]</code> — no student access.</p>
+<p><strong>After:</strong> GET requests now allowed for any authenticated user. POST/PUT/DELETE remain teacher-only.</p>
+<p><strong>Why:</strong> Students need to see prerequisites before buying a lecture.</p>
+<hr>
+<h2 id="purchase-validation">Purchase Validation</h2>
+<h3 id="post-coursespurchasesbuy--added-active-purchase-check"><code>POST /courses/purchases/buy/</code> — Added active purchase check</h3>
 <table>
 <thead>
 <tr>
-<th>Feature</th>
-<th>Detail</th>
+<th>Scenario</th>
+<th>Before</th>
+<th>After</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Lecture Students Progress endpoint</strong></td>
-<td><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code> — single API returns ALL enrolled students with purchase status, homework scores, quiz scores, and watch progress. Supports pagination (<code>?page=</code>, <code>?page_size=</code>). Shows non-buyers too.</td>
+<td>Never purchased</td>
+<td>✅ Creates purchase</td>
+<td>✅ Same</td>
 </tr>
 <tr>
-<td><strong>Choice image update endpoints</strong></td>
-<td><code>PATCH /learning/quiz-choices/&lt;id&gt;/</code> and <code>PATCH /learning/exam-choices/&lt;id&gt;/</code> — same pattern as question image updates. Accepts multipart for image upload, JSON for text.</td>
+<td>Purchased + still active</td>
+<td>✅ Creates duplicate purchase (charged twice!)</td>
+<td>❌ <strong>Blocked</strong> — returns 400 with &quot;already purchased and active&quot;</td>
 </tr>
 <tr>
-<td><strong>Management command: cleanup_stale_uploads</strong></td>
-<td><code>python manage.py cleanup_stale_uploads</code> — releases upload locks on videos where Bunny status hasn't progressed.</td>
+<td>Purchased + expired</td>
+<td>✅ Creates new purchase</td>
+<td>✅ Same (re-buy allowed)</td>
+</tr>
+<tr>
+<td>Teacher reopens expired purchase</td>
+<td>✅ Grants +1 day</td>
+<td>✅ Same</td>
 </tr>
 </tbody>
 </table>
-<h3 id="bug-fixes">Bug Fixes</h3>
+<p><strong>Why:</strong> Students could buy the same lecture multiple times while it's still active, losing money each time. Now they can only re-buy after expiry expires.</p>
+<hr>
+<h2 id="removed-endpoints">Removed Endpoints</h2>
+<h3 id="get-coursesenrolled"><code>GET /courses/enrolled/</code></h3>
+<p><strong>Before:</strong> Separate student-only endpoint returning approved courses with course details.</p>
+<p><strong>After:</strong> Removed. Use <code>GET /courses/enrollments/?status=approved</code> instead — it now returns <code>cover_picture</code>, <code>topic_count</code>, <code>total_lectures</code> for approved enrollments, plus all the existing enrollment fields.</p>
+<p><strong>Why:</strong> Duplicated the enrollments endpoint. The serializer was enhanced to include course details instead.</p>
+<hr>
+<h2 id="enrollment-serializer-enhancements">Enrollment Serializer Enhancements</h2>
 <table>
 <thead>
 <tr>
-<th>Fix</th>
-<th>Detail</th>
+<th>New Field</th>
+<th>Type</th>
+<th>When non-null</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Quiz/Exam multipart form data</strong></td>
-<td><code>settings</code> and <code>questions</code> JSON strings in multipart forms are now parsed correctly. QueryDict flattened before reaching serializer.</td>
+<td><code>course</code></td>
+<td>Integer</td>
+<td>Always (the course ID)</td>
 </tr>
 <tr>
-<td><strong>Choice images preserved on PATCH</strong></td>
-<td><code>_update_questions</code> no longer deletes+recreates choices. Existing choices are updated in-place; omitted fields (like <code>image</code>) are preserved.</td>
+<td><code>cover_picture</code></td>
+<td>String (URL)</td>
+<td>Always</td>
 </tr>
 <tr>
-<td><strong>Bunny: abandoned upload re-usable</strong></td>
-<td><code>create-upload/</code> no longer blocks re-upload on status 0 (Created, no file). User can re-upload if they navigated away.</td>
+<td><code>topic_count</code></td>
+<td>Integer</td>
+<td>For approved enrollments</td>
 </tr>
 <tr>
-<td><strong>Bunny: concurrent upload protection</strong></td>
-<td>While a TUS upload is in progress (status 0 with bytes on Bunny), other users get 409 Conflict.</td>
+<td><code>total_lectures</code></td>
+<td>Integer</td>
+<td>For approved enrollments</td>
 </tr>
 <tr>
-<td><strong>Bunny: delete retry</strong></td>
-<td><code>DELETE /courses/videos/&lt;id&gt;/</code> retries Bunny's delete API 3 times before giving up.</td>
-</tr>
-<tr>
-<td><strong>Bunny: stale sync removed</strong></td>
-<td><code>_sync_bunny_status</code> no longer has a 24-hour cutoff — videos of any age are synced.</td>
-</tr>
-<tr>
-<td><strong>Reopen resets watch count</strong></td>
-<td><code>PATCH /courses/purchases/&lt;id&gt;/reopen/</code> now resets <code>VideoWatchProgress.watch_count = 0</code> so the student can watch again.</td>
-</tr>
-<tr>
-<td><strong>Codes analytics split</strong></td>
-<td><code>total_value</code> replaced by <code>valid_value</code>, <code>used_value</code>, <code>blacklisted_value</code> — blacklisted code values no longer inflate totals.</td>
-</tr>
-<tr>
-<td><strong>Teacher/SiteOwner cut swapped</strong></td>
-<td>Teacher now gets <code>used_value - platform_fee</code> (the remainder), SiteOwner gets the flat <code>price_per_student</code> fee.</td>
-</tr>
-<tr>
-<td><strong>Batch counter removed from notes</strong></td>
-<td>Generated codes no longer append <code> (1/1000)</code> counter to the <code>notes</code> field.</td>
-</tr>
-<tr>
-<td><strong>Email verification blocks existing emails</strong></td>
-<td><code>POST /accounts/verify-email/request/</code> now checks if the email is already linked to any account before sending OTP.</td>
-</tr>
-<tr>
-<td><strong>OTP_EXPIRY_MINUTES cleanup</strong></td>
-<td>Removed unused <code>OTP_EXPIRY_MINUTES = 10</code> from <code>validators.py</code> — actual expiry is always 30 minutes from <code>settings.py</code>.</td>
-</tr>
-<tr>
-<td><strong>Password validation on all endpoints</strong></td>
-<td>Django's password validators now applied to student registration, password reset, change password, and teacher password update.</td>
-</tr>
-<tr>
-<td><strong>effective_expiry removed from purchase serializer</strong></td>
-<td><code>effective_expiry</code> removed because it changes on every reopen — <code>is_expired</code> + <code>expires_at</code> + <code>extra_days</code> give the full picture.</td>
-</tr>
-<tr>
-<td><strong>reopened_at redundant source removed</strong></td>
-<td>Fixed <code>AssertionError</code> in <code>StudentPurchaseInfoSerializer</code> by removing redundant <code>source='reopened_at'</code> argument.</td>
-</tr>
-<tr>
-<td><strong>Codes history pagination fix</strong></td>
-<td>Generator converted to list to support <code>len()</code> for Django paginator.</td>
+<td><code>subject_name</code></td>
+<td>String</td>
+<td>Always</td>
 </tr>
 </tbody>
 </table>
-<h3 id="permission-changes">Permission Changes</h3>
+<p><strong>Also:</strong> <code>cover_picture</code> used to return <code>null</code> for non-approved enrollments. Now returns the URL for all statuses.</p>
+<hr>
+<h2 id="balance--transactions">Balance &amp; Transactions</h2>
+<h3 id="get-paymentsbalance--added-teacher-picture"><code>GET /payments/balance/</code> — Added teacher picture</h3>
+<p>Added <code>teacher_picture</code> (URL) to each balance entry, sourced from <code>course.teacher.profile_picture</code>.</p>
+<h3 id="get-paymentstransactions--added-teacher-name-and-picture"><code>GET /payments/transactions/</code> — Added teacher name and picture</h3>
+<p>Added <code>teacher_name</code> and <code>teacher_picture</code> to each transaction entry.</p>
+<p><strong>Why:</strong> The transaction history UI needs to show the teacher's name and profile picture alongside each transaction.</p>
+<hr>
+<h2 id="course--topic-images">Course &amp; Topic Images</h2>
+<h3 id="get-coursesidpreview--added-topic-picture"><code>GET /courses/&lt;id&gt;/preview/</code> — Added topic picture</h3>
+<p>Each topic now returns <code>picture</code> (URL) from <code>topic.picture</code>.</p>
+<h3 id="get-coursesidlectures--added-topic-picture"><code>GET /courses/&lt;id&gt;/lectures/</code> — Added topic picture</h3>
+<p>Each topic in the student's enrolled course view now returns <code>picture</code> (URL).</p>
+<hr>
+<h2 id="profile-serializer">Profile Serializer</h2>
+<h3 id="removed-email-field-from-student-profile">Removed <code>email</code> field from student profile</h3>
+<p>The <code>StudentProfileSerializer</code> no longer returns <code>email</code> (from <code>User.email</code>). Students only see <code>gmail</code> (from <code>StudentProfile.gmail</code>) — the field they entered during registration and used for password reset.</p>
+<p><strong>Why:</strong> These were duplicate fields with the same value from different models, confusing students.</p>
+<hr>
+<h2 id="student-facing-api-documentation">Student-Facing API Documentation</h2>
+<p>All three missing endpoints were added to <code>API_STUDENT.md</code>:</p>
 <table>
 <thead>
 <tr>
 <th>Endpoint</th>
-<th>Old</th>
-<th>New</th>
+<th>Previously documented in</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>POST /accounts/verify-email/request/</code></td>
-<td>Public (any email)</td>
-<td>Public but blocks already-registered emails</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/</code></td>
+<td>Only in API_TEACHER.md</td>
 </tr>
 <tr>
-<td><code>PATCH /accounts/profile/me/</code></td>
-<td>Verified/pending/suspended could edit</td>
-<td><strong>Only declined</strong> can edit; resets to pending</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/available-assessments/</code></td>
+<td>Only in API_TEACHER.md</td>
 </tr>
 <tr>
-<td><code>POST /payments/codes/</code></td>
-<td>Assistant could generate</td>
-<td><strong>Teacher and SiteOwner only</strong> (Assistant view-only)</td>
+<td><code>GET /courses/lectures/&lt;id&gt;/prerequisites/</code></td>
+<td>Only in API_TEACHER.md</td>
 </tr>
 </tbody>
 </table>
+<hr>
+<h2 id="overview-matrix-updated">Overview Matrix Updated</h2>
+<p>The following missing endpoints were added to <code>API_OVERVIEW.md</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /courses/lectures/&lt;id&gt;/</code></td>
+<td>All authenticated</td>
+</tr>
+<tr>
+<td><code>GET /courses/purchases/</code></td>
+<td>All authenticated</td>
+</tr>
+<tr>
+<td><code>GET /courses/progress/</code></td>
+<td>Student</td>
+</tr>
+<tr>
+<td><code>POST /courses/progress/update/</code></td>
+<td>Student</td>
+</tr>
+<tr>
+<td><code>GET /courses/progress/&lt;video_id&gt;/</code></td>
+<td>Student</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="code-history-endpoint">Code History Endpoint</h2>
+<h3 id="get-paymentscodeshistory--fixed-performedby-name-resolution"><code>GET /payments/codes/history/</code> — Fixed <code>performed_by</code> name resolution</h3>
+<p><strong>Before:</strong> <code>performed_by</code> returned the user's <code>username</code> (e.g., <code>&quot;Marmar999999&quot;</code>).</p>
+<p><strong>After:</strong> Uses the same logic as the balance transaction serializer:</p>
+<ul>
+<li><code>student</code> role → <code>&quot;Student&quot;</code></li>
+<li><code>teacher</code> role → <code>teacher_profile.name</code></li>
+<li><code>assistant</code> role → <code>assistant_profile.name</code></li>
+<li>Fallback → <code>user.username</code></li>
+</ul>
+<hr>
+<h2 id="codes-list-endpoint">Codes List Endpoint</h2>
+<h3 id="get-paymentscodes--added-search-by-code"><code>GET /payments/codes/</code> — Added search by code</h3>
+<p>Added <code>SearchFilter</code> with <code>search_fields = ['code']</code>. Now supports <code>?search=KTMD</code> to filter codes by partial match.</p>
+<hr>
+<h2 id="students-progress-endpoint">Students Progress Endpoint</h2>
+<h3 id="get-courseslecturesidstudents-progress--added-filters"><code>GET /courses/lectures/&lt;id&gt;/students-progress/</code> — Added filters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>?search=</code></td>
+<td>Filter by student name (en/ar) or student code</td>
+</tr>
+<tr>
+<td><code>?is_purchased=true/false</code></td>
+<td>Filter by purchase status</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Before:</strong> All enrolled students returned — no search or purchase filtering.</p>
+<hr>
 
 </body>
 </html>
